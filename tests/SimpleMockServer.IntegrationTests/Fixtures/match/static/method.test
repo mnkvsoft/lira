@@ -1,0 +1,19 @@
+// not matched
+-------------------- case
+
+GET /match/static/method/post
+
+----- expected
+
+code:
+404
+
+// matched
+-------------------- case
+
+POST /match/static/method/post
+
+----- expected
+
+code:
+200

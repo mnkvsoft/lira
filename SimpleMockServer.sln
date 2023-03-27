@@ -1,0 +1,102 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer", "src\SimpleMockServer\SimpleMockServer.csproj", "{73961771-306D-4BCB-AC85-80EF150B8C6C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{79895E68-D478-411B-98E3-00FA4E31E8AA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{B539FCB9-CD31-44BD-BD76-5BCA0A35E4C4}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BE927F78-B04F-4B6F-97FD-9B8397AF9915}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.IntegrationTests", "tests\SimpleMockServer.IntegrationTests\SimpleMockServer.IntegrationTests.csproj", "{2CE89943-5747-44A8-AD37-1A200067B13A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Common", "src\SimpleMockServer.Common\SimpleMockServer.Common.csproj", "{C78A8ECD-5425-4AA0-B6CC-CB323A89AC32}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.FileSectionFormat", "src\SimpleMockServer.FileSectionFormat\SimpleMockServer.FileSectionFormat.csproj", "{E092952A-4EC0-4BD3-916A-6D5F75057830}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain", "src\SimpleMockServer.Domain\SimpleMockServer.Domain.csproj", "{E2CD2B3B-6D9F-4EAB-80C1-5D6F09BACD93}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.ConfigurationProviding", "src\SimpleMockServer.ConfigurationProviding\SimpleMockServer.ConfigurationProviding.csproj", "{6D9A5298-EB81-4474-A518-143FD9F3F4E5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.Functions.Native", "src\SimpleMockServer.Domain.Functions.Native\SimpleMockServer.Domain.Functions.Native.csproj", "{0E782DD1-2926-4B14-9137-508E77D416E2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.Functions.Native.UnitTests", "tests\SimpleMockServer.Domain.Functions.Native.UnitTests\SimpleMockServer.Domain.Functions.Native.UnitTests.csproj", "{2835F99A-D2C3-4F19-94E0-71E882380580}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.UnitTests", "tests\SimpleMockServer.Domain.UnitTests\SimpleMockServer.Domain.UnitTests.csproj", "{55B22771-D380-474A-B5F9-45F063C51DBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.Functions.Pretty", "src\SimpleMockServer.Domain.Functions.Pretty\SimpleMockServer.Domain.Functions.Pretty.csproj", "{8EB09636-17BE-4F19-981E-26A784E2C59E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{73961771-306D-4BCB-AC85-80EF150B8C6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73961771-306D-4BCB-AC85-80EF150B8C6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73961771-306D-4BCB-AC85-80EF150B8C6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73961771-306D-4BCB-AC85-80EF150B8C6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CE89943-5747-44A8-AD37-1A200067B13A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CE89943-5747-44A8-AD37-1A200067B13A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CE89943-5747-44A8-AD37-1A200067B13A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CE89943-5747-44A8-AD37-1A200067B13A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C78A8ECD-5425-4AA0-B6CC-CB323A89AC32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C78A8ECD-5425-4AA0-B6CC-CB323A89AC32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C78A8ECD-5425-4AA0-B6CC-CB323A89AC32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C78A8ECD-5425-4AA0-B6CC-CB323A89AC32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E092952A-4EC0-4BD3-916A-6D5F75057830}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E092952A-4EC0-4BD3-916A-6D5F75057830}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E092952A-4EC0-4BD3-916A-6D5F75057830}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E092952A-4EC0-4BD3-916A-6D5F75057830}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2CD2B3B-6D9F-4EAB-80C1-5D6F09BACD93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2CD2B3B-6D9F-4EAB-80C1-5D6F09BACD93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2CD2B3B-6D9F-4EAB-80C1-5D6F09BACD93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2CD2B3B-6D9F-4EAB-80C1-5D6F09BACD93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D9A5298-EB81-4474-A518-143FD9F3F4E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D9A5298-EB81-4474-A518-143FD9F3F4E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D9A5298-EB81-4474-A518-143FD9F3F4E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D9A5298-EB81-4474-A518-143FD9F3F4E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E782DD1-2926-4B14-9137-508E77D416E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E782DD1-2926-4B14-9137-508E77D416E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E782DD1-2926-4B14-9137-508E77D416E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E782DD1-2926-4B14-9137-508E77D416E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2835F99A-D2C3-4F19-94E0-71E882380580}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2835F99A-D2C3-4F19-94E0-71E882380580}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2835F99A-D2C3-4F19-94E0-71E882380580}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2835F99A-D2C3-4F19-94E0-71E882380580}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55B22771-D380-474A-B5F9-45F063C51DBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55B22771-D380-474A-B5F9-45F063C51DBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55B22771-D380-474A-B5F9-45F063C51DBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55B22771-D380-474A-B5F9-45F063C51DBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EB09636-17BE-4F19-981E-26A784E2C59E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EB09636-17BE-4F19-981E-26A784E2C59E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EB09636-17BE-4F19-981E-26A784E2C59E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EB09636-17BE-4F19-981E-26A784E2C59E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{73961771-306D-4BCB-AC85-80EF150B8C6C} = {79895E68-D478-411B-98E3-00FA4E31E8AA}
+		{2CE89943-5747-44A8-AD37-1A200067B13A} = {BE927F78-B04F-4B6F-97FD-9B8397AF9915}
+		{C78A8ECD-5425-4AA0-B6CC-CB323A89AC32} = {79895E68-D478-411B-98E3-00FA4E31E8AA}
+		{E092952A-4EC0-4BD3-916A-6D5F75057830} = {79895E68-D478-411B-98E3-00FA4E31E8AA}
+		{E2CD2B3B-6D9F-4EAB-80C1-5D6F09BACD93} = {79895E68-D478-411B-98E3-00FA4E31E8AA}
+		{6D9A5298-EB81-4474-A518-143FD9F3F4E5} = {79895E68-D478-411B-98E3-00FA4E31E8AA}
+		{0E782DD1-2926-4B14-9137-508E77D416E2} = {79895E68-D478-411B-98E3-00FA4E31E8AA}
+		{2835F99A-D2C3-4F19-94E0-71E882380580} = {BE927F78-B04F-4B6F-97FD-9B8397AF9915}
+		{55B22771-D380-474A-B5F9-45F063C51DBD} = {BE927F78-B04F-4B6F-97FD-9B8397AF9915}
+		{8EB09636-17BE-4F19-981E-26A784E2C59E} = {79895E68-D478-411B-98E3-00FA4E31E8AA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A5607801-446F-4C0E-B08E-5A39EE462311}
+	EndGlobalSection
+EndGlobal

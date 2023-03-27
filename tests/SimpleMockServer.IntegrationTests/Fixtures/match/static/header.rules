@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /match/static/header
+
+headers:
+Request-Id: 012345
+
+----- response
+
+code:
+200

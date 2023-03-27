@@ -1,0 +1,8 @@
+-------------------- case
+
+GET /match/function/path/impl/any/ANY_VALUE/some
+
+----- expected
+
+code:
+200

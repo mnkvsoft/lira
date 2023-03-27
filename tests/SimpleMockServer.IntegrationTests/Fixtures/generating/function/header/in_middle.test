@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/function/header/in_middle
+
+----- expected
+
+code:
+200
+
+headers:
+Custom:start_hello!_end

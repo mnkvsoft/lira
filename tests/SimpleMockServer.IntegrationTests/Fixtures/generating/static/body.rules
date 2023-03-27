@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/static/body
+
+----- response
+
+code:
+200
+
+body:
+some

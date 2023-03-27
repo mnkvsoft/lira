@@ -1,0 +1,158 @@
+/*
+
+// платеж
+
+----- match Match test
+
+GET /match/data/start{{data:payment_id.custom}}end
+
+body.jsonpath:
+$.phoneNumbers[1].number => {{data:payment_id}}
+
+
+----- response
+
+code:
+200
+
+headers: 
+Content-Type:text/plain
+
+body:
+payment_id_custom
+
+----- match Match test
+
+method:
+GET
+
+path:
+/match/data/{{data:payment_id}}
+
+
+----- response
+
+code:
+200
+
+headers: 
+Content-Type:text/plain
+
+body:
+payment_id
+
+
+----- match Match test
+
+method:
+GET
+
+path:
+/match/{{ IsFloatNumber() }}
+
+
+----- response
+
+code:
+200
+
+headers: 
+Content-Type:text/plain
+
+body:
+any
+
+/*
+
+
+----- match Alias
+
+method:
+GET
+
+path:
+/payment
+
+
+----- response
+
+code:
+200
+
+headers: 
+Content-Type:application/json
+
+body:
+{
+    "paymentId": {{ Data('payment_id') }},
+    "paymentIdCustom": {{ Data('payment_id', 'custom') }},
+    "user_phone": {{ Data('user_phone', 'in_process') }},
+    "user_phone": {{ Data('user_phone', 'success') }},
+    "state": 1,
+    "date": "{{ Now().AddDays(10) }}",
+    "order_id": "{{ Data('order_id') }}",
+    "guid": "{{ Guid() }}"
+}
+
+/*
+
+// поджверждение
+
+----- match
+
+POST /ewallet/mopk/3.4/confirm.do
+
+headers:
+Content-Type:application/x-www-form-urlencoded
+
+body:
+mdOrder=inprocess{int}
+
+
+----- response
+
+conditions:
+attempt(1)
+
+headers: 
+Content-Type:application/json
+
+body:
+{
+ "mdOrder": "{from_body:mdOrder}",
+ "state": 2
+}
+
+----- response
+delay: 1000
+
+conditions:
+attempt:more_than:1
+
+headers: 
+Content-Type:application/json
+
+body:
+{
+ "mdOrder": "{from_body:mdOrder}",
+ "state": 3
+}
+
+
+----- callback
+
+POST http://ewallet/mopk/3.4/confirm.do
+
+delay: 1000
+
+headers: 
+Content-Type:application/json
+
+body:
+{
+ "mdOrder": "{from_body:mdOrder}",
+ "state": 3
+}
+
+*/
+*/

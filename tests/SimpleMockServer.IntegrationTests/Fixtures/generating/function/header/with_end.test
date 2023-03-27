@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/function/header/with_end
+
+----- expected
+
+code:
+200
+
+headers:
+Custom: hello!_end

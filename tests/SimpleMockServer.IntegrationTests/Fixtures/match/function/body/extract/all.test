@@ -1,0 +1,26 @@
+// not matched
+-------------------- case
+
+POST /match/function/body/extract/all
+
+body:
+not_matched_value
+
+----- expected
+
+code:
+404
+
+
+// matched
+-------------------- case
+
+POST /match/function/body/extract/all
+
+body:
+matched_value
+
+----- expected
+
+code:
+200

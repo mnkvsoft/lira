@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/function/header/format
+
+----- expected
+
+code:
+200
+
+headers:
+Custom: 2.00

@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/function/header/in_middle
+
+----- response
+
+code:
+200
+
+headers:
+Custom: start_{{echo:hello!}}_end

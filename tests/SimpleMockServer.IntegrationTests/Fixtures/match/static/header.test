@@ -1,0 +1,23 @@
+// not matched
+-------------------- case
+
+GET /match/static/header
+
+----- expected
+
+code:
+404
+
+
+// matched
+-------------------- case
+
+GET /match/static/header
+
+headers:
+Request-Id: 012345
+
+----- expected
+
+code:
+200

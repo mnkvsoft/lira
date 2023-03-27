@@ -1,0 +1,19 @@
+// not matched
+-------------------- case
+
+GET /match/static/path/not_matched
+
+----- expected
+
+code:
+404
+
+// matched
+-------------------- case
+
+GET /match/static/path
+
+----- expected
+
+code:
+200

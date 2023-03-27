@@ -1,0 +1,11 @@
+-------------------- rule
+
+POST /match/function/body/extract/jpath
+
+body:
+{{ jpath: $.address.city }} => Nara
+
+----- response
+
+code:
+200

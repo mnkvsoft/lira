@@ -1,0 +1,8 @@
+-------------------- rule
+
+GET /match/function/path/impl/int/{{int}}/some
+
+----- response
+
+code:
+200

@@ -1,0 +1,19 @@
+// not matched
+-------------------- case
+
+GET /match/static/query
+
+----- expected
+
+code:
+404
+
+// matched
+-------------------- case
+
+GET /match/static/query?a=1
+
+----- expected
+
+code:
+200

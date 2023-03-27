@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/function/header/with_start
+
+----- response
+
+code:
+200
+
+headers:
+Custom: start_{{echo:hello!}}

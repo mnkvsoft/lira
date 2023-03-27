@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/function/header/with_start
+
+----- expected
+
+code:
+200
+
+headers:
+Custom:start_hello!

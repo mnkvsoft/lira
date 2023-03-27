@@ -1,0 +1,12 @@
+-------------------- rule
+
+POST /match/function/body/extract/all
+
+body:
+matched_value
+
+
+----- response
+
+code:
+200

@@ -1,0 +1,11 @@
+-------------------- rule
+
+POST /match/function/body/extract/xpath
+
+body:
+{{ xpath://employee[1]/text() }} => Johnny Dapp
+
+----- response
+
+code:
+200

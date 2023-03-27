@@ -1,0 +1,8 @@
+-------------------- rule
+
+POST /match/static/method/post
+
+----- response
+
+code:
+200

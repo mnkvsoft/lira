@@ -1,0 +1,36 @@
+{
+  "data": {
+    "payment_id": {
+      "number": {
+        "seq": {
+          "ranges": {
+            "generic": "1",
+            "custom": "1_000_000"
+          }
+        }
+      }
+    },
+
+    "user_phone": {
+      "number": {
+        "set": {
+          "ranges": {
+            "in_process": "7_916_111_10_00 - 7_916_111_10_99",
+            "success": "7_915_000_00_01, 7_915_000_00_02, 7_915_000_00_03"
+          }
+        }
+      }
+    },
+
+    "order_id": {
+      "guid": {
+        "seq": {
+          "ranges": {
+            "pc_orders": "1",
+            "car_orders": "1_000_000"
+          }
+        }
+      }
+    }
+  }
+}

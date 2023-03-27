@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/function/header/format
+
+----- response
+
+code:
+200
+
+headers:
+Custom: {{echo:2 format:#.00#}}

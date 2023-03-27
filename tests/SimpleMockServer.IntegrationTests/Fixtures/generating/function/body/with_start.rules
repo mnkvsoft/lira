@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/function/body/with_start
+
+----- response
+
+code:
+200
+
+body:
+start_{{echo:hello!}}

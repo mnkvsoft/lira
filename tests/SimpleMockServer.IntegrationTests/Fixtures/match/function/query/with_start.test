@@ -1,0 +1,19 @@
+// not matched
+-------------------- case
+
+GET /match/function/query?with_start=start_not_matched_{{int}}
+
+----- expected
+
+code:
+404
+
+// matched
+-------------------- case
+
+GET /match/function/query?with_start=start_123
+
+----- expected
+
+code:
+200

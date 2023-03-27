@@ -1,0 +1,8 @@
+-------------------- rule
+
+GET /match/function/path/with_end/{{int}}_end/some
+
+----- response
+
+code:
+200

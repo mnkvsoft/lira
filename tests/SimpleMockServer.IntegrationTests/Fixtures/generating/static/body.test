@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/static/body
+
+----- expected
+
+code:
+200
+
+body:
+some

@@ -1,0 +1,14 @@
+{
+  "data": {
+    "match_function_path_impl_data": {
+      "number": {
+        "seq": {
+          "ranges": {
+            "range100": "100",
+            "range200": "200"
+          }
+        }
+      }
+    }
+  }
+}

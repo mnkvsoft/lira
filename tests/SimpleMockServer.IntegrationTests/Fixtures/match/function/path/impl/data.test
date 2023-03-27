@@ -1,0 +1,59 @@
+// not matched
+-------------------- case
+
+GET /match/function/path/impl/data/1/some
+
+----- expected
+
+code:
+404
+
+// matched
+
+-------------------- case
+
+GET /match/function/path/impl/data/100/some
+
+----- expected
+
+code:
+200
+
+body:
+range100
+
+-------------------- case
+
+GET /match/function/path/impl/data/101/some
+
+----- expected
+
+code:
+200
+
+body:
+range100
+
+-------------------- case
+
+GET /match/function/path/impl/data/200/some
+
+----- expected
+
+code:
+200
+
+body:
+range200
+
+-------------------- case
+
+GET /match/function/path/impl/data/201/some
+
+----- expected
+
+code:
+200
+
+body:
+range200

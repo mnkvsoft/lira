@@ -1,0 +1,19 @@
+// not matched
+-------------------- case
+
+GET /match/function/path/impl/int/NOT_INT/some
+
+----- expected
+
+code:
+404
+
+// matched
+-------------------- case
+
+GET /match/function/path/impl/int/123/some
+
+----- expected
+
+code:
+200

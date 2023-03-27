@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/function/body/with_end
+
+----- expected
+
+code:
+200
+
+body:
+hello!_end

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="ArgValidation" Version="1.10.0" />
+    </ItemGroup>  
+
+    <ItemGroup>
+      <InternalsVisibleTo Include="SimpleMockServer.UnitTests" />
+      <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    </ItemGroup>  
+
+    <ItemGroup>
+      <ProjectReference Include="..\SimpleMockServer.Common\SimpleMockServer.Common.csproj" />
+      <ProjectReference Include="..\SimpleMockServer.ConfigurationProviding\SimpleMockServer.ConfigurationProviding.csproj" />
+    </ItemGroup>
+
+</Project>
