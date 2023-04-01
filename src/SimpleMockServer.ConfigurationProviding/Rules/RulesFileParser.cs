@@ -1,5 +1,4 @@
-using System.Reflection;
-using System.Text;
+﻿using System.Reflection;
 using System.Web;
 using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common.Exceptions;
@@ -8,13 +7,15 @@ using SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Models.RulesModel;
 using SimpleMockServer.Domain.Models.RulesModel.Generating;
 using SimpleMockServer.Domain.Models.RulesModel.Generating.Writers;
-using SimpleMockServer.Domain.Models.RulesModel.Matching;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Matchers.Body;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Matchers.Body.Functions;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Matchers.Headers;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Matchers.Method;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Matchers.Path;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Matchers.QueryString;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Body;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Body.Functions;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Headers;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Method;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Path;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.QueryString;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.ConfigurationProviding.Rules;
@@ -23,18 +24,25 @@ class RulesFileParser
 {
     private readonly ILoggerFactory _loggerFactory;
     private readonly FunctionFactory _functionFactory;
+    private readonly IRequestStatisticStorage _requestStatisticStorage;
 
-    public RulesFileParser(ILoggerFactory loggerFactory, FunctionFactory functionFactory)
+    public RulesFileParser(ILoggerFactory loggerFactory, FunctionFactory functionFactory, IRequestStatisticStorage requestStatisticStorage)
     {
         _loggerFactory = loggerFactory;
         _functionFactory = functionFactory;
+        _requestStatisticStorage = requestStatisticStorage;
     }
 
-    static class CommentChar
+    static class ManageChar
     {
-        public const string SingleLine = "//";
-        public const string MultiLineStart = "/*";
-        public const string MultiLineEnd = "*/";
+        public static class Comment
+        {
+            public const string SingleLine = "//";
+            public const string MultiLineStart = "/*";
+            public const string MultiLineEnd = "*/";
+        }
+
+        public const string Lambda = "=>";
     }
 
     static class SectionName
@@ -43,6 +51,11 @@ class RulesFileParser
         public const string Condition = "condition";
         public const string Response = "response";
         public const string Callback = "callback";
+    }
+
+    static class ConditionMatcherName
+    {
+        public const string Attempt = "attempt";
     }
 
     static class BlockName
@@ -63,6 +76,20 @@ class RulesFileParser
             public const string Body = "body";
         }
     }
+
+
+
+    private static readonly HashSet<string> HttpMethods = new HashSet<string>
+    {
+        "GET",
+        "PUT",
+        "POST",
+        "DELETE",
+        "HEAD",
+        "TRACE",
+        "OPTIONS",
+        "CONNECT"
+    };
 
     private static IReadOnlySet<string> GetBlockNames<T>()
     {
@@ -153,9 +180,7 @@ class RulesFileParser
         if (childSections.Count == 0)
             throw new Exception("Rule section is empty");
 
-        string? alias = GetAlias(ruleSection);
-
-        var matcherSet = CreateMatchers(ruleSection);
+        var requestMatcherSet = CreateMatchers(ruleSection);
 
         var section = childSections[0];
 
@@ -163,7 +188,45 @@ class RulesFileParser
         {
             AssertContainsOnlySections(childSections, SectionName.Condition);
 
-            throw new NotImplementedException();
+            if (childSections.Count < 2)
+                throw new Exception($"Must be at least 2 '{SectionName.Condition}' sections");
+
+            var rules = new List<Rule>();
+            for (var i = 0; i < childSections.Count; i++)
+            {
+                var conditionSection = childSections[i];
+                var childsConditionSections = conditionSection.ChildSections;
+                AssertContainsOnlySections(childsConditionSections, SectionName.Response, SectionName.Callback);
+
+                var conditionMatchers = new List<IConditionMatcher>();
+                foreach(var line in conditionSection.LinesWithoutBlock)
+                {
+                    (string matcherName, string? functionInvoke) = line.SplitToTwoParts(ManageChar.Lambda).Trim();
+
+                    if (string.IsNullOrEmpty(functionInvoke))
+                        throw new Exception($"Empty condition match function in line '{line}'");
+
+                    // todo: implement polymorphic creation
+                    if (matcherName == ConditionMatcherName.Attempt)
+                    {
+                        var function = _functionFactory.CreateIntMatchFunction(functionInvoke);
+                        conditionMatchers.Add(new AttemptConditionMatcher(function));
+                    }
+                    else
+                    {
+                        throw new Exception($"Unknown condition matcher '{matcherName}'");
+                    }
+                }
+
+                ResponseWriter responseWriter = CreateResponseWriter(conditionSection);
+                rules.Add(new Rule(
+                    ruleName + $". Condition no. {i + 1}", 
+                    _loggerFactory, 
+                    responseWriter, 
+                    requestMatcherSet, 
+                    new ConditionMatcherSet(_requestStatisticStorage, conditionMatchers)));
+            }
+            return rules;
         }
         else
         {
@@ -171,20 +234,8 @@ class RulesFileParser
 
             ResponseWriter responseWriter = CreateResponseWriter(ruleSection);
 
-            return new Rule[] { new Rule(ruleName, _loggerFactory, responseWriter, matcherSet) };
+            return new Rule[] { new Rule(ruleName, _loggerFactory, responseWriter, requestMatcherSet, conditionMatcherSet: null)};
         }
-    }
-
-    private static string? GetAlias(FileSection ruleSection)
-    {
-        string? alias = null;
-        if (ruleSection.Name.Contains(' '))
-        {
-            string name = ruleSection.Name;
-            alias = name.Substring(name.IndexOf(' '));
-        }
-
-        return alias;
     }
 
     private ResponseWriter CreateResponseWriter(FileSection ruleSection)
@@ -246,7 +297,7 @@ class RulesFileParser
                 (string headerName, string? headerPattern) = line.SplitToTwoParts(":").Trim();
 
                 if (headerPattern == null)
-                    throw new Exception($"Empty matching for header '{headerPattern}'");
+                    throw new Exception($"Empty matching for header '{headerPattern}' in line: '{line}'");
 
                 var parts = CreateValueParts(headerPattern);
 
@@ -436,7 +487,7 @@ class RulesFileParser
 
     private static MethodRequestMatcher CreateMethodRequestMather(string method)
     {
-        if (!httpMethods.Contains(method))
+        if (!HttpMethods.Contains(method))
             throw new Exception($"String '{method}' not http method");
 
         return new MethodRequestMatcher(new HttpMethod(method));
@@ -506,133 +557,6 @@ class RulesFileParser
             .TrimEnd(end).TrimEnd(Consts.ExecutedBlock.End)
             .Trim();
 
-        return new ValuePattern.Dynamic(start, end, _functionFactory.CreateMatchFunction(methodCallString));
+        return new ValuePattern.Dynamic(start, end, _functionFactory.CreateStringMatchFunction(methodCallString));
     }
-
-
-
-
-
-
-
-    private static readonly HashSet<string> httpMethods = new HashSet<string> { "GET", "PUT", "POST", "DELETE", "HEAD", "TRACE", "OPTIONS", "CONNECT" };
-
-    //private async Task<List<RuleBuilder>> GetBuilders(string ruleFile)
-    //{
-    //    var iterator = new LinesIterator(await File.ReadAllLinesAsync(ruleFile));
-    //    List<RuleBuilder> builders = new List<RuleBuilder>();
-    //    RuleBuilder? currentBuilder = null;
-
-    //    bool firstSectionFind = false;
-    //    FileSection? currentSection = null;
-    //    bool isMultiLineComment = false;
-
-    //    while (iterator.Next())
-    //    {
-    //        var line = iterator.CurrentLine;
-
-    //        string cleanLine = line.Trim();
-    //        if (cleanLine.StartsWith(CommentChar.SingleLine) || string.IsNullOrWhiteSpace(cleanLine))
-    //            continue;
-
-    //        if (cleanLine.StartsWith(CommentChar.MultiLineStart))
-    //        {
-    //            isMultiLineComment = true;
-    //            continue;
-    //        }
-
-    //        if (cleanLine.StartsWith(CommentChar.MultiLineEnd))
-    //        {
-    //            isMultiLineComment = false;
-    //            continue;
-    //        }
-
-    //        if (isMultiLineComment)
-    //            continue;
-
-    //        if (!firstSectionFind && !IsSection(cleanLine, FileSection.Match))
-    //            throw new Exception("First section must be '----- match'");
-
-    //        firstSectionFind = true;
-
-    //        if (IsSection(cleanLine, FileSection.Match))
-    //        {
-    //            if (currentBuilder != null)
-    //            {
-    //                builders.Add(currentBuilder!);
-    //            }
-
-    //            currentBuilder = new RuleBuilder();
-    //            currentBuilder.Alias = GetAlias(cleanLine);
-    //            currentSection = FileSection.Match;
-    //            continue;
-    //        }
-
-    //        if (IsSection(cleanLine, FileSection.Response))
-    //        {
-    //            currentSection = FileSection.Response;
-    //            continue;
-    //        }
-
-    //        if (currentSection == FileSection.Match)
-    //        {
-    //            AddMessageToException(
-    //                () => currentBuilder!.RequestMatchers.Add(_requestMatcherFactory.CreateMatcher(GetKeyValue(line), iterator)),
-    //                $"An error occurred while reading '{SectionName.Match}' section");
-    //            continue;
-    //        }
-
-    //        if (currentSection == FileSection.Response)
-    //        {
-    //            AddMessageToException(
-    //               () => currentBuilder!.ResponseFillers.Add(_responseFillerFactory.CreateFiller(GetKeyValue(line), iterator)),
-    //               $"An error occurred while reading '{SectionName.Response}' section");
-    //            continue;
-    //        }
-    //    }
-
-    //    if (currentBuilder != null)
-    //        builders.Add(currentBuilder!);
-
-    //    return builders;
-    //}
-
-    private string GetKeyValue(string line) => line.Replace(":", "");
-
-    private void AddMessageToException(Action action, string message)
-    {
-        try
-        {
-            action();
-        }
-        catch (Exception e)
-        {
-            throw new Exception(message, e);
-        }
-    }
-
-    //private string? GetAlias(string cleanLine)
-    //{
-    //    var splitted = cleanLine.Split(SectionName.Match);
-    //    if (splitted.Length > 1 && !string.IsNullOrWhiteSpace(splitted[1]))
-    //    {
-    //        return splitted[1].Trim();
-    //    }
-    //    return null;
-    //}
-
-
-    //private bool IsSection(string cleanLine, FileSection fileSection)
-    //{
-    //    string section = fileSection switch
-    //    {
-    //        FileSection.Match => SectionName.Match,
-    //        FileSection.Response => SectionName.Response,
-    //        _ => throw new Exception("Unknown enum: " + fileSection)
-    //    };
-
-    //    return cleanLine.Replace(" ", "").StartsWith($"-----{section}", StringComparison.OrdinalIgnoreCase);
-    //}
-
-
 }

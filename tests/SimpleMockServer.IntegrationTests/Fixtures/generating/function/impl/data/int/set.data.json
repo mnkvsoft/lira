@@ -1,0 +1,14 @@
+{
+  "data": {
+    "generating_function_impl_data_int_set": {
+      "int": {
+        "set": {
+          "ranges": {
+            "first": "1 - 1000",
+            "second": "2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010"
+          }
+        }
+      }
+    }
+  }
+}

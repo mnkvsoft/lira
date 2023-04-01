@@ -1,12 +1,10 @@
-using System.Collections;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace SimpleMockServer.Domain.Models.RulesModel;
 
-public class RequestMatcherSet : IEnumerable<IRequestMatcher>
+public class RequestMatcherSet
 {
-    private readonly Dictionary<Type, IRequestMatcher> _matchers = new Dictionary<Type, IRequestMatcher>();
-
-
+    private readonly Dictionary<Type, IRequestMatcher> _matchers = new();
 
     public void AddRange(IEnumerable<IRequestMatcher> matchers)
     {
@@ -25,13 +23,16 @@ public class RequestMatcherSet : IEnumerable<IRequestMatcher>
         _matchers.Add(type, matcher);   
     }
 
-    public IEnumerator<IRequestMatcher> GetEnumerator()
+    public async Task<bool> IsMatch(HttpRequest request)
     {
-        return _matchers.Values.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
+        foreach (var matcher in _matchers.Values)
+        {
+            bool isMatch = await matcher.IsMatch(request);
+            if (!isMatch)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

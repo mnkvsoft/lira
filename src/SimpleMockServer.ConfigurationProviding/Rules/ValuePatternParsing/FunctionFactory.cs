@@ -1,8 +1,9 @@
-using SimpleMockServer.Domain.Functions.Native;
+﻿using SimpleMockServer.Domain.Functions.Native;
 using SimpleMockServer.Domain.Functions.Pretty;
 using SimpleMockServer.Domain.Models.RulesModel.Generating;
-using SimpleMockServer.Domain.Models.RulesModel.Matching;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Matchers.Body;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Body;
 
 namespace SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
 
@@ -25,12 +26,20 @@ internal sealed class FunctionFactory
         return _nativeFunctionBodyPartFactory.CreateGeneratingFunction(functionInvoke);
     }
 
-    public IMatchFunction CreateMatchFunction(string functionInvoke)
+    public IStringMatchFunction CreateStringMatchFunction(string functionInvoke)
     {
-        if (_prettyFunctionFactory.TryCreateMatchFunction(functionInvoke, out var function))
+        if (_prettyFunctionFactory.TryCreateStringMatchFunction(functionInvoke, out var function))
             return function;
 
         return _nativeFunctionBodyPartFactory.CreateMatchFunction(functionInvoke);
+    }
+
+    public IIntMatchFunction CreateIntMatchFunction(string functionInvoke)
+    {
+        if (!_prettyFunctionFactory.TryCreateIntMatchFunction(functionInvoke, out var function))
+            throw new Exception($"Cannot create function invoke '{functionInvoke}'");
+
+        return function;
     }
 
     public IExtractFunction CreateExtractFunction(string functionInvoke)

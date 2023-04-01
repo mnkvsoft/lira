@@ -46,10 +46,10 @@ internal class GeneratingPrettyFunctionFactory
 
         var generatingPrettyFunction = (IGeneratingPrettyFunction)_serviceProvider.GetRequiredService(functionType);
 
-        if (argument != null && generatingPrettyFunction is not IWithArgumenFunction)
+        if (argument != null && generatingPrettyFunction is not IWithStringArgumenFunction)
             throw new Exception($"Function '{functionName}' not support arguments");
 
-        if (generatingPrettyFunction is IWithArgumenFunction withArgument)
+        if (generatingPrettyFunction is IWithStringArgumenFunction withArgument)
         {
             withArgument.SetArgument(argument);
         }

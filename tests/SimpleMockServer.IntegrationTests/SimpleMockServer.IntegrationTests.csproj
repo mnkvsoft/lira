@@ -72,6 +72,42 @@
     <None Update="Fixtures\generating\function\header\format.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Fixtures\generating\function\impl\data\guid\seq.data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\function\impl\data\guid\seq.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\function\impl\data\guid\seq.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\function\impl\data\guid\set.data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\function\impl\data\guid\set.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\function\impl\data\guid\set.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\function\impl\data\int\set.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\function\impl\data\int\set.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\function\impl\data\int\set.data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\function\impl\data\int\seq.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\function\impl\data\int\seq.data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\function\impl\data\int\seq.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Fixtures\generating\static\body.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -82,6 +118,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Fixtures\generating\static\header.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\attempt.equals.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\attempt.equals.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Fixtures\match\function\body\extract\all.rules">
@@ -183,7 +225,7 @@
     <None Update="Fixtures\match\static\query.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\by_path1.rules">
+    <None Update="Fixtures\match\conditions\by_path1.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Fixtures\match\static\path.rules">

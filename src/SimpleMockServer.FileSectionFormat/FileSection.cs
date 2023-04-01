@@ -1,6 +1,4 @@
-namespace SimpleMockServer.FileSectionFormat;
-
-
+﻿namespace SimpleMockServer.FileSectionFormat;
 
 public class FileSection
 {

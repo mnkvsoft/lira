@@ -103,9 +103,9 @@ class DataProvider : IDataProvider
         {
             return CreateGuidData(name, dataType.Guid);
         }
-        else if (dataType.Number != null)
+        else if (dataType.Int != null)
         {
-            return CreateNumberData(name, dataType.Number);
+            return CreateNumberData(name, dataType.Int);
         }
         else
         {
@@ -294,7 +294,7 @@ class DataProvider : IDataProvider
 
     record DataRootDto([property: JsonPropertyName("data")] Dictionary<string, TypeDto> Data);
 
-    record TypeDto([property: JsonPropertyName("number")] DataTypeDto? Number, [property: JsonPropertyName("guid")] DataTypeDto? Guid);
+    record TypeDto([property: JsonPropertyName("int")] DataTypeDto? Int, [property: JsonPropertyName("guid")] DataTypeDto? Guid);
 
     record DataTypeDto([property: JsonPropertyName("seq")] RangesDto? Seq, [property: JsonPropertyName("set")] RangesDto? Set);
 

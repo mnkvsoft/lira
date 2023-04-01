@@ -1,0 +1,43 @@
+-------------------- case
+
+GET /generating/function/impl/data/guid/set/first
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check
+
+-------------------- case
+
+GET /generating/function/impl/data/guid/set/first
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check
+
+-------------------- case
+
+GET /generating/function/impl/data/guid/set/second
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check
+
+-------------------- case
+
+GET /generating/function/impl/data/guid/set/second
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check

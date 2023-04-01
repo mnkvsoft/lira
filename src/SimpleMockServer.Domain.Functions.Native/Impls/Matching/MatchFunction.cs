@@ -1,9 +1,9 @@
 using System.Reflection;
-using SimpleMockServer.Domain.Models.RulesModel.Matching;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request;
 
 namespace SimpleMockServer.Domain.Functions.Native.Impls.Matching;
 
-internal class MatchFunction : IMatchFunction
+internal class MatchFunction : IStringMatchFunction
 {
     private readonly MatchingMethodsRoot _matchingMethods;
     private readonly object[] _args;

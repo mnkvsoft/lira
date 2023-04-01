@@ -1,0 +1,24 @@
+-------------------- rule
+
+GET /generating/function/impl/data/guid/seq/range100
+
+----- response
+
+code:
+200
+
+body:
+{{ data: generating_function_impl_data_guid_seq.range100 }}
+
+
+-------------------- rule
+
+GET /generating/function/impl/data/guid/seq/range200
+
+----- response
+
+code:
+200
+
+body:
+{{ data: generating_function_impl_data_guid_seq.range200 }}

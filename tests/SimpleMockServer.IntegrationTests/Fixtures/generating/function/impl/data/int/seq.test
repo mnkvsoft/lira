@@ -1,0 +1,52 @@
+// case range100
+
+-------------------- case
+
+GET /generating/function/impl/data/int/seq/range100
+
+----- expected
+
+code:
+200
+
+body:
+100
+
+-------------------- case
+
+GET /generating/function/impl/data/int/seq/range100
+
+----- expected
+
+code:
+200
+
+body:
+101
+
+
+// case range200
+
+-------------------- case
+
+GET /generating/function/impl/data/int/seq/range200
+
+----- expected
+
+code:
+200
+
+body:
+200
+
+-------------------- case
+
+GET /generating/function/impl/data/int/seq/range200
+
+----- expected
+
+code:
+200
+
+body:
+201

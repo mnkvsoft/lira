@@ -1,7 +1,7 @@
 using SimpleMockServer.Domain.Functions.Native.Impls.Generating;
 using SimpleMockServer.Domain.Functions.Native.Impls.Matching;
 using SimpleMockServer.Domain.Models.RulesModel.Generating;
-using SimpleMockServer.Domain.Models.RulesModel.Matching;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request;
 
 namespace SimpleMockServer.Domain.Functions.Native;
 
@@ -22,7 +22,7 @@ internal sealed class NativeFunctionFactory : INativeFunctionsFactory
         return new GeneratingFunction(_generatingFunctionRoot, callChain);
     }
 
-    public IMatchFunction CreateMatchFunction(string callChainString)
+    public IStringMatchFunction CreateMatchFunction(string callChainString)
     {
         var callChain = CallChainParser.Parse(callChainString);
         return new MatchFunction(_matchingFunctionRoot, callChain.Single());

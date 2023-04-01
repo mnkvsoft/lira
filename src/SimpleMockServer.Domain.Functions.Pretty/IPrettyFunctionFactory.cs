@@ -1,34 +1,44 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using SimpleMockServer.Domain.Functions.Pretty.Functions.Extract;
 using SimpleMockServer.Domain.Functions.Pretty.Functions.Generating;
-using SimpleMockServer.Domain.Functions.Pretty.Functions.Matching;
+using SimpleMockServer.Domain.Functions.Pretty.Functions.Matching.Int;
+using SimpleMockServer.Domain.Functions.Pretty.Functions.Matching.String;
 using SimpleMockServer.Domain.Models.RulesModel.Generating;
-using SimpleMockServer.Domain.Models.RulesModel.Matching;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Matchers.Body;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Body;
 
 namespace SimpleMockServer.Domain.Functions.Pretty;
 
 public interface IPrettyFunctionsFactory
 {
     bool TryCreateExtractFunction(string value, [MaybeNullWhen(false)] out IExtractFunction function);
-    bool TryCreateMatchFunction(string value, [MaybeNullWhen(false)] out IMatchFunction function);
+    
     bool TryCreateGeneratingFunction(string value, [MaybeNullWhen(false)] out IGeneratingFunction function);
+
+    bool TryCreateStringMatchFunction(string value, [MaybeNullWhen(false)] out IStringMatchFunction function);
+    bool TryCreateIntMatchFunction(string value, [MaybeNullWhen(false)] out IIntMatchFunction function);
 }
 
 internal class PrettyFunctionsFactory : IPrettyFunctionsFactory
 {
     private readonly ExtractFunctionsFactory _extractFunctionsFactory;
-    private readonly MatchPrettyFunctionFactory _matchFunctionsFactory;
+    
     private readonly GeneratingPrettyFunctionFactory _generatingFunctionsFactory;
+
+    private readonly StringMatchPrettyFunctionFactory _stringMatchFunctionsFactory;
+    private readonly IntMatchPrettyFunctionFactory _intMatchFunctionsFactory;
 
     public PrettyFunctionsFactory(
         ExtractFunctionsFactory extractFunctionsFactory,
-        MatchPrettyFunctionFactory matchFunctionsFactory,
-        GeneratingPrettyFunctionFactory generatingFunctionsFactory)
+        StringMatchPrettyFunctionFactory stringMatchFunctionsFactory,
+        GeneratingPrettyFunctionFactory generatingFunctionsFactory,
+        IntMatchPrettyFunctionFactory intMatchFunctionsFactory)
     {
         _extractFunctionsFactory = extractFunctionsFactory;
-        _matchFunctionsFactory = matchFunctionsFactory;
+        _stringMatchFunctionsFactory = stringMatchFunctionsFactory;
         _generatingFunctionsFactory = generatingFunctionsFactory;
+        _intMatchFunctionsFactory = intMatchFunctionsFactory;
     }
 
     public bool TryCreateExtractFunction(string value, [MaybeNullWhen(false)] out IExtractFunction function)
@@ -43,9 +53,16 @@ internal class PrettyFunctionsFactory : IPrettyFunctionsFactory
         return result;
     }
 
-    public bool TryCreateMatchFunction(string value, [MaybeNullWhen(false)] out IMatchFunction function)
+    public bool TryCreateIntMatchFunction(string value, [MaybeNullWhen(false)] out IIntMatchFunction function)
     {
-        bool result = _matchFunctionsFactory.TryCreate(value, out var matchFunction);
+        bool result = _intMatchFunctionsFactory.TryCreate(value, out var matchFunction);
+        function = matchFunction;
+        return result;
+    }
+
+    public bool TryCreateStringMatchFunction(string value, [MaybeNullWhen(false)] out IStringMatchFunction function)
+    {
+        bool result = _stringMatchFunctionsFactory.TryCreate(value, out var matchFunction);
         function = matchFunction;
         return result;
     }

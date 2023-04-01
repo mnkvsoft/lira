@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace SimpleMockServer.Domain.Functions.Pretty.Functions.Generating.Impl;
 
-internal class Echo : IGeneratingPrettyFunction, IWithArgumenFunction
+internal class Echo : IGeneratingPrettyFunction, IWithStringArgumenFunction
 {
     public static string Name => "echo";
 

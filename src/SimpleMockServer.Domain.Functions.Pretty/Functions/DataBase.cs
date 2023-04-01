@@ -1,8 +1,8 @@
-using SimpleMockServer.Domain.Models.DataModel;
+﻿using SimpleMockServer.Domain.Models.DataModel;
 
 namespace SimpleMockServer.Domain.Functions.Pretty.Functions;
 
-abstract class DataBase : IWithArgumenFunction
+abstract class DataBase : IWithStringArgumenFunction
 {
     private readonly IDataProvider _dataProvider;
 
@@ -14,7 +14,7 @@ abstract class DataBase : IWithArgumenFunction
     private DataName _name;
     private DataName? _rangeName;
 
-    void IWithArgumenFunction.SetArgument(string argument)
+    void IWithStringArgumenFunction.SetArgument(string argument)
     {
         if (!argument.Contains("."))
         {

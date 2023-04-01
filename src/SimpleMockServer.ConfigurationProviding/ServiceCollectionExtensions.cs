@@ -1,3 +1,4 @@
+﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleMockServer.ConfigurationProviding.DataModel;
 using SimpleMockServer.ConfigurationProviding.Rules;
@@ -5,6 +6,7 @@ using SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Functions.Native;
 using SimpleMockServer.Domain.Functions.Pretty;
 using SimpleMockServer.Domain.Models.DataModel;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions;
 
 namespace SimpleMockServer.ConfigurationProviding;
 
@@ -18,6 +20,8 @@ public static class ServiceCollectionExtensions
            .AddSingleton<IDataProvider, DataProvider>()
            .AddSingleton<RulesFileParser>()
            .AddSingleton<FunctionFactory>()
+           .AddSingleton<IMemoryCache, MemoryCache>()
+           .AddSingleton<IRequestStatisticStorage, RequestStatisticStorage>()
            .AddSingleton<IRulesProvider, RulesProvider>();
     }
 }

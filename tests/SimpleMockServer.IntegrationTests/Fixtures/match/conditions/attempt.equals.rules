@@ -1,0 +1,27 @@
+---------------------------------------- rule
+
+GET /match/conditions/attempt.equals
+
+-------------------- condition
+
+attempt => equals: 1
+
+----- response
+
+code:
+200
+
+body:
+attempt 1
+
+-------------------- condition
+
+attempt => equals: 2
+
+----- response
+
+code:
+200
+
+body:
+attempt 2

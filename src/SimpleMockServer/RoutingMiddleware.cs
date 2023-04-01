@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.ConfigurationProviding.Rules;
 
@@ -53,10 +53,11 @@ class RoutingMiddleware : IMiddleware
 
     private static async Task<RuleWithExtInfo[]> GetMatchedRules(HttpRequest request, IReadOnlyCollection<RuleWithExtInfo> rulesWithExtInfo)
     {
+        Guid requestId = Guid.NewGuid();
         var rules = rulesWithExtInfo
             .Select(r => new
             {
-                Task = r.Rule.IsMatch(request),
+                Task = r.Rule.IsMatch(request, requestId),
                 Rule = r
             })
             .ToArray();

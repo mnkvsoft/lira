@@ -1,7 +1,7 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Matchers.Body;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Matchers.Body.Functions;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Body;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Body.Functions;
 
 namespace SimpleMockServer.Domain.Functions.Pretty.Functions.Extract;
 internal class ExtractFunctionsFactory

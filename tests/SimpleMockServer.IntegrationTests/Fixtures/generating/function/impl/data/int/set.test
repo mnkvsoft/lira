@@ -1,0 +1,35 @@
+-------------------- case
+
+GET /generating/function/impl/data/int/set/first
+
+----- expected
+
+code:
+200
+
+-------------------- case
+
+GET /generating/function/impl/data/int/set/first
+
+----- expected
+
+code:
+200
+
+-------------------- case
+
+GET /generating/function/impl/data/int/set/second
+
+----- expected
+
+code:
+200
+
+-------------------- case
+
+GET /generating/function/impl/data/int/set/second
+
+----- expected
+
+code:
+200
