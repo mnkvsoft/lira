@@ -330,7 +330,7 @@ class RulesFileParser
             case PatternPart.Static:
                 return new ValuePart.Static(patternPart.Value);
             case PatternPart.Dynamic dynamicPart:
-                return new ValuePart.Dynamic(_functionFactory.CreateGeneratingFunction(dynamicPart.Value));
+                return new ValuePart.Function(_functionFactory.CreateGeneratingFunction(dynamicPart.Value));
             default:
                 throw new UnsupportedInstanceType(patternPart);
         }

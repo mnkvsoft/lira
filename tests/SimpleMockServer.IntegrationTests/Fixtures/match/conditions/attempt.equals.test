@@ -21,3 +21,12 @@ code:
 
 body:
 attempt 2
+
+-------------------- case
+
+GET /match/conditions/attempt.equals
+
+----- expected
+
+code:
+404
