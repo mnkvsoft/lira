@@ -56,7 +56,7 @@ public static class StringExtensions
 
     public static (string part1, string? part2) SplitToTwoParts(this string value, string splitter)
     {
-        var index = value.IndexOf(splitter);
+        var index = value.IndexOf(splitter, StringComparison.Ordinal);
 
         if (index < 0)
             return (value, null);
@@ -70,5 +70,23 @@ public static class StringExtensions
     public static (string part1, string? part2) Trim(this (string part1, string? part2) value)
     {
         return (value.part1.Trim(), value.part2?.Trim());
+    }
+    
+    public static (string part1, string part2) SplitToTwoPartsRequired(this string value, string splitter)
+    {
+        var index = value.IndexOf(splitter, StringComparison.Ordinal);
+
+        if (index < 0)
+            throw new Exception($"Value must contains splitter '{splitter}'. Value: '{value}'");
+
+        string part1= value.Substring(0, length: index);
+        string part2 = value.Substring(index + splitter.Length);
+
+        return (part1, part2);
+    }
+
+    public static (string part1, string part2) TrimRequired(this (string part1, string part2) value)
+    {
+        return (value.part1.Trim(), value.part2.Trim());
     }
 }

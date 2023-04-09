@@ -1,0 +1,3 @@
+namespace SimpleMockServer.ConfigurationProviding.Rules;
+
+
