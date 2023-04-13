@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using SimpleMockServer.ConfigurationProviding.DataModel;
 using SimpleMockServer.ConfigurationProviding.Rules;
+using SimpleMockServer.ConfigurationProviding.Rules.Parsers;
 using SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Functions.Native;
 using SimpleMockServer.Domain.Functions.Pretty;
@@ -18,6 +19,9 @@ public static class ServiceCollectionExtensions
            .AddNativeFunctions()
            .AddPrettyFunctions()
            .AddSingleton<IDataProvider, DataProvider>()
+           .AddSingleton<ConditionMatcherParser>()
+           .AddSingleton<RequestMatchersParser>()
+           .AddSingleton<ResponseWriterParser>()
            .AddSingleton<RulesFileParser>()
            .AddSingleton<FunctionFactory>()
            .AddSingleton<IMemoryCache, MemoryCache>()

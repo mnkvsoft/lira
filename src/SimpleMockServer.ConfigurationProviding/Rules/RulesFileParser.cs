@@ -2,10 +2,7 @@
 using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.ConfigurationProviding.Rules.Parsers;
-using SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Models.RulesModel;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.ConfigurationProviding.Rules;
@@ -13,23 +10,21 @@ namespace SimpleMockServer.ConfigurationProviding.Rules;
 partial class RulesFileParser
 {
     private readonly ILoggerFactory _loggerFactory;
-    private readonly FunctionFactory _functionFactory;
-    private readonly IRequestStatisticStorage _requestStatisticStorage;
+    
     private readonly RequestMatchersParser _requestMatchersParser;
     private readonly ResponseWriterParser _responseWriterParser;
+    private readonly ConditionMatcherParser _conditionMatcherParser;
 
     public RulesFileParser(
         ILoggerFactory loggerFactory, 
-        FunctionFactory functionFactory, 
-        IRequestStatisticStorage requestStatisticStorage,
         RequestMatchersParser requestMatchersParser, 
-        ResponseWriterParser responseWriterParser)
+        ResponseWriterParser responseWriterParser, 
+        ConditionMatcherParser conditionMatcherParser)
     {
         _loggerFactory = loggerFactory;
-        _functionFactory = functionFactory;
-        _requestStatisticStorage = requestStatisticStorage;
         _requestMatchersParser = requestMatchersParser;
         _responseWriterParser = responseWriterParser;
+        _conditionMatcherParser = conditionMatcherParser;
     }
 
     public async Task<IReadOnlyCollection<Rule>> Parse(string ruleFile)
@@ -92,7 +87,7 @@ partial class RulesFileParser
                 var childConditionSections = conditionSection.ChildSections;
                 AssertContainsOnlySections(childConditionSections, Constants.SectionName.Response, Constants.SectionName.Callback);
 
-                var conditionMatchers = conditionSection.LinesWithoutBlock.Select(CreateConditionMatcher).ToList();
+                var conditionMatcherSet = _conditionMatcherParser.Parse(conditionSection);
 
                 responseWriter = _responseWriterParser.Parse(conditionSection);
                 rules.Add(new Rule(
@@ -100,7 +95,7 @@ partial class RulesFileParser
                     _loggerFactory,
                     responseWriter,
                     requestMatcherSet,
-                    new ConditionMatcherSet(_requestStatisticStorage, conditionMatchers)));
+                    conditionMatcherSet));
             }
 
             return rules;
@@ -109,20 +104,6 @@ partial class RulesFileParser
         AssertContainsOnlySections(childSections, Constants.SectionName.Response, Constants.SectionName.Callback);
         responseWriter = _responseWriterParser.Parse(ruleSection);
         return new[] { new Rule(ruleName, _loggerFactory, responseWriter, requestMatcherSet, conditionMatcherSet: null) };
-    }
-
-    
-    private IConditionMatcher CreateConditionMatcher(string line)
-    {
-        (string matcherName, string functionInvoke) = line.SplitToTwoPartsRequired(Constants.ManageChar.Lambda).TrimRequired();
-
-        if (matcherName == ConditionMatcherName.Attempt)
-        {
-            var function = _functionFactory.CreateIntMatchFunction(functionInvoke);
-            return new AttemptConditionMatcher(function);
-        }
-
-        throw new Exception($"Unknown condition matcher '{matcherName}'");
     }
 
     private static IReadOnlySet<string> GetBlockNames<T>()
@@ -159,7 +140,10 @@ partial class RulesFileParser
             .ToArray();
 
         if (unknownSections.Length != 0)
-            throw new Exception("Unknown sections: " + string.Join(", ", unknownSections) + ". Expected: " +
-                                string.Join(", ", expectedSectionName));
+        {
+            throw new Exception(
+                "Unknown sections: " + string.Join(", ", unknownSections) + ". " +
+                "Expected: " + string.Join(", ", expectedSectionName));
+        }
     }
 }

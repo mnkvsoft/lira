@@ -55,7 +55,7 @@ class RequestMatchersParser
         if (pathAndQuery == null)
             return result;
         
-        (string path, string? query) = methodAndPath.SplitToTwoParts(" ").Trim();
+        (string path, string? query) = pathAndQuery.SplitToTwoParts("?").Trim();
         
         result.Add(CreatePathRequestMatcher(path));
         

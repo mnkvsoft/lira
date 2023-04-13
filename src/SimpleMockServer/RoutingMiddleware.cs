@@ -1,6 +1,6 @@
 ﻿using System.Text;
-using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.ConfigurationProviding.Rules;
+using SimpleMockServer.Domain.Models.RulesModel;
 
 namespace SimpleMockServer;
 
@@ -22,26 +22,24 @@ class RoutingMiddleware : IMiddleware
 
         _logger.LogInformation($"Begin handle {request.Method} {request.Path}");
 
-        var rulesWithExtInfo = await _rulesProvider.GetRules();
+        var matchesRules = await GetMatchedRules(request);
 
-        RuleWithExtInfo[] matchesRules = await GetMatchedRules(request, rulesWithExtInfo);
-
-        if (matchesRules.Length == 1)
+        if (matchesRules.Count == 1)
         {
-            var rule = matchesRules[0];
-            _logger.LogInformation($"Matched rule: {rule}");
-            await rule.Rule.Execute(new Domain.Models.RulesModel.HttpContextData(context.Request, context.Response));
+            var rule = matchesRules.First();
+            _logger.LogInformation($"Matched rule: {rule.Name}");
+            await rule.Execute(new HttpContextData(context.Request, context.Response));
             return;
         }
 
-        if (matchesRules.Length == 0)
+        if (matchesRules.Count == 0)
         {
             context.Response.StatusCode = 404;
             await context.Response.WriteAsync("Rule not found");
             return;
         }
 
-        if (matchesRules.Length > 1)
+        if (matchesRules.Count > 1)
         {
             context.Response.StatusCode = 404;
             await context.Response.WriteAsync(GetErrorMessageForManyRules(matchesRules));
@@ -51,35 +49,31 @@ class RoutingMiddleware : IMiddleware
         throw new Exception("Unknown case");
     }
 
-    private static async Task<RuleWithExtInfo[]> GetMatchedRules(HttpRequest request, IReadOnlyCollection<RuleWithExtInfo> rulesWithExtInfo)
+    private async Task<IReadOnlyCollection<Rule>> GetMatchedRules(HttpRequest request)
     {
-        Guid requestId = Guid.NewGuid();
-        var rules = rulesWithExtInfo
-            .Select(r => new
-            {
-                Task = r.Rule.IsMatch(request, requestId),
-                Rule = r
-            })
-            .ToArray();
+        var allRules = await _rulesProvider.GetRules();
+        
+        var requestId = Guid.NewGuid();
 
-        await Task.WhenAll(rules.Select(x => x.Task));
+        var matchedRules = new List<Rule>();
 
-        var matchesRules = rules
-            .Where(x => x.Task.Result)
-            .Select(x => x.Rule)
-            .ToArray();
-
-        return matchesRules;
+        foreach (var rule in allRules)
+        {
+            if(await rule.IsMatch(request, requestId))
+                matchedRules.Add(rule);
+        }
+        
+        return matchedRules;
     }
 
-    private static string GetErrorMessageForManyRules(RuleWithExtInfo[] matchesRules)
+    private static string GetErrorMessageForManyRules(IReadOnlyCollection<Rule> matchedRules)
     {
         var sb = new StringBuilder("Find more than one rule:");
         sb.AppendLine();
 
-        foreach (var rule in matchesRules)
+        foreach (var rule in matchedRules)
         {
-            sb.AppendLine($"- file {rule.FileName}. " + rule.Rule.Name);
+            sb.AppendLine("- " + rule.Name);
         }
 
         return sb.ToString();

@@ -2,13 +2,9 @@
 
 GET /match/conditions/attempt.equals
 
--------------------- variables
-
-userId = {{ data: userId.rich }}
-
 -------------------- condition
 
-attemp => equals: 1
+attempt => equals: 1
 
 ----- response
 
@@ -16,9 +12,7 @@ code:
 200
 
 body:
-{
-    "user_id": {{ $userId }}
-}
+attempt 1
 
 -------------------- condition
 

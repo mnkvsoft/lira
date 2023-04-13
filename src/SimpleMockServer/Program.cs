@@ -1,4 +1,7 @@
+using System.Globalization;
 using SimpleMockServer;
+
+CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 
 var builder = WebApplication.CreateBuilder(args);
 
