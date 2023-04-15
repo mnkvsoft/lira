@@ -16,7 +16,7 @@ public abstract record ValuePart
         public override string? Get(HttpRequest request) => Func.Generate(request);
     }
 
-    public record Variable(string Name, IGeneratingFunction Func) : ValuePart
+    public record Variable(string Name, IReadOnlyCollection<ValuePart> Parts) : ValuePart
     {
         public override string? Get(HttpRequest request)
         {
@@ -26,7 +26,7 @@ public abstract record ValuePart
             if (items.TryGetValue(key, out var value))
                 return (string)value;
 
-            string? newValue = Func.Generate(request);
+            string? newValue = string.Concat(Parts.Select(p => p.Get(request)));
             items.Add(key, newValue);
             return newValue;
         }

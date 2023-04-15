@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.ConfigurationProviding.Rules.Parsers;
 using SimpleMockServer.Domain.Models.RulesModel;
+using SimpleMockServer.Domain.Models.RulesModel.Generating;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.ConfigurationProviding.Rules;
@@ -14,17 +15,20 @@ partial class RulesFileParser
     private readonly RequestMatchersParser _requestMatchersParser;
     private readonly ResponseWriterParser _responseWriterParser;
     private readonly ConditionMatcherParser _conditionMatcherParser;
+    private readonly VariablesParser _variablesParser;
 
     public RulesFileParser(
-        ILoggerFactory loggerFactory, 
-        RequestMatchersParser requestMatchersParser, 
-        ResponseWriterParser responseWriterParser, 
-        ConditionMatcherParser conditionMatcherParser)
+        ILoggerFactory loggerFactory,
+        RequestMatchersParser requestMatchersParser,
+        ResponseWriterParser responseWriterParser,
+        ConditionMatcherParser conditionMatcherParser,
+        VariablesParser variablesParser)
     {
         _loggerFactory = loggerFactory;
         _requestMatchersParser = requestMatchersParser;
         _responseWriterParser = responseWriterParser;
         _conditionMatcherParser = conditionMatcherParser;
+        _variablesParser = variablesParser;
     }
 
     public async Task<IReadOnlyCollection<Rule>> Parse(string ruleFile)
@@ -69,13 +73,15 @@ partial class RulesFileParser
 
         var requestMatcherSet = _requestMatchersParser.Parse(ruleSection);
 
-        var section = childSections[0];
+        var variablesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Variables);
+        var variables = variablesSection == null ? new VariableSet() : _variablesParser.Parse(variablesSection);
 
+        var exitstConditionSection = childSections.Any(x => x.Name == Constants.SectionName.Condition);
         ResponseWriter responseWriter;
         
-        if (section.Name == Constants.SectionName.Condition)
+        if (exitstConditionSection)
         {
-            AssertContainsOnlySections(childSections, Constants.SectionName.Condition);
+            AssertContainsOnlySections(childSections, Constants.SectionName.Condition, Constants.SectionName.Variables);
 
             if (childSections.Count < 2)
                 throw new Exception($"Must be at least 2 '{Constants.SectionName.Condition}' sections");
@@ -89,7 +95,7 @@ partial class RulesFileParser
 
                 var conditionMatcherSet = _conditionMatcherParser.Parse(conditionSection);
 
-                responseWriter = _responseWriterParser.Parse(conditionSection);
+                responseWriter = _responseWriterParser.Parse(conditionSection, variables);
                 rules.Add(new Rule(
                     ruleName + $". Condition no. {i + 1}",
                     _loggerFactory,
@@ -101,8 +107,8 @@ partial class RulesFileParser
             return rules;
         }
 
-        AssertContainsOnlySections(childSections, Constants.SectionName.Response, Constants.SectionName.Callback);
-        responseWriter = _responseWriterParser.Parse(ruleSection);
+        AssertContainsOnlySections(childSections, Constants.SectionName.Response, Constants.SectionName.Callback, Constants.SectionName.Variables);
+        responseWriter = _responseWriterParser.Parse(ruleSection, variables);
         return new[] { new Rule(ruleName, _loggerFactory, responseWriter, requestMatcherSet, conditionMatcherSet: null) };
     }
 

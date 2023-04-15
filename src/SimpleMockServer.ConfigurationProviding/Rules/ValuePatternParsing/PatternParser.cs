@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 
 namespace SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
 
@@ -50,11 +50,11 @@ internal static class PatternParser
                             callChain.Append(iterator.Current);
                     }
 
-                    parts.Add(new PatternPart.Dynamic(callChain.ToString()));
+                    parts.Add(new PatternPart.Dynamic(callChain.ToString().Trim()));
                 }
                 else
                 {
-                    sb.Append(EndChar);
+                    sb.Append(BeginChar);
                     sb.Append(iterator.Current);
                 }
             }

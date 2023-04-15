@@ -8,6 +8,7 @@ using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.ConfigurationProviding.Rules.Parsers;
 
+
 class ConditionMatcherParser
 {
     private readonly IRequestStatisticStorage _requestStatisticStorage;
@@ -19,8 +20,8 @@ class ConditionMatcherParser
 
     static class ConditionMatcherName
     {
-        public const string Attempt = "$attempt";
-        public const string Elapsed = "$elapsed";
+        public const string Attempt = Constants.ControlChars.VariablePrefix + "attempt";
+        public const string Elapsed = Constants.ControlChars.VariablePrefix + "elapsed";
     }
 
     public ConditionMatcherSet Parse(FileSection conditionSection)

@@ -5,6 +5,7 @@ class Constants
     public static class SectionName
     {
         public const string Rule = "rule";
+        public const string Variables = "variables";
         public const string Condition = "condition";
         public const string Response = "response";
         public const string Callback = "callback";
@@ -45,5 +46,6 @@ class Constants
     {
         public const string Lambda = "=>";
         public const string HeaderSplitter = ":";
+        public const string VariablePrefix = "$";
     }
 }

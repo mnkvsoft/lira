@@ -120,6 +120,15 @@
     <None Update="Fixtures\generating\static\header.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Fixtures\generating\variable\variable.data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\variable\variable.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\variable\variable.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Fixtures\match\conditions\attempt/less_or_equals.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -159,10 +168,10 @@
     <None Update="Fixtures\match\conditions\attempt\equals.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\match\conditions\elapsed\more.rules">
+    <None Update="Fixtures\match\conditions\elapsed\complex.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\match\conditions\elapsed\more.test">
+    <None Update="Fixtures\match\conditions\elapsed\complex.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Fixtures\match\function\body\extract\all.rules">
