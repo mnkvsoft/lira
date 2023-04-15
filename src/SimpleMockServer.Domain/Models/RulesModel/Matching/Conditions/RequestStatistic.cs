@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions;
+﻿namespace SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions;
 
 public record RequestStatisticEntry(DateTime InvokeTime);
 

@@ -1,4 +1,4 @@
-namespace SimpleMockServer.FileSectionFormat;
+﻿namespace SimpleMockServer.FileSectionFormat;
 
 public static class FileSectionExtensions
 {
@@ -36,11 +36,25 @@ public static class FileSectionExtensions
         return block;
     }
 
-    public static T? GetValueFromBlock<T>(this FileSection section, string blockName)
+    public static FileBlock? GetBlock(this FileSection section, string name)
+    {
+        return section.Blocks.FirstOrDefault(x => x.Name == name);
+    }
+
+    public static T? GetBlockValue<T>(this FileSection section, string blockName)
     {
         return section
                   .GetBlockRequired(blockName)
                   .GetValue<T>();
+    }
+
+    public static T? GetBlockValueOrDefault<T>(this FileSection section, string blockName)
+    {
+        var block = section.GetBlock(blockName);
+        if (block == null)
+            return default(T);
+
+        return block.GetValue<T>();
     }
 
     public static string GetStringValueFromRequiredBlock(this FileSection section, string blockName)

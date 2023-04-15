@@ -1,0 +1,41 @@
+-------------------- case
+
+GET /match/conditions/elapsed/complex
+
+----- expected
+
+code:
+200
+
+body:
+elapsed <= 100 ms
+
+-------------------- case
+
+GET /match/conditions/elapsed/complex
+
+delay: 
+00:00:00.100
+
+----- expected
+
+code:
+200
+
+body:
+elapsed between 100 and 200 ms
+
+-------------------- case
+
+GET /match/conditions/elapsed/complex
+
+delay: 
+00:00:00.100
+
+----- expected
+
+code:
+200
+
+body:
+elapsed > 200 ms

@@ -40,18 +40,23 @@ public class Tests
         var sections = await SectionFileParser.Parse(realTestFilePath, new Dictionary<string, IReadOnlySet<string>>
             {
                 {"expected", new HashSet<string>{ "body", "code", "headers" } },
-                {"case", new HashSet<string>{ "headers", "body" } },
+                {"case", new HashSet<string>{ "headers", "body", "delay" } },
             },
         maxNestingDepth: 2);
 
         foreach (var caseSection in sections)
         {
+            var delay = caseSection.GetBlockValueOrDefault<TimeSpan>("delay");
+
+            if (delay != default)
+                await Task.Delay(delay);
+
             var req = CreateRequest(caseSection);
             var res = await httpClient.SendAsync(req);
 
             var expectedSection = caseSection.GetSingleChildSection("expected");
 
-            int expectedHttpCode = expectedSection.GetValueFromBlock<int>("code");
+            int expectedHttpCode = expectedSection.GetBlockValue<int>("code");
             Assert.AreEqual(expectedHttpCode, (int)res.StatusCode);
 
             var bodyBlock = expectedSection.GetBlockOrNull("body");

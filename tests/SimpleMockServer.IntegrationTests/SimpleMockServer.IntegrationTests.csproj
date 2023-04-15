@@ -159,6 +159,12 @@
     <None Update="Fixtures\match\conditions\attempt\equals.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Fixtures\match\conditions\elapsed\more.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\elapsed\more.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Fixtures\match\function\body\extract\all.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

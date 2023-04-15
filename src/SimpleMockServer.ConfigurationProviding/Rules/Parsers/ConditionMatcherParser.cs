@@ -1,7 +1,9 @@
 ﻿using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Models.RulesModel;
 using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers;
 using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers.Elapsed;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.ConfigurationProviding.Rules.Parsers;
@@ -18,6 +20,7 @@ class ConditionMatcherParser
     static class ConditionMatcherName
     {
         public const string Attempt = "$attempt";
+        public const string Elapsed = "$elapsed";
     }
 
     public ConditionMatcherSet Parse(FileSection conditionSection)
@@ -32,33 +35,38 @@ class ConditionMatcherParser
         if (splitResult == null)
             throw new ArgumentException($"Cannot parse line '{line}'");
 
-        if(splitResult.LeftPart == ConditionMatcherName.Attempt)
+        if (splitResult.LeftPart == ConditionMatcherName.Attempt)
         {
             if (!int.TryParse(splitResult.RightPart, out int value))
                 throw new ArgumentException($"Not int value '{splitResult.RightPart}' in line {line}");
 
-            var comparer = GetIntComparer(splitResult.Splitter, value);
-
+            var comparer = GetValueComparer(splitResult.Splitter, value);
             return new AttemptConditionMatcher(new ComparableMatchFunction<int>(comparer));
         }
+        else if (splitResult.LeftPart == ConditionMatcherName.Elapsed)
+        {
+            var timespan = PrettyTimespanParser.Parse(splitResult.RightPart);
+            var comparer = GetValueComparer(splitResult.Splitter, timespan);
+            return new ElapsedConditionMatcher(new ComparableMatchFunction<TimeSpan>(comparer));
 
+        }
         throw new Exception($"Unknown variable in condition section: '{splitResult.LeftPart}'");
     }
 
-    private Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt.Comparer<int> GetIntComparer(string splitter, int value)
+    private ValueComparer<T> GetValueComparer<T>(string splitter, T value) where T : IComparable<T>
     {
         switch (splitter)
         {
             case "=":
-                return Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt.Comparer<int>.AreEquals(value);
+                return ValueComparer<T>.AreEquals(value);
             case "<":
-                return Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt.Comparer<int>.Less(value);
+                return ValueComparer<T>.Less(value);
             case "<=":
-                return Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt.Comparer<int>.LessOrEquals(value);
+                return ValueComparer<T>.LessOrEquals(value);
             case ">":
-                return Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt.Comparer<int>.More(value);
+                return ValueComparer<T>.More(value);
             case ">=":
-                return Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt.Comparer<int>.MoreOrEquals(value);
+                return ValueComparer<T>.MoreOrEquals(value);
             default: throw new Exception($"Unknown comparable operator '{splitter}'");
         }
     }

@@ -1,19 +1,16 @@
-﻿
-
-namespace SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt;
-
+﻿namespace SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt;
 internal class AttemptConditionMatcher : IConditionMatcher
 {
-    private readonly IComparableMatchFunction<int> _attemptMatchFunction;
+    private readonly IComparableMatchFunction<int> _function;
 
-    public AttemptConditionMatcher(IComparableMatchFunction<int> attemptMatchFunction)
+    public AttemptConditionMatcher(IComparableMatchFunction<int> function)
     {
-        _attemptMatchFunction = attemptMatchFunction;
+        _function = function;
     }
 
     public bool IsMatch(RequestStatistic statistic)
     {
         int attempt = statistic.Entries.Count;
-        return _attemptMatchFunction.IsMatch(attempt);
+        return _function.IsMatch(attempt);
     }
 }

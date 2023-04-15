@@ -1,6 +1,5 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Text;
-using SimpleMockServer.Common.Extensions;
 
 namespace SimpleMockServer.FileSectionFormat;
 public static class FileBlockExtensions
