@@ -4,9 +4,9 @@ namespace SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers
 
 internal class AttemptConditionMatcher : IConditionMatcher
 {
-    private readonly IIntMatchFunction _attemptMatchFunction;
+    private readonly IComparableMatchFunction<int> _attemptMatchFunction;
 
-    public AttemptConditionMatcher(IIntMatchFunction attemptMatchFunction)
+    public AttemptConditionMatcher(IComparableMatchFunction<int> attemptMatchFunction)
     {
         _attemptMatchFunction = attemptMatchFunction;
     }

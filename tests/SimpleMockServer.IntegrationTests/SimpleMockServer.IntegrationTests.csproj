@@ -120,10 +120,43 @@
     <None Update="Fixtures\generating\static\header.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\match\conditions\attempt.equals.rules">
+    <None Update="Fixtures\match\conditions\attempt/less_or_equals.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\match\conditions\attempt.equals.test">
+    <None Update="Fixtures\match\conditions\attempt/lessOrEquela.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\attempt/less.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\attempt/less.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\attempt\complex\1.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\attempt\complex\1.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\attempt\less_or_equals.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\attempt\more_or_equals.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\attempt\more_or_equals.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\attempt\more.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\attempt\more.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\attempt\equals.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\match\conditions\attempt\equals.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Fixtures\match\function\body\extract\all.rules">
@@ -225,7 +258,7 @@
     <None Update="Fixtures\match\static\query.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\match\conditions\by_path1.rules">
+    <None Update="Fixtures\_draft\by_path1.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Fixtures\match\static\path.rules">

@@ -1,4 +1,4 @@
-namespace SimpleMockServer.Common.Extensions;
+﻿namespace SimpleMockServer.Common.Extensions;
 public static class StringExtensions
 {
     public static Stream ToStream(this string s)
@@ -89,4 +89,24 @@ public static class StringExtensions
     {
         return (value.part1.Trim(), value.part2.Trim());
     }
+
+    public static SplitResult? SplitBy(this string str, params string[] splitters)
+    {
+        foreach(string splitter in splitters)
+        {
+            if(str.Contains(splitter, StringComparison.OrdinalIgnoreCase))
+            {
+                (string left, string right) = str.SplitToTwoPartsRequired(splitter);
+                return new SplitResult(splitter, left, right);
+            }
+        }
+        return null;
+    }
+
+    public static SplitResult Trim(this SplitResult splitResult)
+    {
+        return new SplitResult(splitResult.Splitter, splitResult.LeftPart.Trim(), splitResult.RightPart.Trim());    
+    }
 }
+
+public record SplitResult(string Splitter, string LeftPart, string RightPart);

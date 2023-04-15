@@ -1,0 +1,27 @@
+---------------------------------------- rule
+
+GET /match/conditions/attempt.equals
+
+-------------------- condition
+
+elapsed_from_first_request => more: 00:00:01.000
+
+----- response
+
+code:
+200
+
+body:
+attempt 1
+
+-------------------- condition
+
+attempt => equals: 2
+
+----- response
+
+code:
+200
+
+body:
+attempt 2

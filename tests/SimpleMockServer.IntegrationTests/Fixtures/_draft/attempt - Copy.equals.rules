@@ -1,0 +1,29 @@
+/*
+---------------------------------------- rule
+
+GET /match/conditions/attempt/equals
+
+$userId = {{ data: userId.rich }}
+
+----- response
+
+code:
+200
+
+body:
+{
+    "user_id": {{ $userId }}
+}
+
+----- callback
+
+POST http://callback.com/api?a=1
+
+headers:
+Token: af5kdjdg7423j53ll44865jdds
+
+body:
+{
+    "user_id": {{ $userId }}
+}
+*/

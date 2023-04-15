@@ -1,0 +1,23 @@
+-------------------- case
+
+GET /match/conditions/attempt/more
+
+----- expected
+
+code:
+200
+
+body:
+attempt 1
+
+-------------------- case
+
+GET /match/conditions/attempt/more
+
+----- expected
+
+code:
+200
+
+body:
+attempt more than 1

@@ -1,5 +1,4 @@
 ﻿using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Models.RulesModel;
 using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions;
 using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt;
@@ -9,18 +8,16 @@ namespace SimpleMockServer.ConfigurationProviding.Rules.Parsers;
 
 class ConditionMatcherParser
 {
-    private readonly FunctionFactory _functionFactory;
     private readonly IRequestStatisticStorage _requestStatisticStorage;
 
-    public ConditionMatcherParser(FunctionFactory functionFactory, IRequestStatisticStorage requestStatisticStorage)
+    public ConditionMatcherParser(IRequestStatisticStorage requestStatisticStorage)
     {
-        _functionFactory = functionFactory;
         _requestStatisticStorage = requestStatisticStorage;
     }
 
     static class ConditionMatcherName
     {
-        public const string Attempt = "attempt";
+        public const string Attempt = "$attempt";
     }
 
     public ConditionMatcherSet Parse(FileSection conditionSection)
@@ -30,14 +27,39 @@ class ConditionMatcherParser
 
     private IConditionMatcher CreateConditionMatcher(string line)
     {
-        (string matcherName, string functionInvoke) = line.SplitToTwoPartsRequired(Constants.ManageChar.Lambda).TrimRequired();
+        var splitResult = line.SplitBy(">=", "<=", "=", ">", "<")?.Trim();
 
-        if (matcherName == ConditionMatcherName.Attempt)
+        if (splitResult == null)
+            throw new ArgumentException($"Cannot parse line '{line}'");
+
+        if(splitResult.LeftPart == ConditionMatcherName.Attempt)
         {
-            var function = _functionFactory.CreateIntMatchFunction(functionInvoke);
-            return new AttemptConditionMatcher(function);
-        }   
+            if (!int.TryParse(splitResult.RightPart, out int value))
+                throw new ArgumentException($"Not int value '{splitResult.RightPart}' in line {line}");
 
-        throw new Exception($"Unknown condition matcher '{matcherName}'");
+            var comparer = GetIntComparer(splitResult.Splitter, value);
+
+            return new AttemptConditionMatcher(new ComparableMatchFunction<int>(comparer));
+        }
+
+        throw new Exception($"Unknown variable in condition section: '{splitResult.LeftPart}'");
+    }
+
+    private Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt.Comparer<int> GetIntComparer(string splitter, int value)
+    {
+        switch (splitter)
+        {
+            case "=":
+                return Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt.Comparer<int>.AreEquals(value);
+            case "<":
+                return Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt.Comparer<int>.Less(value);
+            case "<=":
+                return Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt.Comparer<int>.LessOrEquals(value);
+            case ">":
+                return Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt.Comparer<int>.More(value);
+            case ">=":
+                return Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt.Comparer<int>.MoreOrEquals(value);
+            default: throw new Exception($"Unknown comparable operator '{splitter}'");
+        }
     }
 }

@@ -41,7 +41,7 @@ class Constants
         "CONNECT"
     };
     
-    public static class ManageChar
+    public static class ControlChars
     {
         public const string Lambda = "=>";
         public const string HeaderSplitter = ":";

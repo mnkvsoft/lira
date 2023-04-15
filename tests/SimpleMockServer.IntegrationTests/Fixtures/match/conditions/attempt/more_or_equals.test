@@ -1,0 +1,23 @@
+-------------------- case
+
+GET /match/conditions/attempt/more_or_equals
+
+----- expected
+
+code:
+200
+
+body:
+attempt 1
+
+-------------------- case
+
+GET /match/conditions/attempt/more_or_equals
+
+----- expected
+
+code:
+200
+
+body:
+attempt more or equals than 2

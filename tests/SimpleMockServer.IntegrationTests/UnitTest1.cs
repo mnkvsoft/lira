@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.FileSectionFormat;
 using SimpleMockServer.IntegrationTests.Extensions;

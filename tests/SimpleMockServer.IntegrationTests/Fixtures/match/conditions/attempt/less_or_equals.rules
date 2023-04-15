@@ -1,0 +1,27 @@
+---------------------------------------- rule
+
+GET /match/conditions/attempt/less_or_equals
+
+-------------------- condition
+
+$attempt <= 2
+
+----- response
+
+code:
+200
+
+body:
+attempt <= 2
+
+-------------------- condition
+
+$attempt = 3
+
+----- response
+
+code:
+200
+
+body:
+attempt = 3

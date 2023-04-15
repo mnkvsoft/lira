@@ -34,13 +34,13 @@ internal sealed class FunctionFactory
         return _nativeFunctionBodyPartFactory.CreateMatchFunction(functionInvoke);
     }
 
-    public IIntMatchFunction CreateIntMatchFunction(string functionInvoke)
-    {
-        if (!_prettyFunctionFactory.TryCreateIntMatchFunction(functionInvoke, out var function))
-            throw new Exception($"Cannot create function invoke '{functionInvoke}'");
+    //public IIntMatchFunction CreateIntMatchFunction(string functionInvoke)
+    //{
+    //    if (!_prettyFunctionFactory.TryCreateIntMatchFunction(functionInvoke, out var function))
+    //        throw new Exception($"Cannot create function invoke '{functionInvoke}'");
 
-        return function;
-    }
+    //    return function;
+    //}
 
     public IExtractFunction CreateExtractFunction(string functionInvoke)
     {

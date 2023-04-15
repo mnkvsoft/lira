@@ -1,0 +1,27 @@
+---------------------------------------- rule
+
+GET /match/conditions/attempt/more
+
+-------------------- condition
+
+$attempt = 1
+
+----- response
+
+code:
+200
+
+body:
+attempt 1
+
+-------------------- condition
+
+$attempt > 1
+
+----- response
+
+code:
+200
+
+body:
+attempt more than 1

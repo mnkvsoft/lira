@@ -133,7 +133,7 @@ class RequestMatchersParser
             if (string.IsNullOrEmpty(line))
                 break;
 
-            (string headerName, string headerPattern) = line.SplitToTwoPartsRequired(Constants.ManageChar.HeaderSplitter);
+            (string headerName, string headerPattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.HeaderSplitter).TrimRequired();
             
             headers.Add(headerName, CreateValuePattern(headerPattern));
         }
@@ -153,7 +153,7 @@ class RequestMatchersParser
                 continue;
             }
 
-            (string extractFunctionInvoke, string pattern) = line.SplitToTwoPartsRequired(Constants.ManageChar.Lambda).TrimRequired();
+            (string extractFunctionInvoke, string pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.Lambda).TrimRequired();
             
             // can write either
             // {{ xpath://employee[1]/text() }}

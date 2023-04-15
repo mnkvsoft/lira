@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /match/conditions/attempt.equals
+GET /match/conditions/attempt/equals
 
 ----- expected
 
@@ -12,7 +12,7 @@ attempt 1
 
 -------------------- case
 
-GET /match/conditions/attempt.equals
+GET /match/conditions/attempt/equals
 
 ----- expected
 
@@ -24,7 +24,7 @@ attempt 2
 
 -------------------- case
 
-GET /match/conditions/attempt.equals
+GET /match/conditions/attempt/equals
 
 ----- expected
 
