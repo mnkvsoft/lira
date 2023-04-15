@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.FileSectionFormat;
 using SimpleMockServer.IntegrationTests.Extensions;
@@ -39,7 +40,7 @@ public class Tests
 
         var sections = await SectionFileParser.Parse(realTestFilePath, new Dictionary<string, IReadOnlySet<string>>
             {
-                {"expected", new HashSet<string>{ "body", "code", "headers" } },
+                {"expected", new HashSet<string>{ "body", "code", "headers", "elapsed" } },
                 {"case", new HashSet<string>{ "headers", "body", "delay" } },
             },
         maxNestingDepth: 2);
@@ -51,13 +52,19 @@ public class Tests
             if (delay != default)
                 await Task.Delay(delay);
 
+            Stopwatch sw = Stopwatch.StartNew();
+
             var req = CreateRequest(caseSection);
             var res = await httpClient.SendAsync(req);
 
             var expectedSection = caseSection.GetSingleChildSection("expected");
 
+            var elapsed = expectedSection.GetBlockValueOrDefault<TimeSpan>("elapsed");
+            if(elapsed != default)
+                Assert.That(sw.Elapsed, Is.GreaterThan(elapsed));
+
             int expectedHttpCode = expectedSection.GetBlockValue<int>("code");
-            Assert.AreEqual(expectedHttpCode, (int)res.StatusCode);
+            Assert.That((int)res.StatusCode, Is.EqualTo(expectedHttpCode));
 
             var bodyBlock = expectedSection.GetBlockOrNull("body");
 
@@ -68,7 +75,7 @@ public class Tests
                 if (res.Content != null)
                 {
                     string body = await res.Content.ReadAsStringAsync();
-                    Assert.AreEqual(expectedBody, body);
+                    Assert.That(body, Is.EqualTo(expectedBody));
                 }
             }
 

@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /delay/response
+
+----- response
+
+delay:
+1 second
+
+code:
+200

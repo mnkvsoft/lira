@@ -1,0 +1,13 @@
+{
+  "data": {
+    "generating_variable_seq": {
+      "int": {
+        "seq": {
+          "ranges": {
+            "default": "1"
+          }
+        }
+      }
+    }
+  }
+}

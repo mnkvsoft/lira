@@ -20,16 +20,28 @@ class ResponseWriterParser
     {
         var responseSection = ruleSection.GetSingleChildSection(Constants.SectionName.Response);
 
-        int httpCode = GetHttpCode(responseSection);
-        
-        HeadersWriter? headersWriter = GetHeadersWriter(responseSection, variables);
-        BodyWriter? bodyWriter = GetBodyWriter(responseSection, variables);
+        var responseWriter = new ResponseWriter(
+            GetHttpCode(responseSection), 
+            GetBodyWriter(responseSection, variables), 
+            GetHeadersWriter(responseSection, variables),
+            GetDelay(responseSection));
 
-        var responseWriter = new ResponseWriter(httpCode, bodyWriter, headersWriter);
         return responseWriter;
     }
-    
-    
+
+    private static TimeSpan? GetDelay(FileSection responseSection)
+    {
+        var block = responseSection.GetBlock(Constants.BlockName.Response.Delay);
+
+        if (block == null)
+            return null;
+
+        var delayStr = block.GetSingleLine();
+        var delay = PrettyTimespanParser.Parse(delayStr);
+
+        return delay;
+    }
+
     private static int GetHttpCode(FileSection responseSection)
     {
         int httpCode;

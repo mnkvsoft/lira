@@ -27,6 +27,7 @@ class Constants
             public const string Code = "code";
             public const string Headers = "headers";
             public const string Body = "body";
+            public const string Delay = "delay";
         }
     }
     

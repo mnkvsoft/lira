@@ -1,0 +1,16 @@
+-------------------- case
+
+GET /generating/variable
+
+----- expected
+
+code:
+200
+
+headers:
+OrderId: order_1
+
+body:
+{
+    "order_id": "order_1"
+}

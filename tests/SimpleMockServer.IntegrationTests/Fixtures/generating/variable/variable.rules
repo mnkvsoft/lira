@@ -1,0 +1,20 @@
+-------------------- rule
+
+GET /generating/variable
+
+----- variables
+
+orderId = order_{{ data: generating_variable_seq.default }}
+
+----- response
+
+code:
+200
+
+headers:
+OrderId: {{ $orderId }}
+
+body:
+{
+    "order_id": "{{ $orderId }}"
+}
