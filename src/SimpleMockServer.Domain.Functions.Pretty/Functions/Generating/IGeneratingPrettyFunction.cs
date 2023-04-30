@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Http;
+﻿using SimpleMockServer.Domain.Models.RulesModel;
 
 namespace SimpleMockServer.Domain.Functions.Pretty.Functions.Generating;
 
 internal interface IGeneratingPrettyFunction
 {
-    object? Generate(HttpRequest request);
+    object? Generate(RequestData request);
 }
 

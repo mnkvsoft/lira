@@ -1,37 +1,43 @@
 ﻿using SimpleMockServer.Common.Exceptions;
 using SimpleMockServer.Common.Extensions;
+using SimpleMockServer.Domain.Functions.Pretty.Functions.Generating;
 using SimpleMockServer.Domain.Models.RulesModel.Generating;
 
 namespace SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
 
-class ValuePartsCreator
+public interface ITextPartsParser
 {
-    private readonly FunctionFactory _functionFactory;
+    TextParts Parse(string pattern, VariableSet variables);
+}
 
-    public ValuePartsCreator(FunctionFactory functionFactory)
+class TextPartsParser : ITextPartsParser
+{
+    private readonly IGeneratingFunctionFactory _generatingFunctionFactory;
+
+    public TextPartsParser(IGeneratingFunctionFactory generatingFunctionFactory)
     {
-        _functionFactory = functionFactory;
+        _generatingFunctionFactory = generatingFunctionFactory;
     }
 
-    public IReadOnlyCollection<ValuePart> Create(string pattern, VariableSet variables)
+    public TextParts Parse(string pattern, VariableSet variables)
     {
         var patternParts = PatternParser.Parse(pattern);
 
-        var valueParts = new List<ValuePart>();
+        var parts = new List<TextPart>();
         foreach (var patternPart in patternParts)
         {
-            valueParts.Add(CreateValuePart(patternPart, variables));
+            parts.Add(CreateValuePart(patternPart, variables));
         }
 
-        return valueParts;
+        return new TextParts(parts);
     }
 
-    private ValuePart CreateValuePart(PatternPart patternPart, VariableSet variables)
+    private TextPart CreateValuePart(PatternPart patternPart, VariableSet variables)
     {
         switch (patternPart)
         {
             case PatternPart.Static:
-                return new ValuePart.Static(patternPart.Value);
+                return new TextPart.Static(patternPart.Value);
             case PatternPart.Dynamic dynamicPart:
                 return GetDynamicPart(dynamicPart, variables);
             default:
@@ -39,7 +45,7 @@ class ValuePartsCreator
         }
     }
 
-    private ValuePart GetDynamicPart(PatternPart.Dynamic dynamicPart, VariableSet variables)
+    private TextPart GetDynamicPart(PatternPart.Dynamic dynamicPart, VariableSet variables)
     {
         if (dynamicPart.Value.StartsWith(Constants.ControlChars.VariablePrefix))
         {
@@ -48,6 +54,6 @@ class ValuePartsCreator
             return variable;
         }
 
-        return new ValuePart.Function(_functionFactory.CreateGeneratingFunction(dynamicPart.Value));
+        return new TextPart.Function(_generatingFunctionFactory.Create(dynamicPart.Value));
     }
 }

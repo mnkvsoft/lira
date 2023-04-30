@@ -1,11 +1,16 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleMockServer.Common.Extensions;
+using SimpleMockServer.Domain.Models.RulesModel.Matching.Request;
 
 namespace SimpleMockServer.Domain.Functions.Pretty.Functions.Matching.String;
 
-internal class StringMatchPrettyFunctionFactory
+public interface IStringMatchFunctionFactory
+{
+    IStringMatchFunction Create(string value);
+}
+
+internal class StringMatchPrettyFunctionFactory : IStringMatchFunctionFactory
 {
     private readonly Dictionary<string, Type> _functionNameToType;
     private readonly IServiceProvider _serviceProvider;
@@ -34,14 +39,12 @@ internal class StringMatchPrettyFunctionFactory
         _serviceProvider = serviceProvider;
     }
 
-    internal bool TryCreate(string value, [MaybeNullWhen(false)] out IStringMatchPrettyFunction function)
+    IStringMatchFunction IStringMatchFunctionFactory.Create(string value)
     {
-        function = null;
-
         (var functionName, var argument) = value.SplitToTwoParts(":").Trim();
 
         if (!_functionNameToType.TryGetValue(functionName, out var functionType))
-            return false;
+            throw new UnknownFunctionException(value);
 
         var prettyMatchFunction = (IStringMatchPrettyFunction)_serviceProvider.GetRequiredService(functionType);
 
@@ -53,8 +56,7 @@ internal class StringMatchPrettyFunctionFactory
             withArgument.SetArgument(argument);
         }
 
-        function = prettyMatchFunction;
-        return true;
+        return prettyMatchFunction;
     }
 
     public static void AddMatchFunctions(IServiceCollection sc)

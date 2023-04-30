@@ -1,7 +1,4 @@
-﻿using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
-using SimpleMockServer.Domain.Models.RulesModel;
-using SimpleMockServer.Domain.Models.RulesModel.Generating;
+﻿using SimpleMockServer.Domain.Models.RulesModel;
 using SimpleMockServer.Domain.Models.RulesModel.Generating.Writers;
 using SimpleMockServer.FileSectionFormat;
 
@@ -9,21 +6,22 @@ namespace SimpleMockServer.ConfigurationProviding.Rules.Parsers;
 
 class ResponseWriterParser
 {
-    private readonly ValuePartsCreator _valuePartsCreator;
+    private readonly GeneratingHttpDataParser _httpDataParser;
 
-    public ResponseWriterParser(ValuePartsCreator valuePartsCreator)
+    public ResponseWriterParser(GeneratingHttpDataParser httpDataParser)
     {
-        _valuePartsCreator = valuePartsCreator;
+        _httpDataParser = httpDataParser;
     }
 
-    public ResponseWriter Parse(FileSection ruleSection, VariableSet variables)
+    public Delayed<ResponseWriter> Parse(FileSection ruleSection, VariableSet variables)
     {
         var responseSection = ruleSection.GetSingleChildSection(Constants.SectionName.Response);
 
-        var responseWriter = new ResponseWriter(
-            GetHttpCode(responseSection), 
-            GetBodyWriter(responseSection, variables), 
-            GetHeadersWriter(responseSection, variables),
+        var responseWriter = new Delayed<ResponseWriter>(
+            new ResponseWriter(
+                GetHttpCode(responseSection),
+                GetBodyWriter(responseSection, variables),
+                GetHeadersWriter(responseSection, variables)),
             GetDelay(responseSection));
 
         return responseWriter;
@@ -66,8 +64,8 @@ class ResponseWriterParser
 
         if (bodyBlock != null)
         {
-            var parts = _valuePartsCreator.Create(bodyBlock.GetStringValue(), variables);
-            bodyWriter = new BodyWriter(new ValuePartSet(parts));
+            var textGenerator = _httpDataParser.ParseBody(bodyBlock, variables);
+            bodyWriter = new BodyWriter(textGenerator);
         }
 
         return bodyWriter;
@@ -75,31 +73,12 @@ class ResponseWriterParser
 
     private HeadersWriter? GetHeadersWriter(FileSection responseSection, VariableSet variables)
     {
-        HeadersWriter? headersWriter = null;
-
         var headersBlock = responseSection.GetBlockOrNull(Constants.BlockName.Response.Headers);
+
         if (headersBlock != null)
-        {
-            var headers = new Dictionary<string, ValuePartSet>();
-            foreach (var line in headersBlock.Lines)
-            {
-                if (string.IsNullOrEmpty(line))
-                    break;
+            return new HeadersWriter(_httpDataParser.ParseHeaders(headersBlock, variables));
 
-                (string headerName, string? headerPattern) = line.SplitToTwoParts(":").Trim();
-
-                if (headerPattern == null)
-                    throw new Exception($"Empty matching for header '{headerPattern}' in line: '{line}'");
-
-                var parts = _valuePartsCreator.Create(headerPattern, variables);
-
-                headers.Add(headerName, new ValuePartSet(parts));
-            }
-
-            headersWriter = new HeadersWriter(headers);
-        }
-
-        return headersWriter;
+        return null;
     }
 
     private static int ParseHttpCode(string str)

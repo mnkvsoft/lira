@@ -1,0 +1,39 @@
+-------------------- rule
+
+POST /call/http
+
+----- variables
+
+newId           = {{ echo: 1 }}
+createdAt       = {{ echo: 2023-04-23 10:45 }}
+callback_server = http://fakeserver:9876
+
+----- response
+
+code:
+200
+
+body:
+{
+    "id": {{ $newId }},
+    "createdAt": "{{ $createdAt }}",
+    "status": "inprocess"
+}
+
+----- call.http
+
+POST {{ $callback_server }}/api/callback?a={{echo: 1}}
+
+delay: 
+100 ms
+
+headers:
+Request-Id: {{ extract.header: Request-Id }}
+
+body:
+{
+    "id": {{ $newId }},
+    "external_id": "{{ extract.body.jpath: $.external_id }}"
+    "createdAt": "{{ $createdAt }}",
+    "status": "success"
+}

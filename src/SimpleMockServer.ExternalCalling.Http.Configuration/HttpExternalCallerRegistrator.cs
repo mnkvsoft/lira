@@ -1,0 +1,55 @@
+﻿using SimpleMockServer.Common.Extensions;
+using SimpleMockServer.ConfigurationProviding;
+using SimpleMockServer.ConfigurationProviding.Rules;
+using SimpleMockServer.ConfigurationProviding.Rules.Parsers;
+using SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
+using SimpleMockServer.Domain.Models.RulesModel;
+using SimpleMockServer.ExternalCalling.Http.Caller;
+using SimpleMockServer.FileSectionFormat;
+
+namespace SimpleMockServer.ExternalCalling.Http.Configuration;
+
+class BlockName
+{
+    public const string Headers = "headers";
+    public const string Body = "body";
+}
+
+public class HttpExternalCallerRegistrator : IExternalCallerRegistrator
+{
+    public string Name => "http";
+    public GeneratingHttpDataParser _generatingHttpDataParser;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ITextPartsParser _partsParser;
+
+
+    public HttpExternalCallerRegistrator(
+        GeneratingHttpDataParser generatingHttpDataParser,
+        IHttpClientFactory httpClientFactory,
+        ITextPartsParser partsParser)
+    {
+        _generatingHttpDataParser = generatingHttpDataParser;
+        _httpClientFactory = httpClientFactory;
+        _partsParser = partsParser;
+    }
+
+    public IExternalCaller Create(FileSection section, VariableSet variables)
+    {
+        var methodAndUrl = section.GetSingleLine();
+        (var methodStr, var urlStr) = methodAndUrl.SplitToTwoPartsRequired(" ");
+
+        var method = methodStr.ToHttpMethod();
+        var urlParts = _partsParser.Parse(urlStr, variables);
+
+        var bodyRawText = section.GetStringValueFromBlockOrEmpty(BlockName.Body);
+        var bodyParts = _partsParser.Parse(bodyRawText, variables);
+
+        var headerBlock = section.GetBlockOrNull(BlockName.Headers);
+        var headers = headerBlock == null ? null : _generatingHttpDataParser.ParseHeaders(headerBlock, variables);
+
+        var caller = new HttpExternalCaller(_httpClientFactory, method, urlParts, bodyParts, headers);
+        return caller;
+    }
+
+    public IReadOnlyCollection<string> GetSectionKnowsBlocks() => BlockNameHelper.GetBlockNames<BlockName>();
+}

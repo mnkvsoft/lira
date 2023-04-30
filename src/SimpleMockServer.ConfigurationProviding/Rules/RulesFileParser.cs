@@ -1,14 +1,13 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.ConfigurationProviding.Rules.Parsers;
 using SimpleMockServer.Domain.Models.RulesModel;
-using SimpleMockServer.Domain.Models.RulesModel.Generating;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.ConfigurationProviding.Rules;
 
-partial class RulesFileParser
+
+internal class RulesFileParser
 {
     private readonly ILoggerFactory _loggerFactory;
     
@@ -16,35 +15,41 @@ partial class RulesFileParser
     private readonly ResponseWriterParser _responseWriterParser;
     private readonly ConditionMatcherParser _conditionMatcherParser;
     private readonly VariablesParser _variablesParser;
+    private readonly ExternalCallerParser _externalCallerParser;
 
     public RulesFileParser(
         ILoggerFactory loggerFactory,
         RequestMatchersParser requestMatchersParser,
         ResponseWriterParser responseWriterParser,
         ConditionMatcherParser conditionMatcherParser,
-        VariablesParser variablesParser)
+        VariablesParser variablesParser,
+        ExternalCallerParser externalCallerParser)
     {
         _loggerFactory = loggerFactory;
         _requestMatchersParser = requestMatchersParser;
         _responseWriterParser = responseWriterParser;
         _conditionMatcherParser = conditionMatcherParser;
-        _variablesParser = variablesParser;
+        _variablesParser = variablesParser; ;
+        _externalCallerParser = externalCallerParser;
     }
 
     public async Task<IReadOnlyCollection<Rule>> Parse(string ruleFile)
     {
         try
         {
+            var knownSectionsBlocks = _externalCallerParser.GetSectionsKnowsBlocks();
+
+            var externalCallerSections = knownSectionsBlocks.Keys.ToList();
+
+            knownSectionsBlocks.Add("rule", BlockNameHelper.GetBlockNames<Constants.BlockName.Rule>());
+            knownSectionsBlocks.Add("response", BlockNameHelper.GetBlockNames<Constants.BlockName.Response>());
+
             var rulesSections = await SectionFileParser.Parse(
                 ruleFile,
-                knownBlockForSections: new Dictionary<string, IReadOnlySet<string>>
-                {
-                    { "rule", GetBlockNames<Constants.BlockName.Rule>() },
-                    { "response", GetBlockNames<Constants.BlockName.Response>() },
-                },
+                knownBlockForSections: knownSectionsBlocks,
                 maxNestingDepth: 3);
 
-            AssertContainsOnlySections(rulesSections, Constants.SectionName.Rule);
+            AssertContainsOnlySections(rulesSections, new [] { Constants.SectionName.Rule });
 
             var rules = new List<Rule>();
             for (int i = 0; i < rulesSections.Count; i++)
@@ -53,7 +58,7 @@ partial class RulesFileParser
                 var ruleName = $"no. {i + 1} file: {fi.Name}";
 
                 var ruleSection = rulesSections[i];
-                rules.AddRange(CreateRules(ruleName, ruleSection));
+                rules.AddRange(CreateRules(ruleName, ruleSection, externalCallerSections));
             }
 
             return rules;
@@ -64,7 +69,7 @@ partial class RulesFileParser
         }
     }
 
-    private IReadOnlyCollection<Rule> CreateRules(string ruleName, FileSection ruleSection)
+    private IReadOnlyCollection<Rule> CreateRules(string ruleName, FileSection ruleSection, IReadOnlyCollection<string> externalCallerSections)
     {
         var childSections = ruleSection.ChildSections;
 
@@ -77,11 +82,13 @@ partial class RulesFileParser
         var variables = variablesSection == null ? new VariableSet() : _variablesParser.Parse(variablesSection);
 
         var exitstConditionSection = childSections.Any(x => x.Name == Constants.SectionName.Condition);
-        ResponseWriter responseWriter;
-        
+
+        Delayed<ResponseWriter> responseWriter;
+        IReadOnlyCollection<Delayed<IExternalCaller>> externalCallers;
+
         if (exitstConditionSection)
         {
-            AssertContainsOnlySections(childSections, Constants.SectionName.Condition, Constants.SectionName.Variables);
+            AssertContainsOnlySections(childSections, new[] { Constants.SectionName.Condition, Constants.SectionName.Variables });
 
             if (childSections.Count < 2)
                 throw new Exception($"Must be at least 2 '{Constants.SectionName.Condition}' sections");
@@ -91,54 +98,36 @@ partial class RulesFileParser
             {
                 var conditionSection = childSections[i];
                 var childConditionSections = conditionSection.ChildSections;
-                AssertContainsOnlySections(childConditionSections, Constants.SectionName.Response, Constants.SectionName.Callback);
+                AssertContainsOnlySections(childConditionSections, externalCallerSections.NewWith(Constants.SectionName.Response));
 
                 var conditionMatcherSet = _conditionMatcherParser.Parse(conditionSection);
 
                 responseWriter = _responseWriterParser.Parse(conditionSection, variables);
+                externalCallers = _externalCallerParser.Parse(childConditionSections, variables);
+
                 rules.Add(new Rule(
                     ruleName + $". Condition no. {i + 1}",
                     _loggerFactory,
                     responseWriter,
                     requestMatcherSet,
-                    conditionMatcherSet));
+                    conditionMatcherSet,
+                    externalCallers));
             }
 
             return rules;
         }
 
-        AssertContainsOnlySections(childSections, Constants.SectionName.Response, Constants.SectionName.Callback, Constants.SectionName.Variables);
+        AssertContainsOnlySections(
+            childSections, 
+            externalCallerSections.NewWith(Constants.SectionName.Response, Constants.SectionName.Variables));
+
         responseWriter = _responseWriterParser.Parse(ruleSection, variables);
-        return new[] { new Rule(ruleName, _loggerFactory, responseWriter, requestMatcherSet, conditionMatcherSet: null) };
+        externalCallers = _externalCallerParser.Parse(childSections, variables);
+
+        return new[] { new Rule(ruleName, _loggerFactory, responseWriter, requestMatcherSet, conditionMatcherSet: null, externalCallers) };
     }
 
-    private static IReadOnlySet<string> GetBlockNames<T>()
-    {
-        var set = new HashSet<string>();
-        var values = GetAllPublicConstantValues<string>(typeof(T));
-
-        foreach (var value in values)
-        {
-            if (string.IsNullOrEmpty(value))
-                throw new Exception("Empty block name");
-
-            set.AddOrThrowIfContains(value);
-        }
-
-        return set;
-    }
-
-    private static IReadOnlyCollection<T?> GetAllPublicConstantValues<T>(Type type)
-    {
-        return type
-            .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-            .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(T))
-            .Select(x => (T?)x.GetRawConstantValue())
-            .ToList();
-    }
-
-
-    private static void AssertContainsOnlySections(IReadOnlyList<FileSection> rulesSections, params string[] expectedSectionName)
+    private static void AssertContainsOnlySections(IReadOnlyList<FileSection> rulesSections, IReadOnlyCollection<string> expectedSectionName)
     {
         var unknownSections = rulesSections
             .Where(s => !expectedSectionName.Contains(s.Name))

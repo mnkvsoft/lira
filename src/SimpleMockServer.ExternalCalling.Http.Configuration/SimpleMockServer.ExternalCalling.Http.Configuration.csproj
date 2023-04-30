@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleMockServer.ConfigurationProviding\SimpleMockServer.ConfigurationProviding.csproj" />
+    <ProjectReference Include="..\SimpleMockServer.Configuration\SimpleMockServer.Configuration.csproj" />
+    <ProjectReference Include="..\SimpleMockServer.ExternalCalling.Http.Caller\SimpleMockServer.ExternalCalling.Http.Caller.csproj" />
+  </ItemGroup>
+
+</Project>

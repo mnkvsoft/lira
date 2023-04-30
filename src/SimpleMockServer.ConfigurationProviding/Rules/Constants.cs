@@ -8,11 +8,16 @@ class Constants
         public const string Variables = "variables";
         public const string Condition = "condition";
         public const string Response = "response";
-        public const string Callback = "callback";
+        public const string CallPrefix = "call";
     }
     
     public static class BlockName
     {
+        public class Common
+        {
+            public const string Delay = "delay";
+        }
+
         public class Rule
         {
             public const string Method = "method";
@@ -27,7 +32,7 @@ class Constants
             public const string Code = "code";
             public const string Headers = "headers";
             public const string Body = "body";
-            public const string Delay = "delay";
+            public const string Delay = Common.Delay;
         }
     }
     

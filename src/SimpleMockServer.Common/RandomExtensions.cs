@@ -1,4 +1,4 @@
-namespace SimpleMockServer.Common;
+﻿namespace SimpleMockServer.Common;
 
 public static class RandomExtensions
 {

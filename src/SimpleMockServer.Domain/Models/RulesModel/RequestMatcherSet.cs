@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace SimpleMockServer.Domain.Models.RulesModel;
+﻿namespace SimpleMockServer.Domain.Models.RulesModel;
 
 public class RequestMatcherSet
 {
@@ -23,7 +21,7 @@ public class RequestMatcherSet
         _matchers.Add(type, matcher);   
     }
 
-    public async Task<bool> IsMatch(HttpRequest request)
+    public async Task<bool> IsMatch(RequestData request)
     {
         foreach (var matcher in _matchers.Values)
         {

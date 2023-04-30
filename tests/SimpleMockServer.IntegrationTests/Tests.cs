@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using Moq;
+using Moq.Contrib.HttpClient;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.FileSectionFormat;
-using SimpleMockServer.IntegrationTests.Extensions;
+using SimpleMockServer.ExternalCalling.Http.Caller;
 
 namespace SimpleMockServer.IntegrationTests;
 
@@ -32,8 +34,9 @@ public class Tests
     public async Task RuleIsWork(string prettyTestFileName)
     {
         string fixturesDirectory = GetFixturesDirectory();
-        using var factory = new TestApplicationFactory(fixturesDirectory);
-        var httpClient = factory.CreateHttpClient();
+        var mocks = new AppMocks();
+        using var factory = new TestApplicationFactory(fixturesDirectory, mocks);
+        var httpClient = factory.CreateDefaultClient();
 
         Console.WriteLine("Execute file: " + prettyTestFileName);
         string realTestFilePath = fixturesDirectory + prettyTestFileName;
@@ -41,9 +44,10 @@ public class Tests
         var sections = await SectionFileParser.Parse(realTestFilePath, new Dictionary<string, IReadOnlySet<string>>
             {
                 {"expected", new HashSet<string>{ "body", "code", "headers", "elapsed" } },
-                {"case", new HashSet<string>{ "headers", "body", "delay" } },
+                {"case", new HashSet<string>{ "headers", "body", "delay", "wait" } },
+                {"call.http", new HashSet<string>{ "headers", "body", "elapsed" } },
             },
-        maxNestingDepth: 2);
+        maxNestingDepth: 3);
 
         foreach (var caseSection in sections)
         {
@@ -56,6 +60,11 @@ public class Tests
 
             var req = CreateRequest(caseSection);
             var res = await httpClient.SendAsync(req);
+
+            var wait = caseSection.GetBlockValueOrDefault<TimeSpan>("wait");
+
+            if (wait != default)
+                await Task.Delay(wait);
 
             var expectedSection = caseSection.GetSingleChildSection("expected");
 
@@ -80,6 +89,42 @@ public class Tests
             }
 
             AssertValidHeaders(res, expectedSection);
+
+            var httpCallSection = expectedSection.ChildSections.FirstOrDefault(x => x.Name == "call.http");
+            if(httpCallSection != null)
+            {
+                string methodAndPath = httpCallSection.GetSingleLine();
+                (string method, string path) = methodAndPath.SplitToTwoPartsRequired(" ").TrimRequired();
+
+                mocks.HttpMessageHandler.VerifyRequest(async message =>
+                {
+                    var expectedHeadersBlock = httpCallSection.GetBlockOrNull("headers");
+                    if(expectedHeadersBlock != null)
+                    {
+                        var expectedHeaders = expectedHeadersBlock.Lines;
+                        foreach(var expectedHeader in expectedHeaders)
+                        {
+                            (string headerName, string expectedValue) = expectedHeader.SplitToTwoPartsRequired(":").TrimRequired();
+                            string actualValue = message.Headers.FirstOrDefault(x => x.Key == headerName).Value.First();
+
+                            Assert.That(expectedValue, Is.EqualTo(actualValue));
+                        }
+                    }
+
+                    Assert.That(method, Is.EqualTo(message.Method.ToString()));
+                    Assert.That(path, Is.EqualTo(message.RequestUri!.ToString()));
+
+                    var bodyBlock = httpCallSection.GetBlockOrNull("body");
+                    if (bodyBlock != null)
+                    {
+                        string expectedBody = bodyBlock.GetStringValue();
+                        Assert.That(expectedBody, Is.EqualTo(await message.Content!.ReadAsStringAsync()));
+                    }
+
+                    return true;
+
+                }, times: Times.Once());
+            }
         }
     }
 

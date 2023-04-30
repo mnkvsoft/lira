@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Http;
+﻿using SimpleMockServer.Domain.Models.RulesModel;
 using SimpleMockServer.Domain.Models.RulesModel.Generating;
 
 namespace SimpleMockServer.Domain.Functions.Native.Impls.Generating;
@@ -14,7 +14,7 @@ internal record GeneratingFunction : IGeneratingFunction
         _methodsRoot = methodsRoot;
     }
 
-    public string? Generate(HttpRequest request)
+    public string? Generate(RequestData request)
     {
         return CallChainExecutor.Execute(_methodsRoot, _callChain)?.ToString();
     }

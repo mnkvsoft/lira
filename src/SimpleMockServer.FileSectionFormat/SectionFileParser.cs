@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using SimpleMockServer.Common.Extensions;
 
@@ -180,23 +180,44 @@ public static class SectionFileParser
 
         foreach (var line in lines)
         {
-            if (line.StartsWith(CommentChar.SingleLine) || string.IsNullOrWhiteSpace(line))
-                continue;
-
-            if (line.StartsWith(CommentChar.MultiLineStart))
-            {
-                isMultiLineComment = true;
-                continue;
-            }
-
-            if (line.EndsWith(CommentChar.MultiLineEnd))
-            {
-                isMultiLineComment = false;
-                continue;
-            }
-
             if (isMultiLineComment)
                 continue;
+
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+
+            if (line.Contains(CommentChar.SingleLine))
+            {
+                (string text, _) = line.SplitToTwoPartsRequired(CommentChar.SingleLine);
+
+                if(!string.IsNullOrWhiteSpace(text))
+                    result.Add(line);
+
+                continue;
+            }
+
+            if (line.Contains(CommentChar.MultiLineStart))
+            {
+                isMultiLineComment = true;
+                (string text, _) = line.SplitToTwoPartsRequired(CommentChar.MultiLineStart);
+
+                if (!string.IsNullOrWhiteSpace(text))
+                    result.Add(line);
+
+                continue;
+            }
+
+            if (line.Contains(CommentChar.MultiLineEnd))
+            {
+                isMultiLineComment = false;
+
+                (_, string text) = line.SplitToTwoPartsRequired(CommentChar.MultiLineEnd);
+
+                if (!string.IsNullOrWhiteSpace(text))
+                    result.Add(line);
+
+                continue;
+            }
 
             result.Add(line);
         }

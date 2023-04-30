@@ -7,8 +7,6 @@ using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers.Ela
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.ConfigurationProviding.Rules.Parsers;
-
-
 class ConditionMatcherParser
 {
     private readonly IRequestStatisticStorage _requestStatisticStorage;

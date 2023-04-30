@@ -7,11 +7,11 @@ namespace SimpleMockServer.ConfigurationProviding.Rules.Parsers;
 
 class VariablesParser
 {
-    private readonly ValuePartsCreator _valuePartsCreator;
+    private readonly ITextPartsParser _textGeneratorFactory;
 
-    public VariablesParser(ValuePartsCreator valuePartsCreator)
+    public VariablesParser(ITextPartsParser textGeneratorFactory)
     {
-        _valuePartsCreator = valuePartsCreator;
+        _textGeneratorFactory = textGeneratorFactory;
     }
 
     internal VariableSet Parse(FileSection variablesSection)
@@ -28,8 +28,8 @@ class VariablesParser
             if (string.IsNullOrEmpty(pattern))
                 throw new Exception($"Variable '{name}' not initialized. Line: {line}");
 
-            var parts = _valuePartsCreator.Create(pattern, set);
-            set.Add(new ValuePart.Variable(name, parts));
+            var generator = _textGeneratorFactory.Parse(pattern, set);
+            set.Add(new TextPart.Variable(name, generator));
         }
 
         return set;

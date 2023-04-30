@@ -11,7 +11,7 @@
 //    [Test]
 //    public async Task IsMatch_ValidPath_PassValidArgumnetToSingleValuePattern()
 //    {
-//        Mock<HttpRequest> request = new Mock<HttpRequest>();
+//        Mock<RequestData> request = new Mock<RequestData>();
 //        request
 //            .Setup(x => x.Body)
 //            .Returns(new MemoryStream(System.Text.Encoding.UTF8.GetBytes("key1=value1&key2=value2")));

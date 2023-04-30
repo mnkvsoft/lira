@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Http;
+using SimpleMockServer.Domain.Models.RulesModel;
 using SimpleMockServer.Domain.Models.RulesModel.Generating;
 
 namespace SimpleMockServer.Domain.Functions.Pretty.Functions.Generating;
@@ -13,7 +13,7 @@ internal class GeneratingPrettyFunction : IGeneratingFunction
         _format = format;
     }
 
-    public string? Generate(HttpRequest request)
+    public string? Generate(RequestData request)
     {
         object? value = _function.Generate(request);
         if (value is IFormattable formattable && _format != null)

@@ -57,6 +57,15 @@ public static class FileSectionExtensions
         return block.GetValue<T>();
     }
 
+    public static T? GetBlockValueOrNullable<T>(this FileSection section, string blockName) where T : struct
+    {
+        var block = section.GetBlock(blockName);
+        if (block == null)
+            return default(T);
+
+        return block.GetValue<T>();
+    }
+
     public static string GetStringValueFromRequiredBlock(this FileSection section, string blockName)
     {
         var block = section.GetBlockRequired(blockName);

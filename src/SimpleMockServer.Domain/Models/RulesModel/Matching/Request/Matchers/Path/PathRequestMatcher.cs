@@ -1,20 +1,19 @@
-using ArgValidation;
-using Microsoft.AspNetCore.Http;
+﻿using ArgValidation;
 
 namespace SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Path;
 
 
 public class PathRequestMatcher : IRequestMatcher
 {
-    private readonly IReadOnlyList<ValuePattern> _segmentsPatterns;
+    private readonly IReadOnlyList<TextPatternPart> _segmentsPatterns;
 
-    public PathRequestMatcher(IReadOnlyList<ValuePattern> expectedSegments)
+    public PathRequestMatcher(IReadOnlyList<TextPatternPart> expectedSegments)
     {
         Arg.NotEmpty(expectedSegments, nameof(expectedSegments));
         _segmentsPatterns = expectedSegments;
     }
 
-    public Task<bool> IsMatch(HttpRequest request)
+    public Task<bool> IsMatch(RequestData request)
     {
         var currentSegments = request.Path.Value.Split('/');
 

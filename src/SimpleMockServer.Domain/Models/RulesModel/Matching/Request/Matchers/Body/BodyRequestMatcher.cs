@@ -1,19 +1,18 @@
 ﻿using ArgValidation;
-using Microsoft.AspNetCore.Http;
 
 namespace SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Body;
 
 public class BodyRequestMatcher : IRequestMatcher
 {
-    private readonly IReadOnlyCollection<KeyValuePair<IExtractFunction, ValuePattern>> _extractToMatchFunctionMap;
+    private readonly IReadOnlyCollection<KeyValuePair<IBodyExtractFunction, TextPatternPart>> _extractToMatchFunctionMap;
 
-    public BodyRequestMatcher(IReadOnlyCollection<KeyValuePair<IExtractFunction, ValuePattern>> extractToMatchFunctionMap)
+    public BodyRequestMatcher(IReadOnlyCollection<KeyValuePair<IBodyExtractFunction, TextPatternPart>> extractToMatchFunctionMap)
     {
         Arg.NotEmpty(extractToMatchFunctionMap, nameof(extractToMatchFunctionMap));
         _extractToMatchFunctionMap = extractToMatchFunctionMap;
     }
 
-    public async Task<bool> IsMatch(HttpRequest request)
+    public async Task<bool> IsMatch(RequestData request)
     {
         request.Body.Position = 0;
         var stream = new StreamReader(request.Body);

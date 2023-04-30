@@ -1,5 +1,4 @@
 ﻿using ArgValidation;
-using Microsoft.AspNetCore.Http;
 using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions;
 
 namespace SimpleMockServer.Domain.Models.RulesModel;
@@ -17,7 +16,7 @@ public class ConditionMatcherSet
         _conditionMatchers = conditionMatchers;
     }
 
-    public async Task<bool> IsMatch(HttpRequest request, Guid requestId)
+    public async Task<bool> IsMatch(RequestData request, Guid requestId)
     {
         await _requestStatisticStorage.Add(request, requestId);
 

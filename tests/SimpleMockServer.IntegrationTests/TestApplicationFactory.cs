@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -8,17 +9,20 @@ namespace SimpleMockServer.IntegrationTests;
 public class TestApplicationFactory : WebApplicationFactory<Startup>
 {
     private readonly string _searchPath;
+    private readonly AppMocks? _appMocks;
 
-    public TestApplicationFactory(string searchPath)
+
+    public TestApplicationFactory(string searchPath, AppMocks? appMocks = null)
     {
         _searchPath = searchPath;
+        _appMocks = appMocks;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        var settings = new Dictionary<string, string>
+        var settings = new Dictionary<string, string?>
         {
-            {"SEARCH_PATH", _searchPath},
+            {"RulesPath", _searchPath},
         };
 
         var cfgBuilder = new ConfigurationBuilder();
@@ -28,13 +32,9 @@ public class TestApplicationFactory : WebApplicationFactory<Startup>
         builder.UseConfiguration(cfg);
         builder.ConfigureLogging(x =>
         {
-            //x.SetMinimumLevel(LogLevel.Warning);
-            //x.AddConsole();
+            x.SetMinimumLevel(LogLevel.Information);
+            x.AddConsole();
         });
-    }
-
-    public HttpClient CreateHttpClient()
-    {
-        return CreateDefaultClient(new LoggingHandler());
+        builder.ConfigureTestServices(services => _appMocks?.Configure(services));
     }
 }

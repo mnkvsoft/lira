@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SimpleMockServer.Common\SimpleMockServer.Common.csproj" />
-    <ProjectReference Include="..\SimpleMockServer.Domain.Functions.Native\SimpleMockServer.Domain.Functions.Native.csproj" />
     <ProjectReference Include="..\SimpleMockServer.Domain.Functions.Pretty\SimpleMockServer.Domain.Functions.Pretty.csproj" />
     <ProjectReference Include="..\SimpleMockServer.Domain\SimpleMockServer.Domain.csproj" />
     <ProjectReference Include="..\SimpleMockServer.FileSectionFormat\SimpleMockServer.FileSectionFormat.csproj" />

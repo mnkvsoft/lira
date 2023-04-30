@@ -1,0 +1,44 @@
+-------------------- case
+
+POST /call/http
+
+body:
+{
+    "external_id": "12345"
+}
+
+headers:
+Request-Id: 64F67BF9-28C8-41F8-9D8B-75E0A64B8A16
+
+wait:
+00:00:01
+
+----- expected
+
+code:
+200
+
+body:
+{
+    "id": 1,
+    "createdAt": "2023-04-23 10:45",
+    "status": "inprocess"
+}
+
+--- call.http
+
+POST http://fakeserver:9876/api/callback?a=1
+
+elapsed: 
+00:00:00.100
+
+headers:
+Request-Id: 64F67BF9-28C8-41F8-9D8B-75E0A64B8A16
+
+body:
+{
+    "id": 1,
+    "external_id": "12345"
+    "createdAt": "2023-04-23 10:45",
+    "status": "success"
+}

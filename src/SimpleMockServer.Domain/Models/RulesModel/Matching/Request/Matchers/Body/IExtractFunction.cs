@@ -1,6 +1,6 @@
-namespace SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Body;
+﻿namespace SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Body;
 
-public interface IExtractFunction
+public interface IBodyExtractFunction
 {
-    string? Extract(string? value);
+    string? Extract(string? body);
 }

@@ -1,21 +1,20 @@
 ﻿namespace SimpleMockServer.Domain.Models.RulesModel.Matching.Request;
 
-
-public abstract record ValuePattern
+public abstract record TextPatternPart
 {
     public abstract bool IsMatch(string? value);
 
-    public record Static(string Expected) : ValuePattern
+    public record Static(string Expected) : TextPatternPart
     {
         public override bool IsMatch(string? current) => Expected.Equals(current, StringComparison.OrdinalIgnoreCase);
     }
 
-    public record NullOrEmpty : ValuePattern
+    public record NullOrEmpty : TextPatternPart
     {
         public override bool IsMatch(string? current) => string.IsNullOrWhiteSpace(current);
     }
 
-    public record Dynamic(string? Start, string? End, IStringMatchFunction MatchFunction) : ValuePattern
+    public record Dynamic(string? Start, string? End, IStringMatchFunction MatchFunction) : TextPatternPart
     {
         public override bool IsMatch(string? current)
         {

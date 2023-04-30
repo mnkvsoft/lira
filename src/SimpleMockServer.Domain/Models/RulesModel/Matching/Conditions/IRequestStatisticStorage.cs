@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions;
@@ -14,8 +13,8 @@ public interface IRequestStatisticStorage
     /// <param name="requestId">
     /// Is required so as not to add statistics for the same request from different rules
     /// </param>
-    Task Add(HttpRequest request, Guid requestId);
-    Task<RequestStatistic?> Get(HttpRequest request);
+    Task Add(RequestData request, Guid requestId);
+    Task<RequestStatistic?> Get(RequestData request);
 }
 
 public class RequestStatisticStorage : IRequestStatisticStorage
@@ -27,7 +26,7 @@ public class RequestStatisticStorage : IRequestStatisticStorage
         _cache = cache;
     }
 
-    public async Task Add(HttpRequest request, Guid requestId)
+    public async Task Add(RequestData request, Guid requestId)
     {
         var hash = await GetHash(request);
 
@@ -51,14 +50,14 @@ public class RequestStatisticStorage : IRequestStatisticStorage
         }
     }
 
-    public async Task<RequestStatistic?> Get(HttpRequest request)
+    public async Task<RequestStatistic?> Get(RequestData request)
     {
         var hash = await GetHash(request);
         var result = _cache.Get<RequestStatistic>(hash);
         return result;
     }
 
-    private async Task<string> GetHash(HttpRequest request)
+    private async Task<string> GetHash(RequestData request)
     {
         using var memoryStream = new MemoryStream();
         using var sw = new StreamWriter(memoryStream);

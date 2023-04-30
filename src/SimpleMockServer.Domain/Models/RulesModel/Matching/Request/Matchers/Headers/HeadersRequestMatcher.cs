@@ -1,19 +1,18 @@
 using ArgValidation;
-using Microsoft.AspNetCore.Http;
 
 namespace SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Headers;
 
 internal class HeadersRequestMatcher : IRequestMatcher
 {
-    IReadOnlyDictionary<string, ValuePattern> _headers;
+    IReadOnlyDictionary<string, TextPatternPart> _headers;
 
-    public HeadersRequestMatcher(IReadOnlyDictionary<string, ValuePattern> headers)
+    public HeadersRequestMatcher(IReadOnlyDictionary<string, TextPatternPart> headers)
     {
         Arg.NotEmpty(headers, nameof(headers));
         _headers = headers;
     }
 
-    public Task<bool> IsMatch(HttpRequest request)
+    public Task<bool> IsMatch(RequestData request)
     {
         foreach (var header in _headers)
         {

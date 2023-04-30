@@ -1,12 +1,12 @@
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace SimpleMockServer.Domain.Models.RulesModel.Generating.Writers;
 
 public class BodyWriter
 {
-    private readonly ValuePartSet _parts;
+    private readonly TextParts _parts;
 
-    public BodyWriter(ValuePartSet parts)
+    public BodyWriter(TextParts parts)
     {
         _parts = parts;
     }
@@ -15,8 +15,7 @@ public class BodyWriter
     {
         foreach (var part in _parts)
         {
-            string? value = part.Get(httpContextData.Request);
-            await httpContextData.Response.WriteAsync(value);
+            await httpContextData.Response.WriteAsync(part.Get(httpContextData.Request));
         }
     }
 }

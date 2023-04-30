@@ -1,10 +1,11 @@
 ﻿using System.Web;
 using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
+using SimpleMockServer.Domain.Functions.Pretty;
+using SimpleMockServer.Domain.Functions.Pretty.Functions.Generating;
+using SimpleMockServer.Domain.Functions.Pretty.Functions.Matching.String;
 using SimpleMockServer.Domain.Models.RulesModel;
 using SimpleMockServer.Domain.Models.RulesModel.Matching.Request;
 using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Body;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Body.Functions;
 using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Headers;
 using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Method;
 using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Path;
@@ -15,11 +16,13 @@ namespace SimpleMockServer.ConfigurationProviding.Rules.Parsers;
 
 class RequestMatchersParser
 {
-    private readonly FunctionFactory _functionFactory;
+    private readonly IBodyExtractFunctionFactory _bodyExtractFunctionFactory;
+    private readonly IStringMatchFunctionFactory _stringMatchFunctionFactory;
 
-    public RequestMatchersParser(FunctionFactory functionFactory)
+    public RequestMatchersParser(IStringMatchFunctionFactory stringMatchFunctionFactory, IBodyExtractFunctionFactory bodyExtractFunctionFactory)
     {
-        _functionFactory = functionFactory;
+        _stringMatchFunctionFactory = stringMatchFunctionFactory;
+        _bodyExtractFunctionFactory = bodyExtractFunctionFactory;
     }
 
     public RequestMatcherSet Parse(FileSection ruleSection)
@@ -87,10 +90,7 @@ class RequestMatchersParser
 
     private static MethodRequestMatcher CreateMethodRequestMather(string method)
     {
-        if (!Constants.HttpMethods.Contains(method))
-            throw new Exception($"String '{method}' not http method");
-
-        return new MethodRequestMatcher(new HttpMethod(method));
+        return new MethodRequestMatcher(method.ToHttpMethod());
     }
 
     private PathRequestMatcher CreatePathRequestMatcher(string path)
@@ -111,7 +111,7 @@ class RequestMatchersParser
     {
         var pars = HttpUtility.ParseQueryString(queryString);
 
-        var patterns = new Dictionary<string, ValuePattern>();
+        var patterns = new Dictionary<string, TextPatternPart>();
 
         foreach (var key in pars.AllKeys)
         {
@@ -126,7 +126,7 @@ class RequestMatchersParser
 
     private HeadersRequestMatcher CreateHeadersRequestMatcher(FileBlock block)
     {
-        var headers = new Dictionary<string, ValuePattern>();
+        var headers = new Dictionary<string, TextPatternPart>();
 
         foreach (var line in block.Lines)
         {
@@ -143,13 +143,13 @@ class RequestMatchersParser
     
     private IRequestMatcher CreateBodyRequestMatcher(FileBlock block)
     {
-        var patterns = new List<KeyValuePair<IExtractFunction, ValuePattern>>();
+        var patterns = new List<KeyValuePair<IBodyExtractFunction, TextPatternPart>>();
 
         foreach (var line in block.Lines)
         {
             if (!line.Contains(Consts.FunctionSplitter))
             {
-                patterns.Add(new KeyValuePair<IExtractFunction, ValuePattern>(new AllExtractFunction(), CreateValuePattern(line.Trim())));
+                patterns.Add(new KeyValuePair<IBodyExtractFunction, TextPatternPart>(_bodyExtractFunctionFactory.Create(FunctionName.ExtractBody.All), CreateValuePattern(line.Trim())));
                 continue;
             }
 
@@ -165,17 +165,17 @@ class RequestMatchersParser
                 .TrimEnd(Consts.ExecutedBlock.End)
                 .Trim();
 
-            var extractFunction = _functionFactory.CreateExtractFunction(extractFunctionInvoke);
+            var extractFunction = _bodyExtractFunctionFactory.Create(extractFunctionInvoke);
 
-            patterns.Add(new KeyValuePair<IExtractFunction, ValuePattern>(extractFunction, CreateValuePattern(pattern)));
+            patterns.Add(new KeyValuePair<IBodyExtractFunction, TextPatternPart>(extractFunction, CreateValuePattern(pattern)));
         }
 
         return new BodyRequestMatcher(patterns);
     }
 
-    private IReadOnlyList<ValuePattern> CreatePatterns(string[] rawValues)
+    private IReadOnlyList<TextPatternPart> CreatePatterns(string[] rawValues)
     {
-        var patterns = new List<ValuePattern>(rawValues.Length);
+        var patterns = new List<TextPatternPart>(rawValues.Length);
 
         foreach (var rawValue in rawValues)
         {
@@ -185,13 +185,13 @@ class RequestMatchersParser
         return patterns;
     }
 
-    private ValuePattern CreateValuePattern(string? rawValue)
+    private TextPatternPart CreateValuePattern(string? rawValue)
     {
         if (string.IsNullOrWhiteSpace(rawValue))
-            return new ValuePattern.NullOrEmpty();
+            return new TextPatternPart.NullOrEmpty();
 
         if (!rawValue.Contains(Consts.ExecutedBlock.Begin) && !rawValue.Contains(Consts.ExecutedBlock.End))
-            return new ValuePattern.Static(rawValue);
+            return new TextPatternPart.Static(rawValue);
 
         if (!rawValue.Contains(Consts.ExecutedBlock.Begin))
             throw new Exception($"Not found begin block for '{rawValue}'");
@@ -207,6 +207,6 @@ class RequestMatchersParser
             .TrimEnd(end).TrimEnd(Consts.ExecutedBlock.End)
             .Trim();
 
-        return new ValuePattern.Dynamic(start, end, _functionFactory.CreateStringMatchFunction(methodCallString));
+        return new TextPatternPart.Dynamic(start, end, _stringMatchFunctionFactory.Create(methodCallString));
     }
 }

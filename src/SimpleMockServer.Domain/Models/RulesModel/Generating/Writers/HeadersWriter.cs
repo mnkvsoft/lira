@@ -1,13 +1,12 @@
-using System.Text;
-using ArgValidation;
+﻿using ArgValidation;
 
 namespace SimpleMockServer.Domain.Models.RulesModel.Generating.Writers;
 
 public class HeadersWriter
 {
-    private readonly IDictionary<string, ValuePartSet> _headers;
+    private readonly IReadOnlyCollection<GeneratingHeader> _headers;
 
-    public HeadersWriter(IDictionary<string, ValuePartSet> headers)
+    public HeadersWriter(IReadOnlyCollection<GeneratingHeader> headers)
     {
         Arg.NotEmpty(headers, nameof(headers));
         _headers = headers;
@@ -19,18 +18,12 @@ public class HeadersWriter
 
         foreach (var header in _headers)
         {
-            StringBuilder sbValue = new StringBuilder();
-            var parts = header.Value;
-            foreach (var part in parts)
-            {
-                sbValue.Append(part.Get(httpContextData.Request));
-            }
+            string value = header.TextParts.Generate(httpContextData.Request);
 
-            string value = sbValue.ToString();
-            if (header.Key == "Content-Type")
+            if (header.Name == "Content-Type")
                 response.ContentType = value;
             else
-                response.Headers.Add(header.Key, value);
+                response.Headers.Add(header.Name, value);
         }
     }
 }
