@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SimpleMockServer.ConfigurationProviding\SimpleMockServer.ConfigurationProviding.csproj" />
+    <ProjectReference Include="..\SimpleMockServer.Domain.Configuration\SimpleMockServer.Domain.Configuration.csproj" />
     <ProjectReference Include="..\SimpleMockServer.Configuration\SimpleMockServer.Configuration.csproj" />
     <ProjectReference Include="..\SimpleMockServer.ExternalCalling.Http.Caller\SimpleMockServer.ExternalCalling.Http.Caller.csproj" />
   </ItemGroup>

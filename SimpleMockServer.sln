@@ -24,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.FileSectio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain", "src\SimpleMockServer.Domain\SimpleMockServer.Domain.csproj", "{E2CD2B3B-6D9F-4EAB-80C1-5D6F09BACD93}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.ConfigurationProviding", "src\SimpleMockServer.ConfigurationProviding\SimpleMockServer.ConfigurationProviding.csproj", "{6D9A5298-EB81-4474-A518-143FD9F3F4E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.Configuration", "src\SimpleMockServer.Domain.Configuration\SimpleMockServer.Domain.Configuration.csproj", "{6D9A5298-EB81-4474-A518-143FD9F3F4E5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.Functions.Native", "src\SimpleMockServer.Domain.Functions.Native\SimpleMockServer.Domain.Functions.Native.csproj", "{0E782DD1-2926-4B14-9137-508E77D416E2}"
 EndProject
