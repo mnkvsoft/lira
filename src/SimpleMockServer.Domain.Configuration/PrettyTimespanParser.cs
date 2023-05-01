@@ -1,6 +1,6 @@
 ﻿using SimpleMockServer.Common.Extensions;
 
-namespace SimpleMockServer.ConfigurationProviding;
+namespace SimpleMockServer.Domain.Configuration;
 
 internal static class PrettyTimespanParser
 {

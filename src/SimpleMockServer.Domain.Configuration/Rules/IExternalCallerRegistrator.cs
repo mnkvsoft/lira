@@ -1,7 +1,6 @@
-﻿using SimpleMockServer.Domain.Models.RulesModel;
-using SimpleMockServer.FileSectionFormat;
+﻿using SimpleMockServer.FileSectionFormat;
 
-namespace SimpleMockServer.ConfigurationProviding.Rules;
+namespace SimpleMockServer.Domain.Configuration.Rules;
 
 public interface IExternalCallerRegistrator
 {

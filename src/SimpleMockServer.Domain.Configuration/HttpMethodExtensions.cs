@@ -1,6 +1,6 @@
-﻿using SimpleMockServer.ConfigurationProviding.Rules;
+﻿using SimpleMockServer.Domain.Configuration.Rules;
 
-namespace SimpleMockServer.ConfigurationProviding;
+namespace SimpleMockServer.Domain.Configuration;
 
 public static class HttpMethodExtensions
 {

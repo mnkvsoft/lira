@@ -1,22 +1,24 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using SimpleMockServer.ConfigurationProviding.DataModel;
-using SimpleMockServer.ConfigurationProviding.Rules;
-using SimpleMockServer.ConfigurationProviding.Rules.Parsers;
-using SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
-using SimpleMockServer.Domain.Functions.Pretty;
-using SimpleMockServer.Domain.Models.DataModel;
-using SimpleMockServer.Domain.Models.RulesModel.Generating;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using SimpleMockServer.Domain.Configuration.DataModel;
+using SimpleMockServer.Domain.Configuration.Rules;
+using SimpleMockServer.Domain.Configuration.Rules.Parsers;
+using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
+using SimpleMockServer.Domain.DataModel;
+using SimpleMockServer.Domain.Matching.Conditions;
+using SimpleMockServer.Domain.TextPart.Functions;
 
-namespace SimpleMockServer.ConfigurationProviding;
+namespace SimpleMockServer.Domain.Configuration;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddDomain(this IServiceCollection services)
+    public static IServiceCollection AddDomainConfiguration(this IServiceCollection services)
     {
+        services.TryAddSingleton<IMemoryCache, MemoryCache>();
+
         return services
-           .AddPrettyFunctions()
+           .AddFunctions()
            .AddSingleton<IDataProvider, DataProvider>()
            .AddSingleton<ConditionMatcherParser>()
            .AddSingleton<RequestMatchersParser>()
@@ -26,8 +28,6 @@ public static class ServiceCollectionExtensions
            .AddSingleton<GeneratingHttpDataParser>()
            .AddSingleton<ITextPartsParser, TextPartsParser>()
            .AddSingleton<RulesFileParser>()
-           .AddSingleton<IMemoryCache, MemoryCache>()
-           .AddSingleton<IRequestStatisticStorage, RequestStatisticStorage>()
            .AddSingleton<IRulesProvider, RulesProvider>();
     }
 }

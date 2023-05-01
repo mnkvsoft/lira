@@ -1,4 +1,4 @@
-namespace SimpleMockServer.ConfigurationProviding;
+namespace SimpleMockServer.Domain.Configuration;
 
 class Consts
 {

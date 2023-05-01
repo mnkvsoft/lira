@@ -1,6 +1,4 @@
-using SimpleMockServer.Domain.Models.RulesModel;
-
-namespace SimpleMockServer.ConfigurationProviding.Rules;
+namespace SimpleMockServer.Domain.Configuration.Rules;
 
 public interface IRulesProvider
 {

@@ -1,9 +1,9 @@
 ﻿using SimpleMockServer.Common.Exceptions;
 using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.Domain.Functions.Pretty.Functions.Generating;
-using SimpleMockServer.Domain.Models.RulesModel.Generating;
+using SimpleMockServer.Domain.Generating;
+using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
 
-namespace SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
+namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 
 public interface ITextPartsParser
 {
@@ -23,7 +23,7 @@ class TextPartsParser : ITextPartsParser
     {
         var patternParts = PatternParser.Parse(pattern);
 
-        var parts = new List<TextPart>();
+        var parts = new List<ITextPart>();
         foreach (var patternPart in patternParts)
         {
             parts.Add(CreateValuePart(patternPart, variables));
@@ -32,12 +32,12 @@ class TextPartsParser : ITextPartsParser
         return new TextParts(parts);
     }
 
-    private TextPart CreateValuePart(PatternPart patternPart, VariableSet variables)
+    private ITextPart CreateValuePart(PatternPart patternPart, VariableSet variables)
     {
         switch (patternPart)
         {
             case PatternPart.Static:
-                return new TextPart.Static(patternPart.Value);
+                return new Static(patternPart.Value);
             case PatternPart.Dynamic dynamicPart:
                 return GetDynamicPart(dynamicPart, variables);
             default:
@@ -45,7 +45,7 @@ class TextPartsParser : ITextPartsParser
         }
     }
 
-    private TextPart GetDynamicPart(PatternPart.Dynamic dynamicPart, VariableSet variables)
+    private ITextPart GetDynamicPart(PatternPart.Dynamic dynamicPart, VariableSet variables)
     {
         if (dynamicPart.Value.StartsWith(Constants.ControlChars.VariablePrefix))
         {
@@ -54,6 +54,6 @@ class TextPartsParser : ITextPartsParser
             return variable;
         }
 
-        return new TextPart.Function(_generatingFunctionFactory.Create(dynamicPart.Value));
+        return _generatingFunctionFactory.Create(dynamicPart.Value);
     }
 }

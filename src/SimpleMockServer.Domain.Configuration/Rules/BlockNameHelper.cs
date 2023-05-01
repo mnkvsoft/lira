@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using SimpleMockServer.Common.Extensions;
 
-namespace SimpleMockServer.ConfigurationProviding.Rules;
+namespace SimpleMockServer.Domain.Configuration.Rules;
 
 public class BlockNameHelper
 {

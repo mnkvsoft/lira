@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleMockServer.Configuration;
-using SimpleMockServer.ConfigurationProviding.Rules;
+using SimpleMockServer.Domain.Configuration.Rules;
 using SimpleMockServer.ExternalCalling.Http.Caller;
 
 namespace SimpleMockServer.ExternalCalling.Http.Configuration;

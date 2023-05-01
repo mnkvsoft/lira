@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SimpleMockServer.Domain.DataModel\SimpleMockServer.Domain.DataModel.csproj" />
+        <ProjectReference Include="..\SimpleMockServer.Domain\SimpleMockServer.Domain.csproj" />
+    </ItemGroup>
+</Project>

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
+namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 
 using static Consts.ExecutedBlock;
 
@@ -11,8 +11,8 @@ internal static class PatternParser
         var parts = new List<PatternPart>();
         var sb = new StringBuilder();
 
-        CharEnumerator iterator = pattern.GetEnumerator();
-        bool writeCallChain = false;
+        var iterator = pattern.GetEnumerator();
+        var writeCallChain = false;
 
         while (iterator.MoveNext())
         {
@@ -29,7 +29,7 @@ internal static class PatternParser
                     sb.Clear();
 
                     writeCallChain = true;
-                    StringBuilder callChain = new StringBuilder();
+                    var callChain = new StringBuilder();
                     while (iterator.MoveNext())
                     {
                         if (iterator.Current == EndChar)

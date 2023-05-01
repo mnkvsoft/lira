@@ -1,12 +1,11 @@
 ﻿using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.Domain.Models.RulesModel;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers.Attempt;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Conditions.Matchers.Elapsed;
+using SimpleMockServer.Domain.Matching.Conditions;
+using SimpleMockServer.Domain.Matching.Conditions.Matchers;
+using SimpleMockServer.Domain.Matching.Conditions.Matchers.Attempt;
+using SimpleMockServer.Domain.Matching.Conditions.Matchers.Elapsed;
 using SimpleMockServer.FileSectionFormat;
 
-namespace SimpleMockServer.ConfigurationProviding.Rules.Parsers;
+namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
 class ConditionMatcherParser
 {
     private readonly IRequestStatisticStorage _requestStatisticStorage;
@@ -36,7 +35,7 @@ class ConditionMatcherParser
 
         if (splitResult.LeftPart == ConditionMatcherName.Attempt)
         {
-            if (!int.TryParse(splitResult.RightPart, out int value))
+            if (!int.TryParse(splitResult.RightPart, out var value))
                 throw new ArgumentException($"Not int value '{splitResult.RightPart}' in line {line}");
 
             var comparer = GetValueComparer(splitResult.Splitter, value);

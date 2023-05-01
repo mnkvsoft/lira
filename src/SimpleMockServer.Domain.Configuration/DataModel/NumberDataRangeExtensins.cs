@@ -1,10 +1,10 @@
-using SimpleMockServer.Domain.Models.DataModel;
-using SimpleMockServer.Domain.Models.DataModel.DataImpls.Guid;
-using SimpleMockServer.Domain.Models.DataModel.DataImpls.Guid.Ranges;
-using SimpleMockServer.Domain.Models.DataModel.DataImpls.Number;
-using SimpleMockServer.Domain.Models.DataModel.DataImpls.Number.Ranges;
+﻿using SimpleMockServer.Domain.DataModel;
+using SimpleMockServer.Domain.DataModel.DataImpls.Guid;
+using SimpleMockServer.Domain.DataModel.DataImpls.Guid.Ranges;
+using SimpleMockServer.Domain.DataModel.DataImpls.Number;
+using SimpleMockServer.Domain.DataModel.DataImpls.Number.Ranges;
 
-namespace SimpleMockServer.ConfigurationProviding.DataModel;
+namespace SimpleMockServer.Domain.Configuration.DataModel;
 
 static class NumberDataRangeExtensins
 {

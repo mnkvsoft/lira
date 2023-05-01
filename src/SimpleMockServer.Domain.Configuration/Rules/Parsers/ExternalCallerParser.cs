@@ -1,8 +1,7 @@
 ﻿using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.Domain.Models.RulesModel;
 using SimpleMockServer.FileSectionFormat;
 
-namespace SimpleMockServer.ConfigurationProviding.Rules.Parsers;
+namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
 
 class ExternalCallerParser
 {
@@ -19,7 +18,7 @@ class ExternalCallerParser
 
         foreach (var registrator in _externalCallerRegistrators)
         {
-            string sectionName = GetSectionName(registrator);
+            var sectionName = GetSectionName(registrator);
             var knownBlocks = new HashSet<string>
             {
                 Constants.BlockName.Common.Delay
@@ -37,7 +36,7 @@ class ExternalCallerParser
 
     internal IReadOnlyCollection<Delayed<IExternalCaller>> Parse(IReadOnlyCollection<FileSection> sections, VariableSet variables)
     {
-        var result  = new List<Delayed<IExternalCaller>>();  
+        var result = new List<Delayed<IExternalCaller>>();
 
         foreach (var section in sections)
         {
@@ -46,12 +45,12 @@ class ExternalCallerParser
             if (registrator == null)
                 continue;
 
-            IExternalCaller caller = registrator.Create(section, variables);
+            var caller = registrator.Create(section, variables);
 
             TimeSpan? delay = null;
-            string delayStr = section.GetStringValueFromBlockOrEmpty(Constants.BlockName.Common.Delay);
+            var delayStr = section.GetStringValueFromBlockOrEmpty(Constants.BlockName.Common.Delay);
 
-            if(!string.IsNullOrWhiteSpace(delayStr)) 
+            if (!string.IsNullOrWhiteSpace(delayStr))
                 delay = PrettyTimespanParser.Parse(delayStr);
 
             result.Add(new Delayed<IExternalCaller>(caller, delay));

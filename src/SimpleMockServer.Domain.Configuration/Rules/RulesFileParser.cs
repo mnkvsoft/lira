@@ -1,16 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.ConfigurationProviding.Rules.Parsers;
-using SimpleMockServer.Domain.Models.RulesModel;
+using SimpleMockServer.Domain.Configuration.Rules.Parsers;
 using SimpleMockServer.FileSectionFormat;
 
-namespace SimpleMockServer.ConfigurationProviding.Rules;
+namespace SimpleMockServer.Domain.Configuration.Rules;
 
 
 internal class RulesFileParser
 {
     private readonly ILoggerFactory _loggerFactory;
-    
+
     private readonly RequestMatchersParser _requestMatchersParser;
     private readonly ResponseWriterParser _responseWriterParser;
     private readonly ConditionMatcherParser _conditionMatcherParser;
@@ -49,10 +48,10 @@ internal class RulesFileParser
                 knownBlockForSections: knownSectionsBlocks,
                 maxNestingDepth: 3);
 
-            AssertContainsOnlySections(rulesSections, new [] { Constants.SectionName.Rule });
+            AssertContainsOnlySections(rulesSections, new[] { Constants.SectionName.Rule });
 
             var rules = new List<Rule>();
-            for (int i = 0; i < rulesSections.Count; i++)
+            for (var i = 0; i < rulesSections.Count; i++)
             {
                 var fi = new FileInfo(ruleFile);
                 var ruleName = $"no. {i + 1} file: {fi.Name}";
@@ -118,7 +117,7 @@ internal class RulesFileParser
         }
 
         AssertContainsOnlySections(
-            childSections, 
+            childSections,
             externalCallerSections.NewWith(Constants.SectionName.Response, Constants.SectionName.Variables));
 
         responseWriter = _responseWriterParser.Parse(ruleSection, variables);

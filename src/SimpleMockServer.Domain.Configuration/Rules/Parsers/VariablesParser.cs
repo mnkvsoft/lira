@@ -1,9 +1,9 @@
 ﻿using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
-using SimpleMockServer.Domain.Models.RulesModel.Generating;
+using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
+using SimpleMockServer.Domain.Generating;
 using SimpleMockServer.FileSectionFormat;
 
-namespace SimpleMockServer.ConfigurationProviding.Rules.Parsers;
+namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
 
 class VariablesParser
 {
@@ -16,20 +16,20 @@ class VariablesParser
 
     internal VariableSet Parse(FileSection variablesSection)
     {
-        VariableSet set = new VariableSet();
+        var set = new VariableSet();
 
-        foreach(var line in variablesSection.LinesWithoutBlock)
+        foreach (var line in variablesSection.LinesWithoutBlock)
         {
-            (string name, string? pattern) = line.SplitToTwoParts("=").Trim();
+            (var name, var pattern) = line.SplitToTwoParts("=").Trim();
 
-            if(string.IsNullOrEmpty(name))
-                throw new Exception($"Variable name not defined. Line: {line}");
+            if (string.IsNullOrEmpty(name))
+                throw new Exception($"RequestVariable name not defined. Line: {line}");
 
             if (string.IsNullOrEmpty(pattern))
-                throw new Exception($"Variable '{name}' not initialized. Line: {line}");
+                throw new Exception($"RequestVariable '{name}' not initialized. Line: {line}");
 
             var generator = _textGeneratorFactory.Parse(pattern, set);
-            set.Add(new TextPart.Variable(name, generator));
+            set.Add(new RequestVariable(name, generator));
         }
 
         return set;

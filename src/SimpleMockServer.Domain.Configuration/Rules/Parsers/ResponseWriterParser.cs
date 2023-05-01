@@ -1,8 +1,7 @@
-﻿using SimpleMockServer.Domain.Models.RulesModel;
-using SimpleMockServer.Domain.Models.RulesModel.Generating.Writers;
+﻿using SimpleMockServer.Domain.Generating.Writers;
 using SimpleMockServer.FileSectionFormat;
 
-namespace SimpleMockServer.ConfigurationProviding.Rules.Parsers;
+namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
 
 class ResponseWriterParser
 {
@@ -83,7 +82,7 @@ class ResponseWriterParser
 
     private static int ParseHttpCode(string str)
     {
-        if (!int.TryParse(str, out int httpCode))
+        if (!int.TryParse(str, out var httpCode))
             throw new Exception($"Invalid http code: '{str}'");
         return httpCode;
     }

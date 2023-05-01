@@ -1,9 +1,9 @@
 ﻿using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.ConfigurationProviding;
-using SimpleMockServer.ConfigurationProviding.Rules;
-using SimpleMockServer.ConfigurationProviding.Rules.Parsers;
-using SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
-using SimpleMockServer.Domain.Models.RulesModel;
+using SimpleMockServer.Domain;
+using SimpleMockServer.Domain.Configuration;
+using SimpleMockServer.Domain.Configuration.Rules;
+using SimpleMockServer.Domain.Configuration.Rules.Parsers;
+using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.ExternalCalling.Http.Caller;
 using SimpleMockServer.FileSectionFormat;
 

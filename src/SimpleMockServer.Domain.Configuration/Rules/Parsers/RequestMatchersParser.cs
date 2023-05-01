@@ -1,18 +1,17 @@
 ﻿using System.Web;
 using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.Domain.Functions.Pretty;
-using SimpleMockServer.Domain.Functions.Pretty.Functions.Generating;
-using SimpleMockServer.Domain.Functions.Pretty.Functions.Matching.String;
-using SimpleMockServer.Domain.Models.RulesModel;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Request;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Body;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Headers;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Method;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.Path;
-using SimpleMockServer.Domain.Models.RulesModel.Matching.Request.Matchers.QueryString;
+using SimpleMockServer.Domain.Matching.Request;
+using SimpleMockServer.Domain.Matching.Request.Matchers.Body;
+using SimpleMockServer.Domain.Matching.Request.Matchers.Headers;
+using SimpleMockServer.Domain.Matching.Request.Matchers.Method;
+using SimpleMockServer.Domain.Matching.Request.Matchers.Path;
+using SimpleMockServer.Domain.Matching.Request.Matchers.QueryString;
+using SimpleMockServer.Domain.TextPart.Functions;
+using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
+using SimpleMockServer.Domain.TextPart.Functions.Functions.Matching.String;
 using SimpleMockServer.FileSectionFormat;
 
-namespace SimpleMockServer.ConfigurationProviding.Rules.Parsers;
+namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
 
 class RequestMatchersParser
 {
@@ -49,22 +48,22 @@ class RequestMatchersParser
 
         var result = new List<IRequestMatcher>();
 
-        string methodAndPath = lines[0];
+        var methodAndPath = lines[0];
 
-        (string method, string? pathAndQuery) = methodAndPath.SplitToTwoParts(" ").Trim();
+        (var method, var pathAndQuery) = methodAndPath.SplitToTwoParts(" ").Trim();
 
         result.Add(CreateMethodRequestMather(method));
 
         if (pathAndQuery == null)
             return result;
-        
-        (string path, string? query) = pathAndQuery.SplitToTwoParts("?").Trim();
-        
+
+        (var path, var query) = pathAndQuery.SplitToTwoParts("?").Trim();
+
         result.Add(CreatePathRequestMatcher(path));
-        
-        if(query != null)
+
+        if (query != null)
             result.Add(CreateQueryStringMatcher(query));
-        
+
         return result;
     }
 
@@ -101,12 +100,12 @@ class RequestMatchersParser
         if (!path.StartsWith('/'))
             throw new Exception($"Matching path must start with '/'. Current value: '{path}'");
 
-        string[] rawSegments = path.Split('/');
+        var rawSegments = path.Split('/');
 
         var patterns = CreatePatterns(rawSegments);
         return new PathRequestMatcher(patterns);
     }
-    
+
     private QueryStringRequestMatcher CreateQueryStringMatcher(string queryString)
     {
         var pars = HttpUtility.ParseQueryString(queryString);
@@ -133,14 +132,14 @@ class RequestMatchersParser
             if (string.IsNullOrEmpty(line))
                 break;
 
-            (string headerName, string headerPattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.HeaderSplitter).TrimRequired();
-            
+            (var headerName, var headerPattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.HeaderSplitter).TrimRequired();
+
             headers.Add(headerName, CreateValuePattern(headerPattern));
         }
 
         return new HeadersRequestMatcher(headers);
     }
-    
+
     private IRequestMatcher CreateBodyRequestMatcher(FileBlock block)
     {
         var patterns = new List<KeyValuePair<IBodyExtractFunction, TextPatternPart>>();
@@ -153,8 +152,8 @@ class RequestMatchersParser
                 continue;
             }
 
-            (string extractFunctionInvoke, string pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.Lambda).TrimRequired();
-            
+            (var extractFunctionInvoke, var pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.Lambda).TrimRequired();
+
             // can write either
             // {{ xpath://employee[1]/text() }}
             // or
@@ -199,10 +198,10 @@ class RequestMatchersParser
         if (!rawValue.Contains(Consts.ExecutedBlock.End))
             throw new Exception($"Not found end block for '{rawValue}'");
 
-        string start = rawValue.Substring(0, rawValue.IndexOf(Consts.ExecutedBlock.Begin, StringComparison.Ordinal));
-        string end = rawValue.Substring(rawValue.IndexOf(Consts.ExecutedBlock.End, StringComparison.Ordinal) + Consts.ExecutedBlock.End.Length);
+        var start = rawValue.Substring(0, rawValue.IndexOf(Consts.ExecutedBlock.Begin, StringComparison.Ordinal));
+        var end = rawValue.Substring(rawValue.IndexOf(Consts.ExecutedBlock.End, StringComparison.Ordinal) + Consts.ExecutedBlock.End.Length);
 
-        string methodCallString = rawValue
+        var methodCallString = rawValue
             .TrimStart(start).TrimStart(Consts.ExecutedBlock.Begin)
             .TrimEnd(end).TrimEnd(Consts.ExecutedBlock.End)
             .Trim();

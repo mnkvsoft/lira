@@ -1,7 +1,7 @@
-﻿using SimpleMockServer.ConfigurationProviding;
-using SimpleMockServer.ExternalCalling.Http.Configuration;
+﻿using SimpleMockServer.ExternalCalling.Http.Configuration;
 using SimpleMockServer.Middlewares;
 using SimpleMockServer.Configuration;
+using SimpleMockServer.Domain.Configuration;
 
 namespace SimpleMockServer;
 
@@ -19,6 +19,7 @@ public class Startup
         services
             .AddLogging(x => { x.AddConsole(); })
             .AddSingleton<RoutingMiddleware>()
+            .AddDomainConfiguration()
             .AddDomain()
             .AddHttpCalling(_configuration);
     }

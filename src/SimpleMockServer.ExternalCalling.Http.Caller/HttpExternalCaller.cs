@@ -1,5 +1,5 @@
-﻿using SimpleMockServer.Domain.Models.RulesModel;
-using SimpleMockServer.Domain.Models.RulesModel.Generating;
+﻿using SimpleMockServer.Domain;
+using SimpleMockServer.Domain.Generating;
 
 namespace SimpleMockServer.ExternalCalling.Http.Caller;
 

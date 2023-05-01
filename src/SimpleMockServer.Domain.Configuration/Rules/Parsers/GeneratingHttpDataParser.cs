@@ -1,9 +1,9 @@
 ﻿using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
-using SimpleMockServer.Domain.Models.RulesModel.Generating;
+using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
+using SimpleMockServer.Domain.Generating;
 using SimpleMockServer.FileSectionFormat;
 
-namespace SimpleMockServer.ConfigurationProviding.Rules.Parsers;
+namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
 
 public class GeneratingHttpDataParser
 {
@@ -22,7 +22,7 @@ public class GeneratingHttpDataParser
             if (string.IsNullOrEmpty(line))
                 break;
 
-            (string headerName, string? headerPattern) = line.SplitToTwoParts(":").Trim();
+            (var headerName, var headerPattern) = line.SplitToTwoParts(":").Trim();
 
             if (headerPattern == null)
                 throw new Exception($"Empty matching for header '{headerPattern}' in line: '{line}'");

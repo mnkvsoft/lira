@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
-using SimpleMockServer.Domain.Models.RulesModel;
 
-namespace SimpleMockServer.ConfigurationProviding.Rules;
+namespace SimpleMockServer.Domain.Configuration.Rules;
 
 internal class RulesProvider : IRulesProvider
 {
@@ -10,7 +9,7 @@ internal class RulesProvider : IRulesProvider
 
     public RulesProvider(IConfiguration configuration, RulesFileParser rulesFileParser)
     {
-        string path = configuration.GetValue<string>(ConfigurationName.ConfigurationPath);
+        var path = configuration.GetValue<string>(ConfigurationName.ConfigurationPath);
 
         _rulesFileParser = rulesFileParser;
         _rulesTask = LoadRules(path);
@@ -18,10 +17,10 @@ internal class RulesProvider : IRulesProvider
 
     async Task<IReadOnlyCollection<Rule>> LoadRules(string path)
     {
-        string[] rulesFiles = Directory.GetFiles(path, "*.rules", SearchOption.AllDirectories);
+        var rulesFiles = Directory.GetFiles(path, "*.rules", SearchOption.AllDirectories);
         var rules = new List<Rule>(rulesFiles.Length * 3);
 
-        foreach (string ruleFile in rulesFiles)
+        foreach (var ruleFile in rulesFiles)
         {
             rules.AddRange(await _rulesFileParser.Parse(ruleFile));
         }

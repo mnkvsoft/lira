@@ -1,6 +1,6 @@
 ﻿using System.Text;
-using SimpleMockServer.ConfigurationProviding.Rules;
-using SimpleMockServer.Domain.Models.RulesModel;
+using SimpleMockServer.Domain;
+using SimpleMockServer.Domain.Configuration.Rules;
 
 namespace SimpleMockServer.Middlewares;
 

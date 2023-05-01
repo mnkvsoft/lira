@@ -1,13 +1,13 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
 using SimpleMockServer.Common;
-using SimpleMockServer.Domain.Models.DataModel;
-using SimpleMockServer.Domain.Models.DataModel.DataImpls.Guid;
-using SimpleMockServer.Domain.Models.DataModel.DataImpls.Number;
-using SimpleMockServer.Domain.Models.DataModel.DataImpls.Number.Ranges;
+using SimpleMockServer.Domain.DataModel;
+using SimpleMockServer.Domain.DataModel.DataImpls.Guid;
+using SimpleMockServer.Domain.DataModel.DataImpls.Number;
+using SimpleMockServer.Domain.DataModel.DataImpls.Number.Ranges;
 
-namespace SimpleMockServer.ConfigurationProviding.DataModel;
+namespace SimpleMockServer.Domain.Configuration.DataModel;
 
 class DataProvider : IDataProvider
 {
@@ -17,7 +17,7 @@ class DataProvider : IDataProvider
 
     public DataProvider(IConfiguration configuration)
     {
-        string path = configuration.GetValue<string>(ConfigurationName.ConfigurationPath);
+        var path = configuration.GetValue<string>(ConfigurationName.ConfigurationPath);
 
         _path = path;
         _datas = LoadDatas(path).Result;
@@ -46,15 +46,15 @@ class DataProvider : IDataProvider
 
     private async Task<Dictionary<DataName, Data>> LoadDatas(string path)
     {
-        string[] dataFiles = Directory.GetFiles(path, "*.data.json", SearchOption.AllDirectories);
+        var dataFiles = Directory.GetFiles(path, "*.data.json", SearchOption.AllDirectories);
         var dataWithRefs = new List<DataWithFileReference>();
 
-        foreach (string dataFile in dataFiles)
+        foreach (var dataFile in dataFiles)
         {
             try
             {
-                string json = await File.ReadAllTextAsync(dataFile);
-                IReadOnlyCollection<Data> datas = CreateDatas(json);
+                var json = await File.ReadAllTextAsync(dataFile);
+                var datas = CreateDatas(json);
                 dataWithRefs.AddRange(datas.Select(d => new DataWithFileReference(d, dataFile)));
             }
             catch (Exception exc)
@@ -78,7 +78,7 @@ class DataProvider : IDataProvider
             throw new Exception($"An error has acсured on deserialize json: '{json}'", exc);
         }
 
-        List<Data> result = new List<Data>();
+        var result = new List<Data>();
 
         foreach (var data in root.Data)
         {
@@ -154,8 +154,8 @@ class DataProvider : IDataProvider
 
         foreach (var range in rangesDto)
         {
-            DataName rangeName = new DataName(range.Key);
-            string value = range.Value;
+            var rangeName = new DataName(range.Key);
+            var value = range.Value;
 
             if (!TryParse(value, out var startInterval))
                 throw new Exception($"An error occurred while creating range '{rangeName}'. Item '{value}' has not Int64 value");
@@ -186,7 +186,7 @@ class DataProvider : IDataProvider
         {
             var rangeName = new DataName(range.Key);
 
-            string rangeValueRaw = range.Value;
+            var rangeValueRaw = range.Value;
             if (rangeValueRaw.Contains('-'))
             {
                 var splitted = rangeValueRaw.Split('-');
@@ -194,10 +194,10 @@ class DataProvider : IDataProvider
                 if (splitted.Length > 2)
                     throw new Exception($"An error occurred while creating '{rangeName}' range. Invalid interval: '{rangeValueRaw}'");
 
-                if (!TryParse(splitted[0], out long from))
+                if (!TryParse(splitted[0], out var from))
                     throw new Exception($"An error occurred while creating '{rangeName}' range. Invalid start interval: '{splitted[0]}'");
 
-                if (!TryParse(splitted[1], out long to))
+                if (!TryParse(splitted[1], out var to))
                     throw new Exception($"An error occurred while creating '{rangeName}' range. Invalid end interval: '{splitted[1]}'");
 
                 ranges.Add(new NumberSetIntervalDataRange(rangeName, new Int64Interval(from, to)));
@@ -209,7 +209,7 @@ class DataProvider : IDataProvider
 
                 foreach (var strValue in splitted)
                 {
-                    if (!TryParse(strValue, out long val))
+                    if (!TryParse(strValue, out var val))
                         throw new Exception($"An error occurred while creating '{rangeName}' range. Invalid value: '{strValue}'");
 
                     values.Add(val);
@@ -226,7 +226,7 @@ class DataProvider : IDataProvider
 
     private static void AssertNotIntersect(IReadOnlyList<NumberDataRange> ranges)
     {
-        for (int i = 0; i < ranges.Count - 1; i++)
+        for (var i = 0; i < ranges.Count - 1; i++)
         {
             var curRange = ranges[i];
             var nextRange = ranges[i + 1];

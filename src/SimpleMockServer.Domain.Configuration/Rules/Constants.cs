@@ -1,4 +1,4 @@
-﻿namespace SimpleMockServer.ConfigurationProviding.Rules;
+﻿namespace SimpleMockServer.Domain.Configuration.Rules;
 
 class Constants
 {
@@ -10,7 +10,7 @@ class Constants
         public const string Response = "response";
         public const string CallPrefix = "call";
     }
-    
+
     public static class BlockName
     {
         public class Common
@@ -35,7 +35,7 @@ class Constants
             public const string Delay = Common.Delay;
         }
     }
-    
+
     public static readonly HashSet<string> HttpMethods = new()
     {
         "GET",
@@ -47,7 +47,7 @@ class Constants
         "OPTIONS",
         "CONNECT"
     };
-    
+
     public static class ControlChars
     {
         public const string Lambda = "=>";

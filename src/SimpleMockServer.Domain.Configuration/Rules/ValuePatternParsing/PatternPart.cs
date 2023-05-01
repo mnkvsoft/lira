@@ -1,4 +1,4 @@
-﻿namespace SimpleMockServer.ConfigurationProviding.Rules.ValuePatternParsing;
+﻿namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 
 abstract record PatternPart(string Value)
 {
