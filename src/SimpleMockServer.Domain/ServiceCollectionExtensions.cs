@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SimpleMockServer.Domain.Matching.Conditions;
 
-namespace SimpleMockServer.Domain.Configuration;
+namespace SimpleMockServer.Domain;
 
 public static class ServiceCollectionExtensions
 {

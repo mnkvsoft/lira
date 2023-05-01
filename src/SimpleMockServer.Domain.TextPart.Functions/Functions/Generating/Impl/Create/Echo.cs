@@ -1,15 +1,13 @@
 ﻿namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Create;
 
-internal class Echo : IGeneratingPrettyFunction, IWithStringArgumenFunction
+internal class Echo : IGlobalGeneratingFunction, IWithStringArgumenFunction
 {
     public static string Name => "echo";
 
     private object? _value;
 
-    public object? Generate(RequestData request)
-    {
-        return _value;
-    }
+    public object? Generate(RequestData request) => Generate();
+    public object? Generate() => _value;
 
     public void SetArgument(string? argument)
     {

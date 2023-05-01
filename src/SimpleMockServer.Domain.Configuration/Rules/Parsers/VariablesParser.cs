@@ -1,6 +1,7 @@
 ﻿using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
-using SimpleMockServer.Domain.Generating;
+using SimpleMockServer.Domain.TextPart.Variables;
+using SimpleMockServer.Domain.TextPart.Variables.Request;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
@@ -14,9 +15,9 @@ class VariablesParser
         _textGeneratorFactory = textGeneratorFactory;
     }
 
-    internal VariableSet Parse(FileSection variablesSection)
+    public VariableSet<RequestVariable> Parse(FileSection variablesSection)
     {
-        var set = new VariableSet();
+        var set = new VariableSet<RequestVariable>();
 
         foreach (var line in variablesSection.LinesWithoutBlock)
         {

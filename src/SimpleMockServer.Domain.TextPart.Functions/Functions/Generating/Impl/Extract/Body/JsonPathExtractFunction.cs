@@ -5,7 +5,7 @@ using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extra
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract.Body;
 
-public class JsonPathExtractFunction : IBodyExtractFunction, IGeneratingPrettyFunction, IWithStringArgumenFunction
+public class JsonPathExtractFunction : IBodyExtractFunction, IGeneratingFunction, IWithStringArgumenFunction
 {
     public static string Name => "extract.body.jpath";
 

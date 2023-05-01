@@ -134,13 +134,22 @@
     <None Update="Fixtures\generating\static\header.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\generating\variable\variable.data.json">
+    <None Update="Fixtures\generating\variable\global\variables.global.var">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\generating\variable\variable.test">
+    <None Update="Fixtures\generating\variable\global\variable.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\generating\variable\variable.rules">
+    <None Update="Fixtures\generating\variable\global\variable.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\variable\request\variable.data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\variable\request\variable.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\variable\request\variable.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Fixtures\match\conditions\attempt/less_or_equals.test">

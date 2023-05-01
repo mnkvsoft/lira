@@ -1,10 +1,9 @@
 ﻿using SimpleMockServer.Domain.Matching.Request.Matchers.Body;
-using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
 using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract.Body.Extensions;
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract.Body;
 
-public class AllExtractFunction : IBodyExtractFunction, IGeneratingPrettyFunction
+public class AllExtractFunction : IBodyExtractFunction, IGeneratingFunction
 {
     public static string Name => "extract.body.all";
 

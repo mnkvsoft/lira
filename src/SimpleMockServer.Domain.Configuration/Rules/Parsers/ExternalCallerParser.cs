@@ -1,4 +1,5 @@
 ﻿using SimpleMockServer.Common.Extensions;
+using SimpleMockServer.Domain.TextPart.Variables;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
@@ -34,7 +35,7 @@ class ExternalCallerParser
 
     private static string GetSectionName(IExternalCallerRegistrator registrator) => Constants.SectionName.CallPrefix + "." + registrator.Name;
 
-    internal IReadOnlyCollection<Delayed<IExternalCaller>> Parse(IReadOnlyCollection<FileSection> sections, VariableSet variables)
+    internal IReadOnlyCollection<Delayed<IExternalCaller>> Parse(IReadOnlyCollection<FileSection> sections, IReadOnlyCollection<Variable> variables)
     {
         var result = new List<Delayed<IExternalCaller>>();
 

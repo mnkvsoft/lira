@@ -94,7 +94,7 @@ public class Tests
             if(httpCallSection != null)
             {
                 string methodAndPath = httpCallSection.GetSingleLine();
-                (string method, string path) = methodAndPath.SplitToTwoPartsRequired(" ").TrimRequired();
+                (string method, string path) = methodAndPath.SplitToTwoPartsRequired(" ").Trim();
 
                 mocks.HttpMessageHandler.VerifyRequest(async message =>
                 {
@@ -104,7 +104,7 @@ public class Tests
                         var expectedHeaders = expectedHeadersBlock.Lines;
                         foreach(var expectedHeader in expectedHeaders)
                         {
-                            (string headerName, string expectedValue) = expectedHeader.SplitToTwoPartsRequired(":").TrimRequired();
+                            (string headerName, string expectedValue) = expectedHeader.SplitToTwoPartsRequired(":").Trim();
                             string actualValue = message.Headers.FirstOrDefault(x => x.Key == headerName).Value.First();
 
                             Assert.That(expectedValue, Is.EqualTo(actualValue));

@@ -1,26 +1,48 @@
 ﻿using SimpleMockServer.Domain.Generating;
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
-internal class GeneratingPrettyFunction : ITextPart
+
+
+internal class GeneratingFunction : ITextPart
 {
     private readonly string? _format;
-    private readonly IGeneratingPrettyFunction _function;
+    private readonly IGeneratingFunction _function;
 
-    public GeneratingPrettyFunction(IGeneratingPrettyFunction function, string? format)
+    public GeneratingFunction(IGeneratingFunction function, string? format)
     {
         _function = function;
         _format = format;
     }
 
-    public string? Get(RequestData request)
+    public string? Get(RequestData request) => _function.Generate(request).FormatIfFormattable(_format);
+}
+
+internal class GlobalGeneratingFunction : IGlobalTextPart
+{
+    private readonly string? _format;
+    private readonly IGlobalGeneratingFunction _function;
+
+    public GlobalGeneratingFunction(IGlobalGeneratingFunction function, string? format)
     {
-        var value = _function.Generate(request);
-        if (value is IFormattable formattable && _format != null)
+        _function = function;
+        _format = format;
+    }
+
+    public string? Get(RequestData _) => Get();
+
+    public string? Get() => _function.Generate().FormatIfFormattable(_format);
+}
+
+
+internal static class FormattableHelper
+{
+    public static string? FormatIfFormattable(this object? value, string? format)
+    {
+        if (value is IFormattable formattable && format != null)
         {
-            return formattable.ToString(_format, null);
+            return formattable.ToString(format, null);
         }
 
         return value?.ToString();
     }
 }
-

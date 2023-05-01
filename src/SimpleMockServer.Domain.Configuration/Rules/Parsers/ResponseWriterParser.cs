@@ -1,4 +1,5 @@
 ﻿using SimpleMockServer.Domain.Generating.Writers;
+using SimpleMockServer.Domain.TextPart.Variables;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
@@ -12,7 +13,7 @@ class ResponseWriterParser
         _httpDataParser = httpDataParser;
     }
 
-    public Delayed<ResponseWriter> Parse(FileSection ruleSection, VariableSet variables)
+    public Delayed<ResponseWriter> Parse(FileSection ruleSection, IReadOnlyCollection<Variable> variables)
     {
         var responseSection = ruleSection.GetSingleChildSection(Constants.SectionName.Response);
 
@@ -56,7 +57,7 @@ class ResponseWriterParser
         return httpCode;
     }
 
-    private BodyWriter? GetBodyWriter(FileSection responseSection, VariableSet variables)
+    private BodyWriter? GetBodyWriter(FileSection responseSection, IReadOnlyCollection<Variable> variables)
     {
         BodyWriter? bodyWriter = null;
         var bodyBlock = responseSection.GetBlockOrNull(Constants.BlockName.Response.Body);
@@ -70,7 +71,7 @@ class ResponseWriterParser
         return bodyWriter;
     }
 
-    private HeadersWriter? GetHeadersWriter(FileSection responseSection, VariableSet variables)
+    private HeadersWriter? GetHeadersWriter(FileSection responseSection, IReadOnlyCollection<Variable> variables)
     {
         var headersBlock = responseSection.GetBlockOrNull(Constants.BlockName.Response.Headers);
 

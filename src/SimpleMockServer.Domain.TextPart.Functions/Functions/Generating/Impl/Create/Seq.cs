@@ -1,15 +1,12 @@
-﻿using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
+﻿namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Create;
 
-namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Create;
-
-internal class Seq : IGeneratingPrettyFunction
+internal class Seq : IGlobalGeneratingFunction
 {
     private static long _counter;
 
     public static string Name => "seq";
 
-    public object? Generate(RequestData request)
-    {
-        return Interlocked.Increment(ref _counter);
-    }
+    public object? Generate(RequestData request) => Generate();
+
+    public object? Generate() => Interlocked.Increment(ref _counter);
 }

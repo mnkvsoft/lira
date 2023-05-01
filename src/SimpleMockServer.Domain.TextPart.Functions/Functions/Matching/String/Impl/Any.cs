@@ -1,6 +1,4 @@
-﻿using SimpleMockServer.Domain.TextPart.Functions.Functions.Matching.String;
-
-namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Matching.String.Impl;
+﻿namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Matching.String.Impl;
 
 internal class Any : IStringMatchPrettyFunction
 {

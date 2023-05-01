@@ -53,5 +53,7 @@ class Constants
         public const string Lambda = "=>";
         public const string HeaderSplitter = ":";
         public const string VariablePrefix = "$";
+        public const string Comment = "//";
+        public const string AssignmentOperator = "=";
     }
 }

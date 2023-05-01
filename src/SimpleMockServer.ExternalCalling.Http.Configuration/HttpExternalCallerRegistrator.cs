@@ -4,6 +4,7 @@ using SimpleMockServer.Domain.Configuration;
 using SimpleMockServer.Domain.Configuration.Rules;
 using SimpleMockServer.Domain.Configuration.Rules.Parsers;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
+using SimpleMockServer.Domain.TextPart.Variables;
 using SimpleMockServer.ExternalCalling.Http.Caller;
 using SimpleMockServer.FileSectionFormat;
 
@@ -33,7 +34,7 @@ public class HttpExternalCallerRegistrator : IExternalCallerRegistrator
         _partsParser = partsParser;
     }
 
-    public IExternalCaller Create(FileSection section, VariableSet variables)
+    public IExternalCaller Create(FileSection section, IReadOnlyCollection<Variable> variables)
     {
         var methodAndUrl = section.GetSingleLine();
         (var methodStr, var urlStr) = methodAndUrl.SplitToTwoPartsRequired(" ");

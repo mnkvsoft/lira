@@ -1,5 +1,5 @@
 ﻿namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract;
-internal class Header : IGeneratingPrettyFunction, IWithStringArgumenFunction
+internal class Header : IGeneratingFunction, IWithStringArgumenFunction
 {
     public static string Name => "extract.header";
 

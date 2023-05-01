@@ -1,0 +1,2 @@
+static        = hello world!
+with_function = ping - {{ echo: pong }}

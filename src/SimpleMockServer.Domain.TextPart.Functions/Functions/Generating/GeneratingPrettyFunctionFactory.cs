@@ -88,17 +88,23 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
         if (!_functionNameToType.TryGetValue(functionName, out var functionType))
             throw new UnknownFunctionException(value);
 
-        var generatingPrettyFunction = (IGeneratingPrettyFunction)_serviceProvider.GetRequiredService(functionType);
+        var function = _serviceProvider.GetRequiredService(functionType);
 
-        if (argument != null && generatingPrettyFunction is not IWithStringArgumenFunction)
+        if (argument != null && function is not IWithStringArgumenFunction)
             throw new Exception($"Function '{functionName}' not support arguments");
 
-        if (generatingPrettyFunction is IWithStringArgumenFunction withArgument)
+        if (function is IWithStringArgumenFunction withArgument)
         {
             withArgument.SetArgument(argument!);
         }
 
-        return new GeneratingPrettyFunction(generatingPrettyFunction, format);
+        if (function is IGlobalGeneratingFunction)
+            return new GlobalGeneratingFunction((IGlobalGeneratingFunction)function, format);
+
+        if (function is IGeneratingFunction)
+            return new GeneratingFunction((IGeneratingFunction)function, format);
+
+        throw new Exception("Unknown function type: " + function.GetType());
     }
 
     public static void AddMatchFunctions(IServiceCollection sc)
@@ -112,7 +118,7 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
     private static IReadOnlyCollection<Type> GetMatchFunctionTypes()
     {
         var result = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => t.IsAssignableTo(typeof(IGeneratingPrettyFunction)) && !t.IsAbstract).ToArray();
+            .Where(t => t.IsAssignableTo(typeof(IGeneratingFunction)) && !t.IsAbstract).ToArray();
         return result;
     }
 }

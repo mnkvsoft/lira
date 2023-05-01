@@ -1,4 +1,5 @@
-﻿using SimpleMockServer.FileSectionFormat;
+﻿using SimpleMockServer.Domain.TextPart.Variables;
+using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Rules;
 
@@ -8,5 +9,5 @@ public interface IExternalCallerRegistrator
 
     IReadOnlyCollection<string> GetSectionKnowsBlocks();
 
-    IExternalCaller Create(FileSection section, VariableSet variables);
+    IExternalCaller Create(FileSection section, IReadOnlyCollection<Variable> variables);
 }

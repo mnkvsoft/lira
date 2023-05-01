@@ -1,0 +1,14 @@
+-------------------- case
+
+GET /generating/variable/global
+
+----- expected
+
+code:
+200
+
+headers:
+static-variable: hello world!
+
+body:
+ping - pong

@@ -1,0 +1,14 @@
+-------------------- rule
+
+GET /generating/variable/global
+
+----- response
+
+code:
+200
+
+headers:
+static-variable: {{ $static }}
+
+body:
+{{ $with_function }}

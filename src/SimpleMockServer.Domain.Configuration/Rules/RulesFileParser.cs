@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Rules.Parsers;
+using SimpleMockServer.Domain.TextPart.Variables;
+using SimpleMockServer.Domain.TextPart.Variables.Global;
+using SimpleMockServer.Domain.TextPart.Variables.Request;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Rules;
-
 
 internal class RulesFileParser
 {
@@ -15,6 +17,7 @@ internal class RulesFileParser
     private readonly ConditionMatcherParser _conditionMatcherParser;
     private readonly VariablesParser _variablesParser;
     private readonly ExternalCallerParser _externalCallerParser;
+    private readonly IGlobalVariableSet _globalVariableSet;
 
     public RulesFileParser(
         ILoggerFactory loggerFactory,
@@ -22,7 +25,8 @@ internal class RulesFileParser
         ResponseWriterParser responseWriterParser,
         ConditionMatcherParser conditionMatcherParser,
         VariablesParser variablesParser,
-        ExternalCallerParser externalCallerParser)
+        ExternalCallerParser externalCallerParser,
+        IGlobalVariableSet globalVariableSet)
     {
         _loggerFactory = loggerFactory;
         _requestMatchersParser = requestMatchersParser;
@@ -30,6 +34,7 @@ internal class RulesFileParser
         _conditionMatcherParser = conditionMatcherParser;
         _variablesParser = variablesParser; ;
         _externalCallerParser = externalCallerParser;
+        _globalVariableSet = globalVariableSet;
     }
 
     public async Task<IReadOnlyCollection<Rule>> Parse(string ruleFile)
@@ -77,8 +82,7 @@ internal class RulesFileParser
 
         var requestMatcherSet = _requestMatchersParser.Parse(ruleSection);
 
-        var variablesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Variables);
-        var variables = variablesSection == null ? new VariableSet() : _variablesParser.Parse(variablesSection);
+        var variables = GetVariables(childSections);
 
         var exitstConditionSection = childSections.Any(x => x.Name == Constants.SectionName.Condition);
 
@@ -124,6 +128,17 @@ internal class RulesFileParser
         externalCallers = _externalCallerParser.Parse(childSections, variables);
 
         return new[] { new Rule(ruleName, _loggerFactory, responseWriter, requestMatcherSet, conditionMatcherSet: null, externalCallers) };
+    }
+
+    private IReadOnlyCollection<Variable> GetVariables(List<FileSection> childSections)
+    {
+        var variablesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Variables);
+
+        VariableSet<RequestVariable> requestVariables = variablesSection == null ? new VariableSet<RequestVariable>() : _variablesParser.Parse(variablesSection);
+
+        return new VariableSet<Variable>()
+            .AddRange(_globalVariableSet)
+            .AddRange(requestVariables);
     }
 
     private static void AssertContainsOnlySections(IReadOnlyList<FileSection> rulesSections, IReadOnlyCollection<string> expectedSectionName)

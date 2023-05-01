@@ -1,13 +1,10 @@
-﻿using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
+﻿namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Create;
 
-namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Create;
-
-internal class Now : IGeneratingPrettyFunction
+internal class Now : IGlobalGeneratingFunction
 {
     public static string Name => "now";
 
-    public object? Generate(RequestData request)
-    {
-        return DateTime.Now;
-    }
+    public object? Generate(RequestData request) => Generate();
+
+    public object? Generate() => DateTime.Now;
 }

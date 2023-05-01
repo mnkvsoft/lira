@@ -2,12 +2,13 @@
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Generating;
 using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
+using SimpleMockServer.Domain.TextPart.Variables;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 
 public interface ITextPartsParser
 {
-    TextParts Parse(string pattern, VariableSet variables);
+    TextParts Parse(string pattern, IReadOnlyCollection<Variable> variables);
 }
 
 class TextPartsParser : ITextPartsParser
@@ -19,7 +20,7 @@ class TextPartsParser : ITextPartsParser
         _generatingFunctionFactory = generatingFunctionFactory;
     }
 
-    public TextParts Parse(string pattern, VariableSet variables)
+    public TextParts Parse(string pattern, IReadOnlyCollection<Variable> variables)
     {
         var patternParts = PatternParser.Parse(pattern);
 
@@ -32,7 +33,7 @@ class TextPartsParser : ITextPartsParser
         return new TextParts(parts);
     }
 
-    private ITextPart CreateValuePart(PatternPart patternPart, VariableSet variables)
+    private ITextPart CreateValuePart(PatternPart patternPart, IReadOnlyCollection<Variable> variables)
     {
         switch (patternPart)
         {
@@ -45,7 +46,7 @@ class TextPartsParser : ITextPartsParser
         }
     }
 
-    private ITextPart GetDynamicPart(PatternPart.Dynamic dynamicPart, VariableSet variables)
+    private ITextPart GetDynamicPart(PatternPart.Dynamic dynamicPart, IReadOnlyCollection<Variable> variables)
     {
         if (dynamicPart.Value.StartsWith(Constants.ControlChars.VariablePrefix))
         {

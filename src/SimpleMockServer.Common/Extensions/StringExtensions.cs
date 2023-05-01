@@ -72,7 +72,7 @@ public static class StringExtensions
         return (value.part1.Trim(), value.part2?.Trim());
     }
     
-    public static (string part1, string part2) SplitToTwoPartsRequired(this string value, string splitter)
+    public static TwoPartsRequired SplitToTwoPartsRequired(this string value, string splitter)
     {
         var index = value.IndexOf(splitter, StringComparison.Ordinal);
 
@@ -82,12 +82,14 @@ public static class StringExtensions
         string part1= value.Substring(0, length: index);
         string part2 = value.Substring(index + splitter.Length);
 
-        return (part1, part2);
+        return new TwoPartsRequired(part1, part2);
     }
 
-    public static (string part1, string part2) TrimRequired(this (string part1, string part2) value)
+    public record TwoPartsRequired(string First, string Second);
+
+    public static TwoPartsRequired Trim(this TwoPartsRequired value)
     {
-        return (value.part1.Trim(), value.part2.Trim());
+        return new TwoPartsRequired (value.First.Trim(), value.Second.Trim());
     }
 
     public static SplitResult? SplitBy(this string str, params string[] splitters)
