@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\SimpleMockServer.Domain\SimpleMockServer.Domain.csproj" />
+    <ProjectReference Include="..\SimpleMockServer.Domain\SimpleMockServer.Domain.csproj" />
   </ItemGroup>
 
 </Project>

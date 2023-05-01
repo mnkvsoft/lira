@@ -1,0 +1,15 @@
+-------------------- rule
+
+GET /generating/variable/global/with_request_var
+
+----- variables
+
+local = {{ $global }} | {{ $req_shared }} | value_from_local
+
+----- response
+
+code:
+200
+
+body:
+{{ $local }}

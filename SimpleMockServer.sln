@@ -42,7 +42,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.Dat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.TextPart.Functions", "src\SimpleMockServer.Domain.TextPart.Functions\SimpleMockServer.Domain.TextPart.Functions.csproj", "{523705D2-4F25-4A75-84D5-F945421D4655}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.TextPart.Variables", "SimpleMockServer.Domain.TextPart.Variables\SimpleMockServer.Domain.TextPart.Variables.csproj", "{AC40618D-3258-42D2-AB6D-8B07FFBFD45B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.TextPart.Variables", "src\SimpleMockServer.Domain.TextPart.Variables\SimpleMockServer.Domain.TextPart.Variables.csproj", "{AC40618D-3258-42D2-AB6D-8B07FFBFD45B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

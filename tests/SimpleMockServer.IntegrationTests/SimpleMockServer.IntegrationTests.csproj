@@ -134,22 +134,37 @@
     <None Update="Fixtures\generating\static\header.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\generating\variable\global\variables.global.var">
+    <None Update="Fixtures\generating\variable\complex.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\generating\variable\global\variable.rules">
+    <None Update="Fixtures\generating\variable\comlex.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\generating\variable\global\variable.test">
+    <None Update="Fixtures\generating\variable\header.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\generating\variable\request\variable.data.json">
+    <None Update="Fixtures\generating\variable\header.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\generating\variable\request\variable.test">
+    <None Update="Fixtures\generating\variable\variables.req.var">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\generating\variable\request\variable.rules">
+    <None Update="Fixtures\generating\variable\variables.global.var">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\variable\body.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\variable\body.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\variable\variable.data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\variable\data.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\generating\variable\data.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Fixtures\match\conditions\attempt/less_or_equals.test">

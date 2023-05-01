@@ -1,0 +1,5 @@
+greetings               = hello world!
+global_content_type     = application/my
+with_function           = ping - {{ echo: pong }}
+with_other_var          = {{ $with_function }} - pong
+global                  = value_from_global_var

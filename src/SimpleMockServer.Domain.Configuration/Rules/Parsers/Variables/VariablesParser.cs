@@ -1,10 +1,9 @@
 ﻿using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.TextPart.Variables;
-using SimpleMockServer.Domain.TextPart.Variables.Request;
 using SimpleMockServer.FileSectionFormat;
 
-namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
+namespace SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
 
 class VariablesParser
 {
@@ -15,9 +14,9 @@ class VariablesParser
         _textGeneratorFactory = textGeneratorFactory;
     }
 
-    public VariableSet<RequestVariable> Parse(FileSection variablesSection)
+    public VariableSet Parse(FileSection variablesSection, IReadOnlyCollection<Variable> registeredVariables)
     {
-        var set = new VariableSet<RequestVariable>();
+        var set = new VariableSet(registeredVariables);
 
         foreach (var line in variablesSection.LinesWithoutBlock)
         {

@@ -9,5 +9,6 @@
     <ItemGroup>
         <ProjectReference Include="..\SimpleMockServer.Domain.DataModel\SimpleMockServer.Domain.DataModel.csproj" />
         <ProjectReference Include="..\SimpleMockServer.Domain\SimpleMockServer.Domain.csproj" />
+        <ProjectReference Include="..\SimpleMockServer.Domain.TextPart.Variables\SimpleMockServer.Domain.TextPart.Variables.csproj" />
     </ItemGroup>
 </Project>

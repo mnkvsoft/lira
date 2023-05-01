@@ -1,4 +1,5 @@
 ﻿using SimpleMockServer.Domain.Generating;
+using SimpleMockServer.Domain.TextPart.Variables;
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
 

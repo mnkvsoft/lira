@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Rules.Parsers;
+using SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
 using SimpleMockServer.Domain.TextPart.Variables;
-using SimpleMockServer.Domain.TextPart.Variables.Global;
-using SimpleMockServer.Domain.TextPart.Variables.Request;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Rules;
@@ -17,7 +16,7 @@ internal class RulesFileParser
     private readonly ConditionMatcherParser _conditionMatcherParser;
     private readonly VariablesParser _variablesParser;
     private readonly ExternalCallerParser _externalCallerParser;
-    private readonly IGlobalVariableSet _globalVariableSet;
+    private readonly GlobalVariableSet _globalVariableSet;
 
     public RulesFileParser(
         ILoggerFactory loggerFactory,
@@ -26,7 +25,7 @@ internal class RulesFileParser
         ConditionMatcherParser conditionMatcherParser,
         VariablesParser variablesParser,
         ExternalCallerParser externalCallerParser,
-        IGlobalVariableSet globalVariableSet)
+        GlobalVariableSet globalVariableSet)
     {
         _loggerFactory = loggerFactory;
         _requestMatchersParser = requestMatchersParser;
@@ -133,12 +132,8 @@ internal class RulesFileParser
     private IReadOnlyCollection<Variable> GetVariables(List<FileSection> childSections)
     {
         var variablesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Variables);
-
-        VariableSet<RequestVariable> requestVariables = variablesSection == null ? new VariableSet<RequestVariable>() : _variablesParser.Parse(variablesSection);
-
-        return new VariableSet<Variable>()
-            .AddRange(_globalVariableSet)
-            .AddRange(requestVariables);
+        VariableSet requestVariables = variablesSection == null ? new VariableSet(_globalVariableSet) : _variablesParser.Parse(variablesSection, _globalVariableSet);
+        return requestVariables;
     }
 
     private static void AssertContainsOnlySections(IReadOnlyList<FileSection> rulesSections, IReadOnlyCollection<string> expectedSectionName)

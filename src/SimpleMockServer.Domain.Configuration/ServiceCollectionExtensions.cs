@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using SimpleMockServer.Domain.Configuration.DataModel;
 using SimpleMockServer.Domain.Configuration.Rules;
 using SimpleMockServer.Domain.Configuration.Rules.Parsers;
+using SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.DataModel;
 using SimpleMockServer.Domain.TextPart.Functions;
@@ -18,7 +19,6 @@ public static class ServiceCollectionExtensions
 
         return services
            .AddFunctions()
-           .AddVariables()
            .AddSingleton<IDataProvider, DataProvider>()
            .AddSingleton<ConditionMatcherParser>()
            .AddSingleton<RequestMatchersParser>()
@@ -27,6 +27,7 @@ public static class ServiceCollectionExtensions
            .AddSingleton<ExternalCallerParser>()
            .AddSingleton<GeneratingHttpDataParser>()
            .AddSingleton<GlobalVariablesParser>()
+           .AddSingleton<GlobalVariableSet>()
            .AddSingleton<ITextPartsParser, TextPartsParser>()
            .AddSingleton<RulesFileParser>()
            .AddSingleton<IRulesProvider, RulesProvider>();

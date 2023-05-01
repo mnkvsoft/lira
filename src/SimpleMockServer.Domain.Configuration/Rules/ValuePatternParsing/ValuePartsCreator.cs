@@ -13,6 +13,13 @@ public interface ITextPartsParser
 
 class TextPartsParser : ITextPartsParser
 {
+    public record Static(string Value) : IGlobalTextPart
+    {
+        public string? Get(RequestData request) => Value;
+
+        public string? Get() => Value;
+    }
+
     private readonly IGeneratingFunctionFactory _generatingFunctionFactory;
 
     public TextPartsParser(IGeneratingFunctionFactory generatingFunctionFactory)

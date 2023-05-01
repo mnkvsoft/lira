@@ -1,10 +1,10 @@
 -------------------- rule
 
-GET /generating/variable/request
+GET /generating/variable/data
 
 ----- variables
 
-orderId = order_{{ data: generating_variable_request_seq.default }}
+orderId = order_{{ data: generating_variable_seq.default }}
 
 ----- response
 

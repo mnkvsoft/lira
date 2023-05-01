@@ -1,6 +1,6 @@
 ﻿using SimpleMockServer.Domain.Generating;
 
-namespace SimpleMockServer.Domain.TextPart.Variables.Request;
+namespace SimpleMockServer.Domain.TextPart.Variables;
 
 public class RequestVariable : Variable
 {
