@@ -31,48 +31,42 @@ internal class RulesFileParser
         _requestMatchersParser = requestMatchersParser;
         _responseWriterParser = responseWriterParser;
         _conditionMatcherParser = conditionMatcherParser;
-        _variablesParser = variablesParser; ;
+        _variablesParser = variablesParser;
         _externalCallerParser = externalCallerParser;
         _globalVariableSet = globalVariableSet;
     }
 
     public async Task<IReadOnlyCollection<Rule>> Parse(string ruleFile)
     {
-        try
+        var knownSectionsBlocks = _externalCallerParser.GetSectionsKnowsBlocks();
+
+        var externalCallerSections = knownSectionsBlocks.Keys.ToList();
+
+        knownSectionsBlocks.Add("rule", BlockNameHelper.GetBlockNames<Constants.BlockName.Rule>());
+        knownSectionsBlocks.Add("response", BlockNameHelper.GetBlockNames<Constants.BlockName.Response>());
+
+        var rulesSections = await SectionFileParser.Parse(
+            ruleFile,
+            knownBlockForSections: knownSectionsBlocks,
+            maxNestingDepth: 3);
+
+        AssertContainsOnlySections(rulesSections, new[] { Constants.SectionName.Rule });
+
+        var rules = new List<Rule>();
+        for (var i = 0; i < rulesSections.Count; i++)
         {
-            var knownSectionsBlocks = _externalCallerParser.GetSectionsKnowsBlocks();
+            var fi = new FileInfo(ruleFile);
+            var ruleName = $"no. {i + 1} file: {fi.Name}";
 
-            var externalCallerSections = knownSectionsBlocks.Keys.ToList();
-
-            knownSectionsBlocks.Add("rule", BlockNameHelper.GetBlockNames<Constants.BlockName.Rule>());
-            knownSectionsBlocks.Add("response", BlockNameHelper.GetBlockNames<Constants.BlockName.Response>());
-
-            var rulesSections = await SectionFileParser.Parse(
-                ruleFile,
-                knownBlockForSections: knownSectionsBlocks,
-                maxNestingDepth: 3);
-
-            AssertContainsOnlySections(rulesSections, new[] { Constants.SectionName.Rule });
-
-            var rules = new List<Rule>();
-            for (var i = 0; i < rulesSections.Count; i++)
-            {
-                var fi = new FileInfo(ruleFile);
-                var ruleName = $"no. {i + 1} file: {fi.Name}";
-
-                var ruleSection = rulesSections[i];
-                rules.AddRange(CreateRules(ruleName, ruleSection, externalCallerSections));
-            }
-
-            return rules;
+            var ruleSection = rulesSections[i];
+            rules.AddRange(CreateRules(ruleName, ruleSection, externalCallerSections));
         }
-        catch (Exception exc)
-        {
-            throw new Exception("An error occured while parsing file: " + ruleFile, exc);
-        }
+
+        return rules;
     }
 
-    private IReadOnlyCollection<Rule> CreateRules(string ruleName, FileSection ruleSection, IReadOnlyCollection<string> externalCallerSections)
+    private IReadOnlyCollection<Rule> CreateRules(string ruleName, FileSection ruleSection,
+        IReadOnlyCollection<string> externalCallerSections)
     {
         var childSections = ruleSection.ChildSections;
 
@@ -132,11 +126,14 @@ internal class RulesFileParser
     private IReadOnlyCollection<Variable> GetVariables(List<FileSection> childSections)
     {
         var variablesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Variables);
-        VariableSet requestVariables = variablesSection == null ? new VariableSet(_globalVariableSet) : _variablesParser.Parse(variablesSection, _globalVariableSet);
+        var requestVariables = variablesSection == null
+            ? new VariableSet(_globalVariableSet)
+            : _variablesParser.Parse(variablesSection, _globalVariableSet);
         return requestVariables;
     }
 
-    private static void AssertContainsOnlySections(IReadOnlyList<FileSection> rulesSections, IReadOnlyCollection<string> expectedSectionName)
+    private static void AssertContainsOnlySections(IReadOnlyList<FileSection> rulesSections,
+        IReadOnlyCollection<string> expectedSectionName)
     {
         var unknownSections = rulesSections
             .Where(s => !expectedSectionName.Contains(s.Name))

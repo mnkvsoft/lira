@@ -19,7 +19,6 @@ public static class ServiceCollectionExtensions
 
         return services
            .AddFunctions()
-           .AddSingleton<IDataProvider, DataProvider>()
            .AddSingleton<ConditionMatcherParser>()
            .AddSingleton<RequestMatchersParser>()
            .AddSingleton<VariablesParser>()
@@ -30,6 +29,16 @@ public static class ServiceCollectionExtensions
            .AddSingleton<GlobalVariableSet>()
            .AddSingleton<ITextPartsParser, TextPartsParser>()
            .AddSingleton<RulesFileParser>()
-           .AddSingleton<IRulesProvider, RulesProvider>();
+           .AddSingleton<IConfigurationPathProvider, ConfigurationPathProvider>()
+           
+           .AddSingleton<DataProvider>()
+           .AddSingleton<DataProviderWithState>()
+           .AddSingleton<IDataProvider>(provider => provider.GetRequiredService<DataProviderWithState>())
+           .AddSingleton<IStatedProvider>(provider => provider.GetRequiredService<DataProviderWithState>())
+           
+           .AddSingleton<RulesProvider>()
+           .AddSingleton<RulesProviderWithState>()
+           .AddSingleton<IRulesProvider>(provider => provider.GetRequiredService<RulesProviderWithState>())
+           .AddSingleton<IStatedProvider>(provider => provider.GetRequiredService<RulesProviderWithState>());
     }
 }

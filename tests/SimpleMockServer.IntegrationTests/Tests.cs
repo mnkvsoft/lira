@@ -20,8 +20,8 @@ public class Tests
             // for pretty view in test explorer
             var prettyFileNames = testsFiles.Select(f =>
             {
-                int index = f.IndexOf("Fixtures");
-                var substr = f.Substring(index).TrimStart("Fixtures");
+                int index = f.IndexOf("cases", StringComparison.Ordinal);
+                var substr = f.Substring(index).TrimStart("cases");
                 return substr;
             }).ToArray();
 
@@ -35,7 +35,7 @@ public class Tests
     {
         string fixturesDirectory = GetFixturesDirectory();
         var mocks = new AppMocks();
-        using var factory = new TestApplicationFactory(fixturesDirectory, mocks);
+        await using var factory = new TestApplicationFactory(fixturesDirectory, mocks);
         var httpClient = factory.CreateDefaultClient();
 
         Console.WriteLine("Execute file: " + prettyTestFileName);
@@ -56,7 +56,7 @@ public class Tests
             if (delay != default)
                 await Task.Delay(delay);
 
-            Stopwatch sw = Stopwatch.StartNew();
+            var sw = Stopwatch.StartNew();
 
             var req = CreateRequest(caseSection);
             var res = await httpClient.SendAsync(req);
@@ -81,57 +81,58 @@ public class Tests
             {
                 string expectedBody = expectedSection.GetStringValueFromRequiredBlock("body");
 
-                if (res.Content != null)
-                {
-                    string body = await res.Content.ReadAsStringAsync();
-                    Assert.That(body, Is.EqualTo(expectedBody));
-                }
+                string body = await res.Content.ReadAsStringAsync();
+                Assert.That(body, Is.EqualTo(expectedBody));
             }
 
             AssertValidHeaders(res, expectedSection);
 
             var httpCallSection = expectedSection.ChildSections.FirstOrDefault(x => x.Name == "call.http");
-            if(httpCallSection != null)
+            AsserCallHttp(httpCallSection, mocks);
+        }
+    }
+
+    private static void AsserCallHttp(FileSection? httpCallSection, AppMocks mocks)
+    {
+        if (httpCallSection != null)
+        {
+            string methodAndPath = httpCallSection.GetSingleLine();
+            (string method, string path) = methodAndPath.SplitToTwoPartsRequired(" ").Trim();
+
+            mocks.HttpMessageHandler.VerifyRequest(async message =>
             {
-                string methodAndPath = httpCallSection.GetSingleLine();
-                (string method, string path) = methodAndPath.SplitToTwoPartsRequired(" ").Trim();
-
-                mocks.HttpMessageHandler.VerifyRequest(async message =>
+                var expectedHeadersBlock = httpCallSection.GetBlockOrNull("headers");
+                if (expectedHeadersBlock != null)
                 {
-                    var expectedHeadersBlock = httpCallSection.GetBlockOrNull("headers");
-                    if(expectedHeadersBlock != null)
+                    var expectedHeaders = expectedHeadersBlock.Lines;
+                    foreach (var expectedHeader in expectedHeaders)
                     {
-                        var expectedHeaders = expectedHeadersBlock.Lines;
-                        foreach(var expectedHeader in expectedHeaders)
-                        {
-                            (string headerName, string expectedValue) = expectedHeader.SplitToTwoPartsRequired(":").Trim();
-                            string actualValue = message.Headers.FirstOrDefault(x => x.Key == headerName).Value.First();
+                        (string headerName, string expectedValue) = expectedHeader.SplitToTwoPartsRequired(":").Trim();
+                        string actualValue = message.Headers.FirstOrDefault(x => x.Key == headerName).Value.First();
 
-                            Assert.That(expectedValue, Is.EqualTo(actualValue));
-                        }
+                        Assert.That(expectedValue, Is.EqualTo(actualValue));
                     }
+                }
 
-                    Assert.That(method, Is.EqualTo(message.Method.ToString()));
-                    Assert.That(path, Is.EqualTo(message.RequestUri!.ToString()));
+                Assert.That(method, Is.EqualTo(message.Method.ToString()));
+                Assert.That(path, Is.EqualTo(message.RequestUri!.ToString()));
 
-                    var bodyBlock = httpCallSection.GetBlockOrNull("body");
-                    if (bodyBlock != null)
-                    {
-                        string expectedBody = bodyBlock.GetStringValue();
-                        Assert.That(expectedBody, Is.EqualTo(await message.Content!.ReadAsStringAsync()));
-                    }
+                var bodyBlock = httpCallSection.GetBlockOrNull("body");
+                if (bodyBlock != null)
+                {
+                    string expectedBody = bodyBlock.GetStringValue();
+                    Assert.That(expectedBody, Is.EqualTo(await message.Content!.ReadAsStringAsync()));
+                }
 
-                    return true;
-
-                }, times: Times.Once());
-            }
+                return true;
+            }, times: Times.Once());
         }
     }
 
     private static string GetFixturesDirectory()
     {
         string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-        string testsDirectory = Path.Combine(currentDirectory, @"Fixtures");
+        string testsDirectory = Path.Combine(currentDirectory, "fixtures", "cases");
         return testsDirectory;
     }
 
@@ -149,7 +150,7 @@ public class Tests
                 throw new Exception($"Not found header '{headerName}' in response");
 
             var headerActualValue = allHeaders[headerName].Single();
-            Assert.AreEqual(expectedHeaderValue, headerActualValue);
+            Assert.That(headerActualValue, Is.EqualTo(expectedHeaderValue));
         }
     }
 

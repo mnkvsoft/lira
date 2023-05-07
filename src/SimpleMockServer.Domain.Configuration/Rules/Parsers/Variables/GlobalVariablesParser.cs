@@ -1,6 +1,5 @@
 ﻿using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
-using SimpleMockServer.Domain.Generating;
 using SimpleMockServer.Domain.TextPart.Variables;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
@@ -40,9 +39,9 @@ internal class GlobalVariablesParser
                     _variableSet.Add(createVariable(line, _variableSet));
                 }
             }
-            catch (Exception e)
+            catch (Exception exc)
             {
-                throw new Exception($"An error occured while parse file: {variableFile}", e);
+                throw new FileParsingException(variableFile, exc);
             }
         }
     }
@@ -66,15 +65,15 @@ internal class GlobalVariablesParser
 
     private GlobalVariable CreateGlobalVariable(string line, GlobalVariableSet registeredVariables)
     {
-        (var name, var pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.AssignmentOperator).Trim();
+        var (name, pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.AssignmentOperator).Trim();
 
         var parts = _textPartsParser.Parse(pattern, registeredVariables);
 
-        var notAccessibleParts = parts.Where(p => p is not IGlobalTextPart);
+        var notAccessibleParts = parts.Where(p => p is not IGlobalTextPart).ToArray();
+        
         if (notAccessibleParts.Any())
         {
             var partsNames = string.Join(", ", notAccessibleParts.Select(x => x.GetType().FullName));
-
             throw new Exception($"{partsNames} cannot be use in global variables because they require http request");
         }
 
@@ -83,7 +82,7 @@ internal class GlobalVariablesParser
 
     private RequestVariable CreateRequestVariable(string line, GlobalVariableSet registeredVariables)
     {
-        (var name, var pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.AssignmentOperator).Trim();
+        var (name, pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.AssignmentOperator).Trim();
 
         var parts = _textPartsParser.Parse(pattern, registeredVariables);
         return new RequestVariable(name, parts);

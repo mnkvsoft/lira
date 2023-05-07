@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.Extensions.Configuration;
 using SimpleMockServer.Common;
+using SimpleMockServer.Domain.Configuration.Rules;
 using SimpleMockServer.Domain.DataModel;
 using SimpleMockServer.Domain.DataModel.DataImpls.Guid;
 using SimpleMockServer.Domain.DataModel.DataImpls.Number;
@@ -9,61 +9,47 @@ using SimpleMockServer.Domain.DataModel.DataImpls.Number.Ranges;
 
 namespace SimpleMockServer.Domain.Configuration.DataModel;
 
-class DataProvider : IDataProvider
+internal class DataProviderWithState : StatedProvider<Dictionary<DataName, Data>>, IDataProvider
 {
-    private const string DefaultSeqName = "default_system";
-    private readonly string _path;
-    private readonly Dictionary<DataName, Data> _datas;
-
-    public DataProvider(IConfiguration configuration)
+    public DataProviderWithState(IConfigurationPathProvider configuration, DataProvider dataProvider) 
+        : base(configuration, dataProvider.LoadDatas)
     {
-        var path = configuration.GetValue<string>(ConfigurationName.ConfigurationPath);
-
-        _path = path;
-        _datas = LoadDatas(path).Result;
     }
 
     public Data GetData(DataName name)
     {
-        if (!_datas.TryGetValue(name, out Data? data))
+        var datas = LoadTask.Result;
+        
+        if (!datas.TryGetValue(name, out var data))
             throw new Exception($"Data '{name}' not found");
         return data;
     }
+}
 
-    private record DataWithFileReference(Data Data, string FileName);
 
-    private class DatasState
-    {
-        public Dictionary<DataName, Data> Datas;
-        public List<DataWithFileReference> FileReferences;
+class DataProvider
+{
+    private const string DefaultSeqName = "default_system";
 
-        public DatasState(Dictionary<DataName, Data> datas, List<DataWithFileReference> fileReferences)
-        {
-            Datas = datas;
-            FileReferences = fileReferences;
-        }
-    }
-
-    private async Task<Dictionary<DataName, Data>> LoadDatas(string path)
+    public async Task<Dictionary<DataName, Data>> LoadDatas(string path)
     {
         var dataFiles = Directory.GetFiles(path, "*.data.json", SearchOption.AllDirectories);
-        var dataWithRefs = new List<DataWithFileReference>();
+        var dataWithRefs = new List<Data>();
 
         foreach (var dataFile in dataFiles)
         {
             try
             {
                 var json = await File.ReadAllTextAsync(dataFile);
-                var datas = CreateDatas(json);
-                dataWithRefs.AddRange(datas.Select(d => new DataWithFileReference(d, dataFile)));
+                dataWithRefs.AddRange(CreateDatas(json));
             }
             catch (Exception exc)
             {
-                throw new Exception($"An error has acсured on read file '{dataFile}'", exc);
+                throw new Exception(dataFile, exc);
             }
         }
 
-        return dataWithRefs.ToDictionary(x => x.Data.Name, x => x.Data);
+        return dataWithRefs.ToDictionary(x => x.Name, x => x);
     }
 
     private IReadOnlyCollection<Data> CreateDatas(string json)

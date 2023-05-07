@@ -1,25 +1,19 @@
-﻿using Microsoft.Extensions.Configuration;
-using SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
+﻿using SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
 
 namespace SimpleMockServer.Domain.Configuration.Rules;
 
-internal class RulesProvider : IRulesProvider
+internal class RulesProvider
 {
-    private readonly Task<IReadOnlyCollection<Rule>> _rulesTask;
     private readonly RulesFileParser _rulesFileParser;
     private readonly GlobalVariablesParser _globalVariablesParser;
 
-    public RulesProvider(IConfiguration configuration, RulesFileParser rulesFileParser, GlobalVariablesParser globalVariablesParser)
+    public RulesProvider(RulesFileParser rulesFileParser, GlobalVariablesParser globalVariablesParser)
     {
-        var path = configuration.GetValue<string>(ConfigurationName.ConfigurationPath);
-
         _globalVariablesParser = globalVariablesParser;
         _rulesFileParser = rulesFileParser;
-
-        _rulesTask = LoadRules(path);
     }
-
-    async Task<IReadOnlyCollection<Rule>> LoadRules(string path)
+    
+    public async Task<IReadOnlyCollection<Rule>> LoadRules(string path)
     {
         await _globalVariablesParser.Load(path);
 
@@ -28,14 +22,16 @@ internal class RulesProvider : IRulesProvider
 
         foreach (var ruleFile in rulesFiles)
         {
-            rules.AddRange(await _rulesFileParser.Parse(ruleFile));
+            try
+            {
+                rules.AddRange(await _rulesFileParser.Parse(ruleFile));
+            }
+            catch (Exception exc)
+            {
+                throw new FileParsingException(ruleFile, exc);
+            }
         }
 
         return rules;
-    }
-
-    public Task<IReadOnlyCollection<Rule>> GetRules()
-    {
-        return _rulesTask;
     }
 }
