@@ -3,12 +3,12 @@ using System.Reflection;
 using Moq;
 using Moq.Contrib.HttpClient;
 using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.FileSectionFormat;
 using SimpleMockServer.ExternalCalling.Http.Caller;
+using SimpleMockServer.FileSectionFormat;
 
-namespace SimpleMockServer.IntegrationTests;
+namespace SimpleMockServer.IntegrationTests.Tests;
 
-public class Tests
+public class Rules_Tests
 {
     public static string[] Cases
     {
@@ -20,8 +20,8 @@ public class Tests
             // for pretty view in test explorer
             var prettyFileNames = testsFiles.Select(f =>
             {
-                int index = f.IndexOf("cases", StringComparison.Ordinal);
-                var substr = f.Substring(index).TrimStart("cases");
+                int index = f.IndexOf("rules", StringComparison.Ordinal);
+                var substr = f.Substring(index).TrimStart("rules");
                 return substr;
             }).ToArray();
 
@@ -132,7 +132,7 @@ public class Tests
     private static string GetFixturesDirectory()
     {
         string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-        string testsDirectory = Path.Combine(currentDirectory, "fixtures", "cases");
+        string testsDirectory = Path.Combine(currentDirectory, "fixtures", "rules");
         return testsDirectory;
     }
 

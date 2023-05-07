@@ -26,298 +26,298 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="fixtures\cases\call\1.rules">
+    <None Update="fixtures\rules\call\1.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\call\1.test">
+    <None Update="fixtures\rules\call\1.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\delay\response.rules">
+    <None Update="fixtures\rules\delay\response.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\delay\response.test">
+    <None Update="fixtures\rules\delay\response.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\body\format.rules">
+    <None Update="fixtures\rules\generating\function\body\format.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\body\format.test">
+    <None Update="fixtures\rules\generating\function\body\format.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\body\in_middle.rules">
+    <None Update="fixtures\rules\generating\function\body\in_middle.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\body\in_middle.test">
+    <None Update="fixtures\rules\generating\function\body\in_middle.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\body\with_end.rules">
+    <None Update="fixtures\rules\generating\function\body\with_end.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\body\with_end.test">
+    <None Update="fixtures\rules\generating\function\body\with_end.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\body\with_start.rules">
+    <None Update="fixtures\rules\generating\function\body\with_start.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\body\with_start.test">
+    <None Update="fixtures\rules\generating\function\body\with_start.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\header\with_end.rules">
+    <None Update="fixtures\rules\generating\function\header\with_end.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\header\with_end.test">
+    <None Update="fixtures\rules\generating\function\header\with_end.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\header\in_middle.rules">
+    <None Update="fixtures\rules\generating\function\header\in_middle.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\header\in_middle.test">
+    <None Update="fixtures\rules\generating\function\header\in_middle.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\header\with_start.test">
+    <None Update="fixtures\rules\generating\function\header\with_start.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\header\with_start.rules">
+    <None Update="fixtures\rules\generating\function\header\with_start.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\header\format.rules">
+    <None Update="fixtures\rules\generating\function\header\format.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\header\format.test">
+    <None Update="fixtures\rules\generating\function\header\format.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\impl\data\guid\seq.data.json">
+    <None Update="fixtures\rules\generating\function\impl\data\guid\seq.data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\impl\data\guid\seq.rules">
+    <None Update="fixtures\rules\generating\function\impl\data\guid\seq.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\impl\data\guid\seq.test">
+    <None Update="fixtures\rules\generating\function\impl\data\guid\seq.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\impl\data\guid\set.data.json">
+    <None Update="fixtures\rules\generating\function\impl\data\guid\set.data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\impl\data\guid\set.rules">
+    <None Update="fixtures\rules\generating\function\impl\data\guid\set.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\impl\data\guid\set.test">
+    <None Update="fixtures\rules\generating\function\impl\data\guid\set.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\impl\data\int\set.test">
+    <None Update="fixtures\rules\generating\function\impl\data\int\set.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\impl\data\int\set.rules">
+    <None Update="fixtures\rules\generating\function\impl\data\int\set.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\impl\data\int\set.data.json">
+    <None Update="fixtures\rules\generating\function\impl\data\int\set.data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\impl\data\int\seq.test">
+    <None Update="fixtures\rules\generating\function\impl\data\int\seq.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\impl\data\int\seq.data.json">
+    <None Update="fixtures\rules\generating\function\impl\data\int\seq.data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\function\impl\data\int\seq.rules">
+    <None Update="fixtures\rules\generating\function\impl\data\int\seq.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\static\body.rules">
+    <None Update="fixtures\rules\generating\static\body.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\static\body.test">
+    <None Update="fixtures\rules\generating\static\body.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\static\header.rules">
+    <None Update="fixtures\rules\generating\static\header.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\static\header.test">
+    <None Update="fixtures\rules\generating\static\header.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\variable\complex.test">
+    <None Update="fixtures\rules\generating\variable\complex.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\variable\comlex.rules">
+    <None Update="fixtures\rules\generating\variable\comlex.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\variable\header.test">
+    <None Update="fixtures\rules\generating\variable\header.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\variable\header.rules">
+    <None Update="fixtures\rules\generating\variable\header.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\variable\variables.req.var">
+    <None Update="fixtures\rules\generating\variable\variables.req.var">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\variable\variables.global.var">
+    <None Update="fixtures\rules\generating\variable\variables.global.var">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\variable\body.rules">
+    <None Update="fixtures\rules\generating\variable\body.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\variable\body.test">
+    <None Update="fixtures\rules\generating\variable\body.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\variable\variable.data.json">
+    <None Update="fixtures\rules\generating\variable\variable.data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\variable\data.test">
+    <None Update="fixtures\rules\generating\variable\data.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\generating\variable\data.rules">
+    <None Update="fixtures\rules\generating\variable\data.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\attempt/less_or_equals.test">
+    <None Update="fixtures\rules\match\conditions\attempt/less_or_equals.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\attempt/lessOrEquela.rules">
+    <None Update="fixtures\rules\match\conditions\attempt/lessOrEquela.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\attempt/less.test">
+    <None Update="fixtures\rules\match\conditions\attempt/less.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\attempt/less.rules">
+    <None Update="fixtures\rules\match\conditions\attempt/less.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\attempt\complex\1.rules">
+    <None Update="fixtures\rules\match\conditions\attempt\complex\1.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\attempt\complex\1.test">
+    <None Update="fixtures\rules\match\conditions\attempt\complex\1.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\attempt\less_or_equals.rules">
+    <None Update="fixtures\rules\match\conditions\attempt\less_or_equals.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\attempt\more_or_equals.test">
+    <None Update="fixtures\rules\match\conditions\attempt\more_or_equals.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\attempt\more_or_equals.rules">
+    <None Update="fixtures\rules\match\conditions\attempt\more_or_equals.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\attempt\more.test">
+    <None Update="fixtures\rules\match\conditions\attempt\more.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\attempt\more.rules">
+    <None Update="fixtures\rules\match\conditions\attempt\more.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\attempt\equals.rules">
+    <None Update="fixtures\rules\match\conditions\attempt\equals.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\attempt\equals.test">
+    <None Update="fixtures\rules\match\conditions\attempt\equals.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\elapsed\complex.rules">
+    <None Update="fixtures\rules\match\conditions\elapsed\complex.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\conditions\elapsed\complex.test">
+    <None Update="fixtures\rules\match\conditions\elapsed\complex.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\body\extract\all.rules">
+    <None Update="fixtures\rules\match\function\body\extract\all.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\body\extract\all.test">
+    <None Update="fixtures\rules\match\function\body\extract\all.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\body\extract\xpath.test">
+    <None Update="fixtures\rules\match\function\body\extract\xpath.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\body\extract\xpath.rules">
+    <None Update="fixtures\rules\match\function\body\extract\xpath.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\body\extract\jpath.rules">
+    <None Update="fixtures\rules\match\function\body\extract\jpath.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\body\extract\jpath.test">
+    <None Update="fixtures\rules\match\function\body\extract\jpath.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\impl\data.data.json">
+    <None Update="fixtures\rules\match\function\path\impl\data.data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\impl\guid.rules">
+    <None Update="fixtures\rules\match\function\path\impl\guid.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\impl\guid.test">
+    <None Update="fixtures\rules\match\function\path\impl\guid.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\impl\any.rules">
+    <None Update="fixtures\rules\match\function\path\impl\any.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\impl\any.test">
+    <None Update="fixtures\rules\match\function\path\impl\any.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\impl\data.rules">
+    <None Update="fixtures\rules\match\function\path\impl\data.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\impl\data.test">
+    <None Update="fixtures\rules\match\function\path\impl\data.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\impl\int.rules">
+    <None Update="fixtures\rules\match\function\path\impl\int.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\impl\int.test">
+    <None Update="fixtures\rules\match\function\path\impl\int.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\with_start_and_end.test">
+    <None Update="fixtures\rules\match\function\path\with_start_and_end.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\with_start_and_end.rules">
+    <None Update="fixtures\rules\match\function\path\with_start_and_end.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\with_end.rules">
+    <None Update="fixtures\rules\match\function\path\with_end.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\with_end.test">
+    <None Update="fixtures\rules\match\function\path\with_end.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\with_start.rules">
+    <None Update="fixtures\rules\match\function\path\with_start.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\path\with_start.test">
+    <None Update="fixtures\rules\match\function\path\with_start.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\query\with_end.rules">
+    <None Update="fixtures\rules\match\function\query\with_end.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\query\with_end.test">
+    <None Update="fixtures\rules\match\function\query\with_end.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\query\with_start.rules">
+    <None Update="fixtures\rules\match\function\query\with_start.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\query\with_start.test">
+    <None Update="fixtures\rules\match\function\query\with_start.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\query\with_start_and_end.rules">
+    <None Update="fixtures\rules\match\function\query\with_start_and_end.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\function\query\with_start_and_end.test">
+    <None Update="fixtures\rules\match\function\query\with_start_and_end.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\static\header.rules">
+    <None Update="fixtures\rules\match\static\header.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\static\header.test">
+    <None Update="fixtures\rules\match\static\header.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\static\method.rules">
+    <None Update="fixtures\rules\match\static\method.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\static\method.test">
+    <None Update="fixtures\rules\match\static\method.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\static\query.rules">
+    <None Update="fixtures\rules\match\static\query.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\static\query.test">
+    <None Update="fixtures\rules\match\static\query.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\_draft\by_path1.rules">
+    <None Update="fixtures\rules\_draft\by_path1.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\static\path.rules">
+    <None Update="fixtures\rules\match\static\path.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\cases\match\static\path.test">
+    <None Update="fixtures\rules\match\static\path.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
