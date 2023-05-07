@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
 using Moq;
 using Moq.Contrib.HttpClient;
 using SimpleMockServer.Common.Extensions;
@@ -8,7 +7,7 @@ using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.IntegrationTests.Tests;
 
-public class Rules_Tests
+public class Rules_Tests : TestBase
 {
     public static string[] Cases
     {
@@ -43,8 +42,8 @@ public class Rules_Tests
 
         var sections = await SectionFileParser.Parse(realTestFilePath, new Dictionary<string, IReadOnlySet<string>>
             {
-                {"expected", new HashSet<string>{ "body", "code", "headers", "elapsed" } },
-                {"case", new HashSet<string>{ "headers", "body", "delay", "wait" } },
+                {"expected",  new HashSet<string>{ "body", "code", "headers", "elapsed" } },
+                {"case",      new HashSet<string>{ "headers", "body", "delay", "wait" } },
                 {"call.http", new HashSet<string>{ "headers", "body", "elapsed" } },
             },
         maxNestingDepth: 3);
@@ -129,12 +128,7 @@ public class Rules_Tests
         }
     }
 
-    private static string GetFixturesDirectory()
-    {
-        string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-        string testsDirectory = Path.Combine(currentDirectory, "fixtures", "rules");
-        return testsDirectory;
-    }
+    private static string GetFixturesDirectory() => Path.Combine(GetCurrentDirectory(), "fixtures", "rules");
 
     private static void AssertValidHeaders(HttpResponseMessage res, FileSection expectedSection)
     {

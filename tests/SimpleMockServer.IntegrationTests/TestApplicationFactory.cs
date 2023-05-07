@@ -8,13 +8,13 @@ namespace SimpleMockServer.IntegrationTests;
 
 public class TestApplicationFactory : WebApplicationFactory<Startup>
 {
-    private readonly string _searchPath;
+    private readonly string _rulesPath;
     private readonly AppMocks? _appMocks;
 
 
-    public TestApplicationFactory(string searchPath, AppMocks? appMocks = null)
+    public TestApplicationFactory(string rulesPath, AppMocks? appMocks = null)
     {
-        _searchPath = searchPath;
+        _rulesPath = rulesPath;
         _appMocks = appMocks;
     }
 
@@ -22,7 +22,7 @@ public class TestApplicationFactory : WebApplicationFactory<Startup>
     {
         var settings = new Dictionary<string, string?>
         {
-            {"RulesPath", _searchPath},
+            {"RulesPath", _rulesPath},
         };
 
         var cfgBuilder = new ConfigurationBuilder();
