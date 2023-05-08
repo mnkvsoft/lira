@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 
-namespace SimpleMockServer.Domain.Configuration.Rules;
+namespace SimpleMockServer.Domain.Configuration;
 
 interface IConfigurationPathProvider
 {
@@ -11,46 +14,45 @@ interface IConfigurationPathProvider
 class ConfigurationPathProvider : IConfigurationPathProvider, IDisposable
 {
     public string Path { get; }
-    private readonly FileSystemWatcher _watcher;
+    private readonly ILogger _logger;
+    
+    private readonly PhysicalFileProvider _fileProvider;
+    private IChangeToken? _fileChangeToken;
     public event EventHandler? Changed;
     
-    public ConfigurationPathProvider(IConfiguration configuration)
+    public ConfigurationPathProvider(ILoggerFactory loggerFactory, IConfiguration configuration)
     {
+        _logger = loggerFactory.CreateLogger(GetType());
         Path = configuration.GetValue<string>(ConfigurationName.ConfigurationPath);
         
-        _watcher = new FileSystemWatcher(Path);
-        _watcher.NotifyFilter = NotifyFilters.Attributes
-                                | NotifyFilters.CreationTime
-                                | NotifyFilters.DirectoryName
-                                | NotifyFilters.FileName
-                                | NotifyFilters.LastAccess
-                                | NotifyFilters.LastWrite
-                                | NotifyFilters.Security
-                                | NotifyFilters.Size;
+        _logger.LogInformation($"Rules path for watching: {Path}");
 
-        _watcher.Changed += OnChanged;
-        _watcher.Created += OnCreated;
-        _watcher.Deleted += OnDeleted;
-        _watcher.Renamed += OnRenamed;
+        _fileProvider = new PhysicalFileProvider(Path);
+        _fileProvider.UsePollingFileWatcher = true;
+        _fileProvider.UseActivePolling = true;
+        WatchForFileChanges();
+    }
 
-        _watcher.IncludeSubdirectories = true;
-        _watcher.EnableRaisingEvents = true;
+    private void WatchForFileChanges()
+    {
+        _fileChangeToken = _fileProvider.Watch("**/*.*");
+        _fileChangeToken.RegisterChangeCallback(Notify, default);
+    }
+
+    private void Notify(object? state)
+    {
+        OnChange();
+        WatchForFileChanges();
+    }
+
+    private void OnChange()
+    {
+        _logger.LogInformation($"Change was detected in {Path}");
+        Changed?.Invoke(this, EventArgs.Empty);
     }
     
-    private void OnChanged(object sender, FileSystemEventArgs e) => 
-        Changed?.Invoke(this, EventArgs.Empty);
-
-    private void OnCreated(object sender, FileSystemEventArgs e) => 
-        Changed?.Invoke(this, EventArgs.Empty);
-
-    private void OnDeleted(object sender, FileSystemEventArgs e) =>
-        Changed?.Invoke(this, EventArgs.Empty);
-
-    private void OnRenamed(object sender, RenamedEventArgs e) =>
-        Changed?.Invoke(this, EventArgs.Empty);
-
     public void Dispose()
     {
-        _watcher.Dispose();
+        _fileProvider.Dispose();
     }
 }

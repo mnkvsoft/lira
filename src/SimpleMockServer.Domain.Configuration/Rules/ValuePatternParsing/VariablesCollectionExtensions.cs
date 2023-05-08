@@ -1,4 +1,6 @@
-﻿namespace SimpleMockServer.Domain.TextPart.Variables;
+﻿using SimpleMockServer.Domain.TextPart.Variables;
+
+namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 
 static class VariablesCollectionExtensions
 {

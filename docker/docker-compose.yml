@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  private:
+    container_name: simplemockserver
+    image: simplemockserver
+    ports:
+      - "8888:80"
+    volumes:
+       - c:/projects/rules:/app/rules
+

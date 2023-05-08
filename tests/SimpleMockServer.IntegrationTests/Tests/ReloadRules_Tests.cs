@@ -3,6 +3,7 @@
 public class ReloadRules_Tests : TestBase
 {
     private static string Nl = Environment.NewLine;
+    private static readonly TimeSpan PhysicalFileProviderPoolingInterval = TimeSpan.FromSeconds(10);
     
     [Test]
     public async Task AddNewRule()
@@ -23,7 +24,7 @@ public class ReloadRules_Tests : TestBase
             "code:" + Nl +
             "200");
 
-        await Task.Delay(100);
+        await Task.Delay(PhysicalFileProviderPoolingInterval);
         
         var response2 = await httpClient.GetAsync("/test");
         Assert.That((int)response2.StatusCode, Is.EqualTo(200));
@@ -33,9 +34,7 @@ public class ReloadRules_Tests : TestBase
     public async Task DeleteRule()
     {
         string rulesPath = CreateRulesPath(); 
-        await using var factory = new TestApplicationFactory(rulesPath);
-        var httpClient = factory.CreateDefaultClient();
-
+        
         var ruleFile = Path.Combine(rulesPath, "1.rules");
         await File.WriteAllTextAsync(
             ruleFile,
@@ -47,12 +46,15 @@ public class ReloadRules_Tests : TestBase
             "200"
             
         );
+        
+        await using var factory = new TestApplicationFactory(rulesPath);
+        var httpClient = factory.CreateDefaultClient();
 
         var response1 = await httpClient.GetAsync("/test");
         Assert.That((int)response1.StatusCode, Is.EqualTo(200));
         
         File.Delete(ruleFile);
-        await Task.Delay(100);
+        await Task.Delay(PhysicalFileProviderPoolingInterval);
         
         var response2 = await httpClient.GetAsync("/test");
         Assert.That((int)response2.StatusCode, Is.EqualTo(404));
@@ -63,9 +65,7 @@ public class ReloadRules_Tests : TestBase
     public async Task ChangeRule()
     {
         string rulesPath = CreateRulesPath(); 
-        await using var factory = new TestApplicationFactory(rulesPath);
-        var httpClient = factory.CreateDefaultClient();
-
+        
         var ruleFile = Path.Combine(rulesPath, "1.rules");
         await File.WriteAllTextAsync(
             ruleFile,
@@ -77,6 +77,9 @@ public class ReloadRules_Tests : TestBase
             "200"
             
         );
+        
+        await using var factory = new TestApplicationFactory(rulesPath);
+        var httpClient = factory.CreateDefaultClient();
 
         var response1 = await httpClient.GetAsync("/test");
         Assert.That((int)response1.StatusCode, Is.EqualTo(200));
@@ -91,7 +94,7 @@ public class ReloadRules_Tests : TestBase
             "204"
             
         );
-        await Task.Delay(100);
+        await Task.Delay(PhysicalFileProviderPoolingInterval);
         
         var response2 = await httpClient.GetAsync("/test");
         Assert.That((int)response2.StatusCode, Is.EqualTo(204));

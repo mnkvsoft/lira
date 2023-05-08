@@ -49,7 +49,7 @@ public class LoggingMiddleware
         var buffer = new byte[Convert.ToInt32(request.ContentLength)];
 
         //...Then we copy the entire request stream into the new buffer.
-        await request.Body.ReadAsync(buffer, 0, buffer.Length);
+        _ = await request.Body.ReadAsync(buffer, 0, buffer.Length);
 
         //We convert the byte[] into a string using UTF8 encoding...
         var bodyAsText = Encoding.UTF8.GetString(buffer);
@@ -72,7 +72,7 @@ public class LoggingMiddleware
             sb.AppendLine();
             foreach (var header in request.Headers)
             {
-                sb.AppendLine($"{header.Key}: {string.Join(", ", header.Value)}");
+                sb.AppendLine($"{header.Key}: {string.Join(", ", header.Value.Select(x => x))}");
             }
         }
 
@@ -100,14 +100,14 @@ public class LoggingMiddleware
 
         var sb = new StringBuilder();
         sb.AppendLine("Response:");
-        sb.AppendLine(((int)response.StatusCode).ToString());
+        sb.AppendLine(response.StatusCode.ToString());
 
         if (response.Headers.Any())
         {
             sb.AppendLine();
             foreach (var header in response.Headers)
             {
-                sb.AppendLine($"{header.Key}: {string.Join(", ", header.Value)}");
+                sb.AppendLine($"{header.Key}: {string.Join(", ", header.Value.Select(x => x))}");
             }
         }
 

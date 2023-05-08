@@ -1,4 +1,5 @@
-﻿using SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
+﻿using Microsoft.Extensions.Logging;
+using SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
 
 namespace SimpleMockServer.Domain.Configuration.Rules;
 
@@ -6,11 +7,13 @@ internal class RulesProvider
 {
     private readonly RulesFileParser _rulesFileParser;
     private readonly GlobalVariablesParser _globalVariablesParser;
+    private readonly ILogger _logger;
 
-    public RulesProvider(RulesFileParser rulesFileParser, GlobalVariablesParser globalVariablesParser)
+    public RulesProvider(ILoggerFactory loggerFactory, RulesFileParser rulesFileParser, GlobalVariablesParser globalVariablesParser)
     {
         _globalVariablesParser = globalVariablesParser;
         _rulesFileParser = rulesFileParser;
+        _logger = loggerFactory.CreateLogger(GetType());
     }
     
     public async Task<IReadOnlyCollection<Rule>> LoadRules(string path)
@@ -32,6 +35,8 @@ internal class RulesProvider
             }
         }
 
+        _logger.LogInformation($"{rules.Count} rules was loaded");
+        
         return rules;
     }
 }

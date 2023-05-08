@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +19,12 @@
     <ProjectReference Include="..\SimpleMockServer.Domain.TextPart.Functions\SimpleMockServer.Domain.TextPart.Functions.csproj" />
     <ProjectReference Include="..\SimpleMockServer.Domain\SimpleMockServer.Domain.csproj" />
     <ProjectReference Include="..\SimpleMockServer.FileSectionFormat\SimpleMockServer.FileSectionFormat.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SimpleMockServer.Domain.TextPart.Functions">
+      <HintPath>..\..\tests\SimpleMockServer.IntegrationTests\bin\Debug\net7.0\SimpleMockServer.Domain.TextPart.Functions.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
