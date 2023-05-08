@@ -11,7 +11,7 @@ internal static class PatternParser
         var parts = new List<PatternPart>();
         var sb = new StringBuilder();
 
-        var iterator = pattern.GetEnumerator();
+        using var iterator = pattern.GetEnumerator();
         var writeCallChain = false;
 
         while (iterator.MoveNext())
@@ -25,8 +25,11 @@ internal static class PatternParser
                 iterator.MoveNext();
                 if (iterator.Current == BeginChar)
                 {
-                    parts.Add(new PatternPart.Static(sb.ToString()));
-                    sb.Clear();
+                    if (sb.Length > 0)
+                    {
+                        parts.Add(new PatternPart.Static(sb.ToString()));
+                        sb.Clear();
+                    }
 
                     writeCallChain = true;
                     var callChain = new StringBuilder();
@@ -63,7 +66,9 @@ internal static class PatternParser
         if (writeCallChain)
             throw new Exception($"Open block {{{{ not close in pattern '{pattern}'");
 
-        parts.Add(new PatternPart.Static(sb.ToString()));
+        if(sb.Length > 0)
+            parts.Add(new PatternPart.Static(sb.ToString()));
+        
         return parts;
     }
 }

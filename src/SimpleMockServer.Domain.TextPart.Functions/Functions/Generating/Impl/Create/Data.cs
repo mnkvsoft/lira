@@ -1,7 +1,7 @@
 ﻿using SimpleMockServer.Domain.DataModel;
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Create;
-internal class Data : DataBase, IGlobalGeneratingFunction
+internal class Data : DataBase, IGlobalObjectTextPart
 {
     public Data(IDataProvider dataProvider) : base(dataProvider)
     {
@@ -9,10 +9,10 @@ internal class Data : DataBase, IGlobalGeneratingFunction
 
     public static string Name => "data";
 
-    public object? Generate(RequestData request) => Generate();
+    public object Get(RequestData request) => Get();
 
-    public object? Generate()
+    public object Get()
     {
-        return GetRange().NextValue().ToString();
+        return GetRange().NextValue().ToString()!;
     }
 }

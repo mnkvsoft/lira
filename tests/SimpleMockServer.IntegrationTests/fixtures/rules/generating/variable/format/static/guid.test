@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/variable/format/static/guid
+
+----- expected
+
+code:
+200
+
+body:
+{a29fa809-b301-443d-afec-9c38f275d096}

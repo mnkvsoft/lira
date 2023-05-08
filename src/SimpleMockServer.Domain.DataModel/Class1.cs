@@ -1,7 +1,6 @@
-﻿namespace SimpleMockServer.Domain.DataModel
-{
-    public class Class1
-    {
+﻿namespace SimpleMockServer.Domain.DataModel;
 
-    }
+public class Class1
+{
+
 }

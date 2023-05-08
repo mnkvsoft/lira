@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
 using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.Domain.Generating;
 using SimpleMockServer.Domain.Matching.Request.Matchers.Body;
 using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract.Body;
 
@@ -16,12 +15,11 @@ public interface IBodyExtractFunctionFactory
 
 public interface IGeneratingFunctionFactory
 {
-    ITextPart Create(string value);
+    IObjectTextPart Create(string value);
 }
 
 internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBodyExtractFunctionFactory
 {
-    private readonly ILoggerFactory _loggerFactory;
     private readonly Dictionary<string, Type> _functionNameToType;
     private readonly IServiceProvider _serviceProvider;
 
@@ -29,15 +27,16 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
 
     public GeneratingPrettyFunctionFactory(IServiceProvider serviceProvider, ILoggerFactory loggerFactory)
     {
-        _loggerFactory = loggerFactory;
         _functionNameToType = new Dictionary<string, Type>();
 
+        var factory = loggerFactory;
+        
         _bodyExtractFunctionsMap = new Dictionary<string, Func<string, IBodyExtractFunction>>
         {
-            {FunctionName.ExtractBody.All, arg => new AllExtractFunction()},
-            {"jpath", arg => new JsonPathExtractFunction(_loggerFactory).Apply(x => x.SetArgument(arg))},
-            {"xpath", arg => new XPathExtractFunction(_loggerFactory).Apply(x => x.SetArgument(arg))},
-            {"form", arg => new FormExtractFunction(_loggerFactory).Apply(x => x.SetArgument(arg))},
+            {FunctionName.ExtractBody.All, _ => new AllExtractFunction()},
+            {"jpath", arg => new JsonPathExtractFunction(factory).Apply(x => x.SetArgument(arg))},
+            {"xpath", arg => new XPathExtractFunction(factory).Apply(x => x.SetArgument(arg))},
+            {"form", arg => new FormExtractFunction(factory).Apply(x => x.SetArgument(arg))},
         };
 
         foreach (var functionType in GetMatchFunctionTypes())
@@ -45,20 +44,20 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
             var nameProperty = functionType.GetProperties().SingleOrDefault(x => x.Name == "Name");
 
             if (nameProperty == null)
-                throw new Exception($"Mutch function '{functionType}' must define static Name property");
+                throw new Exception($"Match function '{functionType}' must define static Name property");
 
             var functionName = (string?)nameProperty.GetValue(null, null);
 
             if (string.IsNullOrEmpty(functionName))
                 throw new Exception("Empty function name in type " + functionType.FullName);
 
-            if (_functionNameToType.ContainsKey(functionName))
-                throw new Exception($"Function with name {functionName} already define in type {_functionNameToType[functionName].FullName}");
+            if (_functionNameToType.TryGetValue(functionName, out var value))
+                throw new Exception($"Function with name {functionName} already define in type {value.FullName}");
 
             _functionNameToType.Add(functionName, functionType);
         }
+        
         _serviceProvider = serviceProvider;
-        _loggerFactory = loggerFactory;
     }
 
     IBodyExtractFunction IBodyExtractFunctionFactory.Create(string value)
@@ -80,16 +79,18 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
         throw new UnknownFunctionException(value);
     }
 
-    ITextPart IGeneratingFunctionFactory.Create(string value)
+    IObjectTextPart IGeneratingFunctionFactory.Create(string value)
     {
-        (var functionInvoke, var format) = value.SplitToTwoParts(" format:").Trim();
-        (var functionName, var argument) = functionInvoke.SplitToTwoParts(":").Trim();
+        var (functionName, argument) = value.SplitToTwoParts(":").Trim();
 
         if (!_functionNameToType.TryGetValue(functionName, out var functionType))
             throw new UnknownFunctionException(value);
 
-        var function = _serviceProvider.GetRequiredService(functionType);
+        var function = _serviceProvider.GetRequiredService(functionType) as IObjectTextPart;
 
+        if (function == null)
+            throw new Exception("Unknown function type: " + functionType);
+        
         if (argument != null && function is not IWithStringArgumenFunction)
             throw new Exception($"Function '{functionName}' not support arguments");
 
@@ -98,13 +99,7 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
             withArgument.SetArgument(argument!);
         }
 
-        if (function is IGlobalGeneratingFunction)
-            return new GlobalGeneratingFunction((IGlobalGeneratingFunction)function, format);
-
-        if (function is IGeneratingFunction)
-            return new GeneratingFunction((IGeneratingFunction)function, format);
-
-        throw new Exception("Unknown function type: " + function.GetType());
+        return function;
     }
 
     public static void AddMatchFunctions(IServiceCollection sc)
@@ -118,7 +113,7 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
     private static IReadOnlyCollection<Type> GetMatchFunctionTypes()
     {
         var result = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => t.IsAssignableTo(typeof(IGeneratingFunction)) && !t.IsAbstract).ToArray();
+            .Where(t => t.IsAssignableTo(typeof(IObjectTextPart)) && !t.IsAbstract).ToArray();
         return result;
     }
 }

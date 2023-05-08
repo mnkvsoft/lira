@@ -1,5 +1,6 @@
 ﻿using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
+using SimpleMockServer.Domain.TextPart;
 using SimpleMockServer.Domain.TextPart.Variables;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
@@ -63,13 +64,13 @@ internal class GlobalVariablesParser
         return result;
     }
 
-    private GlobalVariable CreateGlobalVariable(string line, GlobalVariableSet registeredVariables)
+    private GlobalObjectVariable CreateGlobalVariable(string line, GlobalVariableSet registeredVariables)
     {
         var (name, pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.AssignmentOperator).Trim();
 
         var parts = _textPartsParser.Parse(pattern, registeredVariables);
 
-        var notAccessibleParts = parts.Where(p => p is not IGlobalTextPart).ToArray();
+        var notAccessibleParts = parts.Where(p => p is not IGlobalObjectTextPart).ToArray();
         
         if (notAccessibleParts.Any())
         {
@@ -77,7 +78,7 @@ internal class GlobalVariablesParser
             throw new Exception($"{partsNames} cannot be use in global variables because they require http request");
         }
 
-        return new GlobalVariable(name, parts.Cast<IGlobalTextPart>().ToArray());
+        return new GlobalObjectVariable(name, parts.Cast<IGlobalObjectTextPart>().ToArray());
     }
 
     private RequestVariable CreateRequestVariable(string line, GlobalVariableSet registeredVariables)

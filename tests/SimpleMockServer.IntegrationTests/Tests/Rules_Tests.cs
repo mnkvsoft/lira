@@ -9,6 +9,9 @@ namespace SimpleMockServer.IntegrationTests.Tests;
 
 public class Rules_Tests : TestBase
 {
+    private static readonly string RulesFolderName = "rules";
+    // private static readonly string RulesFolderName = "debug";
+    
     public static string[] Cases
     {
         get
@@ -19,8 +22,8 @@ public class Rules_Tests : TestBase
             // for pretty view in test explorer
             var prettyFileNames = testsFiles.Select(f =>
             {
-                int index = f.IndexOf("rules", StringComparison.Ordinal);
-                var substr = f.Substring(index).TrimStart("rules");
+                int index = f.IndexOf(RulesFolderName, StringComparison.Ordinal);
+                var substr = f.Substring(index).TrimStart(RulesFolderName);
                 return substr;
             }).ToArray();
 
@@ -128,7 +131,7 @@ public class Rules_Tests : TestBase
         }
     }
 
-    private static string GetFixturesDirectory() => Path.Combine(GetCurrentDirectory(), "fixtures", "rules");
+    private static string GetFixturesDirectory() => Path.Combine(GetCurrentDirectory(), "fixtures", RulesFolderName);
 
     private static void AssertValidHeaders(HttpResponseMessage res, FileSection expectedSection)
     {

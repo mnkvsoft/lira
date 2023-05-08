@@ -3,16 +3,16 @@ using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extra
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract.Body;
 
-public class AllExtractFunction : IBodyExtractFunction, IGeneratingFunction
+public class AllExtractFunction : IBodyExtractFunction, IObjectTextPart
 {
-    public static string Name => "extract.body.all";
+    public static string Name => "read.req.body.all";
 
     public string? Extract(string? value)
     {
         return value;
     }
 
-    public object? Generate(RequestData request)
+    public object Get(RequestData request)
     {
         return request.ReadBody();
     }

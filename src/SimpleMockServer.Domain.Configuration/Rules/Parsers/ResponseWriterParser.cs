@@ -1,4 +1,5 @@
 ﻿using SimpleMockServer.Domain.Generating.Writers;
+using SimpleMockServer.Domain.TextPart;
 using SimpleMockServer.Domain.TextPart.Variables;
 using SimpleMockServer.FileSectionFormat;
 
@@ -64,8 +65,8 @@ class ResponseWriterParser
 
         if (bodyBlock != null)
         {
-            var textGenerator = _httpDataParser.ParseBody(bodyBlock, variables);
-            bodyWriter = new BodyWriter(textGenerator);
+            var parts = _httpDataParser.ParseBody(bodyBlock, variables);
+            bodyWriter = new BodyWriter(parts.WrapToTextParts());
         }
 
         return bodyWriter;

@@ -1,23 +1,21 @@
-﻿using SimpleMockServer.Domain.Generating;
-
-namespace SimpleMockServer.Domain.TextPart.Variables;
+﻿namespace SimpleMockServer.Domain.TextPart.Variables;
 
 public class RequestVariable : Variable
 {
-    private readonly IReadOnlyCollection<ITextPart> _parts;
+    private readonly IReadOnlyCollection<IObjectTextPart> _parts;
 
-    public RequestVariable(string name, IReadOnlyCollection<ITextPart> parts) : base(name)
+    public RequestVariable(string name, IReadOnlyCollection<IObjectTextPart> parts) : base(name)
     {
         _parts = parts;
     }
 
-    public override string? Get(RequestData request)
+    public override object Get(RequestData request)
     {
         var key = "variable_" + Name;
         if (request.Items.TryGetValue(key, out var value))
-            return (string)value;
+            return value;
 
-        var newValue = _parts.Generate(request);
+        object? newValue = _parts.Generate(request);
         request.Items.Add(key, newValue);
         return newValue;
     }

@@ -1,0 +1,15 @@
+-------------------- rule
+
+GET /generating/variable/format/static/int
+
+----- variables
+
+order_id = 1
+
+----- response
+
+code:
+200
+
+body:
+{{ $order_id   format:#.00# }}

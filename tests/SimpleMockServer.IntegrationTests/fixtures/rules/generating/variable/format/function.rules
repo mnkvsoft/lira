@@ -1,0 +1,16 @@
+-------------------- rule
+
+GET /generating/variable/format/function
+
+----- variables
+
+order_id = {{ echo: a29fa809-b301-443d-afec-9c38f275d096 }}
+
+----- response
+
+code:
+200
+
+body:
+{{ $order_id   format: N }}
+{{ $order_id   format: B }}

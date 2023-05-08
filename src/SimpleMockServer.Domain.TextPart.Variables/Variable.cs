@@ -1,9 +1,8 @@
 ﻿using ArgValidation;
-using SimpleMockServer.Domain.Generating;
 
 namespace SimpleMockServer.Domain.TextPart.Variables;
 
-public abstract class Variable : ITextPart, IEquatable<Variable>
+public abstract class Variable : IObjectTextPart, IEquatable<Variable>
 {
     public string Name { get; }
 
@@ -32,5 +31,5 @@ public abstract class Variable : ITextPart, IEquatable<Variable>
         return Name.GetHashCode();
     }
 
-    public abstract string? Get(RequestData request);
+    public abstract object Get(RequestData request);
 }

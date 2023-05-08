@@ -5,11 +5,11 @@ using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extra
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract.Body;
 
-public class JsonPathExtractFunction : IBodyExtractFunction, IGeneratingFunction, IWithStringArgumenFunction
+public class JsonPathExtractFunction : IBodyExtractFunction, IObjectTextPart, IWithStringArgumenFunction
 {
-    public static string Name => "extract.body.jpath";
+    public static string Name => "read.req.body.jpath";
 
-    private string _jpath;
+    private string _jpath = "";
     private readonly ILogger _logger;
 
     public JsonPathExtractFunction(ILoggerFactory loggerFactory)
@@ -38,7 +38,7 @@ public class JsonPathExtractFunction : IBodyExtractFunction, IGeneratingFunction
         return result;
     }
 
-    public object? Generate(RequestData request)
+    public object? Get(RequestData request)
     {
         return Extract(request.ReadBody());
     }

@@ -1,11 +1,11 @@
 ﻿namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract;
-internal class Header : IGeneratingFunction, IWithStringArgumenFunction
+internal class Header : IObjectTextPart, IWithStringArgumenFunction
 {
-    public static string Name => "extract.header";
+    public static string Name => "read.req.header";
 
     private string _headerName;
 
-    public object? Generate(RequestData request)
+    public object? Get(RequestData request)
     {
         if (request.Headers.TryGetValue(_headerName, out var result))
             return result.First();

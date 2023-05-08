@@ -17,14 +17,9 @@
     <ProjectReference Include="..\SimpleMockServer.Common\SimpleMockServer.Common.csproj" />
     <ProjectReference Include="..\SimpleMockServer.Domain.DataModel\SimpleMockServer.Domain.DataModel.csproj" />
     <ProjectReference Include="..\SimpleMockServer.Domain.TextPart.Functions\SimpleMockServer.Domain.TextPart.Functions.csproj" />
+    <ProjectReference Include="..\SimpleMockServer.Domain.TextPart\SimpleMockServer.Domain.TextPart.csproj" />
     <ProjectReference Include="..\SimpleMockServer.Domain\SimpleMockServer.Domain.csproj" />
     <ProjectReference Include="..\SimpleMockServer.FileSectionFormat\SimpleMockServer.FileSectionFormat.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="SimpleMockServer.Domain.TextPart.Functions">
-      <HintPath>..\..\tests\SimpleMockServer.IntegrationTests\bin\Debug\net7.0\SimpleMockServer.Domain.TextPart.Functions.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

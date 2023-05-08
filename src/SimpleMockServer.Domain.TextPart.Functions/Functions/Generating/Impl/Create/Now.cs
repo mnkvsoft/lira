@@ -1,10 +1,10 @@
 ﻿namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Create;
 
-internal class Now : IGlobalGeneratingFunction
+internal class Now : IGlobalObjectTextPart
 {
     public static string Name => "now";
 
-    public object? Generate(RequestData request) => Generate();
+    public object Get(RequestData request) => Get();
 
-    public object? Generate() => DateTime.Now;
+    public object Get() => DateTime.Now;
 }

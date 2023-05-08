@@ -2,5 +2,5 @@
 
 public interface ITextPart
 {
-    string? Get(RequestData request);
+    string Get(RequestData request);
 }

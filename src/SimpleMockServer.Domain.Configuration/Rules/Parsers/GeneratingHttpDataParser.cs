@@ -1,6 +1,7 @@
 ﻿using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Generating;
+using SimpleMockServer.Domain.TextPart;
 using SimpleMockServer.Domain.TextPart.Variables;
 using SimpleMockServer.FileSectionFormat;
 
@@ -23,19 +24,19 @@ public class GeneratingHttpDataParser
             if (string.IsNullOrEmpty(line))
                 break;
 
-            (var headerName, var headerPattern) = line.SplitToTwoParts(":").Trim();
+            var (headerName, headerPattern) = line.SplitToTwoParts(":").Trim();
 
             if (headerPattern == null)
                 throw new Exception($"Empty matching for header '{headerPattern}' in line: '{line}'");
 
-            var textGenerator = _partsParser.Parse(headerPattern, variables);
+            var parts = _partsParser.Parse(headerPattern, variables);
 
-            headers.Add(new GeneratingHeader(headerName, textGenerator));
+            headers.Add(new GeneratingHeader(headerName, parts.WrapToTextParts()));
         }
         return headers;
     }
 
-    public TextParts ParseBody(FileBlock block, IReadOnlyCollection<Variable> variables)
+    public ObjectTextParts ParseBody(FileBlock block, IReadOnlyCollection<Variable> variables)
     {
         return _partsParser.Parse(block.GetStringValue(), variables);
     }

@@ -5,11 +5,11 @@ using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extra
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract.Body;
 
-public class FormExtractFunction : IBodyExtractFunction, IGeneratingFunction, IWithStringArgumenFunction
+public class FormExtractFunction : IBodyExtractFunction, IObjectTextPart, IWithStringArgumenFunction
 {
-    public static string Name => "extract.body.form";
+    public static string Name => "read.req.body.form";
 
-    private string _formParamName;
+    private string? _formParamName;
     private readonly ILogger _logger;
 
     public FormExtractFunction(ILoggerFactory loggerFactory)
@@ -37,7 +37,7 @@ public class FormExtractFunction : IBodyExtractFunction, IGeneratingFunction, IW
         return result;
     }
 
-    public object? Generate(RequestData request)
+    public object? Get(RequestData request)
     {
         return Extract(request.ReadBody());
     }

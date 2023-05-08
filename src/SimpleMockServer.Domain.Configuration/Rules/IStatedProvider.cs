@@ -1,7 +1,6 @@
-﻿namespace SimpleMockServer.Domain.Configuration.Rules
+﻿namespace SimpleMockServer.Domain.Configuration.Rules;
+
+public interface IStatedProvider
 {
-    public interface IStatedProvider
-    {
-        Task<ProviderState> GetState();
-    }
+    Task<ProviderState> GetState();
 }

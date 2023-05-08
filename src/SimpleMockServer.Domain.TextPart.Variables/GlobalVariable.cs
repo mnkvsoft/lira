@@ -1,15 +1,15 @@
 ﻿namespace SimpleMockServer.Domain.TextPart.Variables;
 
-public class GlobalVariable : Variable, IGlobalTextPart
+public class GlobalObjectVariable : Variable, IGlobalObjectTextPart
 {
-    private readonly string _value;
+    private readonly object _value;
 
-    public GlobalVariable(string name, IReadOnlyCollection<IGlobalTextPart> parts) : base(name)
+    public GlobalObjectVariable(string name, IReadOnlyCollection<IGlobalObjectTextPart> parts) : base(name)
     {
-        _value = string.Concat(parts.Select(p => p.Get()));
+        _value = parts.Generate();
     }
 
-    public override string? Get(RequestData request) => _value;
+    public override object Get(RequestData request) => _value;
 
-    public string? Get() => _value;
+    public object Get() => _value;
 }
