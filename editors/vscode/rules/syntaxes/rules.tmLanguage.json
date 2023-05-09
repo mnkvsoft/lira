@@ -3,18 +3,52 @@
 	"name": "rules",
 	"patterns": [
 		{
+			"include": "#sections"
+		},
+		{
 			"include": "#keywords"
 		},
 		{
 			"include": "#strings"
+		},
+		{
+			"include": "#methods"
+		},
+		{
+			"include": "#variables"
+		},
+		{
+			"include": "#constants"
 		}
 	],
 	"repository": {
+		"sections": {
+			"patterns": [
+			{
+				"name": "entity.name.type.section.splillet.rules",
+				"match": "-{3,}"
+			},
+			{
+				"name": "entity.name.type.section.name.rules",
+				"match": " (rule|response|variables|condition)"
+			}
+			]
+		},
 		"keywords": {
-			"patterns": [{
-				"name": "keyword.control.rules",
-				"match": "\\b(if|while|for|return)\\b"
-			}]
+			"patterns": [
+			{
+				"name": "keyword.control.http.rules",
+				"match": "GET|POST|PUT|DELETE|HEAD|TRACE|OPTIONS|CONNECT"
+			},
+			{
+				"name": "keyword.control.other.rules",
+				"match": "(format):"
+			},
+			{
+				"name": "keyword.block.rules",
+				"match": "(code|body|headers):"
+			}
+			]
 		},
 		"strings": {
 			"name": "string.quoted.double.rules",
@@ -26,6 +60,30 @@
 					"match": "\\\\."
 				}
 			]
+		},
+		"variables": {
+			"patterns": [{
+				"name": "entity.name.variable.rules",
+				"match": "\\$\\S+ "
+			}]
+		},
+		"constants": {
+			"patterns": [
+			{
+				"name": "constant.numeric.rules",
+				"match": "\\d"
+			},
+			{
+				"name": "constant.guid.rules",
+				"match": "^({)?(\\()?\\d+(?(1)})(?(2)\\))$"
+			}
+			]
+		},
+		"methods": {
+			"patterns": [{
+				"name": "entity.name.function.rules",
+				"match": "jpath|xpath|int|any|guid|data|echo"
+			}]
 		}
 	},
 	"scopeName": "rules"
