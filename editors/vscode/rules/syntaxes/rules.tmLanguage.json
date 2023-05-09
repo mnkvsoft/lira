@@ -47,6 +47,10 @@
 			{
 				"name": "keyword.block.rules",
 				"match": "(code|body|headers):"
+			},
+			{
+				"name": "keyword.dynamic-part.rules",
+				"match": "{{|}}"
 			}
 			]
 		},
@@ -82,7 +86,7 @@
 		"methods": {
 			"patterns": [{
 				"name": "entity.name.function.rules",
-				"match": "jpath|xpath|int|any|guid|data|echo"
+				"match": " (jpath|xpath|int|any|guid|data|echo)"
 			}]
 		}
 	},
