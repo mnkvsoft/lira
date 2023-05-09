@@ -1,0 +1,25 @@
+{
+  "name": "rules",
+  "displayName": "rules",
+  "description": "Rules syntax for SimpleMockServer",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.54.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "rules",
+      "aliases": ["rules", "rules"],
+      "extensions": [".rules"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "rules",
+      "scopeName": "rules",
+      "path": "./syntaxes/rules.tmLanguage.json"
+    }]
+  }
+}
