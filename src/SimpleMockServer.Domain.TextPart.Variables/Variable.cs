@@ -31,5 +31,5 @@ public abstract class Variable : IObjectTextPart, IEquatable<Variable>
         return Name.GetHashCode();
     }
 
-    public abstract object Get(RequestData request);
+    public abstract object? Get(RequestData request);
 }

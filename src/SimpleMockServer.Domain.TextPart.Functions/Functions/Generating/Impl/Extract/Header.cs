@@ -3,7 +3,7 @@ internal class Header : IObjectTextPart, IWithStringArgumenFunction
 {
     public static string Name => "read.req.header";
 
-    private string _headerName;
+    private string _headerName = "";
 
     public object? Get(RequestData request)
     {

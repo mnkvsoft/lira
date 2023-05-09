@@ -13,8 +13,7 @@ public interface IRequestStatisticStorage
     /// <param name="requestId">
     /// Is required so as not to add statistics for the same request from different rules
     /// </param>
-    Task Add(RequestData request, Guid requestId);
-    Task<RequestStatistic?> Get(RequestData request);
+    Task<RequestStatistic> Add(RequestData request, Guid requestId);
 }
 
 class RequestStatisticStorage : IRequestStatisticStorage
@@ -26,7 +25,7 @@ class RequestStatisticStorage : IRequestStatisticStorage
         _cache = cache;
     }
 
-    public async Task Add(RequestData request, Guid requestId)
+    public async Task<RequestStatistic> Add(RequestData request, Guid requestId)
     {
         var hash = await GetHash(request);
 
@@ -48,32 +47,27 @@ class RequestStatisticStorage : IRequestStatisticStorage
                     SlidingExpiration = TimeSpan.FromMinutes(10)
                 });
         }
-    }
 
-    public async Task<RequestStatistic?> Get(RequestData request)
-    {
-        var hash = await GetHash(request);
-        var result = _cache.Get<RequestStatistic>(hash);
-        return result;
+        return statistic;
     }
 
     private async Task<string> GetHash(RequestData request)
     {
         using var memoryStream = new MemoryStream();
-        using var sw = new StreamWriter(memoryStream);
+        await using var sw = new StreamWriter(memoryStream);
 
-        sw.Write(request.Method.ToString());
-        sw.Write(request.Path.ToString());
-        sw.Write(request.QueryString.ToString());
+        await sw.WriteAsync(request.Method);
+        await sw.WriteAsync(request.Path.ToString());
+        await sw.WriteAsync(request.QueryString.ToString());
         sw.Write(request.Headers.Select(x => x.Key + x.Value));
 
         await request.Body.CopyToAsync(memoryStream);
 
-        var result = GetSha1(memoryStream);
+        var result = GetSha(memoryStream);
         return result;
     }
 
-    private string GetSha1(Stream stream)
+    private static string GetSha(Stream stream)
     {
         using var sha1 = SHA1.Create();
 

@@ -18,11 +18,9 @@ public class ConditionMatcherSet
 
     public async Task<bool> IsMatch(RequestData request, Guid requestId)
     {
-        await _requestStatisticStorage.Add(request, requestId);
+        var statistic = await _requestStatisticStorage.Add(request, requestId);
 
         var isMatch = true;
-
-        var statistic = await _requestStatisticStorage.Get(request);
 
         foreach (var conditionMatcher in _conditionMatchers)
         {

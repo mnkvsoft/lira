@@ -8,9 +8,4 @@ internal class Int : IStringMatchPrettyFunction
     {
         return long.TryParse(value, out _);
     }
-
-    public void SetArgument(string argument)
-    {
-        throw new NotImplementedException();
-    }
 }
