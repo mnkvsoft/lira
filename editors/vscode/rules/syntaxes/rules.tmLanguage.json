@@ -19,6 +19,9 @@
 		},
 		{
 			"include": "#constants"
+		},
+		{
+			"include": "#comments"
 		}
 	],
 	"repository": {
@@ -88,7 +91,47 @@
 				"name": "entity.name.function.rules",
 				"match": " (jpath|xpath|int|any|guid|data|echo|seq|read.req.header|read.req.body.all|read.req.body.form|read.req.body.jpath|read.req.body.xpath)"
 			}]
-		}
+		},
+		"comments": {
+            "patterns": [
+                {
+                    "name": "comment.block.rules",
+                    "begin": "/\\*",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.rules"
+                        }
+                    },
+                    "end": "\\*/",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.rules"
+                        }
+                    }
+                },
+                {
+                    "begin": "(^\\s+)?(?=//)",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.whitespace.comment.leading.rules"
+                        }
+                    },
+                    "end": "(?=$)",
+					"patterns": [
+                        {
+                            "name": "comment.line.double-slash.cs",
+                            "begin": "(?<!/)//(?:(?!/)|(?=//))",
+                            "beginCaptures": {
+                                "0": {
+                                    "name": "punctuation.definition.comment.rules"
+                                }
+                            },
+                            "end": "(?=$)"
+                        }
+                    ]
+                }
+            ]
+        }
 	},
 	"scopeName": "rules"
 }
