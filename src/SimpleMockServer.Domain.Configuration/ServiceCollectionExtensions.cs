@@ -18,27 +18,24 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton<IMemoryCache, MemoryCache>();
 
         return services
-           .AddFunctions()
-           .AddSingleton<ConditionMatcherParser>()
-           .AddSingleton<RequestMatchersParser>()
-           .AddSingleton<VariablesParser>()
-           .AddSingleton<ResponseWriterParser>()
-           .AddSingleton<ExternalCallerParser>()
-           .AddSingleton<GeneratingHttpDataParser>()
-           .AddSingleton<GlobalVariablesParser>()
-           .AddSingleton<GlobalVariableSet>()
-           .AddSingleton<ITextPartsParser, TextPartsParser>()
-           .AddSingleton<RulesFileParser>()
-           .AddSingleton<IConfigurationPathProvider, ConfigurationPathProvider>()
-           
-           .AddSingleton<DataProvider>()
-           .AddSingleton<DataProviderWithState>()
-           .AddSingleton<IDataProvider>(provider => provider.GetRequiredService<DataProviderWithState>())
-           .AddSingleton<IStatedProvider>(provider => provider.GetRequiredService<DataProviderWithState>())
-           
-           .AddSingleton<RulesProvider>()
-           .AddSingleton<RulesProviderWithState>()
-           .AddSingleton<IRulesProvider>(provider => provider.GetRequiredService<RulesProviderWithState>())
-           .AddSingleton<IStatedProvider>(provider => provider.GetRequiredService<RulesProviderWithState>());
+            .AddFunctions()
+            .AddSingleton<ConditionMatcherParser>()
+            .AddSingleton<RequestMatchersParser>()
+            .AddSingleton<VariablesParser>()
+            .AddSingleton<ResponseWriterParser>()
+            .AddSingleton<ExternalCallerParser>()
+            .AddSingleton<GeneratingHttpDataParser>()
+            .AddSingleton<GlobalVariablesParser>()
+            .AddSingleton<GlobalVariableSet>()
+            .AddSingleton<ITextPartsParser, TextPartsParser>()
+            .AddSingleton<RuleFileParser>()
+            .AddSingleton<ConfigurationLoader>()
+            .AddSingleton<IConfigurationLoader>(provider => provider.GetRequiredService<ConfigurationLoader>())
+
+            .AddSingleton<DataLoader>()
+            .AddSingleton<IDataProvider>(provider => provider.GetRequiredService<ConfigurationLoader>())
+
+            .AddSingleton<RulesLoader>()
+            .AddSingleton<IRulesProvider>(provider => provider.GetRequiredService<ConfigurationLoader>());
     }
 }

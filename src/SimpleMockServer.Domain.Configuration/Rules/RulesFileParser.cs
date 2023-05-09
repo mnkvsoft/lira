@@ -7,7 +7,7 @@ using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Rules;
 
-internal class RulesFileParser
+internal class RuleFileParser
 {
     private readonly ILoggerFactory _loggerFactory;
 
@@ -18,7 +18,7 @@ internal class RulesFileParser
     private readonly ExternalCallerParser _externalCallerParser;
     private readonly GlobalVariableSet _globalVariableSet;
 
-    public RulesFileParser(
+    public RuleFileParser(
         ILoggerFactory loggerFactory,
         RequestMatchersParser requestMatchersParser,
         ResponseWriterParser responseWriterParser,

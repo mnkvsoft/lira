@@ -50,14 +50,14 @@ class RequestMatchersParser
 
         var methodAndPath = lines[0];
 
-        (var method, var pathAndQuery) = methodAndPath.SplitToTwoParts(" ").Trim();
+        var (method, pathAndQuery) = methodAndPath.SplitToTwoParts(" ").Trim();
 
         result.Add(CreateMethodRequestMather(method));
 
         if (pathAndQuery == null)
             return result;
 
-        (var path, var query) = pathAndQuery.SplitToTwoParts("?").Trim();
+        var (path, query) = pathAndQuery.SplitToTwoParts("?").Trim();
 
         result.Add(CreatePathRequestMatcher(path));
 
@@ -132,7 +132,7 @@ class RequestMatchersParser
             if (string.IsNullOrEmpty(line))
                 break;
 
-            (var headerName, var headerPattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.HeaderSplitter).Trim();
+            var (headerName, headerPattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.HeaderSplitter).Trim();
 
             headers.Add(headerName, CreateValuePattern(headerPattern));
         }
@@ -152,7 +152,7 @@ class RequestMatchersParser
                 continue;
             }
 
-            (var extractFunctionInvoke, var pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.Lambda).Trim();
+            var (extractFunctionInvoke, pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.Lambda).Trim();
 
             // can write either
             // {{ xpath://employee[1]/text() }}

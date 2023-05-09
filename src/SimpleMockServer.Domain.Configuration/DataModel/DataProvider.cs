@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using SimpleMockServer.Common;
-using SimpleMockServer.Domain.Configuration.Rules;
 using SimpleMockServer.Domain.DataModel;
 using SimpleMockServer.Domain.DataModel.DataImpls.Guid;
 using SimpleMockServer.Domain.DataModel.DataImpls.Number;
@@ -9,29 +8,11 @@ using SimpleMockServer.Domain.DataModel.DataImpls.Number.Ranges;
 
 namespace SimpleMockServer.Domain.Configuration.DataModel;
 
-internal class DataProviderWithState : StatedProvider<Dictionary<DataName, Data>>, IDataProvider
-{
-    public DataProviderWithState(IConfigurationPathProvider configuration, DataProvider dataProvider) 
-        : base(configuration, dataProvider.LoadDatas)
-    {
-    }
-
-    public Data GetData(DataName name)
-    {
-        var datas = LoadTask.Result;
-        
-        if (!datas.TryGetValue(name, out var data))
-            throw new Exception($"Data '{name}' not found");
-        return data;
-    }
-}
-
-
-class DataProvider
+class DataLoader
 {
     private const string DefaultSeqName = "default_system";
 
-    public async Task<Dictionary<DataName, Data>> LoadDatas(string path)
+    public async Task<Dictionary<DataName, Data>> Load(string path)
     {
         var dataFiles = Directory.GetFiles(path, "*.data.json", SearchOption.AllDirectories);
         var dataWithRefs = new List<Data>();

@@ -41,7 +41,7 @@ internal class StringMatchPrettyFunctionFactory : IStringMatchFunctionFactory
 
     IStringMatchFunction IStringMatchFunctionFactory.Create(string value)
     {
-        (var functionName, var argument) = value.SplitToTwoParts(":").Trim();
+        var (functionName, argument) = value.SplitToTwoParts(":").Trim();
 
         if (!_functionNameToType.TryGetValue(functionName, out var functionType))
             throw new UnknownFunctionException(value);

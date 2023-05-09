@@ -2,5 +2,5 @@
 
 public interface IStatedProvider
 {
-    Task<ProviderState> GetState();
+    Task<ConfigurationState> GetState();
 }

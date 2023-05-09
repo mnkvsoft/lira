@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using SimpleMockServer;
-using SimpleMockServer.Domain.Configuration.Rules;
+using SimpleMockServer.Domain.Configuration;
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 
@@ -17,11 +17,7 @@ var app = builder.Build();
 
 startup.Configure(app);
 
-var providers = app.Services.GetRequiredService<IEnumerable<IStatedProvider>>();
-foreach (var provider in providers)
-{
-    // begin loading configuration
-    provider.GetState();
-}
+var loader = app.Services.GetRequiredService<IConfigurationLoader>();
+loader.Load();
 
 app.Run();

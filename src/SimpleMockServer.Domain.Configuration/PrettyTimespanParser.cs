@@ -4,13 +4,13 @@ namespace SimpleMockServer.Domain.Configuration;
 
 internal static class PrettyTimespanParser
 {
-    private static List<(string[], Func<int, TimeSpan>)> _nameToCreatorMap = new List<(string[], Func<int, TimeSpan>)>
+    private static readonly List<(string[], Func<int, TimeSpan>)> NameToCreatorMap = new()
     {
-        {(new string[]{ "ms", "milliseconds", "millisecond" }, value => TimeSpan.FromMilliseconds(value))},
-        {(new string[]{  "s", "second", "seconds" }, value => TimeSpan.FromSeconds(value))},
-        {(new string[]{ "m", "minute", "minutes" }, value => TimeSpan.FromMinutes(value))},
-        {(new string[]{ "h", "hour", "hours" }, value => TimeSpan.FromHours(value))},
-        {(new string[]{ "d", "day", "days" }, value => TimeSpan.FromDays(value))},
+        (new[]{ "ms", "milliseconds", "millisecond" }, value => TimeSpan.FromMilliseconds(value)),
+        (new[]{ "s",  "second",       "seconds" }, value => TimeSpan.FromSeconds(value)),
+        (new[]{ "m",  "minute",       "minutes" }, value => TimeSpan.FromMinutes(value)),
+        (new[]{ "h",  "hour",         "hours" }, value => TimeSpan.FromHours(value)),
+        (new[]{ "d",  "day",          "days" }, value => TimeSpan.FromDays(value)),
     };
 
     public static TimeSpan Parse(string? str)
@@ -18,7 +18,7 @@ internal static class PrettyTimespanParser
         if (string.IsNullOrWhiteSpace(str))
             throw new ArgumentException($"Invalid timespan value: '{str}'");
 
-        (var countStr, var unit) = str.SplitToTwoParts(" ").Trim();
+        var (countStr, unit) = str.SplitToTwoParts(" ").Trim();
         countStr = countStr.Replace("_", "");
 
         if (!int.TryParse(countStr, out var count))
@@ -27,7 +27,7 @@ internal static class PrettyTimespanParser
         if (unit == null)
             return TimeSpan.FromMilliseconds(count);
 
-        foreach (var pair in _nameToCreatorMap)
+        foreach (var pair in NameToCreatorMap)
         {
             var names = pair.Item1;
             var create = pair.Item2;

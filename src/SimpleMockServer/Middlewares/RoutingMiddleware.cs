@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using SimpleMockServer.Domain;
+using SimpleMockServer.Domain.Configuration;
 using SimpleMockServer.Domain.Configuration.Rules;
 
 namespace SimpleMockServer.Middlewares;
@@ -7,13 +8,13 @@ namespace SimpleMockServer.Middlewares;
 class RoutingMiddleware : IMiddleware
 {
     private readonly IRulesProvider _rulesProvider;
-    private readonly IReadOnlyCollection<IStatedProvider> _statedProviders;
+    private readonly IConfigurationLoader _configurationLoader;
     private readonly ILogger _logger;
 
-    public RoutingMiddleware(ILoggerFactory loggerFactory, IRulesProvider rulesProvider, IEnumerable<IStatedProvider> statedProviders)
+    public RoutingMiddleware(ILoggerFactory loggerFactory, IRulesProvider rulesProvider, IConfigurationLoader configurationLoader)
     {
         _rulesProvider = rulesProvider;
-        _statedProviders = statedProviders.ToArray();
+        _configurationLoader = configurationLoader;
         _logger = loggerFactory.CreateLogger(GetType());
     }
 
@@ -36,15 +37,12 @@ class RoutingMiddleware : IMiddleware
         var req = context.Request;
         req.EnableBuffering();
 
-        foreach (var provider in _statedProviders)
+        var state = await _configurationLoader.GetState();
+        if (state is ConfigurationState.Error error)
         {
-            var state = await provider.GetState();
-            if (state is ProviderState.Error error)
-            {
-                context.Response.StatusCode = 500;
-                await context.Response.WriteAsync(error.Exception.ToString());
-                return;
-            }
+            context.Response.StatusCode = 500;
+            await context.Response.WriteAsync(error.Exception.ToString());
+            return;
         }
 
         var request = new RequestData(req.Method, req.Path, req.QueryString, req.Headers, req.Query, req.Body);

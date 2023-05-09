@@ -1,25 +1,21 @@
 ﻿using Microsoft.Extensions.Logging;
-using SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
 
 namespace SimpleMockServer.Domain.Configuration.Rules;
 
-internal class RulesProvider
+internal class RulesLoader
 {
-    private readonly RulesFileParser _rulesFileParser;
-    private readonly GlobalVariablesParser _globalVariablesParser;
+    private readonly RuleFileParser _ruleFileParser;
+    
     private readonly ILogger _logger;
 
-    public RulesProvider(ILoggerFactory loggerFactory, RulesFileParser rulesFileParser, GlobalVariablesParser globalVariablesParser)
+    public RulesLoader(ILoggerFactory loggerFactory, RuleFileParser ruleFileParser)
     {
-        _globalVariablesParser = globalVariablesParser;
-        _rulesFileParser = rulesFileParser;
+        _ruleFileParser = ruleFileParser;
         _logger = loggerFactory.CreateLogger(GetType());
     }
     
     public async Task<IReadOnlyCollection<Rule>> LoadRules(string path)
     {
-        await _globalVariablesParser.Load(path);
-
         var rulesFiles = Directory.GetFiles(path, "*.rules", SearchOption.AllDirectories);
         var rules = new List<Rule>(rulesFiles.Length * 3);
 
@@ -27,7 +23,7 @@ internal class RulesProvider
         {
             try
             {
-                rules.AddRange(await _rulesFileParser.Parse(ruleFile));
+                rules.AddRange(await _ruleFileParser.Parse(ruleFile));
             }
             catch (Exception exc)
             {

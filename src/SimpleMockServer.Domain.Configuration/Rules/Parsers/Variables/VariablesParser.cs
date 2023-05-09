@@ -20,7 +20,7 @@ class VariablesParser
 
         foreach (var line in variablesSection.LinesWithoutBlock)
         {
-            (var name, var pattern) = line.SplitToTwoParts("=").Trim();
+            var (name, pattern) = line.SplitToTwoParts("=").Trim();
 
             if (string.IsNullOrEmpty(name))
                 throw new Exception($"RequestVariable name not defined. Line: {line}");

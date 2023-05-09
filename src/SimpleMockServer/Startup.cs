@@ -3,7 +3,6 @@ using SimpleMockServer.Middlewares;
 using SimpleMockServer.Configuration;
 using SimpleMockServer.Domain.Configuration;
 using SimpleMockServer.Domain;
-using SimpleMockServer.Domain.Configuration.Rules;
 
 namespace SimpleMockServer;
 
