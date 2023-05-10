@@ -1,16 +1,16 @@
 ﻿namespace SimpleMockServer.Domain.Matching.Conditions.Matchers.Attempt;
 internal class AttemptConditionMatcher : IConditionMatcher
 {
-    private readonly IComparableMatchFunction<int> _function;
+    private readonly IComparableMatchFunction<int>[] _functions;
 
-    public AttemptConditionMatcher(IComparableMatchFunction<int> function)
+    public AttemptConditionMatcher(params IComparableMatchFunction<int>[] functions)
     {
-        _function = function;
+        _functions = functions;
     }
 
     public bool IsMatch(RequestStatistic statistic)
     {
         var attempt = statistic.Entries.Count;
-        return _function.IsMatch(attempt);
+        return _functions.All(f => f.IsMatch(attempt));
     }
 }

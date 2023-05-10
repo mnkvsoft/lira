@@ -1,0 +1,38 @@
+-------------------- case
+
+GET /match/conditions/elapsed/interval
+
+----- expected
+
+code:
+200
+
+body:
+elapsed < 100 ms
+
+-------------------- case
+
+GET /match/conditions/elapsed/interval
+
+delay: 
+00:00:00.100
+
+----- expected
+
+code:
+200
+
+body:
+elapsed in [100 ms - 200 ms]
+
+-------------------- case
+
+GET /match/conditions/elapsed/interval
+
+delay: 
+00:00:00.100
+
+----- expected
+
+code:
+404

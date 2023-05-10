@@ -16,7 +16,6 @@ internal class RuleFileParser
     private readonly ConditionMatcherParser _conditionMatcherParser;
     private readonly VariablesParser _variablesParser;
     private readonly ExternalCallerParser _externalCallerParser;
-    private readonly GlobalVariableSet _globalVariableSet;
 
     public RuleFileParser(
         ILoggerFactory loggerFactory,
@@ -24,8 +23,7 @@ internal class RuleFileParser
         ResponseWriterParser responseWriterParser,
         ConditionMatcherParser conditionMatcherParser,
         VariablesParser variablesParser,
-        ExternalCallerParser externalCallerParser,
-        GlobalVariableSet globalVariableSet)
+        ExternalCallerParser externalCallerParser)
     {
         _loggerFactory = loggerFactory;
         _requestMatchersParser = requestMatchersParser;
@@ -33,10 +31,9 @@ internal class RuleFileParser
         _conditionMatcherParser = conditionMatcherParser;
         _variablesParser = variablesParser;
         _externalCallerParser = externalCallerParser;
-        _globalVariableSet = globalVariableSet;
     }
 
-    public async Task<IReadOnlyCollection<Rule>> Parse(string ruleFile)
+    public async Task<IReadOnlyCollection<Rule>> Parse(string ruleFile, IReadOnlyCollection<Variable> registeredVariables)
     {
         var knownSectionsBlocks = _externalCallerParser.GetSectionsKnowsBlocks();
 
@@ -59,14 +56,14 @@ internal class RuleFileParser
             var ruleName = $"no. {i + 1} file: {fi.Name}";
 
             var ruleSection = rulesSections[i];
-            rules.AddRange(CreateRules(ruleName, ruleSection, externalCallerSections));
+            rules.AddRange(CreateRules(ruleName, ruleSection, externalCallerSections, registeredVariables));
         }
 
         return rules;
     }
 
     private IReadOnlyCollection<Rule> CreateRules(string ruleName, FileSection ruleSection,
-        IReadOnlyCollection<string> externalCallerSections)
+        IReadOnlyCollection<string> externalCallerSections, IReadOnlyCollection<Variable> registeredVariables)
     {
         var childSections = ruleSection.ChildSections;
 
@@ -75,7 +72,7 @@ internal class RuleFileParser
 
         var requestMatcherSet = _requestMatchersParser.Parse(ruleSection);
 
-        var variables = GetVariables(childSections);
+        var variables = GetVariables(childSections, registeredVariables);
 
         var exitstConditionSection = childSections.Any(x => x.Name == Constants.SectionName.Condition);
 
@@ -123,12 +120,12 @@ internal class RuleFileParser
         return new[] { new Rule(ruleName, _loggerFactory, responseWriter, requestMatcherSet, conditionMatcherSet: null, externalCallers) };
     }
 
-    private IReadOnlyCollection<Variable> GetVariables(List<FileSection> childSections)
+    private IReadOnlyCollection<Variable> GetVariables(List<FileSection> childSections, IReadOnlyCollection<Variable> registeredVariables)
     {
         var variablesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Variables);
         var requestVariables = variablesSection == null
-            ? new VariableSet(_globalVariableSet)
-            : _variablesParser.Parse(variablesSection, _globalVariableSet);
+            ? new VariableSet(registeredVariables)
+            : _variablesParser.Parse(variablesSection, registeredVariables);
         return requestVariables;
     }
 

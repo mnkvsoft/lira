@@ -1,0 +1,56 @@
+-------------------- case
+
+GET /match/conditions/attempt/interval
+
+----- expected
+
+code:
+200
+
+body:
+attempt [1-2]
+
+-------------------- case
+
+GET /match/conditions/attempt/interval
+
+----- expected
+
+code:
+200
+
+body:
+attempt [1-2]
+
+-------------------- case
+
+GET /match/conditions/attempt/interval
+
+----- expected
+
+code:
+200
+
+body:
+attempt [3-4]
+
+-------------------- case
+
+GET /match/conditions/attempt/interval
+
+----- expected
+
+code:
+200
+
+body:
+attempt [3-4]
+
+-------------------- case
+
+GET /match/conditions/attempt/interval
+
+----- expected
+
+code:
+404

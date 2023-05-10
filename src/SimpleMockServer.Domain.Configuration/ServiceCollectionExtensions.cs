@@ -26,7 +26,6 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ExternalCallerParser>()
             .AddSingleton<GeneratingHttpDataParser>()
             .AddSingleton<GlobalVariablesParser>()
-            .AddSingleton<GlobalVariableSet>()
             .AddSingleton<ITextPartsParser, TextPartsParser>()
             .AddSingleton<RuleFileParser>()
             .AddSingleton<ConfigurationLoader>()

@@ -7,27 +7,32 @@ namespace SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
 
 internal class GlobalVariablesParser
 {
-    private readonly GlobalVariableSet _variableSet;
+    
     private readonly ITextPartsParser _textPartsParser;
 
-    public GlobalVariablesParser(GlobalVariableSet variableSet, ITextPartsParser textPartsParser)
+    public GlobalVariablesParser(ITextPartsParser textPartsParser)
     {
-        _variableSet = variableSet;
         _textPartsParser = textPartsParser;
     }
 
-    public async Task Load(string path)
+    public async Task<IReadOnlyCollection<Variable>> Load(string path)
     {
+        var result = new VariableSet();
+        
         await AddVariablesFromFiles(
+            result,
             Directory.GetFiles(path, "*.global.var", SearchOption.AllDirectories),
             CreateGlobalVariable);
 
         await AddVariablesFromFiles(
+            result,
             Directory.GetFiles(path, "*.req.var", SearchOption.AllDirectories),
             CreateRequestVariable);
+
+        return result;
     }
 
-    private async Task AddVariablesFromFiles(string[] variablesFiles, Func<string, GlobalVariableSet, Variable> createVariable)
+    private async Task AddVariablesFromFiles(VariableSet registeredVariables, string[] variablesFiles, Func<string, VariableSet, Variable> createVariable)
     {
         foreach (var variableFile in variablesFiles)
         {
@@ -37,7 +42,7 @@ internal class GlobalVariablesParser
 
                 foreach (var line in lines)
                 {
-                    _variableSet.Add(createVariable(line, _variableSet));
+                    registeredVariables.Add(createVariable(line, registeredVariables));
                 }
             }
             catch (Exception exc)
@@ -64,7 +69,7 @@ internal class GlobalVariablesParser
         return result;
     }
 
-    private GlobalObjectVariable CreateGlobalVariable(string line, GlobalVariableSet registeredVariables)
+    private GlobalObjectVariable CreateGlobalVariable(string line, VariableSet registeredVariables)
     {
         var (name, pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.AssignmentOperator).Trim();
 
@@ -81,7 +86,7 @@ internal class GlobalVariablesParser
         return new GlobalObjectVariable(name, parts.Cast<IGlobalObjectTextPart>().ToArray());
     }
 
-    private RequestVariable CreateRequestVariable(string line, GlobalVariableSet registeredVariables)
+    private RequestVariable CreateRequestVariable(string line, VariableSet registeredVariables)
     {
         var (name, pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.AssignmentOperator).Trim();
 

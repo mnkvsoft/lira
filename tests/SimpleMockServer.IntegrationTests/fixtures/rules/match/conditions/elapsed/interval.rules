@@ -1,0 +1,27 @@
+---------------------------------------- rule
+
+GET /match/conditions/elapsed/interval
+
+-------------------- condition
+
+$elapsed < 100 ms
+
+----- response
+
+code:
+200
+
+body:
+elapsed < 100 ms
+
+-------------------- condition
+
+$elapsed in [100 ms - 200 ms]
+
+----- response
+
+code:
+200
+
+body:
+elapsed in [100 ms - 200 ms]

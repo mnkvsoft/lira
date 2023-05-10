@@ -2,11 +2,11 @@
 
 internal class ElapsedConditionMatcher : IConditionMatcher
 {
-    private readonly IComparableMatchFunction<TimeSpan> _function;
+    private readonly IComparableMatchFunction<TimeSpan>[] _functions;
 
-    public ElapsedConditionMatcher(IComparableMatchFunction<TimeSpan> function)
+    public ElapsedConditionMatcher(params IComparableMatchFunction<TimeSpan>[] functions)
     {
-        _function = function;
+        _functions = functions;
     }
 
     public bool IsMatch(RequestStatistic statistic)
@@ -14,7 +14,6 @@ internal class ElapsedConditionMatcher : IConditionMatcher
         var firstInvokeTime = statistic.Entries.First().InvokeTime;
         var elapsed = DateTime.Now - firstInvokeTime;
 
-        var result = _function.IsMatch(elapsed);
-        return result;
+        return _functions.All(f => f.IsMatch(elapsed));
     }
 }

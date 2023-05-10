@@ -26,7 +26,7 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
     private readonly GlobalVariablesParser _globalVariablesParser;
     private readonly RulesLoader _rulesLoader;
     private readonly DataLoader _dataLoader;
-
+    
     private Task<LoadResult> _loadTask;
     private ConfigurationState? _providerState;
     
@@ -54,8 +54,8 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
     private async Task<LoadResult> Load(string path)
     {
         var datas = await _dataLoader.Load(path);
-        await _globalVariablesParser.Load(path);
-        var rules = await _rulesLoader.LoadRules(path);
+        var variables = await _globalVariablesParser.Load(path);
+        var rules = await _rulesLoader.LoadRules(path, variables);
 
         return new LoadResult(rules, datas);
     }

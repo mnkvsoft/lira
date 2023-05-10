@@ -1,0 +1,27 @@
+---------------------------------------- rule
+
+GET /match/conditions/attempt/interval
+
+-------------------- condition
+
+$attempt in [1-2]
+
+----- response
+
+code:
+200
+
+body:
+attempt [1-2]
+
+-------------------- condition
+
+$attempt in [3-4]
+
+----- response
+
+code:
+200
+
+body:
+attempt [3-4]

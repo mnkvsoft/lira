@@ -344,6 +344,18 @@
     <None Update="fixtures\rules\generating\variable\format\static\guid.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\match\conditions\attempt\interval.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\conditions\attempt\interval.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\conditions\elapsed\interval.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\conditions\elapsed\interval.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

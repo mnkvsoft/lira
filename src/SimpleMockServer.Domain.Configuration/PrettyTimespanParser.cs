@@ -15,17 +15,29 @@ internal static class PrettyTimespanParser
 
     public static TimeSpan Parse(string? str)
     {
-        if (string.IsNullOrWhiteSpace(str))
+        if (!TryParse(str, out var result))
             throw new ArgumentException($"Invalid timespan value: '{str}'");
+        return result;
+    }
+    
+    public static bool TryParse(string? str, out TimeSpan result)
+    {
+        result = default;
+        
+        if (string.IsNullOrWhiteSpace(str))
+            return false;
 
         var (countStr, unit) = str.SplitToTwoParts(" ").Trim();
         countStr = countStr.Replace("_", "");
 
         if (!int.TryParse(countStr, out var count))
-            return TimeSpan.Parse(str);
+            return TimeSpan.TryParse(str, out result);
 
         if (unit == null)
-            return TimeSpan.FromMilliseconds(count);
+        {
+            result = TimeSpan.FromMilliseconds(count);
+            return true;
+        }
 
         foreach (var pair in NameToCreatorMap)
         {
@@ -33,10 +45,13 @@ internal static class PrettyTimespanParser
             var create = pair.Item2;
 
             if (IsMatch(unit, names))
-                return create(count);
+            {
+                result = create(count);
+                return true;
+            }
         }
 
-        throw new ArgumentException($"Invalid timespan value: '{str}'");
+        return false;
     }
 
     private static bool IsMatch(string str, string[] values)
