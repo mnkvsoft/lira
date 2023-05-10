@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/from_file/relative
+
+----- response
+
+code:
+200
+
+body:
+{{ read.file: relative.txt }}

@@ -1,4 +1,5 @@
-﻿using SimpleMockServer.Common.Extensions;
+﻿using SimpleMockServer.Common;
+using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.TextPart;
 using SimpleMockServer.Domain.TextPart.Variables;
@@ -15,16 +16,18 @@ internal class GlobalVariablesParser
         _textPartsParser = textPartsParser;
     }
 
-    public async Task<IReadOnlyCollection<Variable>> Load(string path)
+    public async Task<IReadOnlyCollection<Variable>> Load(ParsingContext parsingContext, string path)
     {
         var result = new VariableSet();
         
         await AddVariablesFromFiles(
+            parsingContext,
             result,
             Directory.GetFiles(path, "*.global.var", SearchOption.AllDirectories),
             CreateGlobalVariable);
 
         await AddVariablesFromFiles(
+            parsingContext,
             result,
             Directory.GetFiles(path, "*.req.var", SearchOption.AllDirectories),
             CreateRequestVariable);
@@ -32,7 +35,7 @@ internal class GlobalVariablesParser
         return result;
     }
 
-    private async Task AddVariablesFromFiles(VariableSet registeredVariables, string[] variablesFiles, Func<string, VariableSet, Variable> createVariable)
+    private async Task AddVariablesFromFiles(ParsingContext parsingContext, VariableSet set, string[] variablesFiles, Func<string, ParsingContext, Task<Variable>> createVariable)
     {
         foreach (var variableFile in variablesFiles)
         {
@@ -42,7 +45,11 @@ internal class GlobalVariablesParser
 
                 foreach (var line in lines)
                 {
-                    registeredVariables.Add(createVariable(line, registeredVariables));
+                    set.Add(await createVariable(line, parsingContext with
+                    {
+                        Variables = set, 
+                        CurrentPath = variableFile.GetDirectory()
+                    }));
                 }
             }
             catch (Exception exc)
@@ -69,11 +76,11 @@ internal class GlobalVariablesParser
         return result;
     }
 
-    private GlobalObjectVariable CreateGlobalVariable(string line, VariableSet registeredVariables)
+    private async Task<Variable> CreateGlobalVariable(string line, ParsingContext parsingContext)
     {
         var (name, pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.AssignmentOperator).Trim();
 
-        var parts = _textPartsParser.Parse(pattern, registeredVariables);
+        var parts = await _textPartsParser.Parse(pattern, parsingContext);
 
         var notAccessibleParts = parts.Where(p => p is not IGlobalObjectTextPart).ToArray();
         
@@ -86,11 +93,11 @@ internal class GlobalVariablesParser
         return new GlobalObjectVariable(name, parts.Cast<IGlobalObjectTextPart>().ToArray());
     }
 
-    private RequestVariable CreateRequestVariable(string line, VariableSet registeredVariables)
+    private async Task<Variable> CreateRequestVariable(string line, ParsingContext parsingContext)
     {
         var (name, pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.AssignmentOperator).Trim();
 
-        var parts = _textPartsParser.Parse(pattern, registeredVariables);
+        var parts = await _textPartsParser.Parse(pattern, parsingContext);
         return new RequestVariable(name, parts);
     }
 }

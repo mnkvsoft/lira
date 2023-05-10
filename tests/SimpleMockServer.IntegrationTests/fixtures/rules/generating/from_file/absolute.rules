@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/from_file/absolute
+
+----- response
+
+code:
+200
+
+body:
+{{ read.file: /generating/from_file/absolute.txt }}

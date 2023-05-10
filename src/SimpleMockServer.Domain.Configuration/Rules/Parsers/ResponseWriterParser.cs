@@ -1,6 +1,6 @@
-﻿using SimpleMockServer.Domain.Generating.Writers;
+﻿using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
+using SimpleMockServer.Domain.Generating.Writers;
 using SimpleMockServer.Domain.TextPart;
-using SimpleMockServer.Domain.TextPart.Variables;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
@@ -14,15 +14,15 @@ class ResponseWriterParser
         _httpDataParser = httpDataParser;
     }
 
-    public Delayed<ResponseWriter> Parse(FileSection ruleSection, IReadOnlyCollection<Variable> variables)
+    public async Task<Delayed<ResponseWriter>> Parse(FileSection ruleSection, ParsingContext parsingContext)
     {
         var responseSection = ruleSection.GetSingleChildSection(Constants.SectionName.Response);
 
         var responseWriter = new Delayed<ResponseWriter>(
             new ResponseWriter(
                 GetHttpCode(responseSection),
-                GetBodyWriter(responseSection, variables),
-                GetHeadersWriter(responseSection, variables)),
+                await GetBodyWriter(responseSection, parsingContext),
+                await GetHeadersWriter(responseSection, parsingContext)),
             GetDelay(responseSection));
 
         return responseWriter;
@@ -58,26 +58,26 @@ class ResponseWriterParser
         return httpCode;
     }
 
-    private BodyWriter? GetBodyWriter(FileSection responseSection, IReadOnlyCollection<Variable> variables)
+    private async Task<BodyWriter?> GetBodyWriter(FileSection responseSection, ParsingContext parsingContext)
     {
         BodyWriter? bodyWriter = null;
         var bodyBlock = responseSection.GetBlockOrNull(Constants.BlockName.Response.Body);
 
         if (bodyBlock != null)
         {
-            var parts = _httpDataParser.ParseBody(bodyBlock, variables);
+            var parts = await _httpDataParser.ParseBody(bodyBlock, parsingContext);
             bodyWriter = new BodyWriter(parts.WrapToTextParts());
         }
 
         return bodyWriter;
     }
 
-    private HeadersWriter? GetHeadersWriter(FileSection responseSection, IReadOnlyCollection<Variable> variables)
+    private async Task<HeadersWriter?> GetHeadersWriter(FileSection responseSection, ParsingContext parsingContext)
     {
         var headersBlock = responseSection.GetBlockOrNull(Constants.BlockName.Response.Headers);
 
         if (headersBlock != null)
-            return new HeadersWriter(_httpDataParser.ParseHeaders(headersBlock, variables));
+            return new HeadersWriter(await _httpDataParser.ParseHeaders(headersBlock, parsingContext));
 
         return null;
     }

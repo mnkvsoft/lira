@@ -1,0 +1,12 @@
+-------------------- case
+
+GET /generating/from_file/relative
+
+----- expected
+
+code:
+200
+
+body:
+static value
+value from function

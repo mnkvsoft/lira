@@ -5,7 +5,6 @@ using SimpleMockServer.Domain.Configuration.Rules;
 using SimpleMockServer.Domain.Configuration.Rules.Parsers;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.TextPart;
-using SimpleMockServer.Domain.TextPart.Variables;
 using SimpleMockServer.ExternalCalling.Http.Caller;
 using SimpleMockServer.FileSectionFormat;
 
@@ -35,19 +34,19 @@ public class HttpExternalCallerRegistrator : IExternalCallerRegistrator
         _partsParser = partsParser;
     }
 
-    public IExternalCaller Create(FileSection section, IReadOnlyCollection<Variable> variables)
+    public async Task<IExternalCaller> Create(FileSection section, IParsingContext parsingContext)
     {
         var methodAndUrl = section.GetSingleLine();
         var (methodStr, urlStr) = methodAndUrl.SplitToTwoPartsRequired(" ");
 
         var method = methodStr.ToHttpMethod();
-        var urlParts = _partsParser.Parse(urlStr, variables);
+        var urlParts = await _partsParser.Parse(urlStr, parsingContext);
 
         var bodyRawText = section.GetStringValueFromBlockOrEmpty(BlockName.Body);
-        var bodyParts = _partsParser.Parse(bodyRawText, variables);
+        var bodyParts = await _partsParser.Parse(bodyRawText, parsingContext);
 
         var headerBlock = section.GetBlockOrNull(BlockName.Headers);
-        var headers = headerBlock == null ? null : _generatingHttpDataParser.ParseHeaders(headerBlock, variables);
+        var headers = headerBlock == null ? null : await _generatingHttpDataParser.ParseHeaders(headerBlock, parsingContext);
 
         var caller = new HttpExternalCaller(
             _httpClientFactory, 

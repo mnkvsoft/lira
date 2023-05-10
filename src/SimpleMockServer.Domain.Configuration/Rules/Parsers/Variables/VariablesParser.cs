@@ -7,16 +7,16 @@ namespace SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
 
 class VariablesParser
 {
-    private readonly ITextPartsParser _textGeneratorFactory;
+    private readonly ITextPartsParser _textPartsParser;
 
-    public VariablesParser(ITextPartsParser textGeneratorFactory)
+    public VariablesParser(ITextPartsParser textPartsParser)
     {
-        _textGeneratorFactory = textGeneratorFactory;
+        _textPartsParser = textPartsParser;
     }
 
-    public VariableSet Parse(FileSection variablesSection, IReadOnlyCollection<Variable> registeredVariables)
+    public async Task<VariableSet> Parse(FileSection variablesSection, ParsingContext parsingContext)
     {
-        var set = new VariableSet(registeredVariables);
+        var set = new VariableSet(parsingContext.Variables);
 
         foreach (var line in variablesSection.LinesWithoutBlock)
         {
@@ -28,8 +28,8 @@ class VariablesParser
             if (string.IsNullOrEmpty(pattern))
                 throw new Exception($"RequestVariable '{name}' not initialized. Line: {line}");
 
-            var generator = _textGeneratorFactory.Parse(pattern, set);
-            set.Add(new RequestVariable(name, generator));
+            var parts = await _textPartsParser.Parse(pattern, parsingContext with {Variables = set} );
+            set.Add(new RequestVariable(name, parts));
         }
 
         return set;

@@ -2,7 +2,6 @@
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Generating;
 using SimpleMockServer.Domain.TextPart;
-using SimpleMockServer.Domain.TextPart.Variables;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
@@ -16,7 +15,7 @@ public class GeneratingHttpDataParser
         _partsParser = textGeneratorFactory;
     }
 
-    public IReadOnlyCollection<GeneratingHeader> ParseHeaders(FileBlock block, IReadOnlyCollection<Variable> variables)
+    public async Task<IReadOnlyCollection<GeneratingHeader>> ParseHeaders(FileBlock block, IParsingContext parsingContext)
     {
         var headers = new List<GeneratingHeader>();
         foreach (var line in block.Lines)
@@ -29,15 +28,15 @@ public class GeneratingHttpDataParser
             if (headerPattern == null)
                 throw new Exception($"Empty matching for header '{headerPattern}' in line: '{line}'");
 
-            var parts = _partsParser.Parse(headerPattern, variables);
+            var parts = await _partsParser.Parse(headerPattern, parsingContext);
 
             headers.Add(new GeneratingHeader(headerName, parts.WrapToTextParts()));
         }
         return headers;
     }
 
-    public ObjectTextParts ParseBody(FileBlock block, IReadOnlyCollection<Variable> variables)
+    public Task<ObjectTextParts> ParseBody(FileBlock block, IParsingContext parsingContext)
     {
-        return _partsParser.Parse(block.GetStringValue(), variables);
+        return _partsParser.Parse(block.GetStringValue(), parsingContext);
     }
 }
