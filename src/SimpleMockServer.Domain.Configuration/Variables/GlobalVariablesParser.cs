@@ -1,6 +1,4 @@
 ﻿using SimpleMockServer.Common;
-using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.Domain.Configuration.Rules;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.TextPart;
 using SimpleMockServer.Domain.TextPart.Variables;
@@ -10,63 +8,50 @@ namespace SimpleMockServer.Domain.Configuration.Variables;
 
 internal class GlobalVariablesParser
 {
-    
-    private readonly ITextPartsParser _textPartsParser;
+    private readonly VariablesParser _variablesParser;
 
-    public GlobalVariablesParser(ITextPartsParser textPartsParser)
+    public GlobalVariablesParser(VariablesParser variablesParser)
     {
-        _textPartsParser = textPartsParser;
+        _variablesParser = variablesParser;
     }
 
     public async Task<IReadOnlyCollection<Variable>> Load(ParsingContext parsingContext, string path)
     {
-        var result = new VariableSet();
-        
-        await AddVariablesFromFiles(
-            parsingContext,
-            result,
-            Directory.GetFiles(path, "*.global.var", SearchOption.AllDirectories),
-            CreateGlobalVariable);
+        var result = new List<Variable>();
 
-        await AddVariablesFromFiles(
+        result.AddRange(await GetVariablesFromFiles(
             parsingContext,
-            result,
+            Directory.GetFiles(path, "*.global.var", SearchOption.AllDirectories),
+            CreateGlobalVariable));
+
+        result.AddRange(await GetVariablesFromFiles(
+            parsingContext with { Variables = parsingContext.Variables.Combine(result)},
             Directory.GetFiles(path, "*.req.var", SearchOption.AllDirectories),
-            CreateRequestVariable);
+            (name, parts) => new RequestVariable(name, parts)));
 
         return result;
     }
 
-    private async Task AddVariablesFromFiles(ParsingContext parsingContext, VariableSet set, string[] variablesFiles, Func<string, ParsingContext, Task<Variable>> createVariable)
+    private async Task<VariableSet> GetVariablesFromFiles(ParsingContext parsingContext, string[] variablesFiles, Func<string, ObjectTextParts, Variable> createVariable)
     {
+        var result = new VariableSet();
         foreach (var variableFile in variablesFiles)
         {
             try
             {
                 var lines = TextCleaner.DeleteEmptiesAndComments(await File.ReadAllTextAsync(variableFile));
-
-                foreach (var line in lines)
-                {
-                    set.Add(await createVariable(line, parsingContext with
-                    {
-                        Variables = set, 
-                        CurrentPath = variableFile.GetDirectory()
-                    }));
-                }
+                result.AddRange(await _variablesParser.Parse(lines, parsingContext with { CurrentPath = variableFile.GetDirectory()}, createVariable));
             }
             catch (Exception exc)
             {
                 throw new FileParsingException(variableFile, exc);
             }
         }
+        return result;
     }
 
-    private async Task<Variable> CreateGlobalVariable(string line, ParsingContext parsingContext)
+    private Variable CreateGlobalVariable(string name, ObjectTextParts parts)
     {
-        var (name, pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.AssignmentOperator).Trim();
-
-        var parts = await _textPartsParser.Parse(pattern, parsingContext);
-
         var notAccessibleParts = parts.Where(p => p is not IGlobalObjectTextPart).ToArray();
         
         if (notAccessibleParts.Any())
@@ -76,13 +61,5 @@ internal class GlobalVariablesParser
         }
 
         return new GlobalObjectVariable(name, parts.Cast<IGlobalObjectTextPart>().ToArray());
-    }
-
-    private async Task<Variable> CreateRequestVariable(string line, ParsingContext parsingContext)
-    {
-        var (name, pattern) = line.SplitToTwoPartsRequired(Constants.ControlChars.AssignmentOperator).Trim();
-
-        var parts = await _textPartsParser.Parse(pattern, parsingContext);
-        return new RequestVariable(name, parts);
     }
 }

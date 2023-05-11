@@ -16,7 +16,7 @@ internal class RuleFileParser
     private readonly RequestMatchersParser _requestMatchersParser;
     private readonly ResponseWriterParser _responseWriterParser;
     private readonly ConditionMatcherParser _conditionMatcherParser;
-    private readonly VariablesParser _variablesParser;
+    private readonly FileSectionVariablesParser _fileSectionVariablesParser;
     private readonly ExternalCallerParser _externalCallerParser;
 
     public RuleFileParser(
@@ -24,14 +24,14 @@ internal class RuleFileParser
         RequestMatchersParser requestMatchersParser,
         ResponseWriterParser responseWriterParser,
         ConditionMatcherParser conditionMatcherParser,
-        VariablesParser variablesParser,
+        FileSectionVariablesParser fileSectionVariablesParser,
         ExternalCallerParser externalCallerParser)
     {
         _loggerFactory = loggerFactory;
         _requestMatchersParser = requestMatchersParser;
         _responseWriterParser = responseWriterParser;
         _conditionMatcherParser = conditionMatcherParser;
-        _variablesParser = variablesParser;
+        _fileSectionVariablesParser = fileSectionVariablesParser;
         _externalCallerParser = externalCallerParser;
     }
 
@@ -44,25 +44,29 @@ internal class RuleFileParser
         knownSectionsBlocks.Add("rule", BlockNameHelper.GetBlockNames<Constants.BlockName.Rule>());
         knownSectionsBlocks.Add("response", BlockNameHelper.GetBlockNames<Constants.BlockName.Response>());
 
-        var rulesSections = await SectionFileParser.Parse(
+        var sections = await SectionFileParser.Parse(
             ruleFile,
             knownBlockForSections: knownSectionsBlocks,
             maxNestingDepth: 3);
 
-        AssertContainsOnlySections(rulesSections, new[] { Constants.SectionName.Rule });
-
+        AssertContainsOnlySections(sections, new[] { Constants.SectionName.Rule, Constants.SectionName.Variables });
+        var variables = await GetVariables(sections, parsingContext);
+        var context = parsingContext with { Variables = variables, CurrentPath = ruleFile.GetDirectory() };
+        
         var rules = new List<Rule>();
-        for (var i = 0; i < rulesSections.Count; i++)
+        var ruleSections = sections.Where(s => s.Name == Constants.SectionName.Rule).ToArray();
+        for (var i = 0; i < ruleSections.Length; i++)
         {
             var fi = new FileInfo(ruleFile);
             var ruleName = $"no. {i + 1} file: {fi.Name}";
 
-            var ruleSection = rulesSections[i];
+            var ruleSection = ruleSections[i];
+            
             rules.AddRange(await CreateRules(
                 ruleName, 
                 ruleSection, 
                 externalCallerSections, 
-                parsingContext with { CurrentPath = ruleFile.GetDirectory() }));
+                context));
         }
 
         return rules;
@@ -127,13 +131,17 @@ internal class RuleFileParser
         return new[] { new Rule(ruleName, _loggerFactory, responseWriter, requestMatcherSet, conditionMatcherSet: null, externalCallers) };
     }
 
-    private async Task<IReadOnlyCollection<Variable>> GetVariables(List<FileSection> childSections, ParsingContext parsingContext)
+    private async Task<IReadOnlyCollection<Variable>> GetVariables(IReadOnlyCollection<FileSection> childSections, ParsingContext parsingContext)
     {
+        var result = new VariableSet(parsingContext.Variables);
+        
         var variablesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Variables);
-        var requestVariables = variablesSection == null
-            ? new VariableSet(parsingContext.Variables)
-            : await _variablesParser.Parse(variablesSection, parsingContext);
-        return requestVariables;
+        if (variablesSection != null)
+        {
+            result.AddRange(await _fileSectionVariablesParser.Parse(variablesSection, parsingContext));
+        }
+        
+        return result;
     }
 
     private static void AssertContainsOnlySections(IReadOnlyList<FileSection> rulesSections,

@@ -1,0 +1,13 @@
+-------------------- rule
+
+GET /generating/template/global
+
+----- response
+
+code:
+200
+
+/*
+body:
+{{ @template }}
+*/

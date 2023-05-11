@@ -1,5 +1,2 @@
-// this is a comment, if it is not cleared then parsing of the file will fail
-test_comment = /* = comment = */ value
-
 req_shared = value_from_req_shared
 

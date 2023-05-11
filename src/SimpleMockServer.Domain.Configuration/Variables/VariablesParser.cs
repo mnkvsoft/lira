@@ -1,7 +1,7 @@
 ﻿using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
+using SimpleMockServer.Domain.TextPart;
 using SimpleMockServer.Domain.TextPart.Variables;
-using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Variables;
 
@@ -14,24 +14,29 @@ class VariablesParser
         _textPartsParser = textPartsParser;
     }
 
-    public async Task<VariableSet> Parse(FileSection variablesSection, ParsingContext parsingContext)
+    public async Task<VariableSet> Parse(IReadOnlyCollection<string> lines, ParsingContext parsingContext, Func<string, ObjectTextParts, Variable> create)
     {
-        var set = new VariableSet(parsingContext.Variables);
+        var all = new VariableSet(parsingContext.Variables);
+        var newContext = parsingContext with { Variables = all };
+        
+        var onlyNew = new VariableSet();
 
-        foreach (var line in variablesSection.LinesWithoutBlock)
+        foreach (var line in lines)
         {
             var (name, pattern) = line.SplitToTwoParts("=").Trim();
 
             if (string.IsNullOrEmpty(name))
-                throw new Exception($"RequestVariable name not defined. Line: {line}");
+                throw new Exception($"Variable name not defined. Line: {line}");
 
             if (string.IsNullOrEmpty(pattern))
-                throw new Exception($"RequestVariable '{name}' not initialized. Line: {line}");
+                throw new Exception($"Variable '{name}' not initialized. Line: {line}");
 
-            var parts = await _textPartsParser.Parse(pattern, parsingContext with {Variables = set} );
-            set.Add(new RequestVariable(name, parts));
+            var parts = await _textPartsParser.Parse(pattern, newContext );
+            
+            all.Add(create(name, parts));
+            onlyNew.Add(create(name, parts));
         }
 
-        return set;
+        return onlyNew;
     }
 }

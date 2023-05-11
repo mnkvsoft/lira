@@ -12,10 +12,7 @@ public class VariableSet : IReadOnlyCollection<Variable>
 
     public VariableSet(IReadOnlyCollection<Variable> set)
     {
-        foreach(var variable in set)
-        {
-            Add(variable);
-        }
+        AddRange(set);
     }
 
     public void Add(Variable variable)
@@ -23,6 +20,14 @@ public class VariableSet : IReadOnlyCollection<Variable>
         if (_variables.TryGetValue(variable, out _))
             throw new InvalidOperationException($"Variable '{variable.Name}' already declared");
         _variables.Add(variable);
+    }
+
+    public void AddRange(IReadOnlyCollection<Variable> set)
+    {
+        foreach(var variable in set)
+        {
+            Add(variable);
+        }
     }
 
     public int Count => _variables.Count;

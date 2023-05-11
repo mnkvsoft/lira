@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/template/global
+
+----- expected
+
+code:
+200
+
+body:
+static_fromVariable_fromFunction_fromFile
