@@ -3,7 +3,7 @@ using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.TextPart.Variables;
 using SimpleMockServer.FileSectionFormat;
 
-namespace SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
+namespace SimpleMockServer.Domain.Configuration.Variables;
 
 class VariablesParser
 {

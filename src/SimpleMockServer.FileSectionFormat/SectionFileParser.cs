@@ -16,9 +16,7 @@ public static class SectionFileParser
         int maxNestingDepth)
     {
         string text = await File.ReadAllTextAsync(ruleFile);
-        text = Comments.Delete(text);
-
-        var lines = DeleteEmpty(text.Split(Environment.NewLine));
+        var lines =  TextCleaner.DeleteEmptiesAndComments(text);
 
         if (lines.Count == 0)
             return Array.Empty<FileSection>();
@@ -167,21 +165,6 @@ public static class SectionFileParser
         }
 
         return subList;
-    }
-
-    private static IReadOnlyList<string> DeleteEmpty(IReadOnlyCollection<string> lines)
-    {
-        var result = new List<string>();
-
-        foreach (var line in lines)
-        {
-            if (string.IsNullOrWhiteSpace(line))
-                continue;
-
-            result.Add(line);
-        }
-
-        return result;
     }
 
     private static bool IsSection(string line)

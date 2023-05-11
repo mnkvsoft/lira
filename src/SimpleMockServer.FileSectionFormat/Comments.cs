@@ -2,7 +2,7 @@
 
 namespace SimpleMockServer.FileSectionFormat;
 
-public static class Comments
+internal static class Comments
 {
     static class CommentChar
     {
@@ -11,17 +11,14 @@ public static class Comments
         public const string MultiLineEnd = "*/";
     }
     
-    public static string Delete(string text)
+    public static string[] Delete(string text)
     {
         text = Delete(text, " " + CommentChar.SingleLine, Environment.NewLine, isMultiline: false);
         text = Delete(text, CommentChar.MultiLineStart, CommentChar.MultiLineEnd, isMultiline: true);
 
-        var lines = text.Split(Environment.NewLine)
-            .Where(l => !l.StartsWith(CommentChar.SingleLine));
-
-        text = string.Join(Environment.NewLine, lines);
-        
-        return text;
+        return text.Split(Environment.NewLine)
+            .Where(l => !l.StartsWith(CommentChar.SingleLine))
+            .ToArray();
     }
 
     private static string Delete(string text, string startComment, string endComment, bool isMultiline)

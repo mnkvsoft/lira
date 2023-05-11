@@ -4,8 +4,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using SimpleMockServer.Domain.Configuration.DataModel;
 using SimpleMockServer.Domain.Configuration.Rules;
 using SimpleMockServer.Domain.Configuration.Rules.Parsers;
-using SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
+using SimpleMockServer.Domain.Configuration.Variables;
 using SimpleMockServer.Domain.DataModel;
 using SimpleMockServer.Domain.TextPart.Functions;
 

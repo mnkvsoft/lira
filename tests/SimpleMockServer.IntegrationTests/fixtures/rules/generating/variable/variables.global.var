@@ -1,3 +1,6 @@
+// this is a comment, if it is not cleared then parsing of the file will fail
+test_comment_in_global = /* = comment = */ value
+
 greetings               = hello world!
 global_content_type     = application/my
 with_function           = ping - {{ echo: pong }}

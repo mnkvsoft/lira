@@ -1,10 +1,12 @@
 ﻿using SimpleMockServer.Common;
 using SimpleMockServer.Common.Extensions;
+using SimpleMockServer.Domain.Configuration.Rules;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.TextPart;
 using SimpleMockServer.Domain.TextPart.Variables;
+using SimpleMockServer.FileSectionFormat;
 
-namespace SimpleMockServer.Domain.Configuration.Rules.Parsers.Variables;
+namespace SimpleMockServer.Domain.Configuration.Variables;
 
 internal class GlobalVariablesParser
 {
@@ -41,7 +43,7 @@ internal class GlobalVariablesParser
         {
             try
             {
-                var lines = CleanLines(await File.ReadAllLinesAsync(variableFile));
+                var lines = TextCleaner.DeleteEmptiesAndComments(await File.ReadAllTextAsync(variableFile));
 
                 foreach (var line in lines)
                 {
@@ -57,23 +59,6 @@ internal class GlobalVariablesParser
                 throw new FileParsingException(variableFile, exc);
             }
         }
-    }
-
-    private IReadOnlyCollection<string> CleanLines(IReadOnlyCollection<string> lines)
-    {
-        var result = new List<string>();
-        foreach (var line in lines)
-        {
-            var cleanLine = line.Trim();
-            if (cleanLine.StartsWith(Constants.ControlChars.Comment))
-                continue;
-
-            if (string.IsNullOrEmpty(cleanLine))
-                continue;
-
-            result.Add(cleanLine);
-        }
-        return result;
     }
 
     private async Task<Variable> CreateGlobalVariable(string line, ParsingContext parsingContext)
