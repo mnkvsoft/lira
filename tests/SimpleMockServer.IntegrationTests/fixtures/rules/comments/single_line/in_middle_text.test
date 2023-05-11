@@ -1,0 +1,12 @@
+-------------------- case
+
+GET /comments/single_line/in_middle_text
+
+----- expected
+
+code:
+200
+
+body:
+start text
+end text

@@ -1,0 +1,12 @@
+-------------------- case
+
+GET /comments/multi_line/many_lines
+
+----- expected
+
+code:
+200
+
+body:
+start text
+end text

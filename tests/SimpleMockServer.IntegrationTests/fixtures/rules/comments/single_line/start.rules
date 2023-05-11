@@ -1,0 +1,9 @@
+// start with comment
+-------------------- rule
+
+GET /comments/single_line/start
+
+----- response
+
+code:
+200

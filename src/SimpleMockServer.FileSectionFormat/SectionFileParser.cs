@@ -6,13 +6,6 @@ namespace SimpleMockServer.FileSectionFormat;
 
 public static class SectionFileParser
 {
-    static class CommentChar
-    {
-        public const string SingleLine = "//";
-        public const string MultiLineStart = "/*";
-        public const string MultiLineEnd = "*/";
-    }
-
     private const int MinSectionBlockCharsLength = 3;
     private const char SectionStartChar = '-';
     private const char BlockEndChar = ':';
@@ -22,14 +15,15 @@ public static class SectionFileParser
         IReadOnlyDictionary<string, IReadOnlySet<string>> knownBlockForSections,
         int maxNestingDepth)
     {
-        IReadOnlyList<string> lines = await File.ReadAllLinesAsync(ruleFile);
+        string text = await File.ReadAllTextAsync(ruleFile);
+        text = Comments.Delete(text);
 
-        lines = DeleteEmptyAndComments(lines);
+        var lines = DeleteEmpty(text.Split(Environment.NewLine));
 
         if (lines.Count == 0)
             return Array.Empty<FileSection>();
 
-        HashSet<int> sectionLengths = GetSectionLengths(lines);
+        var sectionLengths = GetSectionLengths(lines);
 
         if (sectionLengths.Count == 0)
             throw new FileBlockFormatException("Sections not found");
@@ -45,7 +39,7 @@ public static class SectionFileParser
 
     private static HashSet<int> GetSectionLengths(IReadOnlyList<string> lines)
     {
-        HashSet<int> sectionLengths = new HashSet<int>();
+        var sectionLengths = new HashSet<int>();
 
         foreach (var line in lines)
         {
@@ -74,7 +68,8 @@ public static class SectionFileParser
                 string sectionSplitter = GetStartSectionString(line);
                 if (sectionSplitter.Length > currentLength)
                 {
-                    throw new FileBlockFormatException($"Current section splitter length cannot be more than {currentLength}. Current: {sectionSplitter.Length}");
+                    throw new FileBlockFormatException(
+                        $"Current section splitter length cannot be more than {currentLength}. Current: {sectionSplitter.Length}");
                 }
             }
         }
@@ -85,7 +80,7 @@ public static class SectionFileParser
         if (GetStartSectionString(firstLine) != currentSplitter)
             throw new FileBlockFormatException($"First section must be start'{new string(SectionStartChar, currentLength)}'");
 
-        List<List<string>> sectionsLines = new List<List<string>>();
+        var sectionsLines = new List<List<string>>();
 
         List<string>? currentPortion = null;
 
@@ -113,8 +108,8 @@ public static class SectionFileParser
 
             var withoutNameLines = GetSubList(sectionLines, 1);
 
-            List<string> sectionBlocksLines = new List<string>();
-            List<string> childSectionsBlocksLines = new List<string>();
+            var sectionBlocksLines = new List<string>();
+            var childSectionsBlocksLines = new List<string>();
 
             bool childBlockFinded = false;
             foreach (var line in withoutNameLines)
@@ -140,12 +135,12 @@ public static class SectionFileParser
                 if (knownBlockForSections.ContainsKey(sectionName) && IsBlock(line, knownBlockForSections[sectionName], out var blockName))
                 {
                     currentBlock = new FileBlock(blockName);
-                    section!.Blocks.AddOrThrowIfContains(currentBlock);
+                    section.Blocks.AddOrThrowIfContains(currentBlock);
                     continue;
                 }
 
                 if (currentBlock != null)
-                    currentBlock.Lines.Add(line);
+                    currentBlock.Add(line);
                 else
                     section.LinesWithoutBlock.Add(line);
             }
@@ -153,7 +148,8 @@ public static class SectionFileParser
             if (childSectionsBlocksLines.Count > 0)
             {
                 index++;
-                section.ChildSections.AddRange(GetSections(orderedSectionLengths, ref index, childSectionsBlocksLines, knownBlockForSections));
+                section.ChildSections.AddRange(GetSections(orderedSectionLengths, ref index, childSectionsBlocksLines,
+                    knownBlockForSections));
             }
         }
 
@@ -163,7 +159,7 @@ public static class SectionFileParser
 
     private static List<string> GetSubList(List<string> list, int startIndex)
     {
-        List<string> subList = new List<string>();
+        var subList = new List<string>();
 
         for (int i = startIndex; i < list.Count; i++)
         {
@@ -173,51 +169,14 @@ public static class SectionFileParser
         return subList;
     }
 
-    private static IReadOnlyList<string> DeleteEmptyAndComments(IReadOnlyCollection<string> lines)
+    private static IReadOnlyList<string> DeleteEmpty(IReadOnlyCollection<string> lines)
     {
-        List<string> result = new List<string>();
-        bool isMultiLineComment = false;
+        var result = new List<string>();
 
         foreach (var line in lines)
         {
-            if (isMultiLineComment)
-                continue;
-
             if (string.IsNullOrWhiteSpace(line))
                 continue;
-
-            if (line.Contains(CommentChar.SingleLine))
-            {
-                (string text, _) = line.SplitToTwoPartsRequired(CommentChar.SingleLine);
-
-                if(!string.IsNullOrWhiteSpace(text))
-                    result.Add(line);
-
-                continue;
-            }
-
-            if (line.Contains(CommentChar.MultiLineStart))
-            {
-                isMultiLineComment = true;
-                (string text, _) = line.SplitToTwoPartsRequired(CommentChar.MultiLineStart);
-
-                if (!string.IsNullOrWhiteSpace(text))
-                    result.Add(line);
-
-                continue;
-            }
-
-            if (line.Contains(CommentChar.MultiLineEnd))
-            {
-                isMultiLineComment = false;
-
-                (_, string text) = line.SplitToTwoPartsRequired(CommentChar.MultiLineEnd);
-
-                if (!string.IsNullOrWhiteSpace(text))
-                    result.Add(line);
-
-                continue;
-            }
 
             result.Add(line);
         }
@@ -230,7 +189,8 @@ public static class SectionFileParser
         return line.StartsWith(new string(SectionStartChar, MinSectionBlockCharsLength));
     }
 
-    private static bool IsBlock(string cleanLine, IReadOnlySet<string> knownBlocks, [MaybeNullWhen(returnValue: false)] out string blockName)
+    private static bool IsBlock(string cleanLine, IReadOnlySet<string> knownBlocks,
+        [MaybeNullWhen(returnValue: false)] out string blockName)
     {
         blockName = null;
         foreach (string block in knownBlocks)
@@ -241,6 +201,7 @@ public static class SectionFileParser
                 return true;
             }
         }
+
         return false;
     }
 
@@ -255,15 +216,14 @@ public static class SectionFileParser
             {
                 break;
             }
-            else if (c == SectionStartChar)
+
+            if (c == SectionStartChar)
             {
                 startBlock.Append(c);
                 continue;
             }
-            else
-            {
-                throw new FileBlockFormatException($"Invalid char '{c}' in section line '{line}'");
-            }
+
+            throw new FileBlockFormatException($"Invalid char '{c}' in section line '{line}'");
         }
 
         return startBlock.ToString();

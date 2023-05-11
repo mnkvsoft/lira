@@ -1,0 +1,13 @@
+-------------------- rule
+
+GET /comments/single_line/in_middle_text
+
+----- response
+
+code:
+200
+
+body:
+start text
+// comment in middle
+end text

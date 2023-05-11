@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /comments/multi_line/in_middle_line
+
+----- response
+
+code:
+200
+
+body:
+start /* comment */text

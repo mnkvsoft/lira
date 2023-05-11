@@ -3,9 +3,10 @@
 public class FileSection
 {
     public string Name { get; }
-    public List<string> LinesWithoutBlock = new List<string>();
-    public HashSet<FileBlock> Blocks = new HashSet<FileBlock>();
-    public List<FileSection> ChildSections = new List<FileSection>();
+    
+    public List<string> LinesWithoutBlock { get; } = new();
+    public HashSet<FileBlock> Blocks { get; } = new();
+    public List<FileSection> ChildSections { get; } = new();
 
     public FileSection(string name)
     {
