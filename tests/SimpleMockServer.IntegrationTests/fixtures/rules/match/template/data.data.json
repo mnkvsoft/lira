@@ -1,0 +1,14 @@
+{
+  "data": {
+    "match_template": {
+      "int": {
+        "set": {
+          "ranges": {
+            "first": "1",
+            "second": "2"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /match/template/path/user_1
+
+----- expected
+
+code:
+200
+
+body:
+user_1

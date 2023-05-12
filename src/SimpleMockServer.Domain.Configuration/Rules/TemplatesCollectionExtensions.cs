@@ -1,6 +1,6 @@
 ﻿using SimpleMockServer.Domain.Configuration.Templating;
 
-namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing.Extensions
+namespace SimpleMockServer.Domain.Configuration.Rules
 {
     static class TemplatesCollectionExtensions
     {
