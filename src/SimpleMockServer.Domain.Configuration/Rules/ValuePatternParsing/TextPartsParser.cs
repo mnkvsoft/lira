@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Text;
+﻿using System.Text;
 using SimpleMockServer.Common.Exceptions;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.TextPart;
@@ -45,7 +44,7 @@ class TextPartsParser : ITextPartsParser
     {
         return patternPart switch
         {
-            PatternPart.Static @static => new[] { GetStaticPart(@static) },
+            PatternPart.Static @static => new[] { new Static(@static.Value) },
             PatternPart.Dynamic dynamic => await GetDynamicParts(dynamic, parsingContext),
             _ => throw new UnsupportedInstanceType(patternPart)
         };
@@ -63,9 +62,9 @@ class TextPartsParser : ITextPartsParser
 
         var (invoke, format) = value.SplitToTwoParts(" format:").Trim();
 
-        if (invoke.StartsWith(Constants.ControlChars.VariablePrefix))
+        if (invoke.StartsWith(Consts.ControlChars.VariablePrefix))
         {
-            var varName = invoke.TrimStart(Constants.ControlChars.VariablePrefix);
+            var varName = invoke.TrimStart(Consts.ControlChars.VariablePrefix);
 
             var variable = context.Variables.GetOrThrow(varName);
             return new[] { WrapToFormattableIfNeed(variable, format) };
@@ -94,37 +93,16 @@ class TextPartsParser : ITextPartsParser
         var parts = await Parse(pattern, context);
         return (true, parts);
     }
-    
-    private IObjectTextPart GetStaticPart(PatternPart.Static staticPart)
-    {
-        string value = staticPart.Value;
-
-        if (long.TryParse(value, CultureInfo.InvariantCulture, out var longValue))
-            return new Static(longValue);
-
-        if (decimal.TryParse(value, CultureInfo.InvariantCulture, out var decimalValue))
-            return new Static(decimalValue);
-
-        if (Guid.TryParse(value, CultureInfo.InvariantCulture, out var guidValue))
-            return new Static(guidValue);
-
-        if (DateTime.TryParse(value, CultureInfo.InvariantCulture, out var dateValue))
-            return new Static(dateValue);
-
-        if (bool.TryParse(value, out var boolValue))
-            return new Static(boolValue);
-
-        return new Static(value);
-    }
 
     private static IObjectTextPart WrapToFormattableIfNeed(IObjectTextPart objectTextPart, string? format)
     {
         if (string.IsNullOrWhiteSpace(format))
             return objectTextPart;
-
+        
         if (objectTextPart is IGlobalObjectTextPart globalObjectTextPart)
             return new GlobalFormattableTextPart(globalObjectTextPart, format);
 
         return new FormattableTextPart(objectTextPart, format);
     }
+    
 }

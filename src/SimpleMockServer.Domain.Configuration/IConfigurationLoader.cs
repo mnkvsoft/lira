@@ -5,6 +5,7 @@ using Microsoft.Extensions.Primitives;
 using SimpleMockServer.Domain.Configuration.DataModel;
 using SimpleMockServer.Domain.Configuration.Rules;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
+using SimpleMockServer.Domain.Configuration.Templating;
 using SimpleMockServer.Domain.Configuration.Variables;
 using SimpleMockServer.Domain.DataModel;
 using SimpleMockServer.Domain.TextPart.Variables;
@@ -56,7 +57,9 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
     private async Task<LoadResult> Load(string path)
     {
         var datas = await _dataLoader.Load(path);
-        var context = new ParsingContext(new VariableSet(), path, path);
+        
+        var context = new ParsingContext(new VariableSet(), new TemplateSet(), RootPath: path, CurrentPath: path);
+        
         var variables = await _globalVariablesParser.Load(context, path);
         var rules = await _rulesLoader.LoadRules(path, context with { Variables = variables});
 

@@ -18,8 +18,8 @@ class ConditionMatcherParser
 
     static class ConditionMatcherName
     {
-        public const string Attempt = Constants.ControlChars.VariablePrefix + "attempt";
-        public const string Elapsed = Constants.ControlChars.VariablePrefix + "elapsed";
+        public const string Attempt = Consts.ControlChars.VariablePrefix + "attempt";
+        public const string Elapsed = Consts.ControlChars.VariablePrefix + "elapsed";
     }
 
     public ConditionMatcherSet Parse(FileSection conditionSection)

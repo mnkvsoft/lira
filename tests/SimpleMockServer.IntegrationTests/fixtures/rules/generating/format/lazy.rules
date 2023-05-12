@@ -1,0 +1,16 @@
+-------------------- rule
+
+GET /generating/format
+
+----- response
+
+code:
+200
+
+body:
+
+// if format not required then write as is
+{{ read.req.header: Request-Id }}
+
+// otherwise we try convert to type and formatting
+{{ read.req.header: Request-Id   format: N }}

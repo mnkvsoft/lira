@@ -23,7 +23,7 @@ class VariablesParser
 
         foreach (var line in lines)
         {
-            var (name, pattern) = line.SplitToTwoParts("=").Trim();
+            var (name, pattern) = line.SplitToTwoParts(Consts.ControlChars.AssignmentOperator).Trim();
 
             if (string.IsNullOrEmpty(name))
                 throw new Exception($"Variable name not defined. Line: {line}");

@@ -1,10 +1,12 @@
 ﻿using ArgValidation;
+using SimpleMockServer.Common;
 
 namespace SimpleMockServer.Domain.TextPart.Variables;
 
-public abstract class Variable : IObjectTextPart, IEquatable<Variable>
+public abstract class Variable : IObjectTextPart, IEquatable<Variable>, IUniqueSetItem
 {
     public string Name { get; }
+    public string EntityName => "Variable";
 
     public Variable(string name)
     {

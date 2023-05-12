@@ -4,7 +4,7 @@ namespace SimpleMockServer.Domain.Configuration.Templating;
 
 public class TemplateSet : IReadOnlyCollection<Template>
 {
-    private readonly HashSet<Template> _variables = new();
+    private readonly HashSet<Template> _templates = new();
 
     public TemplateSet()
     {
@@ -18,18 +18,26 @@ public class TemplateSet : IReadOnlyCollection<Template>
         }
     }
 
-    public void Add(Template template)
+    public void AddRange(IReadOnlyCollection<Template> set)
     {
-        if (_variables.TryGetValue(template, out _))
-            throw new InvalidOperationException($"Template '{template.Name}' already declared");
-        _variables.Add(template);
+        foreach(var template in set)
+        {
+            Add(template);
+        }
     }
 
-    public int Count => _variables.Count;
+    public void Add(Template template)
+    {
+        if (_templates.TryGetValue(template, out _))
+            throw new InvalidOperationException($"Template '{template.Name}' already declared");
+        _templates.Add(template);
+    }
+
+    public int Count => _templates.Count;
 
     public IEnumerator<Template> GetEnumerator()
     {
-        return _variables.GetEnumerator();
+        return _templates.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
