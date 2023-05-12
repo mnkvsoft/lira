@@ -1,10 +1,10 @@
 ﻿using SimpleMockServer.Domain.TextPart.Variables;
 
-namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
+namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing.Extensions;
 
 static class VariablesCollectionExtensions
 {
-    public static TVariable GetOrThrow<TVariable>(this IReadOnlyCollection<TVariable> variables, string name) where TVariable : Variable
+    public static Variable GetOrThrow(this IReadOnlyCollection<Variable> variables, string name)
     {
         var result = variables.FirstOrDefault(v => v.Name == name);
         if (result == null)
@@ -12,4 +12,3 @@ static class VariablesCollectionExtensions
         return result;
     }
 }
-

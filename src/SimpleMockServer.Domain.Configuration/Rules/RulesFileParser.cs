@@ -3,6 +3,7 @@ using SimpleMockServer.Common;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Rules.Parsers;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
+using SimpleMockServer.Domain.Configuration.Templating;
 using SimpleMockServer.Domain.Configuration.Variables;
 using SimpleMockServer.Domain.TextPart.Variables;
 using SimpleMockServer.FileSectionFormat;
@@ -49,9 +50,15 @@ internal class RuleFileParser
             knownBlockForSections: knownSectionsBlocks,
             maxNestingDepth: 3);
 
-        AssertContainsOnlySections(sections, new[] { Constants.SectionName.Rule, Constants.SectionName.Variables });
+        AssertContainsOnlySections(sections, new[] { Constants.SectionName.Rule, Constants.SectionName.Variables, Constants.SectionName.Templates });
+        
+        var ctx = parsingContext with { CurrentPath = ruleFile.GetDirectory() };
+        
+        var templates = GetTemplates(sections, parsingContext);
+        ctx = ctx with { Templates = templates };
+        
         var variables = await GetVariables(sections, parsingContext);
-        var context = parsingContext with { Variables = variables, CurrentPath = ruleFile.GetDirectory() };
+        ctx = ctx with { Variables = variables };
         
         var rules = new List<Rule>();
         var ruleSections = sections.Where(s => s.Name == Constants.SectionName.Rule).ToArray();
@@ -66,7 +73,7 @@ internal class RuleFileParser
                 ruleName, 
                 ruleSection, 
                 externalCallerSections, 
-                context));
+                ctx));
         }
 
         return rules;
@@ -82,8 +89,11 @@ internal class RuleFileParser
 
         var requestMatcherSet = _requestMatchersParser.Parse(ruleSection);
 
-        var variables = await GetVariables(childSections, parsingContext);
-        var fileRulesContext = parsingContext with { Variables = variables };
+        var templates = GetTemplates(childSections, parsingContext);
+        var ctx = parsingContext with { Templates = templates };
+        
+        var variables = await GetVariables(childSections, ctx);
+        ctx = ctx with { Variables = variables };
         
         var existConditionSection = childSections.Any(x => x.Name == Constants.SectionName.Condition);
 
@@ -92,7 +102,7 @@ internal class RuleFileParser
 
         if (existConditionSection)
         {
-            AssertContainsOnlySections(childSections, new[] { Constants.SectionName.Condition, Constants.SectionName.Variables });
+            AssertContainsOnlySections(childSections, new[] { Constants.SectionName.Condition, Constants.SectionName.Variables, Constants.SectionName.Variables });
 
             if (childSections.Count < 2)
                 throw new Exception($"Must be at least 2 '{Constants.SectionName.Condition}' sections");
@@ -106,8 +116,8 @@ internal class RuleFileParser
 
                 var conditionMatcherSet = _conditionMatcherParser.Parse(conditionSection);
 
-                responseWriter = await _responseWriterParser.Parse(conditionSection, fileRulesContext);
-                externalCallers = await _externalCallerParser.Parse(childConditionSections, fileRulesContext);
+                responseWriter = await _responseWriterParser.Parse(conditionSection, ctx);
+                externalCallers = await _externalCallerParser.Parse(childConditionSections, ctx);
 
                 rules.Add(new Rule(
                     ruleName + $". Condition no. {i + 1}",
@@ -123,14 +133,25 @@ internal class RuleFileParser
 
         AssertContainsOnlySections(
             childSections,
-            externalCallerSections.NewWith(Constants.SectionName.Response, Constants.SectionName.Variables));
+            externalCallerSections.NewWith(Constants.SectionName.Response, Constants.SectionName.Variables, Constants.SectionName.Templates));
 
-        responseWriter = await _responseWriterParser.Parse(ruleSection, fileRulesContext);
-        externalCallers = await _externalCallerParser.Parse(childSections, fileRulesContext);
+        responseWriter = await _responseWriterParser.Parse(ruleSection, ctx);
+        externalCallers = await _externalCallerParser.Parse(childSections, ctx);
 
         return new[] { new Rule(ruleName, _loggerFactory, responseWriter, requestMatcherSet, conditionMatcherSet: null, externalCallers) };
     }
 
+    private IReadOnlyCollection<Template> GetTemplates(IReadOnlyCollection<FileSection> childSections, ParsingContext parsingContext)
+    {
+        var result = new TemplateSet(parsingContext.Templates);
+        
+        var templatesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Templates);
+        if (templatesSection != null)
+            result.AddRange(TemplatesParser.Parse(templatesSection.LinesWithoutBlock));
+        
+        return result;
+    }
+    
     private async Task<IReadOnlyCollection<Variable>> GetVariables(IReadOnlyCollection<FileSection> childSections, ParsingContext parsingContext)
     {
         var result = new VariableSet(parsingContext.Variables);

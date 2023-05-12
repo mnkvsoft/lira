@@ -10,7 +10,7 @@ public interface IUniqueSetItem
     
 public abstract class UniqueSet<T> : IReadOnlyCollection<T> where T : IUniqueSetItem
 {
-    private readonly HashSet<T> _variables = new();
+    private readonly HashSet<T> _set = new();
 
     public UniqueSet()
     {
@@ -23,9 +23,9 @@ public abstract class UniqueSet<T> : IReadOnlyCollection<T> where T : IUniqueSet
 
     public void Add(T item)
     {
-        if (_variables.TryGetValue(item, out _))
+        if (_set.TryGetValue(item, out _))
             throw new InvalidOperationException($"{item.EntityName} '{item.Name}' already declared");
-        _variables.Add(item);
+        _set.Add(item);
     }
 
     public void AddRange(IReadOnlyCollection<T> items)
@@ -36,11 +36,11 @@ public abstract class UniqueSet<T> : IReadOnlyCollection<T> where T : IUniqueSet
         }
     }
 
-    public int Count => _variables.Count;
+    public int Count => _set.Count;
 
     public IEnumerator<T> GetEnumerator()
     {
-        return _variables.GetEnumerator();
+        return _set.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()

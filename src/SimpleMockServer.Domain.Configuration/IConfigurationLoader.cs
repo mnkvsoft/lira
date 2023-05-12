@@ -57,8 +57,10 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
     private async Task<LoadResult> Load(string path)
     {
         var datas = await _dataLoader.Load(path);
+
+        var templates = await TemplatesLoader.Load(path);
         
-        var context = new ParsingContext(new VariableSet(), new TemplateSet(), RootPath: path, CurrentPath: path);
+        var context = new ParsingContext(new VariableSet(), templates, RootPath: path, CurrentPath: path);
         
         var variables = await _globalVariablesParser.Load(context, path);
         var rules = await _rulesLoader.LoadRules(path, context with { Variables = variables});

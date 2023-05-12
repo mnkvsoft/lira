@@ -14,7 +14,7 @@ class DataLoader
 
     public async Task<Dictionary<DataName, Data>> Load(string path)
     {
-        var dataFiles = Directory.GetFiles(path, "*.data.json", SearchOption.AllDirectories);
+        var dataFiles = DirectoryHelper.GetFiles(path, "*.data.json");
         var dataWithRefs = new List<Data>();
 
         foreach (var dataFile in dataFiles)

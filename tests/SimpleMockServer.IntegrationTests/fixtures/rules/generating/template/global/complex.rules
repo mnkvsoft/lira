@@ -7,7 +7,5 @@ GET /generating/template/global
 code:
 200
 
-/*
 body:
 {{ @template }}
-*/

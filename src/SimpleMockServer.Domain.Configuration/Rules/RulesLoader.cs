@@ -17,8 +17,8 @@ internal class RulesLoader
     
     public async Task<IReadOnlyCollection<Rule>> LoadRules(string path, ParsingContext parsingContext)
     {
-        var rulesFiles = Directory.GetFiles(path, "*.rules", SearchOption.AllDirectories);
-        var rules = new List<Rule>(rulesFiles.Length * 3);
+        var rulesFiles = DirectoryHelper.GetFiles(path, "*.rules");
+        var rules = new List<Rule>(rulesFiles.Count * 3);
 
         foreach (var ruleFile in rulesFiles)
         {

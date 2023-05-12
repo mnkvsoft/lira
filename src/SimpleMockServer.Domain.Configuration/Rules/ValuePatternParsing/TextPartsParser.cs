@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using SimpleMockServer.Common.Exceptions;
 using SimpleMockServer.Common.Extensions;
+using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing.Extensions;
 using SimpleMockServer.Domain.TextPart;
 using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
 
@@ -73,12 +74,45 @@ class TextPartsParser : ITextPartsParser
         return new[] { WrapToFormattableIfNeed(_generatingFunctionFactory.Create(invoke), format) };
     }
 
-    private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadParts(ParsingContext context, string value)
+    private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadParts(
+        ParsingContext context, string invoke)
     {
-        if (!value.StartsWith("read.file:"))
+        var (wasRead, parts) = await TryReadPartsFromFile(context, invoke);
+        
+        if (wasRead)
+            return (true, parts!);
+        
+        (wasRead, parts) = await TryReadPartsFromTemplate(context, invoke);
+        
+        if (wasRead)
+            return (true, parts!);
+
+        return (false, null);
+    }
+
+    private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadPartsFromTemplate(
+        ParsingContext context, string invoke)
+    {
+        if (invoke.StartsWith(Consts.ControlChars.TemplatePrefix))
+        {
+            var templateName = invoke.TrimStart(Consts.ControlChars.TemplatePrefix);
+
+            var template = context.Templates.GetOrThrow(templateName);
+            
+            var parts = await Parse(template.Value, context);
+            return (true, parts);
+        }
+        
+        return (false, null);
+    }
+    
+    private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadPartsFromFile(
+        ParsingContext context, string invoke)
+    {
+        if (!invoke.StartsWith("read.file:"))
             return (false, null);
 
-        var args = value.TrimStart("read.file:");
+        var args = invoke.TrimStart("read.file:");
         var (fileName, encodingName) = args.SplitToTwoParts(" encoding:").Trim();
 
         string filePath;

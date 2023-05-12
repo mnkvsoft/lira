@@ -21,18 +21,18 @@ internal class GlobalVariablesParser
 
         result.AddRange(await GetVariablesFromFiles(
             parsingContext,
-            Directory.GetFiles(path, "*.global.var", SearchOption.AllDirectories),
+            DirectoryHelper.GetFiles(path, "*.global.var"),
             CreateGlobalVariable));
 
         result.AddRange(await GetVariablesFromFiles(
             parsingContext with { Variables = parsingContext.Variables.Combine(result)},
-            Directory.GetFiles(path, "*.req.var", SearchOption.AllDirectories),
+            DirectoryHelper.GetFiles(path, "*.req.var"),
             (name, parts) => new RequestVariable(name, parts)));
 
         return result;
     }
 
-    private async Task<VariableSet> GetVariablesFromFiles(ParsingContext parsingContext, string[] variablesFiles, Func<string, ObjectTextParts, Variable> createVariable)
+    private async Task<VariableSet> GetVariablesFromFiles(ParsingContext parsingContext, IReadOnlyCollection<string> variablesFiles, Func<string, ObjectTextParts, Variable> createVariable)
     {
         var result = new VariableSet();
         foreach (var variableFile in variablesFiles)

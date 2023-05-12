@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/template/rule_section
+
+----- expected
+
+code:
+200
+
+body:
+hello from template
