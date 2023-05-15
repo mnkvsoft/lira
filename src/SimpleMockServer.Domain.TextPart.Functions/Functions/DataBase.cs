@@ -2,7 +2,7 @@
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions;
 
-abstract class DataBase : IWithStringArgumenFunction
+abstract class DataBase : IWithStringArgumentFunction
 {
     private readonly IDataProvider _dataProvider;
 
@@ -14,7 +14,7 @@ abstract class DataBase : IWithStringArgumenFunction
     private DataName _name;
     private DataName? _rangeName;
 
-    void IWithStringArgumenFunction.SetArgument(string argument)
+    void IWithStringArgumentFunction.SetArgument(string argument)
     {
         if (!argument.Contains("."))
         {

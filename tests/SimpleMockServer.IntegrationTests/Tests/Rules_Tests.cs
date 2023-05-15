@@ -9,9 +9,9 @@ namespace SimpleMockServer.IntegrationTests.Tests;
 
 public class Rules_Tests : TestBase
 {
-    private static readonly string RulesFolderName = "rules";
-    // private static readonly string RulesFolderName = "debug";
-    
+    // private static readonly string RulesFolderName = "rules";
+    private static readonly string RulesFolderName = "debug";
+
     public static string[] Cases
     {
         get
@@ -43,13 +43,14 @@ public class Rules_Tests : TestBase
         Console.WriteLine("Execute file: " + prettyTestFileName);
         string realTestFilePath = fixturesDirectory + prettyTestFileName;
 
-        var sections = await SectionFileParser.Parse(realTestFilePath, new Dictionary<string, IReadOnlySet<string>>
+        var sections = await SectionFileParser.Parse(realTestFilePath,
+            new Dictionary<string, IReadOnlySet<string>>
             {
-                {"expected",  new HashSet<string>{ "body", "code", "headers", "elapsed" } },
-                {"case",      new HashSet<string>{ "headers", "body", "delay", "wait" } },
-                {"call.http", new HashSet<string>{ "headers", "body", "elapsed" } },
+                { "expected", new HashSet<string> { "body", "code", "headers", "elapsed" } },
+                { "case", new HashSet<string> { "headers", "body", "delay", "wait" } },
+                { "call.http", new HashSet<string> { "headers", "body", "elapsed" } },
             },
-        maxNestingDepth: 3);
+            maxNestingDepth: 3);
 
         foreach (var caseSection in sections)
         {
@@ -71,7 +72,7 @@ public class Rules_Tests : TestBase
             var expectedSection = caseSection.GetSingleChildSection("expected");
 
             var elapsed = expectedSection.GetBlockValueOrDefault<TimeSpan>("elapsed");
-            if(elapsed != default)
+            if (elapsed != default)
                 Assert.That(sw.Elapsed, Is.GreaterThan(elapsed));
 
             int expectedHttpCode = expectedSection.GetBlockValue<int>("code");

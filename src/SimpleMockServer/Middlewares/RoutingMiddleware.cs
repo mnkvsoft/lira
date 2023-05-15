@@ -10,6 +10,7 @@ class RoutingMiddleware : IMiddleware
     private readonly IRulesProvider _rulesProvider;
     private readonly IConfigurationLoader _configurationLoader;
     private readonly ILogger _logger;
+    
 
     public RoutingMiddleware(ILoggerFactory loggerFactory, IRulesProvider rulesProvider, IConfigurationLoader configurationLoader)
     {

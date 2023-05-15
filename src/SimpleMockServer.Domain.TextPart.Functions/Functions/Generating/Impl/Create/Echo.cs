@@ -1,6 +1,6 @@
 ﻿namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Create;
 
-internal class Echo : IGlobalObjectTextPart, IWithStringArgumenFunction
+internal class Echo : IGlobalObjectTextPart, IWithStringArgumentFunction
 {
     public static string Name => "echo";
 

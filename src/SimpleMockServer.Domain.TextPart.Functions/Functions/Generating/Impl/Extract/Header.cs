@@ -1,5 +1,5 @@
 ﻿namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract;
-internal class Header : IObjectTextPart, IWithStringArgumenFunction
+internal class Header : IObjectTextPart, IWithStringArgumentFunction
 {
     public static string Name => "read.req.header";
 

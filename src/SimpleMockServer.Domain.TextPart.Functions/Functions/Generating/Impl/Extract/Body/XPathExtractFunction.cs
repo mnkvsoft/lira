@@ -5,7 +5,7 @@ using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extra
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract.Body;
 
-public class XPathExtractFunction : IBodyExtractFunction, IObjectTextPart, IWithStringArgumenFunction
+public class XPathExtractFunction : IBodyExtractFunction, IObjectTextPart, IWithStringArgumentFunction
 {
     public static string Name => "read.req.body.xpath";
 

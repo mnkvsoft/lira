@@ -48,10 +48,10 @@ internal class StringMatchPrettyFunctionFactory : IStringMatchFunctionFactory
 
         var prettyMatchFunction = (IStringMatchPrettyFunction)_serviceProvider.GetRequiredService(functionType);
 
-        if (argument != null && prettyMatchFunction is not IWithStringArgumenFunction)
+        if (argument != null && prettyMatchFunction is not IWithStringArgumentFunction)
             throw new Exception($"Function '{functionName}' not support arguments");
 
-        if (prettyMatchFunction is IWithStringArgumenFunction withArgument)
+        if (prettyMatchFunction is IWithStringArgumentFunction withArgument)
         {
             withArgument.SetArgument(argument);
         }
