@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{B539FC
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		global.json = global.json
+		todo_teature.txt = todo_teature.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BE927F78-B04F-4B6F-97FD-9B8397AF9915}"

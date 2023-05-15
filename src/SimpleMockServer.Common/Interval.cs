@@ -22,7 +22,7 @@ public record Interval<T> where T : struct, IComparable<T>
     public bool InRange(T value) => From.CompareTo(value) <= 0 && (value.CompareTo(To) <= 0);
     public bool IsIntersect(Interval<T> interval)
     {
-        return interval.From.CompareTo(To) >= 0 || From.CompareTo(interval.To) >= 0;
+        return interval.From.CompareTo(To) <= 0 || From.CompareTo(interval.To) >= 0;
     }
 
     public interface IConverter

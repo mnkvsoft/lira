@@ -64,7 +64,7 @@ public class LoggingMiddleware
 
         if (request.QueryString.HasValue)
         {
-            sb.AppendLine($"?{request.QueryString}");
+            sb.Append($"{request.QueryString}");
         }
 
         if (request.Headers.Any())
