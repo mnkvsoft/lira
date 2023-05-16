@@ -1,0 +1,30 @@
+-------------------- rule
+
+POST /match/multiple/body/only_function
+
+body:
+{{ all }} => {{ any }}
+
+----- response
+
+code:
+200
+
+body:
+any
+
+-------------------- rule
+
+POST /match/multiple/body/only_function
+
+
+body:
+{{ all }} => {{ int }}
+
+----- response
+
+code:
+200
+
+body:
+int

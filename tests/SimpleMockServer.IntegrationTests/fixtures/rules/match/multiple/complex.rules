@@ -1,0 +1,27 @@
+-------------------- rule
+
+POST /match/multiple/complex?a=1
+
+----- response
+
+code:
+200
+
+body:
+query string rule
+
+-------------------- rule
+
+POST /match/multiple/complex
+
+body:
+{{ jpath: $.first_name }} => Vasiliy
+{{ jpath: $.last_name }} => {{ any }}
+
+----- response
+
+code:
+200
+
+body:
+body rule

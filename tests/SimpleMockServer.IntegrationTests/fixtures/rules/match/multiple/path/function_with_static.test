@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /match/multiple/path/function_with_static/123
+
+----- expected
+
+code:
+200
+
+body:
+static

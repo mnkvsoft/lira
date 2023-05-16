@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /match/multiple/path/function_with_suffix/123_suffix
+
+----- expected
+
+code:
+200
+
+body:
+with suffix

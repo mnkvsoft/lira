@@ -1,0 +1,14 @@
+-------------------- case
+
+POST /match/multiple/body/only_function
+
+body:
+100
+
+----- expected
+
+code:
+200
+
+body:
+int

@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /match/multiple/path/only_function/1
+
+----- expected
+
+code:
+200
+
+body:
+int

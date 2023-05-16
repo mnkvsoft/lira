@@ -1,0 +1,17 @@
+-------------------- case
+
+POST /match/multiple/complex?a=1
+
+body:
+{
+    "first_name": "Vasiliy",
+    "last_name": "Pupkin"
+}
+
+----- expected
+
+code:
+200
+
+body:
+body rule

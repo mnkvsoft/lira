@@ -1,0 +1,23 @@
+-------------------- rule
+
+GET /match/multiple/path/only_function/{{ any }}
+
+----- response
+
+code:
+200
+
+body:
+any
+
+-------------------- rule
+
+GET /match/multiple/path/only_function/{{ int }}
+
+----- response
+
+code:
+200
+
+body:
+int

@@ -1,0 +1,23 @@
+-------------------- rule
+
+GET /match/multiple/path/function_with_prefix/prefix_{{ any }}
+
+----- response
+
+code:
+200
+
+body:
+with prefix
+
+-------------------- rule
+
+GET /match/multiple/path/function_with_prefix/{{ any }}
+
+----- response
+
+code:
+200
+
+body:
+without prefix
