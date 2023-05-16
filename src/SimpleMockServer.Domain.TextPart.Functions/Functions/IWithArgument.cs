@@ -1,7 +1,6 @@
-namespace SimpleMockServer.Domain.TextPart.Functions.Functions
+namespace SimpleMockServer.Domain.TextPart.Functions.Functions;
+
+internal interface IWithArgument
 {
-    internal interface IWithArgument
-    {
     
-    }
 }

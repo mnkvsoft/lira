@@ -10,13 +10,15 @@ class RoutingMiddleware : IMiddleware
     private readonly IRulesProvider _rulesProvider;
     private readonly IConfigurationLoader _configurationLoader;
     private readonly ILogger _logger;
+    private readonly bool _allowMultipleRules;
     
 
-    public RoutingMiddleware(ILoggerFactory loggerFactory, IRulesProvider rulesProvider, IConfigurationLoader configurationLoader)
+    public RoutingMiddleware(ILoggerFactory loggerFactory, IRulesProvider rulesProvider, IConfigurationLoader configurationLoader, IConfiguration configuration)
     {
         _rulesProvider = rulesProvider;
         _configurationLoader = configurationLoader;
         _logger = loggerFactory.CreateLogger(GetType());
+        _allowMultipleRules = configuration.GetValue<bool>("AllowMultipleRules");
     }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -50,26 +52,27 @@ class RoutingMiddleware : IMiddleware
 
         var matchesRules = await GetMatchedRules(request);
 
-        if (matchesRules.Count == 1)
-        {
-            var rule = matchesRules.First();
-            await rule.Execute(new HttpContextData(request, context.Response));
-            return;
-        }
+        
+            if (matchesRules.Count == 1)
+            {
+                var rule = matchesRules.First();
+                await rule.Execute(new HttpContextData(request, context.Response));
+                return;
+            }
 
-        if (matchesRules.Count == 0)
-        {
-            context.Response.StatusCode = 404;
-            await context.Response.WriteAsync("Rule not found");
-            return;
-        }
+            if (matchesRules.Count == 0)
+            {
+                context.Response.StatusCode = 404;
+                await context.Response.WriteAsync("Rule not found");
+                return;
+            }
 
-        if (matchesRules.Count > 1)
-        {
-            context.Response.StatusCode = 404;
-            await context.Response.WriteAsync(GetErrorMessageForManyRules(matchesRules));
-            return;
-        }
+            if (matchesRules.Count > 1)
+            {
+                context.Response.StatusCode = 404;
+                await context.Response.WriteAsync(GetErrorMessageForManyRules(matchesRules));
+                return;
+            }
 
         throw new Exception("Unknown case");
     }
@@ -80,15 +83,40 @@ class RoutingMiddleware : IMiddleware
 
         var requestId = Guid.NewGuid();
 
-        var matchedRules = new List<Rule>();
+        if (!_allowMultipleRules)
+        {
+            var result = new List<Rule>();
+
+            foreach (var rule in allRules)
+            {
+                var matchResult = await rule.IsMatch(request, requestId);
+                
+                if (matchResult is RuleMatchResult.Matched)
+                    result.Add(rule);
+            }
+
+            return result;
+        }
+
+        var matchedRules = new List<(Rule Rule, IRuleMatchWeight Weight)>();
 
         foreach (var rule in allRules)
         {
-            if (await rule.IsMatch(request, requestId))
-                matchedRules.Add(rule);
+            var matchResult = await rule.IsMatch(request, requestId);
+                
+            if (matchResult is RuleMatchResult.Matched matched)
+                matchedRules.Add((rule, matched.Weight));
         }
 
-        return matchedRules;
+        if (matchedRules.Count == 0)
+            return Array.Empty<Rule>();
+
+        var maxPriorityRule = matchedRules.MaxBy(x => x.Weight);
+
+        return matchedRules
+            .Where(x => maxPriorityRule.Weight.CompareTo(x.Weight) == 0)
+            .Select(x=> x.Rule)
+            .ToArray();
     }
 
     private static string GetErrorMessageForManyRules(IReadOnlyCollection<Rule> matchedRules)

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using SimpleMockServer.Common;
+using SimpleMockServer.Common.Exceptions;
 using SimpleMockServer.Domain.DataModel;
 using SimpleMockServer.Domain.DataModel.DataImpls.Guid;
 using SimpleMockServer.Domain.DataModel.DataImpls.Number;
@@ -211,7 +212,7 @@ class DataLoader
                 }
                 else
                 {
-                    throw new Exception($"Unknown type: " + curRange.GetType());
+                    throw new UnsupportedInstanceType(curRange);
                 }
             }
             else if (curRange is NumberSetValuesDataRange curValuesRange)

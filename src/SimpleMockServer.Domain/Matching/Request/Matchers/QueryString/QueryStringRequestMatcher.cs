@@ -9,18 +9,22 @@ public class QueryStringRequestMatcher : IRequestMatcher
         _queryParamToPatternMap = queryParamToPatternMap;
     }
 
-    public Task<bool> IsMatch(RequestData request)
+    public Task<RequestMatchResult> IsMatch(RequestData request)
     {
+        int weight = 0;
+        
         foreach (var pair in _queryParamToPatternMap)
         {
             var parName = pair.Key;
             if (!request.Query.TryGetValue(parName, out var value))
-                return Task.FromResult(false);
+                return Task.FromResult(RequestMatchResult.NotMatched);
 
             var pattern = pair.Value;
             if (!pattern.IsMatch(value))
-                return Task.FromResult(false);
+                return Task.FromResult(RequestMatchResult.NotMatched);
+
+            weight += TextPatternPartWeightCalculator.Calculate(pattern);
         }
-        return Task.FromResult(true);
+        return Task.FromResult(RequestMatchResult.Matched(weight));
     }
 }

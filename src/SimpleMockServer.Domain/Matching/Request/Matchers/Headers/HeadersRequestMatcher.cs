@@ -2,7 +2,7 @@ using ArgValidation;
 
 namespace SimpleMockServer.Domain.Matching.Request.Matchers.Headers;
 
-internal class HeadersRequestMatcher : IRequestMatcher
+public class HeadersRequestMatcher : IRequestMatcher
 {
     IReadOnlyDictionary<string, TextPatternPart> _headers;
 
@@ -12,8 +12,9 @@ internal class HeadersRequestMatcher : IRequestMatcher
         _headers = headers;
     }
 
-    public Task<bool> IsMatch(RequestData request)
+    public Task<RequestMatchResult> IsMatch(RequestData request)
     {
+        int weight = 0;
         foreach (var header in _headers)
         {
             var pattern = header.Value;
@@ -30,8 +31,11 @@ internal class HeadersRequestMatcher : IRequestMatcher
             }
 
             if (!isMatch)
-                return Task.FromResult(false);
+                return Task.FromResult(RequestMatchResult.NotMatched);
+            
+            weight += TextPatternPartWeightCalculator.Calculate(pattern);
+            
         }
-        return Task.FromResult(true);
+        return Task.FromResult(RequestMatchResult.Matched(weight));
     }
 }

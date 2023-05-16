@@ -1,4 +1,4 @@
-﻿namespace SimpleMockServer.Domain.Matching.Request;
+namespace SimpleMockServer.Domain.Matching.Request;
 
 public abstract record TextPatternPart
 {

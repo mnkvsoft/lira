@@ -18,8 +18,8 @@ internal class RandomString : IGlobalObjectTextPart, IWithIntArgumentFunction, I
     {
         _length = argument;
     }
-    
-    public static string GetRandomString(int length)
+
+    private static string GetRandomString(int length)
     {
         var sb = new StringBuilder();
 

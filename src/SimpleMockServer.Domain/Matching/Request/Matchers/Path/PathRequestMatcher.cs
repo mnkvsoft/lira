@@ -13,13 +13,14 @@ public class PathRequestMatcher : IRequestMatcher
         _segmentsPatterns = expectedSegments;
     }
 
-    public Task<bool> IsMatch(RequestData request)
+    public Task<RequestMatchResult> IsMatch(RequestData request)
     {
         var currentSegments = request.Path.Value.Split('/');
 
         if (_segmentsPatterns.Count != currentSegments.Length)
-            return Task.FromResult(false);
+            return Task.FromResult(RequestMatchResult.NotMatched);
 
+        int weight = 0;
         for (var i = 0; i < _segmentsPatterns.Count; i++)
         {
             var pattern = _segmentsPatterns[i];
@@ -27,9 +28,11 @@ public class PathRequestMatcher : IRequestMatcher
             var isMatch = pattern.IsMatch(current);
 
             if (!isMatch)
-                return Task.FromResult(false);
+                return Task.FromResult(RequestMatchResult.NotMatched);
+
+            weight += TextPatternPartWeightCalculator.Calculate(pattern);
         }
 
-        return Task.FromResult(true);
+        return Task.FromResult(RequestMatchResult.Matched(weight));
     }
 }

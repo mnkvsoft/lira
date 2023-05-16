@@ -19,25 +19,33 @@ class RequestMatchersParser
     private readonly IBodyExtractFunctionFactory _bodyExtractFunctionFactory;
     private readonly IStringMatchFunctionFactory _stringMatchFunctionFactory;
 
-    public RequestMatchersParser(IStringMatchFunctionFactory stringMatchFunctionFactory, IBodyExtractFunctionFactory bodyExtractFunctionFactory)
+    public RequestMatchersParser(IStringMatchFunctionFactory stringMatchFunctionFactory,
+        IBodyExtractFunctionFactory bodyExtractFunctionFactory)
     {
         _stringMatchFunctionFactory = stringMatchFunctionFactory;
         _bodyExtractFunctionFactory = bodyExtractFunctionFactory;
     }
 
+
     public RequestMatcherSet Parse(FileSection ruleSection, IReadOnlyCollection<Template> templates)
     {
-        var matchers = new RequestMatcherSet();
-        matchers.AddRange(GetMethodAndPathMatchersFromShortEntry(ruleSection, templates));
+        var builder = new RequestMatchersBuilder();
+        builder.AddRange(GetMethodAndPathMatchersFromShortEntry(ruleSection, templates));
         foreach (var block in ruleSection.Blocks)
         {
-            matchers.Add(CreateRequestMatcher(block, templates));
+            builder.Add(CreateRequestMatcher(block, templates));
         }
 
-        return matchers;
+        return new RequestMatcherSet(
+            builder.GetOrNull<MethodRequestMatcher>(),
+            builder.GetOrNull<PathRequestMatcher>(),
+            builder.GetOrNull<QueryStringRequestMatcher>(),
+            builder.GetOrNull<HeadersRequestMatcher>(),
+            builder.GetOrNull<BodyRequestMatcher>());
     }
 
-    private IReadOnlyCollection<IRequestMatcher> GetMethodAndPathMatchersFromShortEntry(FileSection ruleSection, IReadOnlyCollection<Template> templates)
+    private IReadOnlyCollection<IRequestMatcher> GetMethodAndPathMatchersFromShortEntry(FileSection ruleSection,
+        IReadOnlyCollection<Template> templates)
     {
         var lines = ruleSection.LinesWithoutBlock;
 
@@ -149,7 +157,8 @@ class RequestMatchersParser
         {
             if (!line.Contains(Consts.ControlChars.Lambda))
             {
-                patterns.Add(new KeyValuePair<IBodyExtractFunction, TextPatternPart>(_bodyExtractFunctionFactory.Create(FunctionName.ExtractBody.All), CreateValuePattern(line.Trim(), templates)));
+                patterns.Add(new KeyValuePair<IBodyExtractFunction, TextPatternPart>(
+                    _bodyExtractFunctionFactory.Create(FunctionName.ExtractBody.All), CreateValuePattern(line.Trim(), templates)));
                 continue;
             }
 
@@ -200,7 +209,8 @@ class RequestMatchersParser
             throw new Exception($"Not found end block for '{rawValue}'");
 
         var start = rawValue.Substring(0, rawValue.IndexOf(Consts.ExecutedBlock.Begin, StringComparison.Ordinal));
-        var end = rawValue.Substring(rawValue.IndexOf(Consts.ExecutedBlock.End, StringComparison.Ordinal) + Consts.ExecutedBlock.End.Length);
+        var end = rawValue.Substring(rawValue.IndexOf(Consts.ExecutedBlock.End, StringComparison.Ordinal) +
+                                     Consts.ExecutedBlock.End.Length);
 
         var invoke = rawValue
             .TrimStart(start).TrimStart(Consts.ExecutedBlock.Begin)
@@ -214,7 +224,35 @@ class RequestMatchersParser
             var template = templates.GetOrThrow(templateName);
             return CreateValuePattern(template.Value, templates);
         }
-        
+
         return new TextPatternPart.Dynamic(start, end, _stringMatchFunctionFactory.Create(invoke));
+    }
+
+    private class RequestMatchersBuilder
+    {
+        private readonly List<IRequestMatcher> _matchers = new();
+
+        public TRequestMatcher? GetOrNull<TRequestMatcher>() where TRequestMatcher : class, IRequestMatcher
+        {
+            var result = _matchers.FirstOrDefault(m => m is TRequestMatcher);
+            return (TRequestMatcher?)result;
+        }
+        
+        public void AddRange(IEnumerable<IRequestMatcher> matchers)
+        {
+            foreach (var matcher in matchers)
+            {
+                Add(matcher);
+            }
+        }
+
+        public void Add(IRequestMatcher matcher)
+        {
+            var type = matcher.GetType();
+            if (_matchers.FirstOrDefault(x => x.GetType() == matcher.GetType()) != null)
+                throw new InvalidOperationException($"Matcher '{type}' already added");
+
+            _matchers.Add(matcher);
+        }
     }
 }

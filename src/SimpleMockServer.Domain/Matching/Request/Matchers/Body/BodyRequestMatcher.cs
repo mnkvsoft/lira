@@ -12,12 +12,13 @@ public class BodyRequestMatcher : IRequestMatcher
         _extractToMatchFunctionMap = extractToMatchFunctionMap;
     }
 
-    public async Task<bool> IsMatch(RequestData request)
+    public async Task<RequestMatchResult> IsMatch(RequestData request)
     {
         request.Body.Position = 0;
         var stream = new StreamReader(request.Body);
         var body = await stream.ReadToEndAsync();
 
+        int weight = 0;
         foreach (var pair in _extractToMatchFunctionMap)
         {
             var extractor = pair.Key;
@@ -25,10 +26,12 @@ public class BodyRequestMatcher : IRequestMatcher
 
             var value = extractor.Extract(body);
             if (!matcher.IsMatch(value))
-                return false;
+                return RequestMatchResult.NotMatched;
+            
+            weight += TextPatternPartWeightCalculator.Calculate(matcher);
         }
 
-        return true;
+        return RequestMatchResult.Matched(weight);
     }
 
 }

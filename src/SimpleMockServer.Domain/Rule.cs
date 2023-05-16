@@ -27,21 +27,25 @@ public class Rule
         _callers = callers;
     }
 
-    public async Task<bool> IsMatch(RequestData request, Guid requestId)
+    public async Task<RuleMatchResult> IsMatch(RequestData request, Guid requestId)
     {
         using var scope = _logger.BeginScope($"Rule: {Name}");
 
-        var isMatch = await _requestMatcherSet.IsMatch(request);
+        var matchResult = await _requestMatcherSet.IsMatch(request);
 
-        if (!isMatch)
-            return false;
+        if (matchResult is RuleMatchResult.NotMatched notMatched)
+            return notMatched;
 
+        var matched = (RuleMatchResult.Matched)matchResult;
         if (_conditionMatcherSet == null)
-            return true;
+            return matched;
 
-        isMatch = await _conditionMatcherSet.IsMatch(request, requestId);
+        bool conditionsIsMatch = await _conditionMatcherSet.IsMatch(request, requestId);
 
-        return isMatch;
+        if (conditionsIsMatch)
+            return matched;
+
+        return RuleMatchResult.NotMatchedInstance;
     }
 
     public async Task Execute(HttpContextData httpContextData)
@@ -52,10 +56,10 @@ public class Rule
         await _responseWriter.Value.Write(httpContextData);
 
         await httpContextData.Request.SaveBody();
-        _ = CallExtrernalSystems(httpContextData.Request);
+        _ = CallExternalSystems(httpContextData.Request);
     }
 
-    private async Task CallExtrernalSystems(RequestData request)
+    private async Task CallExternalSystems(RequestData request)
     {
         await Task.WhenAll(_callers.Select(caller => TryCall(caller, request)));
     }

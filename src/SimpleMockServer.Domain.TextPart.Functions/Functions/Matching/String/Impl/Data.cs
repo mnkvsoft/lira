@@ -1,4 +1,5 @@
 ﻿using SimpleMockServer.Domain.DataModel;
+using SimpleMockServer.Domain.Matching.Request;
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Matching.String.Impl;
 
@@ -9,6 +10,8 @@ internal class Data : DataBase, IStringMatchPrettyFunction
     }
 
     public static string Name => "data";
+
+    public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
 
     public bool IsMatch(string? value)
     {
