@@ -1,0 +1,11 @@
+-------------------- rule
+
+POST /match/function/body/extract/form
+
+body:
+{{ form: name }} >> Johnny Dapp
+
+----- response
+
+code:
+200
