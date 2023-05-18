@@ -8,4 +8,4 @@ code:
 200
 
 headers:
-Custom: {{echo:2 format:#.00#}}
+Custom: {{echo:2 >> format:#.00#}}

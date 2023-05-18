@@ -1,5 +1,3 @@
-- add function random.string
-- add function random.int32
-- add function random.int64
-
-- убрать числа из подсветки
+- comments setting
+- full file path in rule name
+- replace string chars

@@ -8,4 +8,4 @@ code:
 200
 
 body:
-{{echo:2 format:#.00#}}
+{{echo:2 >> format:#.00#}}

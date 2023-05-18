@@ -4,6 +4,7 @@ using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing.Extensions;
 using SimpleMockServer.Domain.TextPart;
 using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
+using SimpleMockServer.Domain.TextPart.Functions.Functions.Transform;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -22,10 +23,12 @@ class TextPartsParser : ITextPartsParser
     }
 
     private readonly IGeneratingFunctionFactory _generatingFunctionFactory;
+    private readonly ITransformFunctionFactory _transformFunctionFactory;
 
-    public TextPartsParser(IGeneratingFunctionFactory generatingFunctionFactory)
+    public TextPartsParser(IGeneratingFunctionFactory generatingFunctionFactory, ITransformFunctionFactory transformFunctionFactory)
     {
         _generatingFunctionFactory = generatingFunctionFactory;
+        _transformFunctionFactory = transformFunctionFactory;
     }
 
     public async Task<ObjectTextParts> Parse(string pattern, IParsingContext parsingContext)
@@ -51,6 +54,8 @@ class TextPartsParser : ITextPartsParser
         };
     }
 
+    
+    
     private async Task<IReadOnlyCollection<IObjectTextPart>> GetDynamicParts(PatternPart.Dynamic dynamicPart, IParsingContext parsingContext)
     {
         string value = dynamicPart.Value;
@@ -61,18 +66,47 @@ class TextPartsParser : ITextPartsParser
         if (wasRead)
             return parts!;
 
-        var (invoke, format) = value.SplitToTwoParts(" format:").Trim();
-
-        if (invoke.StartsWith(Consts.ControlChars.VariablePrefix))
+        if (value.Contains("return"))
         {
-            var varName = invoke.TrimStart(Consts.ControlChars.VariablePrefix);
+            throw new NotImplementedException();
+        }
+        
+        var pipelineItemsRaw = value.Split(Consts.ControlChars.PipelineSplitter);
 
-            var variable = context.Variables.GetOrThrow(varName);
-            return new[] { WrapToFormattableIfNeed(variable, format) };
+        var pipeline = CreatePipeline(CreateStartFunction(pipelineItemsRaw[0].Trim(), context));
+
+        for (int i = 1; i < pipelineItemsRaw.Length; i++)
+        {
+            if(_transformFunctionFactory.TryCreate(pipelineItemsRaw[i].Trim(), out var transformFunction))
+                pipeline.Add(transformFunction);
         }
 
-        return new[] { WrapToFormattableIfNeed(_generatingFunctionFactory.Create(invoke), format) };
+        return new[] { pipeline };
     }
+
+    private TransformPipelineBase CreatePipeline(IObjectTextPart startFunction)
+    {
+        if (startFunction is IGlobalObjectTextPart globalObjectTextPart)
+            return new GlobalTransformPipeline(globalObjectTextPart);
+        return new TransformPipeline(startFunction);
+    }
+    
+    private IObjectTextPart CreateStartFunction(string rawText, ParsingContext context)
+    {
+        if (rawText.StartsWith(Consts.ControlChars.VariablePrefix))
+        {
+            var varName = rawText.TrimStart(Consts.ControlChars.VariablePrefix);
+
+            var variable = context.Variables.GetOrThrow(varName);
+            return variable;
+        }
+        
+        if (_generatingFunctionFactory.TryCreate(rawText, out var prettyFunction))
+            return prettyFunction;
+
+        throw new NotImplementedException();
+    }
+    
 
     private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadParts(
         ParsingContext context, string invoke)
@@ -127,16 +161,4 @@ class TextPartsParser : ITextPartsParser
         var parts = await Parse(pattern, context);
         return (true, parts);
     }
-
-    private static IObjectTextPart WrapToFormattableIfNeed(IObjectTextPart objectTextPart, string? format)
-    {
-        if (string.IsNullOrWhiteSpace(format))
-            return objectTextPart;
-        
-        if (objectTextPart is IGlobalObjectTextPart globalObjectTextPart)
-            return new GlobalFormattableTextPart(globalObjectTextPart, format);
-
-        return new FormattableTextPart(objectTextPart, format);
-    }
-    
 }

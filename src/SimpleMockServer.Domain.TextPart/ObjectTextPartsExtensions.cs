@@ -2,7 +2,7 @@
 
 namespace SimpleMockServer.Domain.TextPart;
 
-public static class FormattableTextPartsExtensions
+public static class ObjectTextPartsExtensions
 {
     public static object? Generate(this IReadOnlyCollection<IObjectTextPart> parts, RequestData request)
     {

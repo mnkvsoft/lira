@@ -2,6 +2,7 @@
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Generating;
 using SimpleMockServer.Domain.TextPart;
+using SimpleMockServer.Domain.TextPart.Functions.Functions.Transform.Format;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
@@ -30,7 +31,7 @@ public class GeneratingHttpDataParser
 
             var parts = await _partsParser.Parse(headerPattern, parsingContext);
 
-            headers.Add(new GeneratingHeader(headerName, parts.WrapToTextParts()));
+            headers.Add(new GeneratingHeader(headerName, ObjectTextPartsExtensions.WrapToTextParts(parts)));
         }
         return headers;
     }

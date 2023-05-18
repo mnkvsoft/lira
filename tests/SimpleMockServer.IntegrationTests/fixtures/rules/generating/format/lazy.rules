@@ -13,4 +13,4 @@ body:
 {{ read.req.header: Request-Id }}
 
 // otherwise we try convert to type and formatting
-{{ read.req.header: Request-Id   format: N }}
+{{ read.req.header: Request-Id >> format: N }}

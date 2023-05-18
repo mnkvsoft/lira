@@ -12,5 +12,5 @@ code:
 200
 
 body:
-{{ $order_id   format: N }}
-{{ $order_id   format: B }}
+{{ $order_id >> format: N }}
+{{ $order_id >> format: B }}

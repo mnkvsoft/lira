@@ -5,6 +5,7 @@ using SimpleMockServer.Domain.Configuration.Rules;
 using SimpleMockServer.Domain.Configuration.Rules.Parsers;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.TextPart;
+using SimpleMockServer.Domain.TextPart.Functions.Functions.Transform.Format;
 using SimpleMockServer.ExternalCalling.Http.Caller;
 using SimpleMockServer.FileSectionFormat;
 
@@ -51,8 +52,8 @@ public class HttpExternalCallerRegistrator : IExternalCallerRegistrator
         var caller = new HttpExternalCaller(
             _httpClientFactory, 
             method, 
-            urlParts.WrapToTextParts(), 
-            bodyParts.WrapToTextParts(), 
+            ObjectTextPartsExtensions.WrapToTextParts(urlParts), 
+            ObjectTextPartsExtensions.WrapToTextParts(bodyParts), 
             headers);
         
         return caller;

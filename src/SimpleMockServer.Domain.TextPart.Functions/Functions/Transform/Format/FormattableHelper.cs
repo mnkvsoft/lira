@@ -1,18 +1,6 @@
 ﻿using System.Globalization;
 
-namespace SimpleMockServer.Domain.TextPart;
-
-public record FormattableTextPart(IObjectTextPart ObjectTextPart, string Format) : IObjectTextPart
-{
-    public object? Get(RequestData request) => ObjectTextPart.Get(request)?.FormatOrThrow(Format);
-}
-
-public record GlobalFormattableTextPart(IGlobalObjectTextPart GlobalObjectTextPart, string Format) : IGlobalObjectTextPart
-{
-    public object? Get(RequestData request) => GlobalObjectTextPart.Get(request)?.FormatOrThrow(Format);
-
-    public object? Get() => GlobalObjectTextPart.Get()?.FormatOrThrow(Format);
-}
+namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Transform.Format;
 
 internal static class FormattableHelper
 {

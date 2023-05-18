@@ -3,7 +3,7 @@
 POST /match/multiple/body/only_function
 
 body:
-{{ all }} => {{ any }}
+{{ all }} >> {{ any }}
 
 ----- response
 
@@ -19,7 +19,7 @@ POST /match/multiple/body/only_function
 
 
 body:
-{{ all }} => {{ int }}
+{{ all }} >> {{ int }}
 
 ----- response
 

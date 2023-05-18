@@ -24,15 +24,15 @@ internal class StringMatchPrettyFunctionFactory : IStringMatchFunctionFactory
             var nameProperty = functionType.GetProperties().SingleOrDefault(x => x.Name == "Name");
 
             if (nameProperty == null)
-                throw new Exception($"Mutch function '{functionType}' must define static Name property");
+                throw new Exception($"Match function '{functionType}' must define static Name property");
 
             var functionName = (string?)nameProperty.GetValue(null, null);
 
             if (string.IsNullOrEmpty(functionName))
                 throw new Exception("Empty function name in type " + functionType.FullName);
 
-            if (_functionNameToType.ContainsKey(functionName))
-                throw new Exception($"Function with name {functionName} already define in type {_functionNameToType[functionName].FullName}");
+            if (_functionNameToType.TryGetValue(functionName, out var value))
+                throw new Exception($"Function with name {functionName} already define in type {value.FullName}");
 
             _functionNameToType.Add(functionName, functionType);
         }

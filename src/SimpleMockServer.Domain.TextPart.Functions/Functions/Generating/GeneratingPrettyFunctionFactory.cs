@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
@@ -15,7 +16,7 @@ public interface IBodyExtractFunctionFactory
 
 public interface IGeneratingFunctionFactory
 {
-    IObjectTextPart Create(string value);
+    bool TryCreate(string value, [MaybeNullWhen(false)] out IObjectTextPart result);
 }
 
 internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBodyExtractFunctionFactory
@@ -79,12 +80,15 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
         throw new UnknownFunctionException(value);
     }
 
-    IObjectTextPart IGeneratingFunctionFactory.Create(string value)
+    bool IGeneratingFunctionFactory.TryCreate(string value, out IObjectTextPart? result)
     {
         var (functionName, argument) = value.SplitToTwoParts(":").Trim();
 
         if (!_functionNameToType.TryGetValue(functionName, out var functionType))
-            throw new UnknownFunctionException(value);
+        {
+            result = null;
+            return false;
+        }
 
         var function = _serviceProvider.GetRequiredService(functionType) as IObjectTextPart;
 
@@ -112,7 +116,8 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
                 throw new Exception($"Function '{functionName}' not support arguments");
         }
 
-        return function;
+        result = function;
+        return true;
     }
 
     private static void SetTypedArgument(IObjectTextPart function, string argument, string functionName)

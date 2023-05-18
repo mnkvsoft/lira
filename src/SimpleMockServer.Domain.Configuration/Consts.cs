@@ -13,7 +13,7 @@ class Consts
     
     public static class ControlChars
     {
-        public const string Lambda = "=>";
+        public const string PipelineSplitter = ">>";
         public const string HeaderSplitter = ":";
         public const string VariablePrefix = "$";
         public const string TemplatePrefix = "@";

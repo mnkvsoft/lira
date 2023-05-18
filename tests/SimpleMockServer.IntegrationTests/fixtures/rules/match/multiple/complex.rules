@@ -15,8 +15,8 @@ query string rule
 POST /match/multiple/complex
 
 body:
-{{ jpath: $.first_name }} => Vasiliy
-{{ jpath: $.last_name }} => {{ any }}
+{{ jpath: $.first_name }} >> Vasiliy
+{{ jpath: $.last_name }} >> {{ any }}
 
 ----- response
 

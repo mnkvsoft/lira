@@ -3,7 +3,7 @@
 POST /match/function/body/extract/jpath
 
 body:
-{{ jpath: $.address.city }} => Nara
+{{ jpath: $.address.city }} >> Nara
 
 ----- response
 

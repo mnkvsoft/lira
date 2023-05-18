@@ -155,14 +155,14 @@ class RequestMatchersParser
 
         foreach (var line in block.Lines)
         {
-            if (!line.Contains(Consts.ControlChars.Lambda))
+            if (!line.Contains(Consts.ControlChars.PipelineSplitter))
             {
                 patterns.Add(new KeyValuePair<IBodyExtractFunction, TextPatternPart>(
                     _bodyExtractFunctionFactory.Create(FunctionName.ExtractBody.All), CreateValuePattern(line.Trim(), templates)));
                 continue;
             }
 
-            var (extractFunctionInvoke, pattern) = line.SplitToTwoPartsRequired(Consts.ControlChars.Lambda).Trim();
+            var (extractFunctionInvoke, pattern) = line.SplitToTwoPartsRequired(Consts.ControlChars.PipelineSplitter).Trim();
 
             // can write either
             // {{ xpath://employee[1]/text() }}

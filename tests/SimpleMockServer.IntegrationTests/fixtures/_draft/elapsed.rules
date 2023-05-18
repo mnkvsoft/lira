@@ -4,7 +4,7 @@ GET /match/conditions/attempt.equals
 
 -------------------- condition
 
-elapsed_from_first_request => more: 00:00:01.000
+elapsed_from_first_request >> more: 00:00:01.000
 
 ----- response
 
@@ -16,7 +16,7 @@ attempt 1
 
 -------------------- condition
 
-attempt => equals: 2
+attempt >> equals: 2
 
 ----- response
 
