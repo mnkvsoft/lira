@@ -1,0 +1,13 @@
+﻿using System;
+using SimpleMockServer.Domain;
+using SimpleMockServer.Domain.TextPart;
+
+namespace __DynamicGenerated;
+
+public class {className} : IObjectTextPart
+{
+    public object Get(RequestData request)
+    {
+        return {code};
+    }
+}

@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/csharp
+
+----- response
+
+code:
+200
+
+body:
+{{ Guid.NewGuid() >> format: N }}

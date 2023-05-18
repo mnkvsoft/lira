@@ -1,6 +1,10 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Reflection;
+using System.Text;
+using SimpleMockServer.Common;
 using SimpleMockServer.Common.Exceptions;
 using SimpleMockServer.Common.Extensions;
+using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing.DynamicTypeCreating;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing.Extensions;
 using SimpleMockServer.Domain.TextPart;
 using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
@@ -53,8 +57,6 @@ class TextPartsParser : ITextPartsParser
             _ => throw new UnsupportedInstanceType(patternPart)
         };
     }
-
-    
     
     private async Task<IReadOnlyCollection<IObjectTextPart>> GetDynamicParts(PatternPart.Dynamic dynamicPart, IParsingContext parsingContext)
     {
@@ -104,7 +106,45 @@ class TextPartsParser : ITextPartsParser
         if (_generatingFunctionFactory.TryCreate(rawText, out var prettyFunction))
             return prettyFunction;
 
-        throw new NotImplementedException();
+        var code = rawText;
+
+        var className = GetClassName(code);
+
+        string classTemplate = Assembly.GetExecutingAssembly().ReadResourceAsync("Class.template.txt")
+            .Replace("{code}", code)
+            .Replace("{className}", className);
+
+        var sw = Stopwatch.StartNew();
+        
+        var ass = DynamicClassLoader.Compile(rawText, classTemplate);
+
+        var elapsed = sw.ElapsedMilliseconds;
+
+        var type = ass.GetTypes().Single(t => t.Name == className);
+        dynamic instance = Activator.CreateInstance(type)!;
+
+        return new DynamicClassWrapper(instance);
+    }
+
+    class DynamicClassWrapper : IObjectTextPart
+    {
+        private readonly dynamic _instance;
+
+        public DynamicClassWrapper(dynamic instance)
+        {
+            _instance = instance;
+        }
+
+        public object? Get(RequestData request)
+        {
+            object? result = _instance.Get(request);
+            return result;
+        }
+    }
+    
+    private static string GetClassName(string code)
+    {
+        return "_" + HashUtils.GetSha1(code);
     }
     
 
@@ -160,5 +200,20 @@ class TextPartsParser : ITextPartsParser
         string pattern = await File.ReadAllTextAsync(filePath, encoding);
         var parts = await Parse(pattern, context);
         return (true, parts);
+    }
+}
+
+
+internal static class AssemblyExtensions
+{
+    public static string ReadResourceAsync(this Assembly assembly, string name)
+    {
+        // Determine path
+        var names = assembly.GetManifestResourceNames();
+        string resourcePath = names.Single(str => str.EndsWith(name));
+
+        using Stream stream = assembly.GetManifestResourceStream(resourcePath)!;
+        using StreamReader reader = new(stream);
+        return reader.ReadToEnd();
     }
 }

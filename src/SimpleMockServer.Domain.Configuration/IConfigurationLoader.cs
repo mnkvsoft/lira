@@ -15,7 +15,7 @@ namespace SimpleMockServer.Domain.Configuration;
 public interface IConfigurationLoader
 {
     Task<ConfigurationState> GetState();
-    Task Load();
+    void ProvokeLoad();
 }
 
 class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigurationLoader
@@ -53,7 +53,13 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
     }
 
     record LoadResult(IReadOnlyCollection<Rule> Rules, Dictionary<DataName, Data> Datas); 
-    public Task Load() => Load(_path);
+    
+    public void ProvokeLoad()
+    {
+        // loading was init in constructor
+        // invoke only for create instanse
+    }
+
     private async Task<LoadResult> Load(string path)
     {
         var datas = await _dataLoader.Load(path);
