@@ -8,4 +8,4 @@ code:
 200
 
 body:
-{{ Guid.NewGuid() >> format: N }}
+{{ 1 + 1 >> format: #.00# }}

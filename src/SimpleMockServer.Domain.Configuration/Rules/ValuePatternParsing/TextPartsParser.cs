@@ -1,12 +1,9 @@
-﻿using System.Diagnostics;
-using System.Reflection;
-using System.Text;
-using SimpleMockServer.Common;
+﻿using System.Text;
 using SimpleMockServer.Common.Exceptions;
 using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing.DynamicTypeCreating;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing.Extensions;
 using SimpleMockServer.Domain.TextPart;
+using SimpleMockServer.Domain.TextPart.CSharp;
 using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
 using SimpleMockServer.Domain.TextPart.Functions.Functions.Transform;
 
@@ -27,12 +24,14 @@ class TextPartsParser : ITextPartsParser
     }
 
     private readonly IGeneratingFunctionFactory _generatingFunctionFactory;
+    private readonly IGeneratingCSharpFactory _generatingCSharpFactory;
     private readonly ITransformFunctionFactory _transformFunctionFactory;
 
-    public TextPartsParser(IGeneratingFunctionFactory generatingFunctionFactory, ITransformFunctionFactory transformFunctionFactory)
+    public TextPartsParser(IGeneratingFunctionFactory generatingFunctionFactory, ITransformFunctionFactory transformFunctionFactory, IGeneratingCSharpFactory generatingCSharpFactory)
     {
         _generatingFunctionFactory = generatingFunctionFactory;
         _transformFunctionFactory = transformFunctionFactory;
+        _generatingCSharpFactory = generatingCSharpFactory;
     }
 
     public async Task<ObjectTextParts> Parse(string pattern, IParsingContext parsingContext)
@@ -106,47 +105,8 @@ class TextPartsParser : ITextPartsParser
         if (_generatingFunctionFactory.TryCreate(rawText, out var prettyFunction))
             return prettyFunction;
 
-        var code = rawText;
-
-        var className = GetClassName(code);
-
-        string classTemplate = Assembly.GetExecutingAssembly().ReadResourceAsync("Class.template.txt")
-            .Replace("{code}", code)
-            .Replace("{className}", className);
-
-        var sw = Stopwatch.StartNew();
-        
-        var ass = DynamicClassLoader.Compile(rawText, classTemplate);
-
-        var elapsed = sw.ElapsedMilliseconds;
-
-        var type = ass.GetTypes().Single(t => t.Name == className);
-        dynamic instance = Activator.CreateInstance(type)!;
-
-        return new DynamicClassWrapper(instance);
-    }
-
-    class DynamicClassWrapper : IObjectTextPart
-    {
-        private readonly dynamic _instance;
-
-        public DynamicClassWrapper(dynamic instance)
-        {
-            _instance = instance;
-        }
-
-        public object? Get(RequestData request)
-        {
-            object? result = _instance.Get(request);
-            return result;
-        }
-    }
-    
-    private static string GetClassName(string code)
-    {
-        return "_" + HashUtils.GetSha1(code);
-    }
-    
+        return _generatingCSharpFactory.Create(rawText);
+    }    
 
     private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadParts(
         ParsingContext context, string invoke)
@@ -204,16 +164,3 @@ class TextPartsParser : ITextPartsParser
 }
 
 
-internal static class AssemblyExtensions
-{
-    public static string ReadResourceAsync(this Assembly assembly, string name)
-    {
-        // Determine path
-        var names = assembly.GetManifestResourceNames();
-        string resourcePath = names.Single(str => str.EndsWith(name));
-
-        using Stream stream = assembly.GetManifestResourceStream(resourcePath)!;
-        using StreamReader reader = new(stream);
-        return reader.ReadToEnd();
-    }
-}

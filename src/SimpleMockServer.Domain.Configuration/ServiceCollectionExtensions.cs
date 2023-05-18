@@ -7,6 +7,7 @@ using SimpleMockServer.Domain.Configuration.Rules.Parsers;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Configuration.Variables;
 using SimpleMockServer.Domain.DataModel;
+using SimpleMockServer.Domain.TextPart.CSharp;
 using SimpleMockServer.Domain.TextPart.Functions;
 
 namespace SimpleMockServer.Domain.Configuration;
@@ -19,6 +20,7 @@ public static class ServiceCollectionExtensions
 
         return services
             .AddFunctions()
+            .AddCSharp()
             .AddSingleton<ConditionMatcherParser>()
             .AddSingleton<RequestMatchersParser>()
             .AddSingleton<FileSectionVariablesParser>()
