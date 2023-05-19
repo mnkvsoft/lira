@@ -1,0 +1,14 @@
+-------------------- rule
+
+GET /generating/csharp/body_access/header
+
+headers:
+Request-Id: {{ any }}
+
+----- response
+
+code:
+200
+
+body:
+{{ @req.Header("Request-Id") }}

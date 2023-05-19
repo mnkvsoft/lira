@@ -12,4 +12,4 @@ code:
 200
 
 body:
-{{ @template.from.rule.section }}
+{{ @@template.from.rule.section }}

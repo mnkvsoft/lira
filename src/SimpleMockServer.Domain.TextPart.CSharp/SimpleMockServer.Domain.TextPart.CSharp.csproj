@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\SimpleMockServer.Domain.TextPart.Functions.Utils\SimpleMockServer.Domain.TextPart.Functions.Utils.csproj" />
       <ProjectReference Include="..\SimpleMockServer.Domain.TextPart.Variables\SimpleMockServer.Domain.TextPart.Variables.csproj" />
       <ProjectReference Include="..\SimpleMockServer.Domain.TextPart\SimpleMockServer.Domain.TextPart.csproj" />
     </ItemGroup>

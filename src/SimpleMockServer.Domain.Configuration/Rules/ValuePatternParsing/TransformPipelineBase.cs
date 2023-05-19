@@ -9,8 +9,8 @@ record TransformPipeline(IObjectTextPart ObjectTextPart) : TransformPipelineBase
 
 record GlobalTransformPipeline(IGlobalObjectTextPart GlobalObjectTextPart) : TransformPipelineBase, IGlobalObjectTextPart
 {
-    public override object? Get(RequestData request) => Get();
-    public object? Get() =>ExecutePipeline(GlobalObjectTextPart.Get());
+    public override object? Get(RequestData request) => ExecutePipeline(GlobalObjectTextPart.Get(request));
+    public object? Get() => ExecutePipeline(GlobalObjectTextPart.Get());
 }
 
 abstract record TransformPipelineBase : IObjectTextPart

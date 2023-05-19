@@ -46,7 +46,7 @@ static class DynamicClassLoader
 
         foreach (var diagnostic in failures)
         {
-            return new Exception($"Failed to compile. Error: {diagnostic.Id} {diagnostic.GetMessage()}. Code:{Environment.NewLine}'{code}'");
+            return new Exception($"Failed to compile. Error: {diagnostic.Id} {diagnostic.GetMessage()} Code:{Environment.NewLine}'{code}'");
         }
 
         return new Exception($"Unknown error while compiling code '{code}'");

@@ -4,7 +4,7 @@ userid = user_{{ data: match_template.first }}
 
 -------------------- rule
 
-GET /match/template/path/{{ @userid }}
+GET /match/template/path/{{ @@userid }}
 
 ----- response
 
@@ -12,4 +12,4 @@ code:
 200
 
 body:
-{{ @userid }}
+{{ @@userid }}

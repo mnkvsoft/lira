@@ -1,0 +1,32 @@
+-------------------- case
+
+GET /generating/csharp/body_access/body/xpath
+
+body: 
+<root xmlns:foo="http://www.foo.org/" xmlns:bar="http://www.bar.org">
+	<employees>
+		<employee id="1">Johnny Dapp</employee>
+		<employee id="2">Al Pacino</employee>
+		<employee id="3">Robert De Niro</employee>
+		<employee id="4">Kevin Spacey</employee>
+		<employee id="5">Denzel Washington</employee>
+
+	</employees>
+	<foo:companies>
+		<foo:company id="6">Tata Consultancy Services</foo:company>
+		<foo:company id="7">Wipro</foo:company>
+		<foo:company id="8">Infosys</foo:company>
+		<foo:company id="9">Microsoft</foo:company>
+		<foo:company id="10">IBM</foo:company>
+		<foo:company id="11">Apple</foo:company>
+		<foo:company id="12">Oracle</foo:company>
+	</foo:companies>
+</root>
+
+----- expected
+
+code:
+200
+
+body:
+Johnny Dapp

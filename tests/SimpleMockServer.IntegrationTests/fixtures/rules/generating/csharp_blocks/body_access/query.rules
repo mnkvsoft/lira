@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/csharp/body_access/query?param=1
+
+----- response
+
+code:
+200
+
+body:
+{{ @req.Query("param") }}

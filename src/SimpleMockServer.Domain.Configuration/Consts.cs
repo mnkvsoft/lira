@@ -16,7 +16,7 @@ class Consts
         public const string PipelineSplitter = ">>";
         public const string HeaderSplitter = ":";
         public const char VariablePrefix = '$';
-        public const string TemplatePrefix = "@";
+        public const string TemplatePrefix = "@@";
         public const string AssignmentOperator = "=";
     }
 }

@@ -21,12 +21,12 @@ internal class GlobalVariablesParser
 
         result.AddRange(await GetVariablesFromFiles(
             parsingContext,
-            DirectoryHelper.GetFiles(path, "*.global.var"),
+            DirectoryHelper.GetFiles(path, "*global.var"),
             CreateGlobalVariable));
 
         result.AddRange(await GetVariablesFromFiles(
             parsingContext with { Variables = parsingContext.Variables.Combine(result)},
-            DirectoryHelper.GetFiles(path, "*.req.var"),
+            DirectoryHelper.GetFiles(path, "*req.var"),
             (name, parts) => new RequestVariable(name, parts)));
 
         return result;
@@ -60,6 +60,6 @@ internal class GlobalVariablesParser
             throw new Exception($"{partsNames} cannot be use in global variables because they require http request");
         }
 
-        return new GlobalObjectVariable(name, parts.Cast<IGlobalObjectTextPart>().ToArray());
+        return new GlobalVariable(name, parts.Cast<IGlobalObjectTextPart>().ToArray());
     }
 }

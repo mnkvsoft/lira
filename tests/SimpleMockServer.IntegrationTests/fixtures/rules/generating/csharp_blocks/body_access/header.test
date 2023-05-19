@@ -1,0 +1,14 @@
+-------------------- case
+
+GET /generating/csharp/body_access/header
+
+headers: 
+Request-Id: some_request_id
+
+----- expected
+
+code:
+200
+
+body:
+some_request_id

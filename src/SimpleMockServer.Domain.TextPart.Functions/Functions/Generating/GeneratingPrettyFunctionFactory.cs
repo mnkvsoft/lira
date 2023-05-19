@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Matching.Request.Matchers.Body;
@@ -26,18 +25,16 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
 
     private readonly Dictionary<string, Func<string, IBodyExtractFunction>> _bodyExtractFunctionsMap;
 
-    public GeneratingPrettyFunctionFactory(IServiceProvider serviceProvider, ILoggerFactory loggerFactory)
+    public GeneratingPrettyFunctionFactory(IServiceProvider serviceProvider)
     {
         _functionNameToType = new Dictionary<string, Type>();
 
-        var factory = loggerFactory;
-        
         _bodyExtractFunctionsMap = new Dictionary<string, Func<string, IBodyExtractFunction>>
         {
             {FunctionName.ExtractBody.All, _ => new AllExtractFunction()},
-            {"jpath", arg => new JsonPathExtractFunction(factory).Apply(x => x.SetArgument(arg))},
-            {"xpath", arg => new XPathExtractFunction(factory).Apply(x => x.SetArgument(arg))},
-            {"form", arg => new FormExtractFunction(factory).Apply(x => x.SetArgument(arg))},
+            {"jpath", arg => new JsonPathExtractFunction().Apply(x => x.SetArgument(arg))},
+            {"xpath", arg => new XPathExtractFunction().Apply(x => x.SetArgument(arg))},
+            {"form", arg => new FormExtractFunction().Apply(x => x.SetArgument(arg))},
         };
 
         foreach (var functionType in GetMatchFunctionTypes())
@@ -80,13 +77,13 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
         throw new UnknownFunctionException(value);
     }
 
-    bool IGeneratingFunctionFactory.TryCreate(string value, out IObjectTextPart? result)
+    bool IGeneratingFunctionFactory.TryCreate(string value, out IObjectTextPart result)
     {
         var (functionName, argument) = value.SplitToTwoParts(":").Trim();
 
         if (!_functionNameToType.TryGetValue(functionName, out var functionType))
         {
-            result = null;
+            result = null!;
             return false;
         }
 

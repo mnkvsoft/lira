@@ -12,4 +12,4 @@ code:
 200
 
 body:
-{{ @template.from.file.section }}
+{{ @@template.from.file.section }}

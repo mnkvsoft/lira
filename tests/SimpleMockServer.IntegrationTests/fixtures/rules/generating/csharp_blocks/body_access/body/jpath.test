@@ -1,0 +1,16 @@
+-------------------- case
+
+GET /generating/csharp/body_access/body/jpath
+
+body: 
+{
+  "firstName": "John",
+}
+
+----- expected
+
+code:
+200
+
+body:
+John

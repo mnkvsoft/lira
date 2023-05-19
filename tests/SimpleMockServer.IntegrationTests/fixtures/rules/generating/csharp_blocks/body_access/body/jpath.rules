@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/csharp/body_access/body/jpath
+
+----- response
+
+code:
+200
+
+body:
+{{ @req.Body.ByJPath("$.firstName") }}

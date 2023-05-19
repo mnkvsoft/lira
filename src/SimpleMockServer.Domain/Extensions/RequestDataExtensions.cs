@@ -1,6 +1,6 @@
-﻿namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract.Body.Extensions;
+﻿namespace SimpleMockServer.Domain.Extensions;
 
-static class RequestDataExtensions
+public static class RequestDataExtensions
 {
     public static string ReadBody(this RequestData request)
     {

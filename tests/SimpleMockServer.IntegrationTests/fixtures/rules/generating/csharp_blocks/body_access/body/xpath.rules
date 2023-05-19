@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/csharp/body_access/body/xpath
+
+----- response
+
+code:
+200
+
+body:
+{{ @req.Body.ByXPath("//employee[1]/text()") }}

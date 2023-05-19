@@ -1,5 +1,5 @@
-﻿using SimpleMockServer.Domain.Matching.Request.Matchers.Body;
-using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract.Body.Extensions;
+﻿using SimpleMockServer.Domain.Extensions;
+using SimpleMockServer.Domain.Matching.Request.Matchers.Body;
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract.Body;
 

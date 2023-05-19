@@ -8,4 +8,4 @@ code:
 200
 
 body:
-{{ @template }}
+{{ @@template }}

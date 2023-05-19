@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/csharp/body_access/query?param=1
+
+----- expected
+
+code:
+200
+
+body:
+1

@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/csharp/body_access/body/all
+
+----- response
+
+code:
+200
+
+body:
+{{ @req.Body.All() }}
