@@ -2,5 +2,5 @@
 
 public interface IGlobalObjectTextPart : IObjectTextPart
 {
-    object? Get();
+    dynamic? Get();
 }
