@@ -87,7 +87,7 @@ internal class RuleFileParser
         if (childSections.Count == 0)
             throw new Exception("Rule section is empty");
 
-        var requestMatcherSet = _requestMatchersParser.Parse(ruleSection, parsingContext.Templates);
+        var (requestMatcherSet, pathNameMaps) = _requestMatchersParser.Parse(ruleSection, parsingContext.Templates);
 
         var templates = GetTemplates(childSections, parsingContext);
         var ctx = parsingContext with { Templates = templates };
@@ -124,6 +124,7 @@ internal class RuleFileParser
                     _loggerFactory,
                     responseWriter,
                     requestMatcherSet,
+                    pathNameMaps,
                     conditionMatcherSet,
                     externalCallers));
             }
@@ -138,7 +139,7 @@ internal class RuleFileParser
         responseWriter = await _responseWriterParser.Parse(ruleSection, ctx);
         externalCallers = await _externalCallerParser.Parse(childSections, ctx);
 
-        return new[] { new Rule(ruleName, _loggerFactory, responseWriter, requestMatcherSet, conditionMatcherSet: null, externalCallers) };
+        return new[] { new Rule(ruleName, _loggerFactory, responseWriter, requestMatcherSet, pathNameMaps, conditionMatcherSet: null, externalCallers) };
     }
 
     private IReadOnlyCollection<Template> GetTemplates(IReadOnlyCollection<FileSection> childSections, ParsingContext parsingContext)

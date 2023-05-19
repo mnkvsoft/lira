@@ -2,9 +2,13 @@
 
 namespace SimpleMockServer.Domain;
 
+public record PathNameMap(int Index, string? Name);
+
 public class Rule
 {
     public string Name { get; }
+    public IReadOnlyCollection<PathNameMap> PathNameMaps { get; }
+    
     private readonly ILogger _logger;
     private readonly RequestMatcherSet _requestMatcherSet;
     private readonly ConditionMatcherSet? _conditionMatcherSet;
@@ -16,7 +20,8 @@ public class Rule
         ILoggerFactory loggerFactory,
          Delayed<ResponseWriter> responseWriter,
         RequestMatcherSet matchers,
-        ConditionMatcherSet? conditionMatcherSet,
+        IReadOnlyCollection<PathNameMap> pathNameMaps,
+        ConditionMatcherSet? conditionMatcherSet, 
         IReadOnlyCollection<Delayed<IExternalCaller>> callers)
     {
         _responseWriter = responseWriter;
@@ -25,12 +30,11 @@ public class Rule
         Name = name;
         _conditionMatcherSet = conditionMatcherSet;
         _callers = callers;
+        PathNameMaps = pathNameMaps;
     }
 
     public async Task<RuleMatchResult> IsMatch(RequestData request, Guid requestId)
     {
-        using var scope = _logger.BeginScope($"Rule: {Name}");
-
         var matchResult = await _requestMatcherSet.IsMatch(request);
 
         if (matchResult is RuleMatchResult.NotMatched notMatched)

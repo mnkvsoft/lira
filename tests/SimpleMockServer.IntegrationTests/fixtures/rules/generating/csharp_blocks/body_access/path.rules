@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/csharp/body_access/path/{{ int  name: id }}
+
+----- response
+
+code:
+200
+
+body:
+{{ @req.Path("id") }}

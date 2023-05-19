@@ -31,9 +31,13 @@ public class RequestModel
         return null;
     }
     
-    public string? Path(string name)
+    public string Path(string name)
     {
-        throw new NotImplementedException();
+        var map = _data.PathNameMaps?.FirstOrDefault(x => x.Name == name);
+        if (map == null)
+            throw new Exception($"Path segment with name '{name}' not defined");
+
+        return _data.Path.Value.Split('/')[map.Index];
     }
     
     public record BodyModel(string Value)

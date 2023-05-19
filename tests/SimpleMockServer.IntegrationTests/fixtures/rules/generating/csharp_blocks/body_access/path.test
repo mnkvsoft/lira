@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/csharp/body_access/path/1
+
+----- expected
+
+code:
+200
+
+body:
+1

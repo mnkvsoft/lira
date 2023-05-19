@@ -6,6 +6,20 @@ public record RequestData
 {
     public string Method { get; }
     public PathString Path { get; }
+
+    private IReadOnlyCollection<PathNameMap>? _pathNameMaps;
+
+    public IReadOnlyCollection<PathNameMap>? PathNameMaps
+    {
+        get => _pathNameMaps;
+        set
+        {
+            if (_pathNameMaps != null)
+                throw new Exception(nameof(PathNameMaps) + " already set");
+            _pathNameMaps = value;
+        }
+    }
+    
     public QueryString QueryString { get; }
     public IHeaderDictionary Headers { get; }
     public IQueryCollection Query { get; }

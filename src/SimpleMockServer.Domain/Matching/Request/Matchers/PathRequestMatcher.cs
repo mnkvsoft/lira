@@ -1,6 +1,6 @@
 ﻿using ArgValidation;
 
-namespace SimpleMockServer.Domain.Matching.Request.Matchers.Path;
+namespace SimpleMockServer.Domain.Matching.Request.Matchers;
 
 
 public class PathRequestMatcher : IRequestMatcher

@@ -2,11 +2,7 @@
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Templating;
 using SimpleMockServer.Domain.Matching.Request;
-using SimpleMockServer.Domain.Matching.Request.Matchers.Body;
-using SimpleMockServer.Domain.Matching.Request.Matchers.Headers;
-using SimpleMockServer.Domain.Matching.Request.Matchers.Method;
-using SimpleMockServer.Domain.Matching.Request.Matchers.Path;
-using SimpleMockServer.Domain.Matching.Request.Matchers.QueryString;
+using SimpleMockServer.Domain.Matching.Request.Matchers;
 using SimpleMockServer.Domain.TextPart.Functions;
 using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
 using SimpleMockServer.Domain.TextPart.Functions.Functions.Matching.String;
@@ -27,30 +23,48 @@ class RequestMatchersParser
     }
 
 
-    public RequestMatcherSet Parse(FileSection ruleSection, IReadOnlyCollection<Template> templates)
+    public (RequestMatcherSet Set, IReadOnlyCollection<PathNameMap> PathNameMaps) Parse(FileSection ruleSection, IReadOnlyCollection<Template> templates)
     {
         var builder = new RequestMatchersBuilder();
-        builder.AddRange(GetMethodAndPathMatchersFromShortEntry(ruleSection, templates));
+        IReadOnlyCollection<PathNameMap> pathNameMaps;
+
+        var (matchers, pathMaps) = GetMethodAndPathMatchersFromShortEntry(ruleSection, templates);
+        builder.AddRange(matchers);
+        pathNameMaps = pathMaps;
+        
         foreach (var block in ruleSection.Blocks)
         {
+            if (block.Name == Constants.BlockName.Rule.Path)
+            {
+                var (requestMatcher, nameMaps) = CreatePathRequestMatcher(block.GetSingleLine(), templates);
+
+                if (pathNameMaps.Count != 0 && nameMaps.Count != 0)
+                    throw new Exception("Path segment with name map already exist");
+
+                pathNameMaps = nameMaps;
+                
+                builder.Add(requestMatcher);  
+                continue;
+            }
+
             builder.Add(CreateRequestMatcher(block, templates));
         }
 
-        return new RequestMatcherSet(
+        return (new RequestMatcherSet(
             builder.GetOrNull<MethodRequestMatcher>(),
             builder.GetOrNull<PathRequestMatcher>(),
             builder.GetOrNull<QueryStringRequestMatcher>(),
             builder.GetOrNull<HeadersRequestMatcher>(),
-            builder.GetOrNull<BodyRequestMatcher>());
+            builder.GetOrNull<BodyRequestMatcher>()), pathNameMaps);
     }
 
-    private IReadOnlyCollection<IRequestMatcher> GetMethodAndPathMatchersFromShortEntry(FileSection ruleSection,
+    private (IReadOnlyCollection<IRequestMatcher> Matchers, IReadOnlyCollection<PathNameMap> PathNameMaps) GetMethodAndPathMatchersFromShortEntry(FileSection ruleSection,
         IReadOnlyCollection<Template> templates)
     {
         var lines = ruleSection.LinesWithoutBlock;
 
         if (lines.Count == 0)
-            return Array.Empty<IRequestMatcher>();
+            return (Array.Empty<IRequestMatcher>(), Array.Empty<PathNameMap>());
 
         if (lines.Count > 1)
             throw new Exception("Rule section contains several sections: " + string.Join(", ", lines.Select(s => $"'{s}'")));
@@ -64,25 +78,23 @@ class RequestMatchersParser
         result.Add(CreateMethodRequestMather(method));
 
         if (pathAndQuery == null)
-            return result;
+            return (result, Array.Empty<PathNameMap>());
 
         var (path, query) = pathAndQuery.SplitToTwoParts("?").Trim();
 
-        result.Add(CreatePathRequestMatcher(path, templates));
+        var (pathMatcher, pathNameMaps) = CreatePathRequestMatcher(path, templates); 
+        result.Add(pathMatcher);
 
         if (query != null)
             result.Add(CreateQueryStringMatcher(query, templates));
 
-        return result;
+        return (result, pathNameMaps);
     }
 
     private IRequestMatcher CreateRequestMatcher(FileBlock block, IReadOnlyCollection<Template> templates)
     {
         if (block.Name == Constants.BlockName.Rule.Method)
             return CreateMethodRequestMather(block.GetSingleLine());
-
-        if (block.Name == Constants.BlockName.Rule.Path)
-            return CreatePathRequestMatcher(block.GetSingleLine(), templates);
 
         if (block.Name == Constants.BlockName.Rule.Query)
             return CreateQueryStringMatcher(block.GetSingleLine(), templates);
@@ -101,7 +113,7 @@ class RequestMatchersParser
         return new MethodRequestMatcher(method.ToHttpMethod());
     }
 
-    private PathRequestMatcher CreatePathRequestMatcher(string path, IReadOnlyCollection<Template> templates)
+    private (PathRequestMatcher Matcher, IReadOnlyCollection<PathNameMap> PathNameMaps) CreatePathRequestMatcher(string path, IReadOnlyCollection<Template> templates)
     {
         if (path.Length == 0)
             throw new Exception("An error occurred while creating PathRequestMatcher. Path is empty");
@@ -110,9 +122,29 @@ class RequestMatchersParser
             throw new Exception($"Matching path must start with '/'. Current value: '{path}'");
 
         var rawSegments = path.Split('/');
+        
+        var patterns = new List<TextPatternPart>(rawSegments.Length);
 
-        var patterns = CreatePatterns(rawSegments, templates);
-        return new PathRequestMatcher(patterns);
+        var maps = new List<PathNameMap>();
+        for (var i = 0; i < rawSegments.Length; i++)
+        {
+            var rawValue = rawSegments[i];
+            string? segmentName = null;
+
+            string ExtractName(string rawInvoke)
+            {
+                var (invoke, name) = rawInvoke.SplitToTwoParts("name:").Trim();
+                segmentName = name;
+                return invoke;
+            }
+
+            patterns.Add(CreateValuePattern(rawValue, templates, ExtractName));
+            
+            if(!string.IsNullOrWhiteSpace(segmentName))
+                maps.Add(new PathNameMap(Index: i, segmentName));
+        }
+
+        return (new PathRequestMatcher(patterns), maps);
     }
 
     private QueryStringRequestMatcher CreateQueryStringMatcher(string queryString, IReadOnlyCollection<Template> templates)
@@ -182,19 +214,7 @@ class RequestMatchersParser
         return new BodyRequestMatcher(patterns);
     }
 
-    private IReadOnlyList<TextPatternPart> CreatePatterns(string[] rawValues, IReadOnlyCollection<Template> templates)
-    {
-        var patterns = new List<TextPatternPart>(rawValues.Length);
-
-        foreach (var rawValue in rawValues)
-        {
-            patterns.Add(CreateValuePattern(rawValue, templates));
-        }
-
-        return patterns;
-    }
-
-    private TextPatternPart CreateValuePattern(string? rawValue, IReadOnlyCollection<Template> templates)
+    private TextPatternPart CreateValuePattern(string? rawValue, IReadOnlyCollection<Template> templates, Func<string, string>? extractCustomValueFromDynamic = null)
     {
         if (string.IsNullOrWhiteSpace(rawValue))
             return new TextPatternPart.NullOrEmpty();
@@ -217,12 +237,15 @@ class RequestMatchersParser
             .TrimEnd(end).TrimEnd(Consts.ExecutedBlock.End)
             .Trim();
 
+        if (extractCustomValueFromDynamic != null)
+            invoke = extractCustomValueFromDynamic(invoke);
+        
         if (invoke.StartsWith(Consts.ControlChars.TemplatePrefix))
         {
             var templateName = invoke.TrimStart(Consts.ControlChars.TemplatePrefix);
 
             var template = templates.GetOrThrow(templateName);
-            return CreateValuePattern(template.Value, templates);
+            return CreateValuePattern(template.Value, templates, extractCustomValueFromDynamic);
         }
 
         return new TextPatternPart.Dynamic(start, end, _stringMatchFunctionFactory.Create(invoke));

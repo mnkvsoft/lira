@@ -3,7 +3,7 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleMockServer.Common;
 using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.Domain.Matching.Request.Matchers.Body;
+using SimpleMockServer.Domain.Matching.Request.Matchers;
 using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Extract.Body;
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;

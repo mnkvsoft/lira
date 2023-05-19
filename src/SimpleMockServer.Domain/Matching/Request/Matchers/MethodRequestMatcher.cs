@@ -1,4 +1,4 @@
-namespace SimpleMockServer.Domain.Matching.Request.Matchers.Method;
+namespace SimpleMockServer.Domain.Matching.Request.Matchers;
 
 public record MethodRequestMatcher(HttpMethod ExpectedMethod) : IRequestMatcher
 {

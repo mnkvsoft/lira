@@ -1,8 +1,4 @@
-﻿using SimpleMockServer.Domain.Matching.Request.Matchers.Body;
-using SimpleMockServer.Domain.Matching.Request.Matchers.Headers;
-using SimpleMockServer.Domain.Matching.Request.Matchers.Method;
-using SimpleMockServer.Domain.Matching.Request.Matchers.Path;
-using SimpleMockServer.Domain.Matching.Request.Matchers.QueryString;
+﻿using SimpleMockServer.Domain.Matching.Request.Matchers;
 
 namespace SimpleMockServer.Domain;
 

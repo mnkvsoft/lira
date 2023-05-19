@@ -1,6 +1,6 @@
 using ArgValidation;
 
-namespace SimpleMockServer.Domain.Matching.Request.Matchers.Headers;
+namespace SimpleMockServer.Domain.Matching.Request.Matchers;
 
 public class HeadersRequestMatcher : IRequestMatcher
 {

@@ -1,4 +1,4 @@
-﻿namespace SimpleMockServer.Domain.Matching.Request.Matchers.QueryString;
+﻿namespace SimpleMockServer.Domain.Matching.Request.Matchers;
 
 public class QueryStringRequestMatcher : IRequestMatcher
 {

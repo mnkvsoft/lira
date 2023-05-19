@@ -1,6 +1,11 @@
 ﻿using ArgValidation;
 
-namespace SimpleMockServer.Domain.Matching.Request.Matchers.Body;
+namespace SimpleMockServer.Domain.Matching.Request.Matchers;
+
+public interface IBodyExtractFunction
+{
+    string? Extract(string? body);
+}
 
 public class BodyRequestMatcher : IRequestMatcher
 {
