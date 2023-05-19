@@ -67,19 +67,23 @@ class TextPartsParser : ITextPartsParser
         if (wasRead)
             return parts!;
 
+        TransformPipelineBase pipeline;
         if (value.Contains("return"))
         {
-            throw new NotImplementedException();
+            var csharpFunction = _generatingCSharpFactory.Create(value, context.Variables, Consts.ControlChars.VariablePrefix);
+            pipeline = CreatePipeline(csharpFunction);
         }
-        
-        var pipelineItemsRaw = value.Split(Consts.ControlChars.PipelineSplitter);
-
-        var pipeline = CreatePipeline(CreateStartFunction(pipelineItemsRaw[0].Trim(), context));
-
-        for (int i = 1; i < pipelineItemsRaw.Length; i++)
+        else
         {
-            if(_transformFunctionFactory.TryCreate(pipelineItemsRaw[i].Trim(), out var transformFunction))
-                pipeline.Add(transformFunction);
+            var pipelineItemsRaw = value.Split(Consts.ControlChars.PipelineSplitter);
+
+            pipeline = CreatePipeline(CreateStartFunction(pipelineItemsRaw[0].Trim(), context));
+
+            for (int i = 1; i < pipelineItemsRaw.Length; i++)
+            {
+                if(_transformFunctionFactory.TryCreate(pipelineItemsRaw[i].Trim(), out var transformFunction))
+                    pipeline.Add(transformFunction);
+            }    
         }
 
         return new[] { pipeline };

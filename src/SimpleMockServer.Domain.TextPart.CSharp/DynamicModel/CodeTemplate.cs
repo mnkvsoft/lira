@@ -36,8 +36,7 @@ public class {className} : DynamicObjectTextPartBase, IObjectTextPart
     {
         var " + ExternalRequestVariableName + @" = new RequestModel(" + RequestParameterName + @");
 
-        var _result_ = {code}; 
-        return _result_;
+        {code}
     }
 }";
         
@@ -57,8 +56,7 @@ public class {className} : DynamicObjectTextPartBase, IGlobalObjectTextPart
 
     public dynamic? GetInternal(RequestData? _request_)
     {
-        var _result_ = {code}; 
-        return _result_;
+        {code}
     }
 }";
     }

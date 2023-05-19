@@ -34,7 +34,7 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
             : CodeTemplate.ClassTemplate.IObjectTextPart;
 
         string classToCompile = classTemplate
-            .Replace("{code}", code)
+            .Replace("{code}", GetMethodBody(code))
             .Replace("{className}", className);
         
         var sw = Stopwatch.StartNew();
@@ -52,6 +52,24 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
         dynamic instance = Activator.CreateInstance(type, variables)!;
 
         return isGlobalTextPart ? new GlobalDynamicClassWrapper(instance) : new DynamicClassWrapper(instance);
+    }
+
+    private static string GetMethodBody(string code)
+    {
+        string methodBody;
+
+        var nl = Environment.NewLine;
+        if (code.Contains("return"))
+        {
+            methodBody = code;
+        }
+        else
+        {
+            methodBody = $"var _result_ = {code};" + nl +
+                         "return _result_;";
+        }
+
+        return methodBody;
     }
 
     private static string ReplaceVariableNames(string code, char variablePrefix)

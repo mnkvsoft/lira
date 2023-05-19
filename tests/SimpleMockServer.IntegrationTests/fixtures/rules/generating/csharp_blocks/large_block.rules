@@ -1,0 +1,17 @@
+-------------------- rule
+
+GET /generating/csharp/large_block
+
+----- response
+
+code:
+200
+
+body:
+{{ 
+
+int days = 1 + 3;
+var duration = TimeSpan.FromDays(days);
+return duration;
+ 
+}}

@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/csharp/large_block
+
+----- expected
+
+code:
+200
+
+body:
+4.00:00:00
