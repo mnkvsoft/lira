@@ -1,8 +1,6 @@
-﻿using SimpleMockServer.Domain.TextPart.Variables;
+﻿namespace SimpleMockServer.Domain.TextPart.Variables;
 
-namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing.Extensions;
-
-static class VariablesCollectionExtensions
+public static class VariablesCollectionExtensions
 {
     public static Variable GetOrThrow(this IReadOnlyCollection<Variable> variables, string name)
     {

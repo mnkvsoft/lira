@@ -1,0 +1,15 @@
+-------------------- rule
+
+GET /generating/csharp/access_to_variable
+
+----- variables
+
+duration = {{ TimeSpan.FromDays(1) }}
+
+----- response
+
+code:
+200
+
+body:
+{{ $duration + TimeSpan.FromMinutes(1) }}

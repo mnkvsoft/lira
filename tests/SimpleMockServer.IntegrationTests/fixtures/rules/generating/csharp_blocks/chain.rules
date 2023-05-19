@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/csharp
+GET /generating/csharp/chain
 
 ----- response
 

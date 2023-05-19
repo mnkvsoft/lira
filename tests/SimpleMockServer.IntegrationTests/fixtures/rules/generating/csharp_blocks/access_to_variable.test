@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /generating/csharp
+GET /generating/csharp/access_to_variable
 
 ----- expected
 
@@ -8,4 +8,4 @@ code:
 200
 
 body:
-2.00
+1.00:01:00

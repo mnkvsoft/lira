@@ -46,7 +46,7 @@ static class DynamicClassLoader
 
         foreach (var diagnostic in failures)
         {
-            return new Exception($"Failed to compile code '{code}' {diagnostic.Id}: {diagnostic.GetMessage()}");
+            return new Exception($"Failed to compile. Error: {diagnostic.Id} {diagnostic.GetMessage()}. Code:{Environment.NewLine}'{code}'");
         }
 
         return new Exception($"Unknown error while compiling code '{code}'");
@@ -65,12 +65,13 @@ static class DynamicClassLoader
             MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
             MetadataReference.CreateFromFile(Assembly.GetExecutingAssembly().Location),
             MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(System.Runtime.CompilerServices.DynamicAttribute).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "mscorlib.dll")),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.dll")),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Core.dll")),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Runtime.dll")),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Collections.dll")),
-            
         };
 
         result.AddRange(usageAssemblies.Select(a => MetadataReference.CreateFromFile(a.Location)));

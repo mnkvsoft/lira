@@ -1,11 +1,11 @@
 ﻿using System.Text;
 using SimpleMockServer.Common.Exceptions;
 using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing.Extensions;
 using SimpleMockServer.Domain.TextPart;
 using SimpleMockServer.Domain.TextPart.CSharp;
 using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
 using SimpleMockServer.Domain.TextPart.Functions.Functions.Transform;
+using SimpleMockServer.Domain.TextPart.Variables;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -94,10 +94,9 @@ class TextPartsParser : ITextPartsParser
     
     private IObjectTextPart CreateStartFunction(string rawText, ParsingContext context)
     {
-        if (rawText.StartsWith(Consts.ControlChars.VariablePrefix))
+        if (ContainsOnlyVariable(rawText))
         {
             var varName = rawText.TrimStart(Consts.ControlChars.VariablePrefix);
-
             var variable = context.Variables.GetOrThrow(varName);
             return variable;
         }
@@ -105,7 +104,12 @@ class TextPartsParser : ITextPartsParser
         if (_generatingFunctionFactory.TryCreate(rawText, out var prettyFunction))
             return prettyFunction;
 
-        return _generatingCSharpFactory.Create(rawText);
+        return _generatingCSharpFactory.Create(rawText, context.Variables, Consts.ControlChars.VariablePrefix);
+        
+        bool ContainsOnlyVariable(string s)
+        {
+            return s.StartsWith(Consts.ControlChars.VariablePrefix) && Variable.IsValidName(s.TrimStart(Consts.ControlChars.VariablePrefix));
+        }
     }    
 
     private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadParts(

@@ -8,12 +8,30 @@ public abstract class Variable : IObjectTextPart, IEquatable<Variable>, IUniqueS
     public string Name { get; }
     public string EntityName => "Variable";
 
-    public Variable(string name)
+    protected Variable(string name)
     {
-        Arg.NotNullOrEmpty(name, nameof(name)); 
+        Arg.NotNullOrEmpty(name, nameof(name));
 
+        // restriction need for replace variable in csharp block
+        if (!IsValidName(name))
+            throw new ArgumentException($"Variable name must contains only letters or _. Current: '{name}'");
+        
         Name = name;
     }
+
+    public static bool IsValidName(string value)
+    {
+        foreach (char c in value)
+        {
+            if (IsAllowedCharInName(c))
+                continue;
+            return false;
+        }
+
+        return true;
+    }
+
+    public static bool IsAllowedCharInName(char c) => char.IsLetter(c) || c == '_';
 
     public bool Equals(Variable? other)
     {
@@ -33,5 +51,5 @@ public abstract class Variable : IObjectTextPart, IEquatable<Variable>, IUniqueS
         return Name.GetHashCode();
     }
 
-    public abstract object? Get(RequestData request);
+    public abstract dynamic? Get(RequestData request);
 }

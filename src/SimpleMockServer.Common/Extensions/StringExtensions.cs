@@ -11,19 +11,15 @@ public static class StringExtensions
         return stream;
     }
 
-    public static bool EqualsIgnoreCase(this string s, string str)
+    public static bool ContainsOnlyLetters(this string s)
     {
-        return s.Equals(str, StringComparison.OrdinalIgnoreCase);
-    }
-
-    public static string? GetNullOrValue(this string? value, Func<string, string> getValue)
-    {
-        if (string.IsNullOrWhiteSpace(value))
+        foreach (char c in s)
         {
-            return null;
+            if (!char.IsLetter(c))
+                return false;
         }
 
-        return getValue(value);
+        return true;
     }
 
     public static string TrimStart(this string value, string trimString)

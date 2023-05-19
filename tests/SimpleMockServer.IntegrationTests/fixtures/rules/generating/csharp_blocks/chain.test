@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/csharp/chain
+
+----- expected
+
+code:
+200
+
+body:
+2.00

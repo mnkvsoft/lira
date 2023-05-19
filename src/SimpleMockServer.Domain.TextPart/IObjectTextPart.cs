@@ -2,5 +2,5 @@
 
 public interface IObjectTextPart
 {
-    object? Get(RequestData request);
+    dynamic? Get(RequestData request);
 }
