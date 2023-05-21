@@ -24,6 +24,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ConditionMatcherParser>()
             .AddSingleton<RequestMatchersParser>()
             .AddSingleton<FileSectionVariablesParser>()
+            .AddSingleton<CustomClassesCompiler>()
             .AddSingleton<ResponseWriterParser>()
             .AddSingleton<ExternalCallerParser>()
             .AddSingleton<GeneratingHttpDataParser>()

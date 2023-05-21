@@ -70,7 +70,7 @@ class TextPartsParser : ITextPartsParser
         TransformPipelineBase pipeline;
         if (value.Contains("return"))
         {
-            var csharpFunction = _generatingCSharpFactory.Create(value, context.Variables, Consts.ControlChars.VariablePrefix);
+            var csharpFunction = _generatingCSharpFactory.Create(value, context.CustomAssembly, context.Variables, Consts.ControlChars.VariablePrefix);
             pipeline = CreatePipeline(csharpFunction);
         }
         else
@@ -81,8 +81,11 @@ class TextPartsParser : ITextPartsParser
 
             for (int i = 1; i < pipelineItemsRaw.Length; i++)
             {
-                if(_transformFunctionFactory.TryCreate(pipelineItemsRaw[i].Trim(), out var transformFunction))
+                var invoke = pipelineItemsRaw[i].Trim();
+                if (_transformFunctionFactory.TryCreate(invoke, out var transformFunction))
                     pipeline.Add(transformFunction);
+                else
+                    pipeline.Add(_generatingCSharpFactory.CreateTransform(invoke, context.CustomAssembly));
             }    
         }
 
@@ -108,7 +111,7 @@ class TextPartsParser : ITextPartsParser
         if (_generatingFunctionFactory.TryCreate(rawText, out var prettyFunction))
             return prettyFunction;
 
-        return _generatingCSharpFactory.Create(rawText, context.Variables, Consts.ControlChars.VariablePrefix);
+        return _generatingCSharpFactory.Create(rawText, context.CustomAssembly, context.Variables, Consts.ControlChars.VariablePrefix);
         
         bool ContainsOnlyVariable(string s)
         {

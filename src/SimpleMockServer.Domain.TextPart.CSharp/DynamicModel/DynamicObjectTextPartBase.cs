@@ -1,7 +1,6 @@
 ﻿using SimpleMockServer.Domain.TextPart.Variables;
 
 namespace SimpleMockServer.Domain.TextPart.CSharp.DynamicModel;
-
 public class DynamicObjectTextPartBase
 {
     private readonly IReadOnlyCollection<Variable> _variables;

@@ -1,15 +1,18 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
 using SimpleMockServer.Domain.TextPart.CSharp.DynamicModel;
 using SimpleMockServer.Domain.TextPart.Variables;
+using SimpleMockServer.RuntimeCompilation;
 
 namespace SimpleMockServer.Domain.TextPart.CSharp;
 
 public interface IGeneratingCSharpFactory
 {
-    IObjectTextPart Create(string code, IReadOnlyCollection<Variable> variables, char variablePrefix);
+    IObjectTextPart Create(string code, CompileResult? customAssembly, IReadOnlyCollection<Variable> variables, char variablePrefix);
+    ITransformFunction CreateTransform(string code, CompileResult? customAssembly);
 }
 
 class GeneratingCSharpFactory : IGeneratingCSharpFactory
@@ -21,37 +24,80 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
         _logger = loggerFactory.CreateLogger(GetType());
     }
 
-    public IObjectTextPart Create(string code, IReadOnlyCollection<Variable> variables, char variablePrefix)
+    public ITransformFunction CreateTransform(string code, CompileResult? customAssembly)
     {
         var className = GetClassName(code);
+        string classToCompile = ClassCodeCreator.CreateITransformFunction(className, code, "@value", GetNamespaces(customAssembly?.Assembly));
 
-        bool isGlobalTextPart = !code.Contains(CodeTemplate.ClassTemplate.ExternalRequestVariableName);
-        
-        code = ReplaceVariableNames(code, variablePrefix);
-        
-        string classTemplate = isGlobalTextPart
-            ? CodeTemplate.ClassTemplate.IGlobalObjectTextPart
-            : CodeTemplate.ClassTemplate.IObjectTextPart;
-
-        string classToCompile = classTemplate
-            .Replace("{code}", GetMethodBody(code))
-            .Replace("{className}", className);
-        
         var sw = Stopwatch.StartNew();
 
-        var ass = DynamicClassLoader.Compile(classToCompile,
-            typeof(IObjectTextPart).Assembly,
-            typeof(Variable).Assembly,
-            typeof(RequestData).Assembly);
+        var ass = DynamicClassLoader.Compile(
+            new string[] { classToCompile },
+            assemblyName: "DynamicTransformFunction_" + Path.GetRandomFileName(),
+            new UsageAssemblies(
+                Compiled: new Assembly[]
+                {
+                    typeof(IObjectTextPart).Assembly,
+                },
+                Runtime: customAssembly == null ? Array.Empty<byte[]>() : new[] { customAssembly.Bytes }));
 
         var elapsed = sw.ElapsedMilliseconds;
 
         _logger.LogInformation($"Compilation '{code}' took {elapsed} ms");
 
-        var type = ass.GetTypes().Single(t => t.Name == className);
-        dynamic instance = Activator.CreateInstance(type, variables)!;
+        var type = ass.Assembly.GetTypes().Single(t => t.Name == className);
+        return (ITransformFunction)Activator.CreateInstance(type)!;
+    }
 
-        return isGlobalTextPart ? new GlobalDynamicClassWrapper(instance) : new DynamicClassWrapper(instance);
+    public IObjectTextPart Create(string code, CompileResult? customAssembly, IReadOnlyCollection<Variable> variables, char variablePrefix)
+    {
+        var customNamespaces = GetNamespaces(customAssembly?.Assembly);
+
+        const string externalRequestVariableName = "@req";
+        const string requestParameterName = "_request_";
+
+        bool isGlobalTextPart = !code.Contains(externalRequestVariableName);
+
+        code = ReplaceVariableNames(code, variablePrefix, requestParameterName);
+
+        var className = GetClassName(code);
+        string classToCompile =
+            isGlobalTextPart
+            ? ClassCodeCreator.CreateIGlobalObjectTextPart(className, GetMethodBody(code), requestParameterName, customNamespaces)
+            : ClassCodeCreator.CreateIObjectTextPart(className, GetMethodBody(code), requestParameterName, externalRequestVariableName, customNamespaces);
+
+        var sw = Stopwatch.StartNew();
+
+        var ass = DynamicClassLoader.Compile(
+            new string[] { classToCompile },
+            assemblyName: "DynamicTextPart_" + Path.GetRandomFileName(),
+            new UsageAssemblies(
+                Compiled: new Assembly[]
+                {
+                    typeof(IObjectTextPart).Assembly,
+                    typeof(Variable).Assembly,
+                    typeof(RequestData).Assembly,
+                    Assembly.GetExecutingAssembly()
+                },
+                Runtime: customAssembly == null ? Array.Empty<byte[]>() : new[] { customAssembly.Bytes }));
+
+        var elapsed = sw.ElapsedMilliseconds;
+
+        _logger.LogInformation($"Compilation '{code}' took {elapsed} ms");
+
+        var type = ass.Assembly.GetTypes().Single(t => t.Name == className);
+        return (IObjectTextPart)Activator.CreateInstance(type, variables)!;
+    }
+
+    private static string[] GetNamespaces(Assembly? customAssembly)
+    {
+        return customAssembly != null
+                    ? customAssembly.GetTypes()
+                        .Where(x => x.IsVisible && x.Namespace != null)
+                        .Select(t => t.Namespace!)
+                        .Distinct()
+                        .ToArray()
+                    : Array.Empty<string>();
     }
 
     private static string GetMethodBody(string code)
@@ -72,7 +118,7 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
         return methodBody;
     }
 
-    private static string ReplaceVariableNames(string code, char variablePrefix)
+    private static string ReplaceVariableNames(string code, char variablePrefix, string requestParameterName)
     {
 
         using var enumerator = code.GetEnumerator();
@@ -130,47 +176,24 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
         {
             code = code.Replace(name,
                 $"GetVariable(" +
-                $"\"{name.TrimStart(variablePrefix)}\", {CodeTemplate.ClassTemplate.RequestParameterName})");
+                $"\"{name.TrimStart(variablePrefix)}\", {requestParameterName})");
         }
         
         return code;
     }
 
-    class GlobalDynamicClassWrapper : IGlobalObjectTextPart
+    class DynamicTransformFunctionWrapper : ITransformFunction
     {
         private readonly dynamic _instance;
 
-        public GlobalDynamicClassWrapper(dynamic instance)
+        public DynamicTransformFunctionWrapper(dynamic instance)
         {
             _instance = instance;
         }
 
-        public object? Get(RequestData request)
+        public dynamic Transform(dynamic? dynamic)
         {
-            object? result = _instance.Get(request);
-            return result;
-        }
-
-        public dynamic? Get()
-        {
-            object? result = _instance.Get();
-            return result;
-        }
-    }
-    
-    class DynamicClassWrapper : IObjectTextPart
-    {
-        private readonly dynamic _instance;
-
-        public DynamicClassWrapper(dynamic instance)
-        {
-            _instance = instance;
-        }
-
-        public object? Get(RequestData request)
-        {
-            object? result = _instance.Get(request);
-            return result;
+            return _instance.Transform(dynamic);
         }
     }
 

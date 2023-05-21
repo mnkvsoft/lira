@@ -1,7 +1,7 @@
-namespace SimpleMockServer.Domain.TextPart
+﻿namespace SimpleMockServer.Domain.TextPart
 {
     public interface ITransformFunction
     {
-        object? Transform(object? input);
+        dynamic? Transform(dynamic? dynamic);
     }
 }

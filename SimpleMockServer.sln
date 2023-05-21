@@ -39,25 +39,27 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Configurat
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{044C763C-B375-4A31-9A6E-DCDE605EEDFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.DataModel", "src\SimpleMockServer.Domain.DataModel\SimpleMockServer.Domain.DataModel.csproj", "{D6B34C9E-6580-492C-922D-A0EDAD316FD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.DataModel", "src\SimpleMockServer.Domain.DataModel\SimpleMockServer.Domain.DataModel.csproj", "{D6B34C9E-6580-492C-922D-A0EDAD316FD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.TextPart.Functions", "src\SimpleMockServer.Domain.TextPart.Functions\SimpleMockServer.Domain.TextPart.Functions.csproj", "{523705D2-4F25-4A75-84D5-F945421D4655}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.TextPart.Functions", "src\SimpleMockServer.Domain.TextPart.Functions\SimpleMockServer.Domain.TextPart.Functions.csproj", "{523705D2-4F25-4A75-84D5-F945421D4655}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.TextPart.Variables", "src\SimpleMockServer.Domain.TextPart.Variables\SimpleMockServer.Domain.TextPart.Variables.csproj", "{AC40618D-3258-42D2-AB6D-8B07FFBFD45B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.TextPart.Variables", "src\SimpleMockServer.Domain.TextPart.Variables\SimpleMockServer.Domain.TextPart.Variables.csproj", "{AC40618D-3258-42D2-AB6D-8B07FFBFD45B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{767340BD-E0C8-4628-998C-D3B26E5CA480}"
 	ProjectSection(SolutionItems) = preProject
-		docker\dockerfile = docker\dockerfile
-		docker\docker-compose.yml = docker\docker-compose.yml
+		docker-compose.yml = docker-compose.yml
+		dockerfile = dockerfile
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.TextPart", "src\SimpleMockServer.Domain.TextPart\SimpleMockServer.Domain.TextPart.csproj", "{D4124250-A017-4E8E-9C96-49AF7D67FCA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.TextPart", "src\SimpleMockServer.Domain.TextPart\SimpleMockServer.Domain.TextPart.csproj", "{D4124250-A017-4E8E-9C96-49AF7D67FCA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.TextPart.CSharp", "src\SimpleMockServer.Domain.TextPart.CSharp\SimpleMockServer.Domain.TextPart.CSharp.csproj", "{99D92E95-F1CB-4830-843C-F11A76150993}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.TextPart.CSharp", "src\SimpleMockServer.Domain.TextPart.CSharp\SimpleMockServer.Domain.TextPart.CSharp.csproj", "{99D92E95-F1CB-4830-843C-F11A76150993}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TextParts", "TextParts", "{72A44983-7297-4284-BD2C-24CC9D307612}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.TextPart.Functions.Utils", "src\SimpleMockServer.Domain.TextPart.Functions.Utils\SimpleMockServer.Domain.TextPart.Functions.Utils.csproj", "{2AB6AB20-AD74-4D66-ABA7-7C9BDA7B7286}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.TextPart.Functions.Utils", "src\SimpleMockServer.Domain.TextPart.Functions.Utils\SimpleMockServer.Domain.TextPart.Functions.Utils.csproj", "{2AB6AB20-AD74-4D66-ABA7-7C9BDA7B7286}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.RuntimeCompilation", "src\SimpleMockServer.RuntimeCompilation\SimpleMockServer.RuntimeCompilation.csproj", "{5E37BA4E-C091-4863-8B01-CDB2E88D201A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,6 +131,10 @@ Global
 		{2AB6AB20-AD74-4D66-ABA7-7C9BDA7B7286}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AB6AB20-AD74-4D66-ABA7-7C9BDA7B7286}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AB6AB20-AD74-4D66-ABA7-7C9BDA7B7286}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E37BA4E-C091-4863-8B01-CDB2E88D201A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E37BA4E-C091-4863-8B01-CDB2E88D201A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E37BA4E-C091-4863-8B01-CDB2E88D201A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E37BA4E-C091-4863-8B01-CDB2E88D201A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -147,12 +153,13 @@ Global
 		{00953478-60D4-4092-B231-D9E47AB83F3E} = {79895E68-D478-411B-98E3-00FA4E31E8AA}
 		{044C763C-B375-4A31-9A6E-DCDE605EEDFB} = {79895E68-D478-411B-98E3-00FA4E31E8AA}
 		{D6B34C9E-6580-492C-922D-A0EDAD316FD1} = {044C763C-B375-4A31-9A6E-DCDE605EEDFB}
-		{72A44983-7297-4284-BD2C-24CC9D307612} = {044C763C-B375-4A31-9A6E-DCDE605EEDFB}
-		{D4124250-A017-4E8E-9C96-49AF7D67FCA8} = {72A44983-7297-4284-BD2C-24CC9D307612}
-		{99D92E95-F1CB-4830-843C-F11A76150993} = {72A44983-7297-4284-BD2C-24CC9D307612}
 		{523705D2-4F25-4A75-84D5-F945421D4655} = {72A44983-7297-4284-BD2C-24CC9D307612}
 		{AC40618D-3258-42D2-AB6D-8B07FFBFD45B} = {72A44983-7297-4284-BD2C-24CC9D307612}
+		{D4124250-A017-4E8E-9C96-49AF7D67FCA8} = {72A44983-7297-4284-BD2C-24CC9D307612}
+		{99D92E95-F1CB-4830-843C-F11A76150993} = {72A44983-7297-4284-BD2C-24CC9D307612}
+		{72A44983-7297-4284-BD2C-24CC9D307612} = {044C763C-B375-4A31-9A6E-DCDE605EEDFB}
 		{2AB6AB20-AD74-4D66-ABA7-7C9BDA7B7286} = {72A44983-7297-4284-BD2C-24CC9D307612}
+		{5E37BA4E-C091-4863-8B01-CDB2E88D201A} = {79895E68-D478-411B-98E3-00FA4E31E8AA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5607801-446F-4C0E-B08E-5A39EE462311}

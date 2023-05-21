@@ -1,0 +1,14 @@
+-------------------- case
+
+GET /generating/csharp/chain_second_block_is_csharp
+
+body:
+string with whitespaces
+
+----- expected
+
+code:
+200
+
+body:
+stringwithwhitespaces

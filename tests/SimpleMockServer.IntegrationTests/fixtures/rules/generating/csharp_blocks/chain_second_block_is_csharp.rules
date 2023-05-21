@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/csharp/chain_second_block_is_csharp
+
+----- response
+
+code:
+200
+
+body:
+{{ read.req.body.all >> Cleaner.Clean(@value) }}

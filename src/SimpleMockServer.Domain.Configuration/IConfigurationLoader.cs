@@ -26,15 +26,16 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
     private readonly PhysicalFileProvider _fileProvider;
     private IChangeToken? _fileChangeToken;
     
+    private readonly CustomClassesCompiler _customClassesCompiler;
     private readonly GlobalVariablesParser _globalVariablesParser;
     private readonly RulesLoader _rulesLoader;
     private readonly DataLoader _dataLoader;
     
     private Task<LoadResult> _loadTask;
     private ConfigurationState? _providerState;
-    
-    public ConfigurationLoader(ILoggerFactory loggerFactory, IConfiguration configuration, GlobalVariablesParser globalVariablesParser, RulesLoader rulesLoader, DataLoader dataLoader)
+    public ConfigurationLoader(ILoggerFactory loggerFactory, IConfiguration configuration, GlobalVariablesParser globalVariablesParser, RulesLoader rulesLoader, DataLoader dataLoader, CustomClassesCompiler customClassesCompiler)
     {
+        _customClassesCompiler = customClassesCompiler;
         _globalVariablesParser = globalVariablesParser;
         _rulesLoader = rulesLoader;
         _dataLoader = dataLoader;
@@ -42,13 +43,13 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
         _path = configuration.GetValue<string>(ConfigurationName.ConfigurationPath);
 
         _loadTask = Load(_path);
-        
+
         _logger.LogInformation($"Rules path for watching: {_path}");
 
         _fileProvider = new PhysicalFileProvider(_path);
         _fileProvider.UsePollingFileWatcher = true;
         _fileProvider.UseActivePolling = true;
-        
+
         WatchForFileChanges();
     }
 
@@ -65,8 +66,10 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
         var datas = await _dataLoader.Load(path);
 
         var templates = await TemplatesLoader.Load(path);
-        
-        var context = new ParsingContext(new VariableSet(), templates, RootPath: path, CurrentPath: path);
+
+        var customAssembly = await _customClassesCompiler.Compile(path);
+
+        var context = new ParsingContext(customAssembly, new VariableSet(), templates, RootPath: path, CurrentPath: path);
         
         var variables = await _globalVariablesParser.Load(context, path);
         var rules = await _rulesLoader.LoadRules(path, context with { Variables = variables});

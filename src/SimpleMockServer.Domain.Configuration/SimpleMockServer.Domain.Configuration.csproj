@@ -1,10 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Resources\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Resources\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
@@ -21,10 +27,7 @@
     <ProjectReference Include="..\SimpleMockServer.Domain.TextPart\SimpleMockServer.Domain.TextPart.csproj" />
     <ProjectReference Include="..\SimpleMockServer.Domain\SimpleMockServer.Domain.csproj" />
     <ProjectReference Include="..\SimpleMockServer.FileSectionFormat\SimpleMockServer.FileSectionFormat.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\" />
+    <ProjectReference Include="..\SimpleMockServer.RuntimeCompilation\SimpleMockServer.RuntimeCompilation.csproj" />
   </ItemGroup>
 
 </Project>
