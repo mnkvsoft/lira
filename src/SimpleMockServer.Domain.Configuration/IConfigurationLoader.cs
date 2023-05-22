@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Runtime.Loader;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -8,9 +9,13 @@ using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Configuration.Templating;
 using SimpleMockServer.Domain.Configuration.Variables;
 using SimpleMockServer.Domain.DataModel;
+using SimpleMockServer.Domain.TextPart.CSharp;
 using SimpleMockServer.Domain.TextPart.Variables;
+using SimpleMockServer.RuntimeCompilation;
 
 namespace SimpleMockServer.Domain.Configuration;
+
+
 
 public interface IConfigurationLoader
 {
@@ -20,6 +25,7 @@ public interface IConfigurationLoader
 
 class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigurationLoader
 {
+    private int _revision;
     private readonly string _path;
     private readonly ILogger _logger;
     
@@ -67,9 +73,14 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
 
         var templates = await TemplatesLoader.Load(path);
 
-        var customAssembly = await _customClassesCompiler.Compile(path);
+        var sharpCodeRegistry = new CSharpCodeRegistry(Interlocked.Increment(ref _revision));
 
-        var context = new ParsingContext(customAssembly, new VariableSet(), templates, RootPath: path, CurrentPath: path);
+        var customAssembly = await _customClassesCompiler.Compile(path, "_dynamic_CustomClasses_" + sharpCodeRegistry.Revision);
+        
+        if(customAssembly != null)
+            sharpCodeRegistry.LoadCustomAssembly(customAssembly);
+
+        var context = new ParsingContext(sharpCodeRegistry, new VariableSet(), templates, RootPath: path, CurrentPath: path);
         
         var variables = await _globalVariablesParser.Load(context, path);
         var rules = await _rulesLoader.LoadRules(path, context with { Variables = variables});

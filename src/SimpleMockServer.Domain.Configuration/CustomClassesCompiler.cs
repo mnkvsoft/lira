@@ -4,7 +4,7 @@ namespace SimpleMockServer.Domain.Configuration;
 
 class CustomClassesCompiler
 {
-    public async Task<CompileResult?> Compile(string path)
+    public async Task<CompileResult?> Compile(string path, string assemblyName)
     {
         var csharpFiles = DirectoryHelper.GetFiles(path, "*.cs");
 
@@ -14,9 +14,8 @@ class CustomClassesCompiler
         var tasks = csharpFiles.Select(f => File.ReadAllTextAsync(f)).ToList();
         await Task.WhenAll(tasks);
 
-        var codes = tasks.Select(x=> x.Result).ToArray();
+        var codes = tasks.Select(x => x.Result).ToArray();
 
-        var result = DynamicClassLoader.Compile(codes, assemblyName: "UserCustomClasses");
-        return result;
+        return DynamicClassLoader.Compile(codes, assemblyName);
     }
 }

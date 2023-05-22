@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
@@ -9,10 +10,40 @@ using SimpleMockServer.RuntimeCompilation;
 
 namespace SimpleMockServer.Domain.TextPart.CSharp;
 
+public class CSharpCodeRegistry
+{
+    public record CustomAssembly1(Assembly Assembly, byte[] PeImage);
+
+    private readonly AssemblyLoadContext _context = new AssemblyLoadContext(null);
+
+    public CustomAssembly1? CustomAssembly { get; private set; }
+
+    public int Revision { get; }
+
+    public CSharpCodeRegistry(int revision)
+    {
+        Revision = revision;
+    }
+
+    public void LoadCustomAssembly(CompileResult compileResult)
+    {
+        CustomAssembly = new CustomAssembly1(Load(compileResult), compileResult.PeImage);
+    }
+
+    public Assembly Load(CompileResult compileResult)
+    {
+        using MemoryStream stream = new MemoryStream();
+        stream.Write(compileResult.PeImage);
+        stream.Position = 0;
+        return _context.LoadFromStream(stream);
+    }
+
+}
+
 public interface IGeneratingCSharpFactory
 {
-    IObjectTextPart Create(string code, CompileResult? customAssembly, IReadOnlyCollection<Variable> variables, char variablePrefix);
-    ITransformFunction CreateTransform(string code, CompileResult? customAssembly);
+    IObjectTextPart Create(CSharpCodeRegistry registry, string code, IReadOnlyCollection<Variable> variables, char variablePrefix);
+    ITransformFunction CreateTransform(CSharpCodeRegistry registry, string code);
 }
 
 class GeneratingCSharpFactory : IGeneratingCSharpFactory
@@ -24,14 +55,14 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
         _logger = loggerFactory.CreateLogger(GetType());
     }
 
-    public ITransformFunction CreateTransform(string code, CompileResult? customAssembly)
+    public ITransformFunction CreateTransform(CSharpCodeRegistry registry, string code)
     {
         var className = GetClassName(code);
-        string classToCompile = ClassCodeCreator.CreateITransformFunction(className, code, "@value", GetNamespaces(customAssembly?.Assembly));
+        string classToCompile = ClassCodeCreator.CreateITransformFunction(className, code, "@value", GetNamespaces(registry.CustomAssembly?.Assembly));
 
         var sw = Stopwatch.StartNew();
 
-        var ass = DynamicClassLoader.Compile(
+        var ass = registry.Load(DynamicClassLoader.Compile(
             new string[] { classToCompile },
             assemblyName: "DynamicTransformFunction_" + Path.GetRandomFileName(),
             new UsageAssemblies(
@@ -39,19 +70,19 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
                 {
                     typeof(IObjectTextPart).Assembly,
                 },
-                Runtime: customAssembly == null ? Array.Empty<byte[]>() : new[] { customAssembly.Bytes }));
+                Runtime: registry.CustomAssembly == null ? Array.Empty<byte[]>() : new[] { registry.CustomAssembly.PeImage })));
 
         var elapsed = sw.ElapsedMilliseconds;
 
         _logger.LogInformation($"Compilation '{code}' took {elapsed} ms");
 
-        var type = ass.Assembly.GetTypes().Single(t => t.Name == className);
+        var type = ass.GetTypes().Single(t => t.Name == className);
         return (ITransformFunction)Activator.CreateInstance(type)!;
     }
 
-    public IObjectTextPart Create(string code, CompileResult? customAssembly, IReadOnlyCollection<Variable> variables, char variablePrefix)
+    public IObjectTextPart Create(CSharpCodeRegistry registry, string code, IReadOnlyCollection<Variable> variables, char variablePrefix)
     {
-        var customNamespaces = GetNamespaces(customAssembly?.Assembly);
+        var customNamespaces = GetNamespaces(registry.CustomAssembly?.Assembly);
 
         const string externalRequestVariableName = "@req";
         const string requestParameterName = "_request_";
@@ -68,7 +99,7 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
 
         var sw = Stopwatch.StartNew();
 
-        var ass = DynamicClassLoader.Compile(
+        var ass = registry.Load(DynamicClassLoader.Compile(
             new string[] { classToCompile },
             assemblyName: "DynamicTextPart_" + Path.GetRandomFileName(),
             new UsageAssemblies(
@@ -79,13 +110,13 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
                     typeof(RequestData).Assembly,
                     Assembly.GetExecutingAssembly()
                 },
-                Runtime: customAssembly == null ? Array.Empty<byte[]>() : new[] { customAssembly.Bytes }));
+                Runtime: registry.CustomAssembly == null ? Array.Empty<byte[]>() : new[] { registry.CustomAssembly.PeImage })));
 
         var elapsed = sw.ElapsedMilliseconds;
 
         _logger.LogInformation($"Compilation '{code}' took {elapsed} ms");
 
-        var type = ass.Assembly.GetTypes().Single(t => t.Name == className);
+        var type = ass.GetTypes().Single(t => t.Name == className);
         return (IObjectTextPart)Activator.CreateInstance(type, variables)!;
     }
 

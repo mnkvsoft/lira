@@ -7,7 +7,7 @@ namespace SimpleMockServer.RuntimeCompilation;
 
 public record UsageAssemblies(IReadOnlyCollection<Assembly>? Compiled, IReadOnlyCollection<byte[]>? Runtime);
 
-public record CompileResult(Assembly Assembly, byte[] Bytes);
+public record CompileResult(byte[] PeImage);
 
 public static class DynamicClassLoader
 {
@@ -27,7 +27,9 @@ public static class DynamicClassLoader
         var bytes = ms.ToArray();
         var assembly = Assembly.Load(bytes);
 
-        return new CompileResult(assembly, bytes);
+        var types = assembly.GetTypes();
+
+        return new CompileResult(bytes);
     }
 
     private static CSharpCompilation CreateCompilation(IReadOnlyCollection<string> codes, UsageAssemblies? usageAssemblies, string? assemblyName)
@@ -43,7 +45,7 @@ public static class DynamicClassLoader
         return compilation;
     }
 
-    private static Exception CreateException( IReadOnlyCollection<string> codes, EmitResult result)
+    private static Exception CreateException(IReadOnlyCollection<string> codes, EmitResult result)
     {
         var failures = result.Diagnostics.Where(diagnostic =>
             diagnostic.IsWarningAsError ||
