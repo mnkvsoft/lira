@@ -10,10 +10,9 @@ using SimpleMockServer.Domain.Configuration.Variables;
 using SimpleMockServer.Domain.DataModel;
 using SimpleMockServer.Domain.TextPart.CSharp;
 using SimpleMockServer.Domain.TextPart.Variables;
+using SimpleMockServer.RuntimeCompilation;
 
 namespace SimpleMockServer.Domain.Configuration;
-
-
 
 public interface IConfigurationLoader
 {
@@ -23,21 +22,22 @@ public interface IConfigurationLoader
 
 class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigurationLoader
 {
-    private int _revision;
     private readonly string _path;
     private readonly ILogger _logger;
-    
+
     private readonly PhysicalFileProvider _fileProvider;
     private IChangeToken? _fileChangeToken;
-    
+
     private readonly CustomClassesCompiler _customClassesCompiler;
     private readonly GlobalVariablesParser _globalVariablesParser;
     private readonly RulesLoader _rulesLoader;
     private readonly DataLoader _dataLoader;
-    
+
     private Task<LoadResult> _loadTask;
     private ConfigurationState? _providerState;
-    public ConfigurationLoader(ILoggerFactory loggerFactory, IConfiguration configuration, GlobalVariablesParser globalVariablesParser, RulesLoader rulesLoader, DataLoader dataLoader, CustomClassesCompiler customClassesCompiler)
+
+    public ConfigurationLoader(ILoggerFactory loggerFactory, IConfiguration configuration, GlobalVariablesParser globalVariablesParser,
+        RulesLoader rulesLoader, DataLoader dataLoader, CustomClassesCompiler customClassesCompiler)
     {
         _customClassesCompiler = customClassesCompiler;
         _globalVariablesParser = globalVariablesParser;
@@ -57,8 +57,8 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
         WatchForFileChanges();
     }
 
-    record LoadResult(IReadOnlyCollection<Rule> Rules, Dictionary<DataName, Data> Datas); 
-    
+    record LoadResult(IReadOnlyCollection<Rule> Rules, Dictionary<DataName, Data> Datas);
+
     public void ProvokeLoad()
     {
         // loading was init in constructor
@@ -71,19 +71,33 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
 
         var templates = await TemplatesLoader.Load(path);
 
-        var sharpCodeRegistry = new CSharpCodeRegistry(Interlocked.Increment(ref _revision));
+        var sharpCodeRegistry = new DynamicAssembliesRegistry();
 
-        var customAssembly = await _customClassesCompiler.Compile(path, "_dynamic_CustomClasses_" + sharpCodeRegistry.Revision);
-        
-        if(customAssembly != null)
-            sharpCodeRegistry.LoadCustomAssembly(customAssembly);
+        var customAssembly = await GetCustomAssembly(path, sharpCodeRegistry);
 
-        var context = new ParsingContext(sharpCodeRegistry, new VariableSet(), templates, RootPath: path, CurrentPath: path);
-        
+        var context = new ParsingContext(
+            sharpCodeRegistry, 
+            customAssembly, 
+            new VariableSet(), 
+            templates, 
+            RootPath: path,
+            CurrentPath: path);
+
         var variables = await _globalVariablesParser.Load(context, path);
-        var rules = await _rulesLoader.LoadRules(path, context with { Variables = variables});
+        var rules = await _rulesLoader.LoadRules(path, context with { Variables = variables });
 
         return new LoadResult(rules, datas);
+    }
+
+    private async Task<CustomAssembly?> GetCustomAssembly(string path, DynamicAssembliesRegistry sharpCodeRegistry)
+    {
+        var compileResult = await _customClassesCompiler.Compile(path, "_dynamic_CustomClasses_" + sharpCodeRegistry.Revision);
+
+        if (compileResult == null)
+            return null;
+
+        var assembly = sharpCodeRegistry.Load(compileResult);
+        return new CustomAssembly(assembly, compileResult.PeImage);
     }
 
     async Task<IReadOnlyCollection<Rule>> IRulesProvider.GetRules()
@@ -97,7 +111,7 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
         var (_, datas) = _loadTask.Result;
         return datas[name];
     }
-    
+
     private void WatchForFileChanges()
     {
         _fileChangeToken = _fileProvider.Watch("**/*.*");
@@ -116,7 +130,7 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
         _providerState = null;
         _loadTask = Load(_path);
     }
-    
+
     public async Task<ConfigurationState> GetState()
     {
         if (_providerState != null)

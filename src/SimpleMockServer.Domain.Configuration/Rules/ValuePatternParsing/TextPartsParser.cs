@@ -70,7 +70,11 @@ class TextPartsParser : ITextPartsParser
         TransformPipelineBase pipeline;
         if (value.Contains("return"))
         {
-            var csharpFunction = _generatingCSharpFactory.Create(context.CSharpCodeRegistry, value, context.Variables, Consts.ControlChars.VariablePrefix);
+            var csharpFunction = _generatingCSharpFactory.Create(
+                new GeneratingCSharpContext(context.DynamicAssembliesRegistry, context.CustomAssembly), 
+                new GeneratingCSharpVariablesContext(context.Variables, Consts.ControlChars.VariablePrefix), 
+                value);
+            
             pipeline = CreatePipeline(csharpFunction);
         }
         else
@@ -83,9 +87,16 @@ class TextPartsParser : ITextPartsParser
             {
                 var invoke = pipelineItemsRaw[i].Trim();
                 if (_transformFunctionFactory.TryCreate(invoke, out var transformFunction))
+                {
                     pipeline.Add(transformFunction);
+                }
                 else
-                    pipeline.Add(_generatingCSharpFactory.CreateTransform(context.CSharpCodeRegistry, invoke));
+                {
+                    pipeline.Add(
+                        _generatingCSharpFactory.CreateTransform(
+                            new GeneratingCSharpContext(context.DynamicAssembliesRegistry, context.CustomAssembly),
+                            invoke));
+                }
             }    
         }
 
@@ -111,7 +122,10 @@ class TextPartsParser : ITextPartsParser
         if (_generatingFunctionFactory.TryCreate(rawText, out var prettyFunction))
             return prettyFunction;
 
-        return _generatingCSharpFactory.Create(context.CSharpCodeRegistry, rawText, context.Variables, Consts.ControlChars.VariablePrefix);
+        return _generatingCSharpFactory.Create(
+            new GeneratingCSharpContext(context.DynamicAssembliesRegistry, context.CustomAssembly), 
+            new GeneratingCSharpVariablesContext(context.Variables, Consts.ControlChars.VariablePrefix), 
+            rawText);
         
         bool ContainsOnlyVariable(string s)
         {

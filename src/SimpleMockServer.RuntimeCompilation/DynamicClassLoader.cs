@@ -25,10 +25,6 @@ public static class DynamicClassLoader
         ms.Seek(0, SeekOrigin.Begin);
 
         var bytes = ms.ToArray();
-        var assembly = Assembly.Load(bytes);
-
-        var types = assembly.GetTypes();
-
         return new CompileResult(bytes);
     }
 
