@@ -1,5 +1,4 @@
-﻿using System.Runtime.Loader;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -11,7 +10,6 @@ using SimpleMockServer.Domain.Configuration.Variables;
 using SimpleMockServer.Domain.DataModel;
 using SimpleMockServer.Domain.TextPart.CSharp;
 using SimpleMockServer.Domain.TextPart.Variables;
-using SimpleMockServer.RuntimeCompilation;
 
 namespace SimpleMockServer.Domain.Configuration;
 

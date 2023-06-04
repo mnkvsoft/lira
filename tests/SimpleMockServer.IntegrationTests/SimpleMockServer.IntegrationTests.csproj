@@ -9,16 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="fixtures\rules\generating\csharp_blocks\Cleaner.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="fixtures\rules\generating\csharp_blocks\Cleaner.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.13" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="Moq" Version="4.18.4" />
@@ -52,6 +42,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\csharp_blocks\chain_second_block_is_csharp.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp_blocks\chain_second_block_is_csharp.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\function\body\format.rules">
@@ -583,6 +576,39 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\csharp_blocks\body_access\path.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="fixtures\rules\generating\csharp_blocks\custom_class_without_namespace.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="fixtures\rules\generating\csharp_blocks\custom_class_with_namespace.cs" />
+    <None Update="fixtures\rules\generating\csharp_blocks\custom_class_with_namespace.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Remove="fixtures\rules\generating\csharp_blocks\chain_second_block_is_csharp.cs" />
+    <None Include="fixtures\rules\generating\csharp_blocks\chain_second_block_is_csharp.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Remove="fixtures\rules\generating\csharp_blocks\custom_class_with_namespace.cs" />
+    <None Include="fixtures\rules\generating\csharp_blocks\custom_class_with_namespace.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp_blocks\custom_class_with_namespace.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp_blocks\custom_class_without_namespace.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp_blocks\custom_class_without_namespace.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="fixtures\rules\generating\csharp_blocks\global_method.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp_blocks\global_method.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp_blocks\global_method.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

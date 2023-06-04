@@ -8,7 +8,7 @@ class CustomClassesCompiler
     {
         var csharpFiles = DirectoryHelper.GetFiles(path, "*.cs");
 
-        if(csharpFiles == null)
+        if(csharpFiles.Count == 0)
             return null;
 
         var tasks = csharpFiles.Select(f => File.ReadAllTextAsync(f)).ToList();

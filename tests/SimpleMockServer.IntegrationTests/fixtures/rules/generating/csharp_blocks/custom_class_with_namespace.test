@@ -1,0 +1,14 @@
+-------------------- case
+
+GET /generating/csharp/custom_class_with_namespace
+
+body:
+echo
+
+----- expected
+
+code:
+200
+
+body:
+echo

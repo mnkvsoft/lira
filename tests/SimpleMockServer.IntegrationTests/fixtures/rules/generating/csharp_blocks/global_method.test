@@ -1,0 +1,14 @@
+-------------------- case
+
+GET /generating/csharp/global_method
+
+body:
+au
+
+----- expected
+
+code:
+200
+
+body:
+au-au...

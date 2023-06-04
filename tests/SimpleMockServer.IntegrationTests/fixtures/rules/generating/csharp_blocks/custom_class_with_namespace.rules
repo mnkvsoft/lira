@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/csharp/custom_class_with_namespace
+
+----- response
+
+code:
+200
+
+body:
+{{ read.req.body.all >> custom_class_with_namespace.echo.ho(@value) }}

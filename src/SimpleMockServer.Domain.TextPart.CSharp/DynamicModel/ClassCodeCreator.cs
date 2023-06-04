@@ -6,9 +6,10 @@ static class ClassCodeCreator
         string className,
         string code,
         string requestParameterName,
-        IReadOnlyCollection<string> namespaces)
+        IReadOnlyCollection<string> namespaces,
+        IReadOnlyCollection<string> usingStaticTypes)
     {
-        return CreateClassCode(CodeTemplate.IGlobalObjectTextPart, className, code, requestParameterName, namespaces);
+        return CreateClassCode(CodeTemplate.IGlobalObjectTextPart, className, code, requestParameterName, namespaces, usingStaticTypes);
     }
 
     public static string CreateIObjectTextPart(
@@ -16,9 +17,10 @@ static class ClassCodeCreator
         string code,
         string requestParameterName,
         string externalRequestVariableName,
-        IReadOnlyCollection<string> namespaces)
+        IReadOnlyCollection<string> namespaces,
+        IReadOnlyCollection<string> usingStaticTypes)
     {
-        return CreateClassCode(CodeTemplate.IObjectTextPart, className, code, requestParameterName, namespaces)
+        return CreateClassCode(CodeTemplate.IObjectTextPart, className, code, requestParameterName, namespaces, usingStaticTypes)
                     .Replace("[externalRequestVariableName]", externalRequestVariableName);
     }
 
@@ -26,27 +28,41 @@ static class ClassCodeCreator
         string className,
         string code,
         string inputArgumentName,
-        IReadOnlyCollection<string> namespaces)
+        IReadOnlyCollection<string> namespaces,
+        IReadOnlyCollection<string> usingStaticTypes)
     {
         return CodeTemplate.ITransformFunction
             .Replace("[namespaces]", GetNamespaces(namespaces))
+            .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
             .Replace("[className]", className)
             .Replace("[input]", inputArgumentName)
             .Replace("[code]", code);
     }
 
-    private static string CreateClassCode(string template, string className, string code, string requestParameterName, IReadOnlyCollection<string> namespaces)
+    private static string CreateClassCode(
+        string template, 
+        string className, 
+        string code, 
+        string requestParameterName, 
+        IReadOnlyCollection<string> namespaces,
+        IReadOnlyCollection<string> usingStaticTypes)
     {
         return template
                     .Replace("[className]", className)
                     .Replace("[code]", code)
                     .Replace("[request]", requestParameterName)
+                    .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
                     .Replace("[namespaces]", GetNamespaces(namespaces));
     }
 
     private static string GetNamespaces(IReadOnlyCollection<string> namespaces)
     {
         return namespaces.Count == 0 ? "" : string.Join(Environment.NewLine, namespaces.Select(n => $"using {n};"));
+    }
+
+    private static string GetUsingStatic(IReadOnlyCollection<string> usingStaticTypes)
+    {
+        return usingStaticTypes.Count == 0 ? "" : string.Join(Environment.NewLine, usingStaticTypes.Select(n => $"using static {n};"));
     }
 
     static class CodeTemplate
@@ -70,6 +86,7 @@ static class ClassCodeCreator
 
         public readonly static string IObjectTextPart =
             ImportNamespaces + Nl + Nl +
+            "[usingstatic]" + Nl + Nl +
             Namespace + Nl + Nl +
             @"
 public class [className] : DynamicObjectTextPartBase, IObjectTextPart
@@ -87,7 +104,8 @@ public class [className] : DynamicObjectTextPartBase, IObjectTextPart
 }";
 
         public readonly static string ITransformFunction =
-            "[namespaces]" + Nl +
+            "[namespaces]" + Nl + Nl +
+            "[usingstatic]" + Nl + Nl +
 @"namespace SimpleMockServer.Domain.TextPart.CSharp.DynamicModel;
 
 public class [className] : ITransformFunction
@@ -101,6 +119,7 @@ public class [className] : ITransformFunction
 
         public readonly static string IGlobalObjectTextPart =
             ImportNamespaces + Nl + Nl +
+            "[usingstatic]" + Nl + Nl +
             Namespace + Nl + Nl +
             @"
 public class [className] : DynamicObjectTextPartBase, IGlobalObjectTextPart

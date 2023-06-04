@@ -1,4 +1,4 @@
-﻿namespace Custom;
+﻿namespace chain_second_block_is_csharp;
 
 public static class Cleaner
 { 

@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-using System.Runtime.Loader;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
@@ -9,36 +8,6 @@ using SimpleMockServer.Domain.TextPart.Variables;
 using SimpleMockServer.RuntimeCompilation;
 
 namespace SimpleMockServer.Domain.TextPart.CSharp;
-
-public class CSharpCodeRegistry
-{
-    public record CustomAssembly1(Assembly Assembly, byte[] PeImage);
-
-    private readonly AssemblyLoadContext _context = new AssemblyLoadContext(null);
-
-    public CustomAssembly1? CustomAssembly { get; private set; }
-
-    public int Revision { get; }
-
-    public CSharpCodeRegistry(int revision)
-    {
-        Revision = revision;
-    }
-
-    public void LoadCustomAssembly(CompileResult compileResult)
-    {
-        CustomAssembly = new CustomAssembly1(Load(compileResult), compileResult.PeImage);
-    }
-
-    public Assembly Load(CompileResult compileResult)
-    {
-        using MemoryStream stream = new MemoryStream();
-        stream.Write(compileResult.PeImage);
-        stream.Position = 0;
-        return _context.LoadFromStream(stream);
-    }
-
-}
 
 public interface IGeneratingCSharpFactory
 {
@@ -58,7 +27,13 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
     public ITransformFunction CreateTransform(CSharpCodeRegistry registry, string code)
     {
         var className = GetClassName(code);
-        string classToCompile = ClassCodeCreator.CreateITransformFunction(className, code, "@value", GetNamespaces(registry.CustomAssembly?.Assembly));
+        var customAssembly = registry.CustomAssembly?.Assembly;
+        string classToCompile = ClassCodeCreator.CreateITransformFunction(
+            className, 
+            code, 
+            "@value", 
+            GetNamespaces(customAssembly),
+            GetUsingStatic(customAssembly));
 
         var sw = Stopwatch.StartNew();
 
@@ -82,8 +57,6 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
 
     public IObjectTextPart Create(CSharpCodeRegistry registry, string code, IReadOnlyCollection<Variable> variables, char variablePrefix)
     {
-        var customNamespaces = GetNamespaces(registry.CustomAssembly?.Assembly);
-
         const string externalRequestVariableName = "@req";
         const string requestParameterName = "_request_";
 
@@ -92,10 +65,12 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
         code = ReplaceVariableNames(code, variablePrefix, requestParameterName);
 
         var className = GetClassName(code);
+        var customAssembly = registry.CustomAssembly?.Assembly;
+        
         string classToCompile =
             isGlobalTextPart
-            ? ClassCodeCreator.CreateIGlobalObjectTextPart(className, GetMethodBody(code), requestParameterName, customNamespaces)
-            : ClassCodeCreator.CreateIObjectTextPart(className, GetMethodBody(code), requestParameterName, externalRequestVariableName, customNamespaces);
+            ? ClassCodeCreator.CreateIGlobalObjectTextPart(className, GetMethodBody(code), requestParameterName, GetNamespaces(customAssembly), GetUsingStatic(customAssembly))
+            : ClassCodeCreator.CreateIObjectTextPart(className, GetMethodBody(code), requestParameterName, externalRequestVariableName, GetNamespaces(customAssembly), GetUsingStatic(customAssembly));
 
         var sw = Stopwatch.StartNew();
 
@@ -124,8 +99,19 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
     {
         return customAssembly != null
                     ? customAssembly.GetTypes()
-                        .Where(x => x.IsVisible && x.Namespace != null)
+                        .Where(x => x.IsVisible && x.Namespace?.StartsWith("_") == true)
                         .Select(t => t.Namespace!)
+                        .Distinct()
+                        .ToArray()
+                    : Array.Empty<string>();
+    }
+
+    private static string[] GetUsingStatic(Assembly? customAssembly)
+    {
+        return customAssembly != null
+                    ? customAssembly.GetTypes()
+                        .Where(x => x.IsVisible && x.Name.StartsWith("_") == true)
+                        .Select(t => t.FullName!)
                         .Distinct()
                         .ToArray()
                     : Array.Empty<string>();
@@ -151,7 +137,6 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
 
     private static string ReplaceVariableNames(string code, char variablePrefix, string requestParameterName)
     {
-
         using var enumerator = code.GetEnumerator();
 
         bool isString = false;
@@ -211,21 +196,6 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
         }
         
         return code;
-    }
-
-    class DynamicTransformFunctionWrapper : ITransformFunction
-    {
-        private readonly dynamic _instance;
-
-        public DynamicTransformFunctionWrapper(dynamic instance)
-        {
-            _instance = instance;
-        }
-
-        public dynamic Transform(dynamic? dynamic)
-        {
-            return _instance.Transform(dynamic);
-        }
     }
 
     private static string GetClassName(string code)

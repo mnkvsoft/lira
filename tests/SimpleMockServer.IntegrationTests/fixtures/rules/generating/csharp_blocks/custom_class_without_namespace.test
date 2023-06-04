@@ -1,0 +1,14 @@
+-------------------- case
+
+GET /generating/csharp/custom_class_without_namespace
+
+body:
+au
+
+----- expected
+
+code:
+200
+
+body:
+au-au...
