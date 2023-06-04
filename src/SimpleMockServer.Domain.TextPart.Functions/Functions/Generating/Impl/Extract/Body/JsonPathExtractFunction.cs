@@ -6,7 +6,7 @@ namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.E
 
 public class JsonPathExtractFunction : IBodyExtractFunction, IObjectTextPart, IWithStringArgumentFunction
 {
-    public static string Name => "read.req.body.jpath";
+    public static string Name => "req.body.jpath";
 
     private string _jpath = "";
 

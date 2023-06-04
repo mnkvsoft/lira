@@ -6,7 +6,7 @@ namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.E
 
 public class FormExtractFunction : IBodyExtractFunction, IObjectTextPart, IWithStringArgumentFunction
 {
-    public static string Name => "read.req.body.form";
+    public static string Name => "req.body.form";
     
     private string _formParamName = "";
 

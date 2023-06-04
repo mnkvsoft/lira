@@ -6,7 +6,7 @@ namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.E
 
 public class XPathExtractFunction : IBodyExtractFunction, IObjectTextPart, IWithStringArgumentFunction
 {
-    public static string Name => "read.req.body.xpath";
+    public static string Name => "req.body.xpath";
 
     private string _xpath = "";
 

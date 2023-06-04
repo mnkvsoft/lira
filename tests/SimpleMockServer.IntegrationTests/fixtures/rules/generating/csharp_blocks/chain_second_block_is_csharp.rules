@@ -8,4 +8,4 @@ code:
 200
 
 body:
-{{ read.req.body.all >> chain_second_block_is_csharp.Cleaner.Clean(@value) }}
+{{ req.body.all >> chain_second_block_is_csharp.Cleaner.Clean(@value) }}

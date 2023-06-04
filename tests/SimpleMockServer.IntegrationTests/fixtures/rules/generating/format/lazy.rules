@@ -10,7 +10,7 @@ code:
 body:
 
 // if format not required then write as is
-{{ read.req.header: Request-Id }}
+{{ req.header: Request-Id }}
 
 // otherwise we try convert to type and formatting
-{{ read.req.header: Request-Id >> format: N }}
+{{ req.header: Request-Id >> format: N }}

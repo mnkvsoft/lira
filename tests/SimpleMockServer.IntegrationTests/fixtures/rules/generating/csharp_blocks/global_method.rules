@@ -8,4 +8,4 @@ code:
 200
 
 body:
-{{ read.req.body.all >> echo(@value) }}
+{{ req.body.all >> echo(@value) }}

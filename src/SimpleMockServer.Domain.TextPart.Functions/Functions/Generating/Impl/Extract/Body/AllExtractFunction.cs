@@ -5,7 +5,7 @@ namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.E
 
 public class AllExtractFunction : IBodyExtractFunction, IObjectTextPart
 {
-    public static string Name => "read.req.body.all";
+    public static string Name => "req.body.all";
 
     public string? Extract(string? value)
     {

@@ -28,12 +28,12 @@ delay:
 100 ms
 
 headers:
-Request-Id: {{ read.req.header: Request-Id }}
+Request-Id: {{ req.header: Request-Id }}
 
 body:
 {
     "id": {{ $newId }},
-    "external_id": "{{ read.req.body.jpath: $.external_id }}"
+    "external_id": "{{ req.body.jpath: $.external_id }}"
     "createdAt": "{{ $createdAt }}",
     "status": "success"
 }
