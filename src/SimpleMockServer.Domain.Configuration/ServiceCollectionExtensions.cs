@@ -21,24 +21,23 @@ public static class ServiceCollectionExtensions
         return services
             .AddFunctions()
             .AddCSharp()
-            .AddSingleton<ConditionMatcherParser>()
-            .AddSingleton<RequestMatchersParser>()
-            .AddSingleton<FileSectionVariablesParser>()
-            .AddSingleton<CustomClassesCompiler>()
-            .AddSingleton<ResponseWriterParser>()
-            .AddSingleton<ExternalCallerParser>()
+            .AddTransient<ConditionMatcherParser>()
+            .AddTransient<RequestMatchersParser>()
+            .AddTransient<FileSectionVariablesParser>()
+            .AddTransient<ResponseWriterParser>()
+            .AddTransient<ExternalCallerParser>()
             .AddSingleton<GeneratingHttpDataParser>()
             .AddSingleton<GlobalVariablesParser>()
             .AddSingleton<VariablesParser>()
             .AddSingleton<ITextPartsParser, TextPartsParser>()
-            .AddSingleton<RuleFileParser>()
+            .AddTransient<RuleFileParser>()
             .AddSingleton<ConfigurationLoader>()
             .AddSingleton<IConfigurationLoader>(provider => provider.GetRequiredService<ConfigurationLoader>())
 
             .AddSingleton<DataLoader>()
             .AddSingleton<IDataProvider>(provider => provider.GetRequiredService<ConfigurationLoader>())
 
-            .AddSingleton<RulesLoader>()
+            .AddTransient<RulesLoader>()
             .AddSingleton<IRulesProvider>(provider => provider.GetRequiredService<ConfigurationLoader>());
     }
 }

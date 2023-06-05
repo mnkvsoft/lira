@@ -2,4 +2,4 @@
 
 namespace SimpleMockServer.Domain.TextPart.CSharp;
 
-public record CustomAssembly(Assembly Assembly, byte[] PeImage);
+public record CustomAssembly(Assembly LoadedAssembly, byte[] PeImage);

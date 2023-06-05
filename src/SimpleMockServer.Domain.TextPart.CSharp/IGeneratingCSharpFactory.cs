@@ -1,54 +1,70 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
+using SimpleMockServer.Configuration;
 using SimpleMockServer.Domain.TextPart.CSharp.DynamicModel;
+using SimpleMockServer.Domain.TextPart.CSharp.RuntimeCompilation;
 using SimpleMockServer.Domain.TextPart.Variables;
-using SimpleMockServer.RuntimeCompilation;
+
 // ReSharper disable RedundantExplicitArrayCreation
 
 namespace SimpleMockServer.Domain.TextPart.CSharp;
 
-public record GeneratingCSharpContext(DynamicAssembliesRegistry Registry, CustomAssembly? CustomAssembly);
 public record GeneratingCSharpVariablesContext(IReadOnlyCollection<Variable> Variables, char VariablePrefix);
 
 public interface IGeneratingCSharpFactory
 {
     IObjectTextPart Create(
-        GeneratingCSharpContext context, 
         GeneratingCSharpVariablesContext variablesContext, 
         string code);
     
-    ITransformFunction CreateTransform(GeneratingCSharpContext context, string code);
+    ITransformFunction CreateTransform(string code);
+    
+    public CompilationStatistic CompilationStatistic { get; }
 }
 
 class GeneratingCSharpFactory : IGeneratingCSharpFactory
 {
+    private static int RevisionCounter;
+    
     private readonly ILogger _logger;
+    private readonly string _path;
+    
+    private readonly AssemblyLoadContext _context = new(null);
+    private readonly int _revision;
+    private string GetAssemblyName(string name) => $"__dynamic_{_revision}_{name}";
 
-    public GeneratingCSharpFactory(ILoggerFactory loggerFactory)
+    public CompilationStatistic CompilationStatistic { get; }
+    
+    public GeneratingCSharpFactory(IConfiguration configuration, ILoggerFactory loggerFactory)
     {
         _logger = loggerFactory.CreateLogger(GetType());
+        _path = configuration.GetRulesPath();
+        _revision = ++RevisionCounter;
+        CompilationStatistic = new CompilationStatistic(_revision);
     }
-
-    public ITransformFunction CreateTransform(GeneratingCSharpContext context, string code)
+    
+    public ITransformFunction CreateTransform(string code)
     {
-        string className = GetClassName(code);
+        var sw = Stopwatch.StartNew();
         
-        var customAssembly = context.CustomAssembly;
+        string className = GetClassName(code);
+        var customAssembly = GetCustomAssembly();
+        
         string classToCompile = ClassCodeCreator.CreateITransformFunction(
             className, 
             code, 
             "@value", 
-            GetNamespaces(customAssembly?.Assembly),
-            GetUsingStatic(customAssembly?.Assembly));
+            GetNamespaces(customAssembly?.LoadedAssembly),
+            GetUsingStatic(customAssembly?.LoadedAssembly));
 
-        var sw = Stopwatch.StartNew();
-
-        var ass = context.Registry.Load(DynamicClassLoader.Compile(
+        var ass = Load(Compile(
             new string[] { classToCompile },
-            assemblyName: "DynamicTransformFunction_" + Path.GetRandomFileName(),
+            assemblyName: GetAssemblyName("TransformFunction" + className),
             new UsageAssemblies(
                 Compiled: new Assembly[]
                 {
@@ -61,18 +77,23 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
         _logger.LogDebug($"Compilation '{code}' took {elapsed} ms");
 
         var type = ass.GetTypes().Single(t => t.Name == className);
-        return (ITransformFunction)Activator.CreateInstance(type)!;
+        
+        var result = (ITransformFunction)Activator.CreateInstance(type)!;
+        CompilationStatistic.AddTotalTime(sw.Elapsed);
+        
+        return result;
     }
-
-    public IObjectTextPart Create(GeneratingCSharpContext context, GeneratingCSharpVariablesContext variablesContext, string code)
+    
+    public IObjectTextPart Create(GeneratingCSharpVariablesContext variablesContext, string code)
     {
-        var (className, classToCompile) = CreateClassCode(context, variablesContext, code);
-
         var sw = Stopwatch.StartNew();
+        var customAssembly = GetCustomAssembly();
+        
+        var (className, classToCompile) = CreateClassCode(customAssembly?.LoadedAssembly, variablesContext, code);
 
-        var ass = context.Registry.Load(DynamicClassLoader.Compile(
+        var classAssembly = Load(Compile(
             new string[] { classToCompile },
-            assemblyName: "DynamicTextPart_" + Path.GetRandomFileName(),
+            assemblyName: GetAssemblyName("ObjectTextPart" + className),
             new UsageAssemblies(
                 Compiled: new Assembly[]
                 {
@@ -81,17 +102,70 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
                     typeof(RequestData).Assembly,
                     Assembly.GetExecutingAssembly()
                 },
-                Runtime: context.CustomAssembly == null ? Array.Empty<byte[]>() : new[] { context.CustomAssembly.PeImage })));
+                Runtime: customAssembly == null ? Array.Empty<byte[]>() : new[] { customAssembly.PeImage })));
 
         var elapsed = sw.ElapsedMilliseconds;
 
         _logger.LogDebug($"Compilation '{code}' took {elapsed} ms");
 
-        var type = ass.GetTypes().Single(t => t.Name == className);
-        return (IObjectTextPart)Activator.CreateInstance(type, variablesContext.Variables)!;
+        var type = classAssembly.GetTypes().Single(t => t.Name == className);
+        
+        var result = (IObjectTextPart)Activator.CreateInstance(type, variablesContext.Variables)!;
+        CompilationStatistic.AddTotalTime(sw.Elapsed);
+        
+        return result;
+    }
+    
+    private bool _wasInit;
+    private CustomAssembly? _customAssembly;
+    private CustomAssembly? GetCustomAssembly()
+    {
+        if (_wasInit)
+            return _customAssembly;
+            
+        _customAssembly = GetCustomAssembly(_path);
+        _wasInit = true;
+        return _customAssembly;
+    }
+    
+    private CustomAssembly? GetCustomAssembly(string path)
+    {
+        var csharpFiles = Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories);
+
+        if(csharpFiles.Length == 0)
+            return null;
+
+        var codes = csharpFiles.Select(File.ReadAllText).ToList();
+
+        var compileResult = Compile(codes, GetAssemblyName("CustomTypes"));
+
+        var assembly = Load(compileResult);
+        return new CustomAssembly(assembly, compileResult.PeImage);
     }
 
-    private static (string className, string classToCompile) CreateClassCode(GeneratingCSharpContext context, GeneratingCSharpVariablesContext variablesContext, string code)
+    private Assembly Load(CompileResult compileResult)
+    {
+        var sw = Stopwatch.StartNew();
+
+        using var stream = new MemoryStream();
+        stream.Write(compileResult.PeImage);
+        stream.Position = 0;
+        var result = _context.LoadFromStream(stream);
+        
+        CompilationStatistic.AddLoadAssemblyTime(sw.Elapsed);
+        
+        return result;
+    }
+
+    CompileResult Compile(IReadOnlyCollection<string> codes, string assemblyName, UsageAssemblies? usageAssemblies = null)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = DynamicClassLoader.Compile(codes, assemblyName, usageAssemblies);
+        CompilationStatistic.AddCompilationTime(sw.Elapsed);
+        return result;
+    }
+    
+    private static (string className, string classToCompile) CreateClassCode(Assembly? customAssembly, GeneratingCSharpVariablesContext variablesContext, string code)
     {
         const string externalRequestVariableName = "@req";
         const string requestParameterName = "_request_";
@@ -101,7 +175,6 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
         code = ReplaceVariableNames(code, variablesContext.VariablePrefix, requestParameterName);
 
         var className = GetClassName(code);
-        var customAssembly = context.CustomAssembly?.Assembly;
 
         string classToCompile = isGlobalTextPart
             ? ClassCodeCreator.CreateIGlobalObjectTextPart(

@@ -71,7 +71,6 @@ class TextPartsParser : ITextPartsParser
         if (value.Contains("return"))
         {
             var csharpFunction = _generatingCSharpFactory.Create(
-                new GeneratingCSharpContext(context.DynamicAssembliesRegistry, context.CustomAssembly), 
                 new GeneratingCSharpVariablesContext(context.Variables, Consts.ControlChars.VariablePrefix), 
                 value);
             
@@ -92,10 +91,7 @@ class TextPartsParser : ITextPartsParser
                 }
                 else
                 {
-                    pipeline.Add(
-                        _generatingCSharpFactory.CreateTransform(
-                            new GeneratingCSharpContext(context.DynamicAssembliesRegistry, context.CustomAssembly),
-                            invoke));
+                    pipeline.Add(_generatingCSharpFactory.CreateTransform(invoke));
                 }
             }    
         }
@@ -123,7 +119,6 @@ class TextPartsParser : ITextPartsParser
             return prettyFunction;
 
         return _generatingCSharpFactory.Create(
-            new GeneratingCSharpContext(context.DynamicAssembliesRegistry, context.CustomAssembly), 
             new GeneratingCSharpVariablesContext(context.Variables, Consts.ControlChars.VariablePrefix), 
             rawText);
         

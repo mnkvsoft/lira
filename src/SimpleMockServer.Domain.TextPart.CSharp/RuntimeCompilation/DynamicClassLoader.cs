@@ -3,13 +3,13 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 
-namespace SimpleMockServer.RuntimeCompilation;
+namespace SimpleMockServer.Domain.TextPart.CSharp.RuntimeCompilation;
 
-public record UsageAssemblies(IReadOnlyCollection<Assembly>? Compiled, IReadOnlyCollection<byte[]>? Runtime);
+record UsageAssemblies(IReadOnlyCollection<Assembly>? Compiled, IReadOnlyCollection<byte[]>? Runtime);
 
-public record CompileResult(byte[] PeImage);
+record CompileResult(byte[] PeImage);
 
-public static class DynamicClassLoader
+static class DynamicClassLoader
 {
     public static CompileResult Compile(IReadOnlyCollection<string> codes, string assemblyName, UsageAssemblies? usageAssemblies = null)
     {

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
+using SimpleMockServer.Configuration;
 using SimpleMockServer.Domain.Configuration.DataModel;
 using SimpleMockServer.Domain.Configuration.Rules;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
@@ -10,7 +12,6 @@ using SimpleMockServer.Domain.Configuration.Variables;
 using SimpleMockServer.Domain.DataModel;
 using SimpleMockServer.Domain.TextPart.CSharp;
 using SimpleMockServer.Domain.TextPart.Variables;
-using SimpleMockServer.RuntimeCompilation;
 
 namespace SimpleMockServer.Domain.Configuration;
 
@@ -28,23 +29,25 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
     private readonly PhysicalFileProvider _fileProvider;
     private IChangeToken? _fileChangeToken;
 
-    private readonly CustomClassesCompiler _customClassesCompiler;
     private readonly GlobalVariablesParser _globalVariablesParser;
-    private readonly RulesLoader _rulesLoader;
     private readonly DataLoader _dataLoader;
 
     private Task<LoadResult> _loadTask;
     private ConfigurationState? _providerState;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public ConfigurationLoader(ILoggerFactory loggerFactory, IConfiguration configuration, GlobalVariablesParser globalVariablesParser,
-        RulesLoader rulesLoader, DataLoader dataLoader, CustomClassesCompiler customClassesCompiler)
+    public ConfigurationLoader(
+        IServiceScopeFactory serviceScopeFactory,
+        ILoggerFactory loggerFactory,
+        IConfiguration configuration,
+        GlobalVariablesParser globalVariablesParser,
+        DataLoader dataLoader)
     {
-        _customClassesCompiler = customClassesCompiler;
         _globalVariablesParser = globalVariablesParser;
-        _rulesLoader = rulesLoader;
         _dataLoader = dataLoader;
+        _serviceScopeFactory = serviceScopeFactory;
         _logger = loggerFactory.CreateLogger(GetType());
-        _path = configuration.GetValue<string>(ConfigurationName.ConfigurationPath);
+        _path = configuration.GetRulesPath();
 
         _loadTask = Load(_path);
 
@@ -71,34 +74,34 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
 
         var templates = await TemplatesLoader.Load(path);
 
-        var sharpCodeRegistry = new DynamicAssembliesRegistry();
-
-        var customAssembly = await GetCustomAssembly(path, sharpCodeRegistry);
 
         var context = new ParsingContext(
-            sharpCodeRegistry, 
-            customAssembly, 
-            new VariableSet(), 
-            templates, 
+            new VariableSet(),
+            templates,
             RootPath: path,
             CurrentPath: path);
 
         var variables = await _globalVariablesParser.Load(context, path);
-        var rules = await _rulesLoader.LoadRules(path, context with { Variables = variables });
+
+        var scope = _serviceScopeFactory.CreateScope();
+        var provider = scope.ServiceProvider;
+
+        var rulesLoader = provider.GetRequiredService<RulesLoader>();
+        var rules = await rulesLoader.LoadRules(path, context with { Variables = variables });
+        var csharpFactory = provider.GetRequiredService<IGeneratingCSharpFactory>();
+
+        var stat = csharpFactory.CompilationStatistic;
+        _logger.LogInformation($"Dynamic csharp compilation statistic: " + Environment.NewLine +
+                               $"Total time: {(int)stat.TotalTime.TotalMilliseconds} ms. " + Environment.NewLine +
+                               $"Assembly load time: {(int)stat.TotalLoadAssemblyTime.TotalMilliseconds} ms. " + Environment.NewLine +
+                               $"Count load assemblies: {stat.CountLoadAssemblies}. " + Environment.NewLine +
+                               $"Compilation time: {(int)stat.TotalCompilationTime.TotalMilliseconds} ms. " + Environment.NewLine +
+                               $"Max compilation time: {(int)stat.MaxCompilationTime.TotalMilliseconds} ms. " + Environment.NewLine +
+                               $"Average compilation time: {(int)(stat.TotalCompilationTime.TotalMilliseconds / stat.CountLoadAssemblies)} ms.");
 
         return new LoadResult(rules, datas);
     }
 
-    private async Task<CustomAssembly?> GetCustomAssembly(string path, DynamicAssembliesRegistry sharpCodeRegistry)
-    {
-        var compileResult = await _customClassesCompiler.Compile(path, "_dynamic_CustomClasses_" + sharpCodeRegistry.Revision);
-
-        if (compileResult == null)
-            return null;
-
-        var assembly = sharpCodeRegistry.Load(compileResult);
-        return new CustomAssembly(assembly, compileResult.PeImage);
-    }
 
     async Task<IReadOnlyCollection<Rule>> IRulesProvider.GetRules()
     {
