@@ -10,7 +10,6 @@ using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Configuration.Templating;
 using SimpleMockServer.Domain.Configuration.Variables;
 using SimpleMockServer.Domain.DataModel;
-using SimpleMockServer.Domain.TextPart.CSharp;
 using SimpleMockServer.Domain.TextPart.Variables;
 
 namespace SimpleMockServer.Domain.Configuration;
@@ -29,7 +28,6 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
     private readonly PhysicalFileProvider _fileProvider;
     private IChangeToken? _fileChangeToken;
 
-    private readonly GlobalVariablesParser _globalVariablesParser;
     private readonly DataLoader _dataLoader;
 
     private Task<LoadResult> _loadTask;
@@ -40,10 +38,8 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
         IServiceScopeFactory serviceScopeFactory,
         ILoggerFactory loggerFactory,
         IConfiguration configuration,
-        GlobalVariablesParser globalVariablesParser,
         DataLoader dataLoader)
     {
-        _globalVariablesParser = globalVariablesParser;
         _dataLoader = dataLoader;
         _serviceScopeFactory = serviceScopeFactory;
         _logger = loggerFactory.CreateLogger(GetType());
@@ -81,23 +77,15 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
             RootPath: path,
             CurrentPath: path);
 
-        var variables = await _globalVariablesParser.Load(context, path);
-
-        var scope = _serviceScopeFactory.CreateScope();
+        using var scope = _serviceScopeFactory.CreateScope();
         var provider = scope.ServiceProvider;
+
+        var globalVariablesParser = provider.GetRequiredService<GlobalVariablesParser>();
+
+        var variables = await globalVariablesParser.Load(context, path);
 
         var rulesLoader = provider.GetRequiredService<RulesLoader>();
         var rules = await rulesLoader.LoadRules(path, context with { Variables = variables });
-        var csharpFactory = provider.GetRequiredService<IGeneratingCSharpFactory>();
-
-        var stat = csharpFactory.CompilationStatistic;
-        _logger.LogInformation($"Dynamic csharp compilation statistic: " + Environment.NewLine +
-                               $"Total time: {(int)stat.TotalTime.TotalMilliseconds} ms. " + Environment.NewLine +
-                               $"Assembly load time: {(int)stat.TotalLoadAssemblyTime.TotalMilliseconds} ms. " + Environment.NewLine +
-                               $"Count load assemblies: {stat.CountLoadAssemblies}. " + Environment.NewLine +
-                               $"Compilation time: {(int)stat.TotalCompilationTime.TotalMilliseconds} ms. " + Environment.NewLine +
-                               $"Max compilation time: {(int)stat.MaxCompilationTime.TotalMilliseconds} ms. " + Environment.NewLine +
-                               $"Average compilation time: {(int)(stat.TotalCompilationTime.TotalMilliseconds / stat.CountLoadAssemblies)} ms.");
 
         return new LoadResult(rules, datas);
     }

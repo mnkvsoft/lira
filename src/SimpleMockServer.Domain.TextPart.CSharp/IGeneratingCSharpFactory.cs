@@ -16,18 +16,16 @@ namespace SimpleMockServer.Domain.TextPart.CSharp;
 
 public record GeneratingCSharpVariablesContext(IReadOnlyCollection<Variable> Variables, char VariablePrefix);
 
-public interface IGeneratingCSharpFactory
+public interface IGeneratingCSharpFactory : IDisposable
 {
     IObjectTextPart Create(
         GeneratingCSharpVariablesContext variablesContext, 
         string code);
     
     ITransformFunction CreateTransform(string code);
-    
-    public CompilationStatistic CompilationStatistic { get; }
 }
 
-class GeneratingCSharpFactory : IGeneratingCSharpFactory
+class GeneratingCSharpFactory : IGeneratingCSharpFactory, IDisposable
 {
     private static int RevisionCounter;
     
@@ -36,18 +34,22 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
     
     private readonly AssemblyLoadContext _context = new(null);
     private readonly int _revision;
-    private string GetAssemblyName(string name) => $"__dynamic_{_revision}_{name}";
+
+    private const string AssemblyPrefix = $"__dynamic";
+    private string GetAssemblyName(string name) => $"{AssemblyPrefix}_{_revision}_{name}";
 
     public CompilationStatistic CompilationStatistic { get; }
-    
-    public GeneratingCSharpFactory(IConfiguration configuration, ILoggerFactory loggerFactory)
+    private readonly DynamicAssembliesUploader _unloader;
+
+    public GeneratingCSharpFactory(IConfiguration configuration, ILoggerFactory loggerFactory, DynamicAssembliesUploader unloader)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _path = configuration.GetRulesPath();
         _revision = ++RevisionCounter;
         CompilationStatistic = new CompilationStatistic(_revision);
+        _unloader = unloader;
     }
-    
+
     public ITransformFunction CreateTransform(string code)
     {
         var sw = Stopwatch.StartNew();
@@ -300,5 +302,25 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
     private static string GetClassName(string code)
     {
         return "_" + HashUtils.GetSha1(code);
+    }
+
+    public void Dispose()
+    {
+        var stat = CompilationStatistic;
+        _logger.LogInformation($"Dynamic csharp compilation statistic: " + Environment.NewLine +
+                               $"Revision: {_revision}" + Environment.NewLine +
+                               $"Total time: {(int)stat.TotalTime.TotalMilliseconds} ms. " + Environment.NewLine +
+                               $"Assembly load time: {(int)stat.TotalLoadAssemblyTime.TotalMilliseconds} ms. " + Environment.NewLine +
+                               $"Count load assemblies: {stat.CountLoadAssemblies}. " + Environment.NewLine +
+                               $"Compilation time: {(int)stat.TotalCompilationTime.TotalMilliseconds} ms. " + Environment.NewLine +
+                               $"Max compilation time: {(int)stat.MaxCompilationTime.TotalMilliseconds} ms. " + Environment.NewLine +
+                               $"Average compilation time: {(int)(stat.TotalCompilationTime.TotalMilliseconds / stat.CountLoadAssemblies)} ms.");
+
+        _unloader.UnloadUnused(new DynamicAssembliesContext(_revision, _context));
+
+        _logger.LogInformation($"Count dynamic assemblies in current domain: " +
+            AppDomain.CurrentDomain.GetAssemblies()
+            .Where(x => x.GetName().Name?.StartsWith(AssemblyPrefix) == true)
+            .Count());
     }
 }

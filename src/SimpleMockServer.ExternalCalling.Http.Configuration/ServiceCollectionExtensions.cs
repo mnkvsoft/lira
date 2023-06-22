@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
                 return handler;
             });
 
-        services.AddSingleton<IExternalCallerRegistrator, HttpExternalCallerRegistrator>();
+        services.AddScoped<IExternalCallerRegistrator, HttpExternalCallerRegistrator>();
         services.AddSingleton<IHttpMessageHandlerFactory, HttpMessageHandlerFactory>();
 
         return services;

@@ -6,7 +6,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCSharp(this IServiceCollection sc)
     {
-        return sc.AddSingleton<IGeneratingCSharpFactory, GeneratingCSharpFactory>();
+        return sc.AddScoped<IGeneratingCSharpFactory, GeneratingCSharpFactory>()
+                    .AddSingleton<DynamicAssembliesUploader>();
     }
 }
 
