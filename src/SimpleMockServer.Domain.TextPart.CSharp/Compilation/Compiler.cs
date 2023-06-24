@@ -18,12 +18,12 @@ class Compiler
 
     public PeImage Compile(CompileUnit compileUnit)
     {
+        var sw = Stopwatch.StartNew();
+
         var hash = GetHash(compileUnit);
 
         if (_peImagesCache.TryGet(hash, out var peImage))
             return peImage;
-
-        var sw = Stopwatch.StartNew();
 
         peImage = CodeCompiler.Compile(new[] { compileUnit.Code }, compileUnit.AssemblyName, compileUnit.UsageAssemblies);
 

@@ -57,14 +57,14 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
         var sw = Stopwatch.StartNew();
 
         string className = GetClassName(code);
-        var customAssembly = GetCustomAssemblies();
+        var customAssemblies = GetCustomAssemblies();
 
         string classToCompile = ClassCodeCreator.CreateITransformFunction(
             className,
             code,
             "@value",
-            GetNamespaces(customAssembly.Loaded),
-            GetUsingStatic(customAssembly.Loaded));
+            GetNamespaces(customAssemblies.Loaded),
+            GetUsingStatic(customAssemblies.Loaded));
 
         var ass = Load(_compiler.Compile(
             new CompileUnit(
@@ -72,15 +72,12 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
                 AssemblyName: GetAssemblyName("TransformFunction" + className),
                 new UsageAssemblies(
                     Compiled: new Assembly[] { typeof(IObjectTextPart).Assembly, },
-                    Runtime: customAssembly.PeImages))));
-
-        var elapsed = sw.ElapsedMilliseconds;
-
-        _logger.LogDebug($"Compilation '{code}' took {elapsed} ms");
+                    Runtime: customAssemblies.PeImages))));
 
         var type = ass.GetTypes().Single(t => t.Name == className);
 
         var result = (ITransformFunction)Activator.CreateInstance(type)!;
+
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
         return result;
@@ -89,6 +86,7 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
     public IObjectTextPart Create(GeneratingCSharpVariablesContext variablesContext, string code)
     {
         var sw = Stopwatch.StartNew();
+
         var customAssemblies = GetCustomAssemblies();
 
         var (className, classToCompile) = CreateClassCode(customAssemblies.Loaded, variablesContext, code);
@@ -103,17 +101,13 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
                         typeof(IObjectTextPart).Assembly, 
                         typeof(Variable).Assembly, 
                         typeof(RequestData).Assembly,
-                        typeof(GeneratingCSharpFactory).Assembly
+                        GetType().Assembly
                     },
                     Runtime: customAssemblies.PeImages))));
 
-        var elapsed = sw.ElapsedMilliseconds;
-
-        _logger.LogDebug($"Compilation '{code}' took {elapsed} ms");
-
         var type = classAssembly.GetTypes().Single(t => t.Name == className);
-
         var result = (IObjectTextPart)Activator.CreateInstance(type, variablesContext.Variables)!;
+
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
         return result;
@@ -175,6 +169,8 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
     private static (string className, string classToCompile) CreateClassCode(IReadOnlyCollection<Assembly> customAssemblies,
         GeneratingCSharpVariablesContext variablesContext, string code)
     {
+        var sw = Stopwatch.StartNew();
+
         const string externalRequestVariableName = "@req";
         const string requestParameterName = "_request_";
 
@@ -308,14 +304,13 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
     public void Dispose()
     {
         var stat = _compilationStatistic;
-        _logger.LogInformation($"Dynamic csharp compilation statistic: " + Environment.NewLine +
-                               $"Revision: {_revision}" + Environment.NewLine +
-                               $"Total time: {(int)stat.TotalTime.TotalMilliseconds} ms. " + Environment.NewLine +
-                               $"Assembly load time: {(int)stat.TotalLoadAssemblyTime.TotalMilliseconds} ms. " + Environment.NewLine +
-                               $"Count load assemblies: {stat.CountLoadAssemblies}. " + Environment.NewLine +
-                               $"Compilation time: {(int)stat.TotalCompilationTime.TotalMilliseconds} ms. " + Environment.NewLine +
-                               $"Max compilation time: {(int)stat.MaxCompilationTime.TotalMilliseconds} ms. " + Environment.NewLine +
-                               $"Average compilation time: {(int)(stat.TotalCompilationTime.TotalMilliseconds / stat.CountLoadAssemblies)} ms.");
+        var nl = Environment.NewLine;
+        _logger.LogInformation($"Dynamic csharp compilation statistic: " + nl +
+                               $"Revision: {_revision}" + nl +
+                               $"Total time: {(int)stat.TotalTime.TotalMilliseconds} ms. " + nl +
+                               $"Assembly load time: {(int)stat.TotalLoadAssemblyTime.TotalMilliseconds} ms. " + nl +
+                               $"Count load assemblies: {stat.CountLoadAssemblies}. " + nl +
+                               $"Compilation time: {(int)stat.TotalCompilationTime.TotalMilliseconds} ms. " + nl);
 
         _unLoader.UnloadUnused(new DynamicAssembliesContext(_revision, _context));
 
