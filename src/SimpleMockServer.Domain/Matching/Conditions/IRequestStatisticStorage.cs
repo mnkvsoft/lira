@@ -1,6 +1,5 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
+using SimpleMockServer.Common;
 
 namespace SimpleMockServer.Domain.Matching.Conditions;
 
@@ -51,7 +50,7 @@ class RequestStatisticStorage : IRequestStatisticStorage
         return statistic;
     }
 
-    private async Task<string> GetHash(RequestData request)
+    private async Task<Hash> GetHash(RequestData request)
     {
         using var memoryStream = new MemoryStream();
         await using var sw = new StreamWriter(memoryStream);
@@ -61,25 +60,12 @@ class RequestStatisticStorage : IRequestStatisticStorage
         await sw.WriteAsync(request.QueryString.ToString());
         sw.Write(request.Headers.Select(x => x.Key + x.Value));
 
+        await sw.FlushAsync();
+        
         await request.Body.CopyToAsync(memoryStream);
 
-        var result = GetSha(memoryStream);
-        return result;
-    }
-
-    private static string GetSha(Stream stream)
-    {
-        using var sha1 = SHA1.Create();
-
-        var hash = sha1.ComputeHash(stream);
-        var sb = new StringBuilder(hash.Length * 2);
-
-        foreach (var b in hash)
-        {
-            sb.Append(b.ToString("x2"));
-        }
-
-        return sb.ToString();
+        memoryStream.Seek(0, SeekOrigin.Begin);
+        return Sha1.Create(memoryStream);
     }
 }
 

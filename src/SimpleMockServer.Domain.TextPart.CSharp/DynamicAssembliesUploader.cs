@@ -7,7 +7,7 @@ namespace SimpleMockServer.Domain.TextPart.CSharp;
 class DynamicAssembliesUploader
 {
     private readonly ILogger _logger;
-    private Queue<DynamicAssembliesContext> ToUnload = new();
+    private readonly Queue<DynamicAssembliesContext> _toUnload = new();
 
     public DynamicAssembliesUploader(ILoggerFactory loggerFactory)
     {
@@ -16,11 +16,11 @@ class DynamicAssembliesUploader
 
     public void UnloadUnused(DynamicAssembliesContext currentContext)
     {
-        ToUnload.Enqueue(currentContext);
+        _toUnload.Enqueue(currentContext);
 
-        while (ToUnload.Count > 1)
+        while (_toUnload.Count > 1)
         {
-            var (revision, contextToUnload) = ToUnload.Peek();
+            var (revision, contextToUnload) = _toUnload.Peek();
             try
             {
                 contextToUnload.Unload();

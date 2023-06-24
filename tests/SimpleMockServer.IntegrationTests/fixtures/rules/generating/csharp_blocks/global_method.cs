@@ -1,4 +1,4 @@
-﻿namespace global_method;
+﻿namespace SimpleMockServer.IntegrationTests.fixtures.rules.generating.csharp_blocks;
 
 public static class _echo
 { 

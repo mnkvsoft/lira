@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
+using SimpleMockServer.Domain.TextPart.CSharp.Compilation;
 
 namespace SimpleMockServer.Domain.TextPart.CSharp;
 
-public record CustomAssembly(Assembly LoadedAssembly, byte[] PeImage);
+record CustomAssembly(Assembly LoadedAssembly, PeImage PeImage);

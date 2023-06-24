@@ -3,15 +3,15 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 
-namespace SimpleMockServer.Domain.TextPart.CSharp.RuntimeCompilation;
+namespace SimpleMockServer.Domain.TextPart.CSharp.Compilation;
 
-record UsageAssemblies(IReadOnlyCollection<Assembly>? Compiled, IReadOnlyCollection<byte[]>? Runtime);
+record UsageAssemblies(IReadOnlyCollection<Assembly> Compiled, IReadOnlyCollection<PeImage> Runtime);
 
-record CompileResult(byte[] PeImage);
+record PeImage(byte[] Bytes);
 
-static class DynamicClassLoader
+static class CodeCompiler
 {
-    public static CompileResult Compile(IReadOnlyCollection<string> codes, string assemblyName, UsageAssemblies? usageAssemblies = null)
+    public static PeImage Compile(IReadOnlyCollection<string> codes, string assemblyName, UsageAssemblies? usageAssemblies = null)
     {
         var compilation = CreateCompilation(codes, usageAssemblies, assemblyName);
 
@@ -25,10 +25,11 @@ static class DynamicClassLoader
         ms.Seek(0, SeekOrigin.Begin);
 
         var bytes = ms.ToArray();
-        return new CompileResult(bytes);
+        return new PeImage(bytes);
     }
 
-    private static CSharpCompilation CreateCompilation(IReadOnlyCollection<string> codes, UsageAssemblies? usageAssemblies, string? assemblyName)
+    private static CSharpCompilation CreateCompilation(IReadOnlyCollection<string> codes, UsageAssemblies? usageAssemblies,
+        string? assemblyName)
     {
         var syntaxTrees = codes.Select(code => CSharpSyntaxTree.ParseText(code));
 
@@ -80,14 +81,8 @@ static class DynamicClassLoader
 
         if (usageAssemblies != null)
         {
-            if (usageAssemblies.Compiled != null)
-            {
-                result.AddRange(usageAssemblies.Compiled.Select(a => MetadataReference.CreateFromFile(a.Location)));
-            }
-            if (usageAssemblies.Runtime != null)
-            {
-                result.AddRange(usageAssemblies.Runtime.Select(bytes => MetadataReference.CreateFromImage(bytes)));
-            }
+            result.AddRange(usageAssemblies.Compiled.Select(a => MetadataReference.CreateFromFile(a.Location)));
+            result.AddRange(usageAssemblies.Runtime.Select(peImage => MetadataReference.CreateFromImage(peImage.Bytes)));
         }
 
         return result;
