@@ -1,10 +1,10 @@
-﻿namespace SimpleMockServer.Domain.DataModel.DataImpls.Number.Ranges;
+﻿namespace SimpleMockServer.Domain.DataModel.DataImpls.Int.Ranges;
 
-public class NumberSetValuesDataRange : NumberDataRange
+public class IntSetValuesDataRange : IntDataRange
 {
     public IReadOnlyList<long> Values { get; }
 
-    public NumberSetValuesDataRange(DataName name, IReadOnlyList<long> values) : base(name)
+    public IntSetValuesDataRange(DataName name, IReadOnlyList<long> values) : base(name)
     {
         Values = values;
     }

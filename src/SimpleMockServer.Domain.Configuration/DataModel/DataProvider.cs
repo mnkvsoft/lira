@@ -1,11 +1,14 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using SimpleMockServer.Common;
 using SimpleMockServer.Common.Exceptions;
 using SimpleMockServer.Domain.DataModel;
+using SimpleMockServer.Domain.DataModel.DataImpls.Float;
+using SimpleMockServer.Domain.DataModel.DataImpls.Float.Ranges;
 using SimpleMockServer.Domain.DataModel.DataImpls.Guid;
-using SimpleMockServer.Domain.DataModel.DataImpls.Number;
-using SimpleMockServer.Domain.DataModel.DataImpls.Number.Ranges;
+using SimpleMockServer.Domain.DataModel.DataImpls.Int;
+using SimpleMockServer.Domain.DataModel.DataImpls.Int.Ranges;
 
 namespace SimpleMockServer.Domain.Configuration.DataModel;
 
@@ -71,61 +74,84 @@ class DataLoader
         {
             return CreateGuidData(name, dataType.Guid);
         }
-        else if (dataType.Int != null)
+
+        if (dataType.Int != null)
         {
-            return CreateNumberData(name, dataType.Int);
+            return CreateIntData(name, dataType.Int);
         }
-        else
+        
+        if (dataType.Float != null)
         {
-            throw new Exception("Type not defined for data. Known types: guid, number");
+            return CreateFloatData(name, dataType.Float);
         }
+
+        throw new Exception("Type not defined for data. Known types: guid, int, float");
     }
 
-    private static NumberData CreateNumberData(DataName name, DataTypeDto number)
+    private static IntData CreateIntData(DataName name, DataTypeDto number)
     {
         if (number.Seq != null)
         {
-            return new NumberData(name, CreateNumberSeqDataRanges(number.Seq.Ranges));
+            return new IntData(name, CreateIntSeqDataRanges(number.Seq.Ranges).ToLongRangesDictionary());
+        }
 
-        }
-        else if (number.Set != null)
+        if (number.Set != null)
         {
-            return new NumberData(name, CreateNumberSetDataRanges(number.Set.Ranges));
+            return new IntData(name, CreateNumberSetDataRanges<long>(number.Set.Ranges,
+                (datName, interval) => new IntSetIntervalDataRange(datName, new Int64Interval(interval)),
+                (datName, values) => new IntSetValuesDataRange(datName, values)));
         }
-        else
-        {
-            throw new Exception($"An error occurred while creating '{name}' data. For number access only 'seq' or 'set' values providing type");
-        }
+
+        throw new Exception($"An error occurred while creating '{name}' data. For number access only 'seq' or 'set' values providing type");
     }
 
+    
+
+    private static FloatData CreateFloatData(DataName name, FloatDataTypeDto number)
+    {
+        if (number.Set != null)
+        {
+            var numberSetDataRanges = CreateNumberSetDataRanges<float>(number.Set.Ranges,
+                (datName, interval) => new FloatSetIntervalDataRange(datName, interval),
+                (datName, values) => new FloatSetValuesDataRange(datName, values));
+            return new FloatData(name, numberSetDataRanges);
+        }
+
+        throw new Exception($"An error occurred while creating '{name}' data. For number access only 'seq' or 'set' values providing type");
+    }
+    
     private static GuidData CreateGuidData(DataName name, DataTypeDto guid)
     {
         if (guid.Seq != null)
         {
-            var numberSeqRanges = CreateNumberSeqDataRanges(guid.Seq.Ranges);
-            return new GuidData(name, numberSeqRanges.ToGuidRangesDictionary());
+            var intSeqRanges = CreateIntSeqDataRanges(guid.Seq.Ranges);
+            return new GuidData(name, intSeqRanges.ToLongRangesDictionary().ToGuidRangesDictionary());
         }
-        else if (guid.Set != null)
+
+        if (guid.Set != null)
         {
-            var numberSetRanges = CreateNumberSetDataRanges(guid.Set.Ranges);
+            var numberSetRanges = CreateNumberSetDataRanges<long>(
+                guid.Set.Ranges, 
+                (datName, interval) => new IntSetIntervalDataRange(datName, new Int64Interval(interval)),
+                (datName, values) => new IntSetValuesDataRange(datName, values));
+            
             return new GuidData(name, numberSetRanges.ToGuidRangesDictionary());
         }
-        else
-        {
-            throw new Exception($"An error occurred while creating '{name}' data. For guid access only 'seq' or 'set' values providing type");
-        }
+
+        throw new Exception($"An error occurred while creating '{name}' data. For guid access only 'seq' or 'set' values providing type");
     }
 
-    private static IReadOnlyDictionary<DataName, NumberDataRange> CreateNumberSeqDataRanges(IReadOnlyDictionary<string, string> rangesDto)
+    
+    private static IReadOnlyDictionary<DataName, IntDataRange> CreateIntSeqDataRanges(IReadOnlyDictionary<string, string> rangesDto)
     {
-        var builder = new NumberSeqRangesBuilder();
+        var builder = new IntSeqRangesBuilder();
 
         foreach (var range in rangesDto)
         {
             var rangeName = new DataName(range.Key);
             var value = range.Value;
 
-            if (!TryParse(value, out var startInterval))
+            if (!TryParseInt(value, out var startInterval))
                 throw new Exception($"An error occurred while creating range '{rangeName}'. Item '{value}' has not Int64 value");
 
             builder.Add(rangeName, startInterval);
@@ -143,48 +169,44 @@ class DataLoader
             intervals = builder.BuildIntervals();
         }
 
-        var ranges = intervals.ToDictionary(x => x.Key, x => (NumberDataRange)new NumberSeqDataRange(x.Key, new Int64Sequence(x.Value)));
+        var ranges = intervals.ToDictionary(x => x.Key, x => (IntDataRange)new IntSeqDataRange(x.Key, new Int64Sequence(x.Value)));
         return ranges;
     }
 
-    private static IReadOnlyDictionary<DataName, NumberDataRange> CreateNumberSetDataRanges(Dictionary<string, string> rangesDto)
+    private static IReadOnlyDictionary<DataName, DataRange<TNumber>> CreateNumberSetDataRanges<TNumber>(
+        Dictionary<string, string> rangesDto,
+        Func<DataName, Interval<TNumber>, DataRange<TNumber>> createInterval,
+        Func<DataName, IReadOnlyList<TNumber>, DataRange<TNumber>> createValues) 
+        where TNumber : struct, IComparable<TNumber>
     {
-        var ranges = new List<NumberDataRange>();
+        var ranges = new List<DataRange<TNumber>>();
         foreach (var range in rangesDto)
         {
             var rangeName = new DataName(range.Key);
 
             var rangeValueRaw = range.Value;
-            if (rangeValueRaw.Contains('-'))
-            {
-                var splitted = rangeValueRaw.Split('-');
-
-                if (splitted.Length > 2)
-                    throw new Exception($"An error occurred while creating '{rangeName}' range. Invalid interval: '{rangeValueRaw}'");
-
-                if (!TryParse(splitted[0], out var from))
-                    throw new Exception($"An error occurred while creating '{rangeName}' range. Invalid start interval: '{splitted[0]}'");
-
-                if (!TryParse(splitted[1], out var to))
-                    throw new Exception($"An error occurred while creating '{rangeName}' range. Invalid end interval: '{splitted[1]}'");
-
-                ranges.Add(new NumberSetIntervalDataRange(rangeName, new Int64Interval(from, to)));
+            
+            if(Interval<TNumber>.TryParse(rangeValueRaw, out var interval))
+            {            
+                ranges.Add(createInterval(rangeName, interval));
+                continue;
             }
-            else
+
+            var splitted = rangeValueRaw.Trim().TrimStart('[').TrimEnd(']').Split(',');
+            var values = new List<TNumber>();
+
+            foreach (var strValue in splitted)
             {
-                var splitted = rangeValueRaw.Split(',');
-                var values = new List<long>();
+                var converter = TypeDescriptor.GetConverter(typeof(TNumber));
+                object? objValue = converter.ConvertFromInvariantString(strValue);
+                        
+                if (objValue == null)
+                    throw new Exception($"An error occurred while creating '{rangeName}' range. Invalid value: '{strValue}'");
 
-                foreach (var strValue in splitted)
-                {
-                    if (!TryParse(strValue, out var val))
-                        throw new Exception($"An error occurred while creating '{rangeName}' range. Invalid value: '{strValue}'");
-
-                    values.Add(val);
-                }
-
-                ranges.Add(new NumberSetValuesDataRange(rangeName, values));
+                values.Add((TNumber)objValue);
             }
+
+            ranges.Add(createValues(rangeName, values));
         }
 
         AssertNotIntersect(ranges);
@@ -192,21 +214,21 @@ class DataLoader
         return ranges.ToDictionary(x => x.Name, x => x);
     }
 
-    private static void AssertNotIntersect(IReadOnlyList<NumberDataRange> ranges)
+    private static void AssertNotIntersect<TNumber>(IReadOnlyList<DataRange<TNumber>> ranges) where TNumber : struct
     {
         for (var i = 0; i < ranges.Count - 1; i++)
         {
             var curRange = ranges[i];
             var nextRange = ranges[i + 1];
 
-            if (curRange is NumberSetIntervalDataRange curIntervalRange)
+            if (curRange is IntSetIntervalDataRange curIntervalRange)
             {
-                if (nextRange is NumberSetIntervalDataRange nextIntervalRange)
+                if (nextRange is IntSetIntervalDataRange nextIntervalRange)
                 {
                     AssertNotIntersect(curIntervalRange, nextIntervalRange);
 
                 }
-                else if (nextRange is NumberSetValuesDataRange nextValuesRange)
+                else if (nextRange is IntSetValuesDataRange nextValuesRange)
                 {
                     AssertNotIntersect(curIntervalRange, nextValuesRange);
                 }
@@ -215,13 +237,13 @@ class DataLoader
                     throw new UnsupportedInstanceType(curRange);
                 }
             }
-            else if (curRange is NumberSetValuesDataRange curValuesRange)
+            else if (curRange is IntSetValuesDataRange curValuesRange)
             {
-                if (nextRange is NumberSetValuesDataRange nextValuesRange)
+                if (nextRange is IntSetValuesDataRange nextValuesRange)
                 {
                     AssertNotIntersect(curValuesRange, nextValuesRange);
                 }
-                else if (nextRange is NumberSetIntervalDataRange nextIntervalRange)
+                else if (nextRange is IntSetIntervalDataRange nextIntervalRange)
                 {
                     AssertNotIntersect(nextIntervalRange, curValuesRange);
                 }
@@ -233,14 +255,14 @@ class DataLoader
         }
     }
 
-    private static void AssertNotIntersect(NumberSetValuesDataRange curValuesRange, NumberSetValuesDataRange nextValuesRange)
+    private static void AssertNotIntersect(IntSetValuesDataRange curValuesRange, IntSetValuesDataRange nextValuesRange)
     {
         var intersectValues = curValuesRange.Values.Intersect(nextValuesRange.Values).ToArray();
         if (intersectValues.Length > 0)
             throw new Exception($"Values {string.Join(", ", intersectValues)} from range '{curValuesRange.Name}' intersect with '{nextValuesRange.Name}'");
     }
 
-    private static void AssertNotIntersect(NumberSetIntervalDataRange curIntervalRange, NumberSetValuesDataRange nextValuesRange)
+    private static void AssertNotIntersect(IntSetIntervalDataRange curIntervalRange, IntSetValuesDataRange nextValuesRange)
     {
         foreach (var value in nextValuesRange.Values)
         {
@@ -249,22 +271,29 @@ class DataLoader
         }
     }
 
-    private static void AssertNotIntersect(NumberSetIntervalDataRange curIntervalRange, NumberSetIntervalDataRange nextIntervalRange)
+    private static void AssertNotIntersect(IntSetIntervalDataRange curIntervalRange, IntSetIntervalDataRange nextIntervalRange)
     {
         if (curIntervalRange.Interval.IsIntersect(nextIntervalRange.Interval))
             throw new Exception($"Range '{curIntervalRange.Name}' intersect with '{nextIntervalRange.Name}'");
     }
 
-    private static bool TryParse(string str, out long result)
+    private static bool TryParseInt(string str, out long result)
     {
         return long.TryParse(str.Replace("_", ""), out result);
     }
 
     record DataRootDto([property: JsonPropertyName("data")] Dictionary<string, TypeDto> Data);
 
-    record TypeDto([property: JsonPropertyName("int")] DataTypeDto? Int, [property: JsonPropertyName("guid")] DataTypeDto? Guid);
+    record TypeDto(
+        [property: JsonPropertyName("int")] DataTypeDto? Int, 
+        [property: JsonPropertyName("float")] FloatDataTypeDto? Float, 
+        [property: JsonPropertyName("guid")] DataTypeDto? Guid);
 
-    record DataTypeDto([property: JsonPropertyName("seq")] RangesDto? Seq, [property: JsonPropertyName("set")] RangesDto? Set);
+    record DataTypeDto(
+        [property: JsonPropertyName("seq")] RangesDto? Seq, 
+        [property: JsonPropertyName("set")] RangesDto? Set);
 
+    record FloatDataTypeDto([property: JsonPropertyName("set")] RangesDto? Set);
+    
     record RangesDto([property: JsonPropertyName("ranges")] Dictionary<string, string> Ranges);
 }

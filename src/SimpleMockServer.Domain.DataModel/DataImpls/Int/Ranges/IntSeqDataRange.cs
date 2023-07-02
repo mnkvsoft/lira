@@ -1,10 +1,10 @@
-﻿namespace SimpleMockServer.Domain.DataModel.DataImpls.Number.Ranges;
+﻿namespace SimpleMockServer.Domain.DataModel.DataImpls.Int.Ranges;
 
-public class NumberSeqDataRange : NumberDataRange
+public class IntSeqDataRange : IntDataRange
 {
     public Int64Sequence Sequence { get; }
 
-    public NumberSeqDataRange(DataName name, Int64Sequence seq) : base(name)
+    public IntSeqDataRange(DataName name, Int64Sequence seq) : base(name)
     {
         Sequence = seq;
     }

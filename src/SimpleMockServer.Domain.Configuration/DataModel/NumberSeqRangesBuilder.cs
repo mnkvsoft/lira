@@ -4,10 +4,10 @@ using SimpleMockServer.Domain.DataModel;
 
 namespace SimpleMockServer.Domain.Configuration.DataModel;
 
-class NumberSeqRangesBuilder
+class IntSeqRangesBuilder
 {
     private readonly Dictionary<DataName, long> _nameToStart = new();
-    private long _lastStartRange = 0;
+    private readonly long _lastStartRange = 0;
 
     public void Add(DataName rangeName, long startRange)
     {

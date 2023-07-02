@@ -1,12 +1,12 @@
 ﻿using SimpleMockServer.Common;
 
-namespace SimpleMockServer.Domain.DataModel.DataImpls.Number.Ranges;
+namespace SimpleMockServer.Domain.DataModel.DataImpls.Int.Ranges;
 
-public class NumberSetIntervalDataRange : NumberDataRange
+public class IntSetIntervalDataRange : IntDataRange
 {
     public Int64Interval Interval { get; }
 
-    public NumberSetIntervalDataRange(DataName name, Int64Interval interval) : base(name)
+    public IntSetIntervalDataRange(DataName name, Int64Interval interval) : base(name)
     {
         Interval = interval;
     }

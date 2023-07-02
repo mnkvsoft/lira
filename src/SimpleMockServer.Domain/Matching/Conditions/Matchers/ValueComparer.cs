@@ -29,7 +29,7 @@ public class ValueComparer<T> where T : IComparable<T>
 
     public static ValueComparer<T> LessOrEquals(T value)
     {
-        return new ValueComparer<T>(value, compareResult => compareResult > 0 || compareResult == 0);
+        return new ValueComparer<T>(value, compareResult => compareResult is > 0 or 0);
     }
 
     public static ValueComparer<T> More(T value)
@@ -39,6 +39,6 @@ public class ValueComparer<T> where T : IComparable<T>
 
     public static ValueComparer<T> MoreOrEquals(T value)
     {
-        return new ValueComparer<T>(value, compareResult => compareResult < 0 || compareResult == 0);
+        return new ValueComparer<T>(value, compareResult => compareResult is < 0 or 0);
     }
 }

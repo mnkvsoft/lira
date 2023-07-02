@@ -4,6 +4,18 @@ using SimpleMockServer.Common.Extensions;
 
 namespace SimpleMockServer.Common;
 
+
+public record Int64Interval(Int64 From, Int64 To) : Interval<Int64>(From, To)
+{
+    public Int64Interval(Interval<Int64> interval) : this(interval.From, interval.To)
+    {
+        
+    }
+}
+
+// public record FloatInterval(float From, float To) : Interval<float>(From, To);
+
+
 public record Interval<T> where T : struct, IComparable<T>
 {
     public T From { get; }
@@ -83,6 +95,3 @@ public record Interval<T> where T : struct, IComparable<T>
         return from.CompareTo(to) >= 0;
     }
 }
-
-
-public record Int64Interval(Int64 From, Int64 To) : Interval<Int64>(From, To);

@@ -239,9 +239,6 @@
     <None Update="fixtures\rules\match\function\body\extract\jpath.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\match\function\path\impl\data.data.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="fixtures\rules\match\function\path\impl\guid.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -252,12 +249,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\match\function\path\impl\any.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\match\function\path\impl\data.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\match\function\path\impl\data.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\match\function\path\impl\int.rules">
@@ -609,6 +600,24 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\csharp_blocks\global_method.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\function\impl\data\float\set.data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\function\impl\data\float\set.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\function\impl\data\float\set.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\function\path\impl\data\int.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\function\path\impl\data\int.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\function\path\impl\data\int.data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

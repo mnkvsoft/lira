@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /generating/function/impl/data/float/set/first
+
+----- response
+
+code:
+200
+
+body:
+{{ data: generating_function_impl_data_float_set.first }}
+
+
+-------------------- rule
+
+GET /generating/function/impl/data/float/set/second
+
+----- response
+
+code:
+200
+
+body:
+{{ data: generating_function_impl_data_float_set.second }}
+
+
+-------------------- rule
+
+GET /generating/function/impl/data/float/set/third
+
+----- response
+
+code:
+200
+
+body:
+{{ data: generating_function_impl_data_float_set.third }}
