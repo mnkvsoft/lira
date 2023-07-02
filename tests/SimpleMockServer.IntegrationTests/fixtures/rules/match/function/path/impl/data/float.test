@@ -1,0 +1,72 @@
+// not matched
+-------------------- case
+
+GET /match/function/path/impl/data/float/0.99/some
+
+----- expected
+
+code:
+404
+
+// matched
+
+-------------------- case
+
+GET /match/function/path/impl/data/float/1.001/some
+
+----- expected
+
+code:
+200
+
+body:
+range1
+
+-------------------- case
+
+GET /match/function/path/impl/data/float/101.01/some
+
+----- expected
+
+code:
+200
+
+body:
+range2
+
+-------------------- case
+
+GET /match/function/path/impl/data/float/200/some
+
+----- expected
+
+code:
+200
+
+body:
+range2
+
+-------------------- case
+
+GET /match/function/path/impl/data/float/199.99/some
+
+----- expected
+
+code:
+200
+
+body:
+range2
+
+
+-------------------- case
+
+GET /match/function/path/impl/data/float/202.202/some
+
+----- expected
+
+code:
+200
+
+body:
+range3

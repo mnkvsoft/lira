@@ -1,0 +1,15 @@
+{
+  "data": {
+    "match_function_path_impl_data_float": {
+      "float": {
+        "set": {
+          "ranges": {
+            "range1": "[1 - 100]",
+            "range2": "[101 - 200]",
+            "range3": "[201.201, 202.202, 203.203]"
+          }
+        }
+      }
+    }
+  }
+}
