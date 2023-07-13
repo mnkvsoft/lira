@@ -11,6 +11,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<Compiler>()
             .AddScoped<CompilationStatistic>()
             .AddScoped<PeImagesCache>()
-            .AddSingleton<DynamicAssembliesUploader>();
+            .AddSingleton<DynamicAssembliesUnloader>();
     }
 }

@@ -1,0 +1,49 @@
+-------------------- rule
+
+GET /match/function/path/impl/data/int_pretty/{{ data: match_function_path_impl_data_int_pretty.k }}
+
+----- response
+
+code:
+200
+
+body:
+k
+
+
+-------------------- rule
+
+GET /match/function/path/impl/data/int_pretty/{{ data: match_function_path_impl_data_int_pretty.M }}
+
+----- response
+
+code:
+200
+
+body:
+M
+
+
+-------------------- rule
+
+GET /match/function/path/impl/data/int_pretty/{{ data: match_function_path_impl_data_int_pretty.G }}
+
+----- response
+
+code:
+200
+
+body:
+G
+
+-------------------- rule
+
+GET /match/function/path/impl/data/int_pretty/{{ data: match_function_path_impl_data_int_pretty.T }}
+
+----- response
+
+code:
+200
+
+body:
+T

@@ -61,7 +61,7 @@ class DataLoader
             }
             catch (Exception e)
             {
-                throw new Exception($"An error has acсured on parse data '{data.Key}'", e);
+                throw new Exception($"An error has accured on parse data '{data.Key}'", e);
             }
         }
 
@@ -151,7 +151,7 @@ class DataLoader
             var rangeName = new DataName(range.Key);
             var value = range.Value;
 
-            if (!TryParseInt(value, out var startInterval))
+            if (!PrettyInt64Parser.TryParse(value, out var startInterval))
                 throw new Exception($"An error occurred while creating range '{rangeName}'. Item '{value}' has not Int64 value");
 
             builder.Add(rangeName, startInterval);
@@ -173,6 +173,30 @@ class DataLoader
         return ranges;
     }
 
+    class PrettyNumberConverter<TNumber> : Interval<TNumber>.IConverter 
+        where TNumber : struct, IComparable<TNumber>
+    {
+        private readonly TypeConverter _converter = TypeDescriptor.GetConverter(typeof(TNumber));
+        
+        public bool TryConvert(string str, out TNumber result)
+        {
+            if (typeof(TNumber) == typeof(long))
+            {
+                bool res = PrettyInt64Parser.TryParse(str, out var value);
+                result = (TNumber)_converter.ConvertTo(value, typeof(TNumber))!;
+                return res;
+            }
+            
+            object? objValue = _converter.ConvertFromInvariantString(str);
+                        
+            if (objValue == null)
+                throw new Exception($"An error occurred while creating '{str}' value for '{typeof(TNumber)}' type");
+
+            result = (TNumber)objValue;
+            return true;
+        }
+    }
+    
     private static IReadOnlyDictionary<DataName, DataRange<TNumber>> CreateNumberSetDataRanges<TNumber>(
         Dictionary<string, string> rangesDto,
         Func<DataName, Interval<TNumber>, DataRange<TNumber>> createInterval,
@@ -186,7 +210,7 @@ class DataLoader
 
             var rangeValueRaw = range.Value;
             
-            if(Interval<TNumber>.TryParse(rangeValueRaw, out var interval))
+            if(Interval<TNumber>.TryParse(rangeValueRaw, out var interval, new PrettyNumberConverter<TNumber>()))
             {            
                 ranges.Add(createInterval(rangeName, interval));
                 continue;
@@ -275,11 +299,6 @@ class DataLoader
     {
         if (curIntervalRange.Interval.IsIntersect(nextIntervalRange.Interval))
             throw new Exception($"Range '{curIntervalRange.Name}' intersect with '{nextIntervalRange.Name}'");
-    }
-
-    private static bool TryParseInt(string str, out long result)
-    {
-        return long.TryParse(str.Replace("_", ""), out result);
     }
 
     record DataRootDto([property: JsonPropertyName("data")] Dictionary<string, TypeDto> Data);

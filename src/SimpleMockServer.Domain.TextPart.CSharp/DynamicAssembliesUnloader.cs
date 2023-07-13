@@ -4,12 +4,12 @@
 
 namespace SimpleMockServer.Domain.TextPart.CSharp;
 
-class DynamicAssembliesUploader
+internal class DynamicAssembliesUnloader
 {
     private readonly ILogger _logger;
     private readonly Queue<DynamicAssembliesContext> _toUnload = new();
 
-    public DynamicAssembliesUploader(ILoggerFactory loggerFactory)
+    public DynamicAssembliesUnloader(ILoggerFactory loggerFactory)
     {
         _logger = loggerFactory.CreateLogger(GetType());
     }
@@ -24,8 +24,8 @@ class DynamicAssembliesUploader
             try
             {
                 contextToUnload.Unload();
-                _logger.LogInformation($"Dynamic assemblies with revision {revision} was uploaded");
-
+                _logger.LogInformation($"Dynamic assemblies with revision {revision} was unloaded");
+                _toUnload.Dequeue();
             }
             catch (Exception e)
             {
@@ -33,5 +33,7 @@ class DynamicAssembliesUploader
                 break;
             }
         }
+        
+        GC.Collect();
     }
 }

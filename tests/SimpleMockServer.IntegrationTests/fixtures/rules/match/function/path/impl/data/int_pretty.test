@@ -1,0 +1,47 @@
+-------------------- case
+
+GET /match/function/path/impl/data/int_pretty/1001
+
+----- expected
+
+code:
+200
+
+body:
+k
+
+-------------------- case
+
+GET /match/function/path/impl/data/int_pretty/1000001
+
+----- expected
+
+code:
+200
+
+body:
+M
+
+-------------------- case
+
+GET /match/function/path/impl/data/int_pretty/1000000001
+
+----- expected
+
+code:
+200
+
+body:
+G
+
+-------------------- case
+
+GET /match/function/path/impl/data/int_pretty/1000000000001
+
+----- expected
+
+code:
+200
+
+body:
+T

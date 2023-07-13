@@ -69,11 +69,6 @@ public record Interval<T> where T : struct, IComparable<T>
     public static bool TryParse(string str, [MaybeNullWhen(false)] out Interval<T> result, IConverter converter)
     {
         result = null;
-        if (str.First() != '[')
-            return false;
-        
-        if (str.Last() != ']')
-            return false;
 
         str = str.TrimStart('[').TrimEnd(']');
         var (fromStr, toStr) = str.SplitToTwoParts("-").Trim();

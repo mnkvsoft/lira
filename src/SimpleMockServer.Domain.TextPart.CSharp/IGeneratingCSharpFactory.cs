@@ -32,17 +32,17 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
     private readonly ILogger _logger;
     private readonly string _path;
 
-    private readonly AssemblyLoadContext _context = new(null);
+    private readonly AssemblyLoadContext _context = new(name: null, isCollectible: true);
     private readonly int _revision;
 
     private const string AssemblyPrefix = "__dynamic";
     private string GetAssemblyName(string name) => $"{AssemblyPrefix}_{_revision}_{name}";
 
     private readonly CompilationStatistic _compilationStatistic;
-    private readonly DynamicAssembliesUploader _unLoader;
+    private readonly DynamicAssembliesUnloader _unLoader;
     private readonly Compiler _compiler;
 
-    public GeneratingCSharpFactory(IConfiguration configuration, ILoggerFactory loggerFactory, DynamicAssembliesUploader unLoader, Compiler compiler, CompilationStatistic compilationStatistic)
+    public GeneratingCSharpFactory(IConfiguration configuration, ILoggerFactory loggerFactory, DynamicAssembliesUnloader unLoader, Compiler compiler, CompilationStatistic compilationStatistic)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _path = configuration.GetRulesPath();
@@ -169,8 +169,6 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
     private static (string className, string classToCompile) CreateClassCode(IReadOnlyCollection<Assembly> customAssemblies,
         GeneratingCSharpVariablesContext variablesContext, string code)
     {
-        var sw = Stopwatch.StartNew();
-
         const string externalRequestVariableName = "@req";
         const string requestParameterName = "_request_";
 
@@ -314,9 +312,9 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
 
         _unLoader.UnloadUnused(new DynamicAssembliesContext(_revision, _context));
 
-        _logger.LogInformation($"Count dynamic assemblies in current domain: " +
-                               AppDomain.CurrentDomain.GetAssemblies()
-                                   .Where(x => x.GetName().Name?.StartsWith(AssemblyPrefix) == true)
-                                   .Count());
+        _logger.LogInformation("Count dynamic assemblies in current domain: " +
+                               AppDomain.CurrentDomain
+                                   .GetAssemblies()
+                                   .Count(x => x.GetName().Name?.StartsWith(AssemblyPrefix) == true));
     }
 }
