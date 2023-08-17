@@ -1,0 +1,11 @@
+{
+  "generating_function_impl_data_int_capacity_manual": {
+    "type" : "int",
+    "mode" : "seq",
+    "capacity": "100",
+    "ranges": [
+      "1",
+      "101"
+    ]
+  }
+}

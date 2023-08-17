@@ -1,7 +1,7 @@
 // not matched
 -------------------- case
 
-GET /match/function/path/impl/data/int/1/some
+GET /match/function/path/impl/data/int/0/some
 
 ----- expected
 
@@ -9,6 +9,18 @@ code:
 404
 
 // matched
+
+-------------------- case
+
+GET /match/function/path/impl/data/int/1/some
+
+----- expected
+
+code:
+200
+
+body:
+range1
 
 -------------------- case
 
@@ -20,7 +32,7 @@ code:
 200
 
 body:
-range100
+range1
 
 -------------------- case
 
@@ -32,19 +44,7 @@ code:
 200
 
 body:
-range100
-
--------------------- case
-
-GET /match/function/path/impl/data/int/200/some
-
------ expected
-
-code:
-200
-
-body:
-range200
+range101
 
 -------------------- case
 
@@ -56,4 +56,4 @@ code:
 200
 
 body:
-range200
+range101

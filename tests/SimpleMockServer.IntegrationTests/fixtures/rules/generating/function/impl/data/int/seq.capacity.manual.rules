@@ -1,0 +1,24 @@
+-------------------- rule
+
+GET /generating/function/impl/data/int/seq/capacity/manual/1
+
+----- response
+
+code:
+200
+
+body:
+{{ data: generating_function_impl_data_int_capacity_manual.1 }}
+
+
+-------------------- rule
+
+GET /generating/function/impl/data/int/seq/capacity/manual/101
+
+----- response
+
+code:
+200
+
+body:
+{{ data: generating_function_impl_data_int_capacity_manual.101 }}

@@ -1,6 +1,8 @@
+// k
+
 -------------------- case
 
-GET /match/function/path/impl/data/int_pretty/1001
+GET /match/function/path/impl/data/int_pretty_k/1001
 
 ----- expected
 
@@ -8,11 +10,13 @@ code:
 200
 
 body:
-k
+2
+
+// m
 
 -------------------- case
 
-GET /match/function/path/impl/data/int_pretty/1000001
+GET /match/function/path/impl/data/int_pretty_m/1000001
 
 ----- expected
 
@@ -20,11 +24,13 @@ code:
 200
 
 body:
-M
+2
+
+// g
 
 -------------------- case
 
-GET /match/function/path/impl/data/int_pretty/1000000001
+GET /match/function/path/impl/data/int_pretty_g/1000000001
 
 ----- expected
 
@@ -32,11 +38,13 @@ code:
 200
 
 body:
-G
+2
+
+// t
 
 -------------------- case
 
-GET /match/function/path/impl/data/int_pretty/1000000000001
+GET /match/function/path/impl/data/int_pretty_t/1000000000001
 
 ----- expected
 
@@ -44,4 +52,4 @@ code:
 200
 
 body:
-T
+2

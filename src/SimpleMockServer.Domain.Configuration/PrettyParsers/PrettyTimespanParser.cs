@@ -1,8 +1,9 @@
-﻿using SimpleMockServer.Common.Extensions;
+﻿using SimpleMockServer.Common;
+using SimpleMockServer.Common.Extensions;
 
-namespace SimpleMockServer.Domain.Configuration;
+namespace SimpleMockServer.Domain.Configuration.PrettyParsers;
 
-internal static class PrettyTimespanParser
+internal class PrettyTimespanParser : Interval<TimeSpan>.IConverter
 {
     private static readonly List<(string[], Func<int, TimeSpan>)> NameToCreatorMap = new()
     {
@@ -63,4 +64,6 @@ internal static class PrettyTimespanParser
         }
         return false;
     }
+
+    public bool TryConvert(string str, out TimeSpan result) => TryParse(str, out result);
 }

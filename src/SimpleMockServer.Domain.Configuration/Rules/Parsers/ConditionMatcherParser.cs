@@ -1,5 +1,6 @@
 ﻿using SimpleMockServer.Common;
 using SimpleMockServer.Common.Extensions;
+using SimpleMockServer.Domain.Configuration.PrettyParsers;
 using SimpleMockServer.Domain.Matching.Conditions;
 using SimpleMockServer.Domain.Matching.Conditions.Matchers;
 using SimpleMockServer.Domain.Matching.Conditions.Matchers.Attempt;
@@ -59,7 +60,7 @@ class ConditionMatcherParser
         {
             if (splitter == "in")
             {
-                if(!Interval<TimeSpan>.TryParse(strValue, out var interval, new PrettyTimespanConverter()))
+                if(!Interval<TimeSpan>.TryParse(strValue, out var interval, new PrettyTimespanParser()))
                     throw new ArgumentException($"Not range int value '{strValue}' in line {line}");
 
                 return new ElapsedConditionMatcher(
@@ -90,14 +91,6 @@ class ConditionMatcherParser
             case ">=":
                 return ValueComparer<T>.MoreOrEquals(value);
             default: throw new Exception($"Unknown comparable operator '{splitter}'");
-        }
-    }
-
-    class PrettyTimespanConverter : Interval<TimeSpan>.IConverter
-    {
-        public bool TryConvert(string str, out TimeSpan result)
-        {
-            return PrettyTimespanParser.TryParse(str, out result);
         }
     }
 }

@@ -4,9 +4,9 @@ namespace SimpleMockServer.Domain.DataModel.DataImpls.Int.Ranges;
 
 public class IntSetIntervalDataRange : IntDataRange
 {
-    public Int64Interval Interval { get; }
+    public Interval<long> Interval { get; }
 
-    public IntSetIntervalDataRange(DataName name, Int64Interval interval) : base(name)
+    public IntSetIntervalDataRange(DataName name, Interval<long> interval) : base(name)
     {
         Interval = interval;
     }

@@ -1,13 +1,9 @@
 {
-  "data": {
-    "generating_variable_seq": {
-      "int": {
-        "seq": {
-          "ranges": {
-            "default": "1"
-          }
-        }
-      }
-    }
+  "generating_variable_seq": {
+    "type": "int",
+    "mode": "seq",
+    "ranges": [
+      "default"
+    ]
   }
 }

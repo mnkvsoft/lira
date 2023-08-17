@@ -1,0 +1,24 @@
+-------------------- rule
+
+GET /generating/function/impl/data/guid/first
+
+----- response
+
+code:
+200
+
+body:
+{{ data: generating_function_impl_data_guid.first }}
+
+
+-------------------- rule
+
+GET /generating/function/impl/data/guid/second
+
+----- response
+
+code:
+200
+
+body:
+{{ data: generating_function_impl_data_guid.second }}

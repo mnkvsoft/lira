@@ -1,6 +1,8 @@
+// k
+
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty/{{ data: match_function_path_impl_data_int_pretty.k }}
+GET /match/function/path/impl/data/int_pretty_k/{{ data: match_function_path_impl_data_int_pretty_capacity_k.1 }}
 
 ----- response
 
@@ -8,12 +10,11 @@ code:
 200
 
 body:
-k
-
+1
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty/{{ data: match_function_path_impl_data_int_pretty.M }}
+GET /match/function/path/impl/data/int_pretty_k/{{ data: match_function_path_impl_data_int_pretty_capacity_k.2 }}
 
 ----- response
 
@@ -21,12 +22,11 @@ code:
 200
 
 body:
-M
-
+2
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty/{{ data: match_function_path_impl_data_int_pretty.G }}
+GET /match/function/path/impl/data/int_pretty_k/{{ data: match_function_path_impl_data_int_pretty_capacity_k.3 }}
 
 ----- response
 
@@ -34,11 +34,14 @@ code:
 200
 
 body:
-G
+3
+
+
+// M
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty/{{ data: match_function_path_impl_data_int_pretty.T }}
+GET /match/function/path/impl/data/int_pretty_m/{{ data: match_function_path_impl_data_int_pretty_capacity_m.1 }}
 
 ----- response
 
@@ -46,4 +49,106 @@ code:
 200
 
 body:
-T
+1
+
+-------------------- rule
+
+GET /match/function/path/impl/data/int_pretty_m/{{ data: match_function_path_impl_data_int_pretty_capacity_m.2 }}
+
+----- response
+
+code:
+200
+
+body:
+2
+
+-------------------- rule
+
+GET /match/function/path/impl/data/int_pretty_m/{{ data: match_function_path_impl_data_int_pretty_capacity_m.3 }}
+
+----- response
+
+code:
+200
+
+body:
+3
+
+
+// G
+
+-------------------- rule
+
+GET /match/function/path/impl/data/int_pretty_g/{{ data: match_function_path_impl_data_int_pretty_capacity_g.1 }}
+
+----- response
+
+code:
+200
+
+body:
+1
+
+-------------------- rule
+
+GET /match/function/path/impl/data/int_pretty_g/{{ data: match_function_path_impl_data_int_pretty_capacity_g.2 }}
+
+----- response
+
+code:
+200
+
+body:
+2
+
+-------------------- rule
+
+GET /match/function/path/impl/data/int_pretty_g/{{ data: match_function_path_impl_data_int_pretty_capacity_g.3 }}
+
+----- response
+
+code:
+200
+
+body:
+3
+
+
+// T
+
+-------------------- rule
+
+GET /match/function/path/impl/data/int_pretty_t/{{ data: match_function_path_impl_data_int_pretty_capacity_t.1 }}
+
+----- response
+
+code:
+200
+
+body:
+1
+
+-------------------- rule
+
+GET /match/function/path/impl/data/int_pretty_t/{{ data: match_function_path_impl_data_int_pretty_capacity_t.2 }}
+
+----- response
+
+code:
+200
+
+body:
+2
+
+-------------------- rule
+
+GET /match/function/path/impl/data/int_pretty_t/{{ data: match_function_path_impl_data_int_pretty_capacity_t.3 }}
+
+----- response
+
+code:
+200
+
+body:
+3

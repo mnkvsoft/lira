@@ -1,6 +1,8 @@
+// case range100
+
 -------------------- case
 
-GET /generating/function/impl/data/guid/set/first
+GET /generating/function/impl/data/guid/first
 
 ----- expected
 
@@ -11,7 +13,21 @@ code:
 
 -------------------- case
 
-GET /generating/function/impl/data/guid/set/first
+GET /generating/function/impl/data/guid/first
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check
+
+
+// case range200
+
+-------------------- case
+
+GET /generating/function/impl/data/guid/second
 
 ----- expected
 
@@ -22,18 +38,7 @@ code:
 
 -------------------- case
 
-GET /generating/function/impl/data/guid/set/second
-
------ expected
-
-code:
-200
-
-// todo: need implementation body check
-
--------------------- case
-
-GET /generating/function/impl/data/guid/set/second
+GET /generating/function/impl/data/guid/second
 
 ----- expected
 

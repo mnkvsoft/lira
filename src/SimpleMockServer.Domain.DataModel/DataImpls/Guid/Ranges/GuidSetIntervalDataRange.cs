@@ -4,9 +4,9 @@ namespace SimpleMockServer.Domain.DataModel.DataImpls.Guid.Ranges;
 
 public class GuidSetIntervalDataRange : GuidDataRange
 {
-    public Int64Interval Interval { get; }
+    public Interval<long> Interval { get; }
 
-    public GuidSetIntervalDataRange(DataName name, Int64Interval interval) : base(name)
+    public GuidSetIntervalDataRange(DataName name, Interval<long> interval) : base(name)
     {
         Interval = interval;
     }

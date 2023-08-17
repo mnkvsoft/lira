@@ -1,16 +1,38 @@
 {
-  "data": {
-    "match_function_path_impl_data_int_pretty": {
-      "int": {
-        "set": {
-          "ranges": {
-            "k": "[1k - 2k]",
-            "M": "[1M - 2M]",
-            "G": "[1G - 2G]",
-            "T": "[1T - 2T]"
-          }
-        }
-      }
-    }
+  "match_function_path_impl_data_int_pretty_capacity_k": {
+    "type": "int",
+    "capacity": "1k",
+    "ranges": [
+      "1",
+      "2",
+      "3"
+    ]
+  },
+  "match_function_path_impl_data_int_pretty_capacity_m": {
+    "type": "int",
+    "capacity": "1M",
+    "ranges": [
+      "1",
+      "2",
+      "3"
+    ]
+  },
+  "match_function_path_impl_data_int_pretty_capacity_g": {
+    "type": "int",
+    "capacity": "1G",
+    "ranges": [
+      "1",
+      "2",
+      "3"
+    ]
+  },
+  "match_function_path_impl_data_int_pretty_capacity_t": {
+    "type": "int",
+    "capacity": "1T",
+    "ranges": [
+      "1",
+      "2",
+      "3"
+    ]
   }
 }

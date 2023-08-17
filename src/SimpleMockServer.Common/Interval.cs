@@ -1,20 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using SimpleMockServer.Common.Extensions;
 
 namespace SimpleMockServer.Common;
-
-
-public record Int64Interval(Int64 From, Int64 To) : Interval<Int64>(From, To)
-{
-    public Int64Interval(Interval<Int64> interval) : this(interval.From, interval.To)
-    {
-        
-    }
-}
-
-// public record FloatInterval(float From, float To) : Interval<float>(From, To);
-
 
 public record Interval<T> where T : struct, IComparable<T>
 {
@@ -44,21 +31,17 @@ public record Interval<T> where T : struct, IComparable<T>
     
     private class ConverterAdapter : IConverter
     {
-        private readonly TypeConverter _converter = TypeDescriptor.GetConverter(typeof(T));
-        
         public bool TryConvert(string str, out T result)
         {
-            result = default;
-            if (!_converter.IsValid(str))
-                return false;
-        
-            object? fromObj = _converter.ConvertFromInvariantString(str);
-            if (fromObj == null)
-                return false;
-
-            result = (T)fromObj;
-            return true;
+            return StringConverter<T>.TryConvert(str, out result);
         }
+    }
+
+    public static Interval<T> Parse(string str, IConverter converter)
+    {
+        if (!TryParse(str, out var result, converter))
+            throw new Exception($"Cannot parse interval value '{str}'");
+        return result;
     }
 
     public static bool TryParse(string str, [MaybeNullWhen(false)] out Interval<T> result)

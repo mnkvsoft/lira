@@ -95,40 +95,31 @@
     <None Update="fixtures\rules\generating\function\header\format.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\impl\data\guid\seq.data.json">
+    <None Update="fixtures\rules\generating\function\impl\data\guid\capacity.auto.data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\impl\data\guid\seq.rules">
+    <None Update="fixtures\rules\generating\function\impl\data\guid\capacity.auto.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\impl\data\guid\seq.test">
+    <None Update="fixtures\rules\generating\function\impl\data\guid\capacity.auto.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\impl\data\guid\set.data.json">
+    <None Update="fixtures\rules\generating\function\impl\data\int\set.test.comment">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\impl\data\guid\set.rules">
+    <None Update="fixtures\rules\generating\function\impl\data\int\set.rules.comment">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\impl\data\guid\set.test">
+    <None Update="fixtures\rules\generating\function\impl\data\int\set.data.json.comment">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\impl\data\int\set.test">
+    <None Update="fixtures\rules\generating\function\impl\data\int\seq.capacity.manual.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\impl\data\int\set.rules">
+    <None Update="fixtures\rules\generating\function\impl\data\int\seq.capacity.manual.data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\impl\data\int\set.data.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\function\impl\data\int\seq.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\function\impl\data\int\seq.data.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\function\impl\data\int\seq.rules">
+    <None Update="fixtures\rules\generating\function\impl\data\int\seq.capacity.manual.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\static\body.rules">
@@ -602,13 +593,13 @@
     <None Update="fixtures\rules\generating\csharp_blocks\global_method.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\impl\data\float\set.data.json">
+    <None Update="fixtures\rules\generating\function\impl\data\float\capacity.data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\impl\data\float\set.test">
+    <None Update="fixtures\rules\generating\function\impl\data\float\capacity.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\impl\data\float\set.rules">
+    <None Update="fixtures\rules\generating\function\impl\data\float\capacity.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\match\function\path\impl\data\int.test">
@@ -638,7 +629,7 @@
     <None Update="fixtures\rules\match\function\path\impl\data\int_pretty.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\match\function\path\impl\data\int_pretty.data2.json">
+    <None Update="fixtures\_draft\float.data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

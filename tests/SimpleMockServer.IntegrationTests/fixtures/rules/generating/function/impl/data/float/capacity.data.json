@@ -1,0 +1,12 @@
+{
+  "generating_function_impl_data_float_capacity_manual": {
+    "type": "float",
+    "interval" : "0.01 - 100",
+    "capacity": "10",
+    "ranges": [
+      "first",
+      "second",
+      "third"
+    ]
+  }
+}

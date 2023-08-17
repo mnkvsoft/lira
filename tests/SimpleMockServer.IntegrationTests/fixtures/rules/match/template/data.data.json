@@ -1,14 +1,9 @@
 {
-  "data": {
-    "match_template": {
-      "int": {
-        "set": {
-          "ranges": {
-            "first": "1",
-            "second": "2"
-          }
-        }
-      }
-    }
+  "match_template": {
+    "type": "int",
+    "ranges": [
+      "first",
+      "second"
+    ]
   }
 }
