@@ -1,0 +1,44 @@
+-------------------- case
+
+GET /data/int/capacity/pretty/match/999
+
+----- expected
+
+code:
+404
+
+-------------------- case
+
+GET /data/int/capacity/pretty/match/1000
+
+----- expected
+
+code:
+200
+
+body:
+first
+
+-------------------- case
+
+GET /data/int/capacity/pretty/match/2000
+
+----- expected
+
+code:
+200
+
+body:
+second
+
+-------------------- case
+
+GET /data/int/capacity/pretty/match/3000
+
+----- expected
+
+code:
+200
+
+body:
+third

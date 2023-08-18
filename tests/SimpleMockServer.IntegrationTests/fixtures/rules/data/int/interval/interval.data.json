@@ -1,0 +1,11 @@
+{
+  "int_interval": {
+    "type": "int",
+    "interval": "1000 - 10_001",
+    "ranges": [
+      "first",
+      "second",
+      "third"
+    ]
+  }
+}

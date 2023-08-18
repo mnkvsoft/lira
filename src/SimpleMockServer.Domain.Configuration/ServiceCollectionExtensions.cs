@@ -34,6 +34,10 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ConfigurationLoader>()
             .AddSingleton<IConfigurationLoader>(provider => provider.GetRequiredService<ConfigurationLoader>())
 
+            .AddSingleton<GuidParser>()
+            .AddSingleton<IntParser>()
+            .AddSingleton<FloatParser>()
+            
             .AddSingleton<DataLoader>()
             .AddSingleton<IDataProvider>(provider => provider.GetRequiredService<ConfigurationLoader>())
 

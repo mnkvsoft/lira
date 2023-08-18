@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /data/int/mode/random/match/{{ data: int_mode_random.first }}
+
+----- response
+
+code:
+200
+
+body:
+first
+
+
+-------------------- rule
+
+GET /data/int/mode/random/match/{{ data: int_mode_random.second }}
+
+----- response
+
+code:
+200
+
+body:
+second
+
+
+-------------------- rule
+
+GET /data/int/mode/random/match/{{ data: int_mode_random.third }}
+
+----- response
+
+code:
+200
+
+body:
+third

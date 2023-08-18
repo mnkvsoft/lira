@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /data/int/interval/gen/first
+
+----- expected
+
+code:
+200
+
+body:
+1000
+
+
+-------------------- rule
+
+GET /data/int/interval/gen/second
+
+----- expected
+
+code:
+200
+
+body:
+4000
+
+
+-------------------- rule
+
+GET /data/int/interval/gen/third
+
+----- expected
+
+code:
+200
+
+body:
+7000

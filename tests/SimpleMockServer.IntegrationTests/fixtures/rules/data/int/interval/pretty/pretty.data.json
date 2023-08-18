@@ -1,0 +1,12 @@
+{
+  "int_interval_pretty": {
+    "type": "int",
+    "interval": "1M - 10M",
+    "capacity": "1_000",
+    "ranges": [
+      "first",
+      "second",
+      "third"
+    ]
+  }
+}

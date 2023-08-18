@@ -6,6 +6,17 @@ namespace SimpleMockServer.Domain.Configuration.DataModel;
 
 class DataLoader
 {
+    private readonly GuidParser _guidParser;
+    private readonly IntParser _intParser;
+    private readonly FloatParser _floatParser;
+
+    public DataLoader(GuidParser guidParser, IntParser intParser, FloatParser floatParser)
+    {
+        _guidParser = guidParser;
+        _intParser = intParser;
+        _floatParser = floatParser;
+    }
+
     public async Task<Dictionary<DataName, Data>> Load(string path)
     {
         var dataFiles = DirectoryHelper.GetFiles(path, "*.data.json");
@@ -60,16 +71,16 @@ class DataLoader
         return result;
     }
 
-    private static Data CreateData(DataName name, DataOptionsDto dataOptionsDto)
+    private Data CreateData(DataName name, DataOptionsDto dataOptionsDto)
     {
         switch (dataOptionsDto.Type)
         {
             case "guid":
-                return GuidParser.Parse(name, dataOptionsDto);
+                return _guidParser.Parse(name, dataOptionsDto);
             case "int":
-                return IntParser.Parse(name, dataOptionsDto);
+                return _intParser.Parse(name, dataOptionsDto);
             case "float":
-                return FloatParser.Parse(name, dataOptionsDto);
+                return _floatParser.Parse(name, dataOptionsDto);
             default:
                 throw new Exception("Type not defined for data. Known types: guid, int, float");
         }

@@ -1,3 +1,2 @@
-- comments setting
-- full file path in rule name
-- replace string chars
+- escape long string
+- number and string deserialize in one node

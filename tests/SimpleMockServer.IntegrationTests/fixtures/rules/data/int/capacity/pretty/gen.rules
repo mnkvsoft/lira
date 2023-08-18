@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /data/int/capacity/pretty/gen/first
+
+----- response
+
+code:
+200
+
+body:
+{{ data: int_capacity_pretty.first }}
+
+
+-------------------- rule
+
+GET /data/int/capacity/pretty/gen/second
+
+----- response
+
+code:
+200
+
+body:
+{{ data: int_capacity_pretty.second }}
+
+
+-------------------- rule
+
+GET /data/int/capacity/pretty/gen/third
+
+----- response
+
+code:
+200
+
+body:
+{{ data: int_capacity_pretty.third }}

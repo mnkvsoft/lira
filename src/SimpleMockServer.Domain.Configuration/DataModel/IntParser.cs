@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
 using SimpleMockServer.Domain.Configuration.DataModel.Dto;
 using SimpleMockServer.Domain.Configuration.PrettyParsers;
@@ -7,9 +8,16 @@ using SimpleMockServer.Domain.DataModel.DataImpls.Int.Ranges;
 
 namespace SimpleMockServer.Domain.Configuration.DataModel;
 
-static class IntParser
+class IntParser
 {
-    public static Data Parse(DataName name, DataOptionsDto dto)
+    private readonly ILogger _logger;
+
+    public IntParser(ILoggerFactory loggerFactory)
+    {
+        _logger = loggerFactory.CreateLogger(GetType());
+    }
+    
+    public Data Parse(DataName name, DataOptionsDto dto)
     {
         var mode = dto.Mode ?? "seq";
         
@@ -19,6 +27,8 @@ static class IntParser
         
         var intervals = GetIntervals(dto.Ranges, interval, dto.Capacity);
 
+        _logger.LogDataRanges(name, intervals, "Mode: " + mode);
+        
         if (mode == "seq")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,

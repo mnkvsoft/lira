@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
 using SimpleMockServer.Domain.Configuration.DataModel.Dto;
 using SimpleMockServer.Domain.Configuration.PrettyParsers;
@@ -8,9 +9,16 @@ using SimpleMockServer.Domain.DataModel.DataImpls.Float.Ranges;
 
 namespace SimpleMockServer.Domain.Configuration.DataModel;
 
-static class FloatParser
+class FloatParser
 {
-    public static Data Parse(DataName name, DataOptionsDto dto)
+    private readonly ILogger _logger;
+
+    public FloatParser(ILoggerFactory loggerFactory)
+    {
+        _logger = loggerFactory.CreateLogger(GetType());
+    }
+
+    public Data Parse(DataName name, DataOptionsDto dto)
     {
         decimal unit = dto.Unit ?? 0.01m;
         Interval<decimal> interval;
@@ -31,6 +39,9 @@ static class FloatParser
         }
 
         var intervals = GetIntervals(dto.Ranges, interval, dto.Capacity, unit);
+
+        _logger.LogDataRanges(name, intervals);
+        
         return new FloatData(name,
             intervals.ToDictionary(p => p.Key, p => (DataRange<decimal>)new FloatSetIntervalDataRange(p.Key, p.Value, GetDecimals(unit))));
     }

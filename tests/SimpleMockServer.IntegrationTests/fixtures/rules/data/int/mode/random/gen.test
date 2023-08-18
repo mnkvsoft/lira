@@ -1,0 +1,34 @@
+-------------------- rule
+
+GET /data/int/mode/random/gen/first
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check {{ InRange(1, 3) }}
+
+
+-------------------- rule
+
+GET /data/int/mode/random/gen/second
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check {{ InRange(4, 6) }}
+
+
+-------------------- rule
+
+GET /data/int/mode/random/gen/third
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check {{ InRange(7, 10) }}

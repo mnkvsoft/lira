@@ -3,6 +3,7 @@ using SimpleMockServer;
 using SimpleMockServer.Domain.Configuration;
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 var builder = WebApplication.CreateBuilder(args);
 

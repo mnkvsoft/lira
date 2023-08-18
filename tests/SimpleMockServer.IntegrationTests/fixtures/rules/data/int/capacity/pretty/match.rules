@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /data/int/capacity/pretty/match/{{ data: int_capacity_pretty.first }}
+
+----- response
+
+code:
+200
+
+body:
+first
+
+
+-------------------- rule
+
+GET /data/int/capacity/pretty/match/{{ data: int_capacity_pretty.second }}
+
+----- response
+
+code:
+200
+
+body:
+second
+
+
+-------------------- rule
+
+GET /data/int/capacity/pretty/match/{{ data: int_capacity_pretty.third }}
+
+----- response
+
+code:
+200
+
+body:
+third

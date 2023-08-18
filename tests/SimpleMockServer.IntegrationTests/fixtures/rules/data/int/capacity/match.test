@@ -1,0 +1,89 @@
+-------------------- case
+
+GET /data/int/capacity/match/0
+
+----- expected
+
+code:
+404
+
+-------------------- case
+
+GET /data/int/capacity/match/1
+
+----- expected
+
+code:
+200
+
+body:
+first
+
+-------------------- case
+
+GET /data/int/capacity/match/2
+
+----- expected
+
+code:
+200
+
+body:
+first
+
+-------------------- case
+
+GET /data/int/capacity/match/3
+
+----- expected
+
+code:
+200
+
+body:
+second
+
+-------------------- case
+
+GET /data/int/capacity/match/4
+
+----- expected
+
+code:
+200
+
+body:
+second
+
+-------------------- case
+
+GET /data/int/capacity/match/5
+
+----- expected
+
+code:
+200
+
+body:
+third
+
+-------------------- case
+
+GET /data/int/capacity/match/10
+
+----- expected
+
+code:
+200
+
+body:
+third
+
+-------------------- case
+
+GET /data/int/capacity/match/11
+
+----- expected
+
+code:
+404

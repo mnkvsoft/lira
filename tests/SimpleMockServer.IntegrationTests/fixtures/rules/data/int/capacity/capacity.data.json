@@ -1,0 +1,12 @@
+{
+  "int_capacity": {
+    "type": "int",
+    "interval": "1 - 10",
+    "capacity": "2",
+    "ranges": [
+      "first",
+      "second",
+      "third"
+    ]
+  }
+}

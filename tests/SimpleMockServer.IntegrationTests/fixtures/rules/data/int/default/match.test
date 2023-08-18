@@ -1,0 +1,65 @@
+-------------------- case
+
+GET /data/int/default/match/0
+
+----- expected
+
+code:
+404
+
+-------------------- case
+
+GET /data/int/default/match/1
+
+----- expected
+
+code:
+200
+
+body:
+first
+
+-------------------- case
+
+GET /data/int/default/match/4611686018427387903
+
+----- expected
+
+code:
+200
+
+body:
+first
+
+-------------------- case
+
+GET /data/int/default/match/4611686018427387904
+
+----- expected
+
+code:
+200
+
+body:
+second
+
+-------------------- case
+
+GET /data/int/default/match/9223372036854775807
+
+----- expected
+
+code:
+200
+
+body:
+second
+
+-------------------- case
+
+GET /data/int/default/match/9223372036854775808
+
+----- expected
+
+code:
+404
