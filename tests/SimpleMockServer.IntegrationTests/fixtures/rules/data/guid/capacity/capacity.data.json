@@ -1,0 +1,11 @@
+{
+  "guid_capacity": {
+    "type": "guid",
+    "capacity": "10",
+    "ranges": [
+      "first",
+      "second",
+      "third"
+    ]
+  }
+}
