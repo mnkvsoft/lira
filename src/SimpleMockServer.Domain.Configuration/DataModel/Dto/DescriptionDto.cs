@@ -12,6 +12,9 @@ record DataOptionsDto(
     [property: JsonPropertyName("capacity")]
     string? Capacity,
     
+    [property: JsonPropertyName("format")]
+    string? Format,
+    
     [property: JsonPropertyName("interval")]
     string? Interval,
     

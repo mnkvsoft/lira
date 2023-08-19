@@ -1,0 +1,24 @@
+-------------------- rule
+
+GET /data/types/guid/format/gen/first
+
+----- response
+
+code:
+200
+
+body:
+{{ data: guid_format.first }}
+
+
+-------------------- rule
+
+GET /data/types/guid/format/gen/second
+
+----- response
+
+code:
+200
+
+body:
+{{ data: guid_format.second }}

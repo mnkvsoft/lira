@@ -1,10 +1,32 @@
-﻿namespace SimpleMockServer.Domain.DataModel.DataImpls.Guid;
+﻿using SimpleMockServer.Common;
 
-public abstract class GuidDataRange : DataRange<System.Guid>
+namespace SimpleMockServer.Domain.DataModel.DataImpls.Guid;
+
+public class GuidDataRange : DataRange
 {
-    protected GuidDataRange(DataName name) : base(name)
+    private readonly Int64Sequence _seq;
+    private readonly string? _format;
+
+    public GuidDataRange(DataName name, Int64Sequence seq, string? format) : base(name)
     {
+        _seq = seq;
+        _format = format;
     }
 
-    public override bool TryParse(string str, out System.Guid value) => System.Guid.TryParse(str, out value);
+    public override object NextValue()
+    {
+        System.Guid nextValue = _seq.Next().ToGuid();
+        if (_format == null)
+            return nextValue;
+
+        return nextValue.ToString(_format);
+    }
+
+    public override bool IsBelong(string value)
+    {
+        if (!System.Guid.TryParse(value, out var guid))
+            return false;
+
+        return _seq.Interval.InRange(guid.ToLong());
+    }
 }

@@ -5,7 +5,8 @@ namespace SimpleMockServer.Domain.DataModel;
 public abstract class Data
 {
     public DataName Name { get; }
-    public Data(DataName name)
+
+    protected Data(DataName name)
     {
         Arg.NotDefault(name, nameof(name));
         Name = name;

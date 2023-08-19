@@ -1,0 +1,21 @@
+-------------------- case
+
+GET /data/types/guid/format/gen/first
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check
+
+-------------------- case
+
+GET /data/types/guid/format/gen/second
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check

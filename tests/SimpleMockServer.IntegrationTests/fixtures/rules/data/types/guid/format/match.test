@@ -1,0 +1,27 @@
+// 3e008400-5800-c800-00e0-00b1005b802d - -9223372036854775808 in int64
+
+-------------------- case
+
+GET /data/types/guid/format/match/3e0084005800c80000e000b1005b802d
+
+----- expected
+
+code:
+200
+
+body:
+first
+
+// 20ff58ff-e9ff-91ff-ff2c-ff94ff8cff97 - -1 in int64
+
+-------------------- case
+
+GET /data/types/guid/format/match/20ff58ffe9ff91ffff2cff94ff8cff97
+
+----- expected
+
+code:
+200
+
+body:
+second

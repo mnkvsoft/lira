@@ -3,7 +3,6 @@ using SimpleMockServer.Common;
 using SimpleMockServer.Domain.Configuration.DataModel.Dto;
 using SimpleMockServer.Domain.DataModel;
 using SimpleMockServer.Domain.DataModel.DataImpls.Guid;
-using SimpleMockServer.Domain.DataModel.DataImpls.Guid.Ranges;
 
 namespace SimpleMockServer.Domain.Configuration.DataModel;
 
@@ -16,13 +15,14 @@ class GuidParser
         _logger = loggerFactory.CreateLogger(GetType());
     }
     
-    public Data Parse(DataName name, DataOptionsDto dataOptionsDto)
+    public Data Parse(DataName name, DataOptionsDto dto)
     {
-        var intervals = IntParser.GetIntervals(dataOptionsDto.Ranges, new Interval<long>(long.MinValue, long.MaxValue), dataOptionsDto.Capacity);
+        var intervals = IntParser.GetIntervals(dto.Ranges, new Interval<long>(long.MinValue, long.MaxValue), dto.Capacity);
         
         _logger.LogDataRanges(name, intervals);
         
-        return new GuidData(name,
-            intervals.ToDictionary(p => p.Key, p => (GuidDataRange)new GuidSeqDataRange(p.Key, new Int64Sequence(p.Value))));
+        return new GuidData(
+            name,
+            intervals.ToDictionary(p => p.Key, p => new GuidDataRange(p.Key, new Int64Sequence(p.Value), dto.Format)));
     }
 }

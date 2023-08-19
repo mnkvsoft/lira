@@ -1,0 +1,10 @@
+{
+  "guid_format": {
+    "type": "guid",
+    "format": "N",
+    "ranges": [
+      "first",
+      "second"
+    ]
+  }
+}
