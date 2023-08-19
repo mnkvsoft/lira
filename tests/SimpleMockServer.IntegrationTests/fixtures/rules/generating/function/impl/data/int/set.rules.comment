@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/function/impl/data/int/set/first
+GET /generating/function/impl/data/types/int/set/first
 
 ----- response
 
@@ -13,7 +13,7 @@ body:
 
 -------------------- rule
 
-GET /generating/function/impl/data/int/set/second
+GET /generating/function/impl/data/types/int/set/second
 
 ----- response
 

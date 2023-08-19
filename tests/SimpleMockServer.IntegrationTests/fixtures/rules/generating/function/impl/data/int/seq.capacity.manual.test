@@ -2,7 +2,7 @@
 
 -------------------- case
 
-GET /generating/function/impl/data/int/seq/capacity/manual/1
+GET /generating/function/impl/data/types/int/seq/capacity/manual/1
 
 ----- expected
 
@@ -14,7 +14,7 @@ body:
 
 -------------------- case
 
-GET /generating/function/impl/data/int/seq/capacity/manual/1
+GET /generating/function/impl/data/types/int/seq/capacity/manual/1
 
 ----- expected
 
@@ -29,7 +29,7 @@ body:
 
 -------------------- case
 
-GET /generating/function/impl/data/int/seq/capacity/manual/101
+GET /generating/function/impl/data/types/int/seq/capacity/manual/101
 
 ----- expected
 
@@ -41,7 +41,7 @@ body:
 
 -------------------- case
 
-GET /generating/function/impl/data/int/seq/capacity/manual/101
+GET /generating/function/impl/data/types/int/seq/capacity/manual/101
 
 ----- expected
 

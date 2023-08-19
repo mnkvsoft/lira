@@ -1,0 +1,39 @@
+// f9006900-cd00-a800-0053-001a006080fb -  -9223372036854775808 in int64
+
+-------------------- case
+
+GET /data/types/guid/capacity/match/f9006900-cd00-a800-0053-001a006080fb
+
+----- expected
+
+code:
+200
+
+// aa00ed0a-9d00-7300-0025-00d600448042 -  -9223372036854775798 in int64
+
+-------------------- case
+
+GET /data/types/guid/capacity/match/aa00ed0a-9d00-7300-0025-00d600448042
+
+----- expected
+
+code:
+200
+
+body:
+second
+
+// d0007b14-e000-f500-0029-00940039804e -  -9223372036854775788 in int64
+
+-------------------- case
+
+GET /data/types/guid/capacity/match/d0007b14-e000-f500-0029-00940039804e
+
+----- expected
+
+code:
+200
+
+body:
+third
+

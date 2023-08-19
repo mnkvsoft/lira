@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /data/types/guid/capacity/match/{{ data: guid_capacity.first }}
+
+----- response
+
+code:
+200
+
+body:
+first
+
+
+-------------------- rule
+
+GET /data/types/guid/capacity/match/{{ data: guid_capacity.second }}
+
+----- response
+
+code:
+200
+
+body:
+second
+
+
+-------------------- rule
+
+GET /data/types/guid/capacity/match/{{ data: guid_capacity.third }}
+
+----- response
+
+code:
+200
+
+body:
+third

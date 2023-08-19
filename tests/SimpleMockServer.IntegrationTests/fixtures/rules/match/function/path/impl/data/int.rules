@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /match/function/path/impl/data/int/{{ data: match_function_path_impl_data_int.range1 }}/some
+GET /match/function/path/impl/data/types/int/{{ data: match_function_path_impl_data_int.range1 }}/some
 
 ----- response
 
@@ -13,7 +13,7 @@ range1
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int/{{ data: match_function_path_impl_data_int.range101 }}/some
+GET /match/function/path/impl/data/types/int/{{ data: match_function_path_impl_data_int.range101 }}/some
 
 ----- response
 

@@ -2,7 +2,7 @@
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty_k/{{ data: match_function_path_impl_data_int_pretty_capacity_k.1 }}
+GET /match/function/path/impl/data/types/int_pretty_k/{{ data: match_function_path_impl_data_int_pretty_capacity_k.1 }}
 
 ----- response
 
@@ -14,7 +14,7 @@ body:
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty_k/{{ data: match_function_path_impl_data_int_pretty_capacity_k.2 }}
+GET /match/function/path/impl/data/types/int_pretty_k/{{ data: match_function_path_impl_data_int_pretty_capacity_k.2 }}
 
 ----- response
 
@@ -26,7 +26,7 @@ body:
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty_k/{{ data: match_function_path_impl_data_int_pretty_capacity_k.3 }}
+GET /match/function/path/impl/data/types/int_pretty_k/{{ data: match_function_path_impl_data_int_pretty_capacity_k.3 }}
 
 ----- response
 
@@ -41,7 +41,7 @@ body:
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty_m/{{ data: match_function_path_impl_data_int_pretty_capacity_m.1 }}
+GET /match/function/path/impl/data/types/int_pretty_m/{{ data: match_function_path_impl_data_int_pretty_capacity_m.1 }}
 
 ----- response
 
@@ -53,7 +53,7 @@ body:
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty_m/{{ data: match_function_path_impl_data_int_pretty_capacity_m.2 }}
+GET /match/function/path/impl/data/types/int_pretty_m/{{ data: match_function_path_impl_data_int_pretty_capacity_m.2 }}
 
 ----- response
 
@@ -65,7 +65,7 @@ body:
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty_m/{{ data: match_function_path_impl_data_int_pretty_capacity_m.3 }}
+GET /match/function/path/impl/data/types/int_pretty_m/{{ data: match_function_path_impl_data_int_pretty_capacity_m.3 }}
 
 ----- response
 
@@ -80,7 +80,7 @@ body:
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty_g/{{ data: match_function_path_impl_data_int_pretty_capacity_g.1 }}
+GET /match/function/path/impl/data/types/int_pretty_g/{{ data: match_function_path_impl_data_int_pretty_capacity_g.1 }}
 
 ----- response
 
@@ -92,7 +92,7 @@ body:
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty_g/{{ data: match_function_path_impl_data_int_pretty_capacity_g.2 }}
+GET /match/function/path/impl/data/types/int_pretty_g/{{ data: match_function_path_impl_data_int_pretty_capacity_g.2 }}
 
 ----- response
 
@@ -104,7 +104,7 @@ body:
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty_g/{{ data: match_function_path_impl_data_int_pretty_capacity_g.3 }}
+GET /match/function/path/impl/data/types/int_pretty_g/{{ data: match_function_path_impl_data_int_pretty_capacity_g.3 }}
 
 ----- response
 
@@ -119,7 +119,7 @@ body:
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty_t/{{ data: match_function_path_impl_data_int_pretty_capacity_t.1 }}
+GET /match/function/path/impl/data/types/int_pretty_t/{{ data: match_function_path_impl_data_int_pretty_capacity_t.1 }}
 
 ----- response
 
@@ -131,7 +131,7 @@ body:
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty_t/{{ data: match_function_path_impl_data_int_pretty_capacity_t.2 }}
+GET /match/function/path/impl/data/types/int_pretty_t/{{ data: match_function_path_impl_data_int_pretty_capacity_t.2 }}
 
 ----- response
 
@@ -143,7 +143,7 @@ body:
 
 -------------------- rule
 
-GET /match/function/path/impl/data/int_pretty_t/{{ data: match_function_path_impl_data_int_pretty_capacity_t.3 }}
+GET /match/function/path/impl/data/types/int_pretty_t/{{ data: match_function_path_impl_data_int_pretty_capacity_t.3 }}
 
 ----- response
 

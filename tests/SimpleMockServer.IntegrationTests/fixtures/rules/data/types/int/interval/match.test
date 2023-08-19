@@ -1,0 +1,89 @@
+-------------------- case
+
+GET /data/types/int/interval/match/999
+
+----- expected
+
+code:
+404
+
+-------------------- case
+
+GET /data/types/int/interval/match/1000
+
+----- expected
+
+code:
+200
+
+body:
+first
+
+-------------------- case
+
+GET /data/types/int/interval/match/3999
+
+----- expected
+
+code:
+200
+
+body:
+first
+
+-------------------- case
+
+GET /data/types/int/interval/match/4000
+
+----- expected
+
+code:
+200
+
+body:
+second
+
+-------------------- case
+
+GET /data/types/int/interval/match/6999
+
+----- expected
+
+code:
+200
+
+body:
+second
+
+-------------------- case
+
+GET /data/types/int/interval/match/7000
+
+----- expected
+
+code:
+200
+
+body:
+third
+
+-------------------- case
+
+GET /data/types/int/interval/match/10001
+
+----- expected
+
+code:
+200
+
+body:
+third
+
+-------------------- case
+
+GET /data/types/int/interval/match/10002
+
+----- expected
+
+code:
+404

@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /generating/function/impl/data/int/set/first
+GET /generating/function/impl/data/types/int/set/first
 
 ----- expected
 
@@ -9,7 +9,7 @@ code:
 
 -------------------- case
 
-GET /generating/function/impl/data/int/set/first
+GET /generating/function/impl/data/types/int/set/first
 
 ----- expected
 
@@ -18,7 +18,7 @@ code:
 
 -------------------- case
 
-GET /generating/function/impl/data/int/set/second
+GET /generating/function/impl/data/types/int/set/second
 
 ----- expected
 
@@ -27,7 +27,7 @@ code:
 
 -------------------- case
 
-GET /generating/function/impl/data/int/set/second
+GET /generating/function/impl/data/types/int/set/second
 
 ----- expected
 

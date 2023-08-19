@@ -1,7 +1,7 @@
 // not matched
 -------------------- case
 
-GET /match/function/path/impl/data/int/0/some
+GET /match/function/path/impl/data/types/int/0/some
 
 ----- expected
 
@@ -12,7 +12,7 @@ code:
 
 -------------------- case
 
-GET /match/function/path/impl/data/int/1/some
+GET /match/function/path/impl/data/types/int/1/some
 
 ----- expected
 
@@ -24,7 +24,7 @@ range1
 
 -------------------- case
 
-GET /match/function/path/impl/data/int/100/some
+GET /match/function/path/impl/data/types/int/100/some
 
 ----- expected
 
@@ -36,7 +36,7 @@ range1
 
 -------------------- case
 
-GET /match/function/path/impl/data/int/101/some
+GET /match/function/path/impl/data/types/int/101/some
 
 ----- expected
 
@@ -48,7 +48,7 @@ range101
 
 -------------------- case
 
-GET /match/function/path/impl/data/int/201/some
+GET /match/function/path/impl/data/types/int/201/some
 
 ----- expected
 

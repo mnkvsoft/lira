@@ -2,7 +2,7 @@
 
 -------------------- case
 
-GET /match/function/path/impl/data/int_pretty_k/1001
+GET /match/function/path/impl/data/types/int_pretty_k/1001
 
 ----- expected
 
@@ -16,7 +16,7 @@ body:
 
 -------------------- case
 
-GET /match/function/path/impl/data/int_pretty_m/1000001
+GET /match/function/path/impl/data/types/int_pretty_m/1000001
 
 ----- expected
 
@@ -30,7 +30,7 @@ body:
 
 -------------------- case
 
-GET /match/function/path/impl/data/int_pretty_g/1000000001
+GET /match/function/path/impl/data/types/int_pretty_g/1000000001
 
 ----- expected
 
@@ -44,7 +44,7 @@ body:
 
 -------------------- case
 
-GET /match/function/path/impl/data/int_pretty_t/1000000000001
+GET /match/function/path/impl/data/types/int_pretty_t/1000000000001
 
 ----- expected
 

@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /data/pretty/gen/first
+
+----- response
+
+code:
+200
+
+body:
+{{ data: pretty.first }}
+
+
+-------------------- rule
+
+GET /data/pretty/gen/second
+
+----- response
+
+code:
+200
+
+body:
+{{ data: pretty.second }}
+
+
+-------------------- rule
+
+GET /data/pretty/gen/third
+
+----- response
+
+code:
+200
+
+body:
+{{ data: pretty.third }}
