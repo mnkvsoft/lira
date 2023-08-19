@@ -1,0 +1,89 @@
+-------------------- case
+
+GET /data/types/float/capacity/match/0.99
+
+----- expected
+
+code:
+404
+
+-------------------- case
+
+GET /data/types/float/capacity/match/1
+
+----- expected
+
+code:
+200
+
+body:
+first
+
+-------------------- case
+
+GET /data/types/float/capacity/match/4.54
+
+----- expected
+
+code:
+200
+
+body:
+first
+
+-------------------- case
+
+GET /data/types/float/capacity/match/4.55
+
+----- expected
+
+code:
+200
+
+body:
+second
+
+-------------------- case
+
+GET /data/types/float/capacity/match/8.09
+
+----- expected
+
+code:
+200
+
+body:
+second
+
+-------------------- case
+
+GET /data/types/float/capacity/match/8.1
+
+----- expected
+
+code:
+200
+
+body:
+third
+
+-------------------- case
+
+GET /data/types/float/capacity/match/10
+
+----- expected
+
+code:
+200
+
+body:
+third
+
+-------------------- case
+
+GET /data/types/float/capacity/match/10.01
+
+----- expected
+
+code:
+404

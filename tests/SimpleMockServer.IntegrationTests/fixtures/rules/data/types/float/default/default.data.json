@@ -1,0 +1,9 @@
+{
+  "float_default": {
+    "type": "float",
+    "ranges": [
+      "first",
+      "second"
+    ]
+  }
+}

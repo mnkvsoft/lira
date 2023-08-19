@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /data/types/float/interval/gen/first
+
+----- response
+
+code:
+200
+
+body:
+{{ data: float_interval.first }}
+
+
+-------------------- rule
+
+GET /data/types/float/interval/gen/second
+
+----- response
+
+code:
+200
+
+body:
+{{ data: float_interval.second }}
+
+
+-------------------- rule
+
+GET /data/types/float/interval/gen/third
+
+----- response
+
+code:
+200
+
+body:
+{{ data: float_interval.third }}

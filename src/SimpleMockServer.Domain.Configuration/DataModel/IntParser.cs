@@ -82,6 +82,13 @@ class IntParser
         if (intervalLength < capacity)
             throw new Exception($"Capacity value {capacityStr} more than interval length {intervalLength}");
 
+        var restForLastRange = capacity * ((ulong)rangesCount - 1); 
+        if(intervalLength - restForLastRange <= 0)
+        {
+            throw new Exception($"Capacity value {capacityStr} is invalid for current count of ranges ({rangesCount}) " +
+                                $"and current interval value ({intervalLength})");
+        }
+
         return capacity;
     }
 }

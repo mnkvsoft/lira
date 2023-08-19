@@ -75,11 +75,19 @@ class FloatParser
         if (string.IsNullOrWhiteSpace(capacityStr) || capacityStr == "auto")
             return Math.Round(intervalLength / rangesCount, GetDecimals(unit));
 
-        if (!PrettyNumberParser<ulong>.TryParse(capacityStr, out ulong capacity))
+        if (!PrettyNumberParser<decimal>.TryParse(capacityStr, out decimal capacity))
             throw new ArgumentException("Invalid capacity value: " + capacityStr);
 
         if (intervalLength < capacity)
             throw new Exception($"Capacity value {capacityStr} more than interval length {intervalLength}");
+
+        var restForLastRange = capacity * ((ulong)rangesCount - 1); 
+        if(intervalLength - restForLastRange <= 0)
+        {
+            // todo: fix duplicate message
+            throw new Exception($"Capacity value {capacityStr} is invalid for current count of ranges ({rangesCount}) " +
+                                $"and current interval value ({intervalLength})");
+        }
 
         if (!IsDividedWithoutRemainder(capacity, unit))
             throw new Exception($"Capacity must be a multiple of '{unit}'");

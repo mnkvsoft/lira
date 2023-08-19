@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/pretty/match/{{ data: pretty.first }}
+GET /data/pretty/gen/first
 
 ----- response
 
@@ -8,12 +8,12 @@ code:
 200
 
 body:
-first
+{{ data: pretty_capacity.first }}
 
 
 -------------------- rule
 
-GET /data/pretty/match/{{ data: pretty.second }}
+GET /data/pretty/gen/second
 
 ----- response
 
@@ -21,12 +21,12 @@ code:
 200
 
 body:
-second
+{{ data: pretty_capacity.second }}
 
 
 -------------------- rule
 
-GET /data/pretty/match/{{ data: pretty.third }}
+GET /data/pretty/gen/third
 
 ----- response
 
@@ -34,4 +34,4 @@ code:
 200
 
 body:
-third
+{{ data: pretty_capacity.third }}

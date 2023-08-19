@@ -1,0 +1,43 @@
+-------------------- case
+
+GET /data/types/float/default/gen/first
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check
+
+-------------------- case
+
+GET /data/types/float/default/gen/first
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check
+
+-------------------- case
+
+GET /data/types/float/default/gen/second
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check
+
+-------------------- case
+
+GET /data/types/float/default/gen/second
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check
