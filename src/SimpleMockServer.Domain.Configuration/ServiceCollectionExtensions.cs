@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using SimpleMockServer.Domain.Configuration.DataModel;
@@ -37,6 +37,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<GuidParser>()
             .AddSingleton<IntParser>()
             .AddSingleton<FloatParser>()
+            .AddSingleton<HexParser>()
             
             .AddSingleton<DataLoader>()
             .AddSingleton<IDataProvider>(provider => provider.GetRequiredService<ConfigurationLoader>())

@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /data/types/hex/capacity/gen/first
+
+----- response
+
+code:
+200
+
+body:
+{{ data: hex_capacity.first }}
+
+
+-------------------- rule
+
+GET /data/types/hex/capacity/gen/second
+
+----- response
+
+code:
+200
+
+body:
+{{ data: hex_capacity.second }}
+
+
+-------------------- rule
+
+GET /data/types/hex/capacity/gen/third
+
+----- response
+
+code:
+200
+
+body:
+{{ data: hex_capacity.third }}

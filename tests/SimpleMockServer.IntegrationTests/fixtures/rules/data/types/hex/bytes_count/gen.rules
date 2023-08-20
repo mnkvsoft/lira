@@ -1,0 +1,24 @@
+-------------------- rule
+
+GET /data/types/hex/bytes_count/gen/first
+
+----- response
+
+code:
+200
+
+body:
+{{ data: hex_bytes_count.first }}
+
+
+-------------------- rule
+
+GET /data/types/hex/bytes_count/gen/second
+
+----- response
+
+code:
+200
+
+body:
+{{ data: hex_bytes_count.second }}

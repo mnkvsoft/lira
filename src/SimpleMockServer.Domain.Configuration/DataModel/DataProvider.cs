@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using SimpleMockServer.Domain.Configuration.DataModel.Dto;
 using SimpleMockServer.Domain.DataModel;
 
@@ -9,12 +9,14 @@ class DataLoader
     private readonly GuidParser _guidParser;
     private readonly IntParser _intParser;
     private readonly FloatParser _floatParser;
+    private readonly HexParser _hexParser;
 
-    public DataLoader(GuidParser guidParser, IntParser intParser, FloatParser floatParser)
+    public DataLoader(GuidParser guidParser, IntParser intParser, FloatParser floatParser, HexParser hexParser)
     {
         _guidParser = guidParser;
         _intParser = intParser;
         _floatParser = floatParser;
+        _hexParser = hexParser;
     }
 
     public async Task<Dictionary<DataName, Data>> Load(string path)
@@ -81,6 +83,8 @@ class DataLoader
                 return _intParser.Parse(name, dataOptionsDto);
             case "float":
                 return _floatParser.Parse(name, dataOptionsDto);
+            case "hex":
+                return _hexParser.Parse(name, dataOptionsDto);
             default:
                 throw new Exception("Type not defined for data. Known types: guid, int, float");
         }

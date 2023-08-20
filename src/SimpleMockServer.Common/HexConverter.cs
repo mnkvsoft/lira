@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 
 namespace SimpleMockServer.Common;
@@ -15,12 +17,57 @@ public static class HexConverter
 
         return sb.ToString();
     }
-    
-    public static byte[] ToBytes(string hex) 
+
+    public static byte[] ToBytes(string hex)
     {
+        if (!IsValidHexString(hex))
+            throw new ArgumentException($"Invalid hex string '{hex}'");
+
         return Enumerable.Range(0, hex.Length)
-            .Where(x => x % 2 == 0)
-            .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
-            .ToArray();
+                     .Where(x => x % 2 == 0)
+                     .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                     .ToArray();
+    }
+
+    //public static bool TryToBytes(string hex, [MaybeNullWhen(false)] out byte[] bytes)
+    //{
+    //    bytes = null;
+    //    if (hex.Length % 2 != 0)
+    //        return false;
+
+    //    bytes = new byte[hex.Length / 2];
+
+    //    for (int i = 0; i < hex.Length; i++)
+    //    {
+    //        if (i % 2 != 0)
+    //            continue;
+
+    //        if (!byte.TryParse(hex.AsSpan(i, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte b))
+    //        {
+    //            bytes = null;
+    //            return false;
+    //        }
+
+    //        bytes[i / 2] = b;
+    //    }
+
+    //    return true;
+    //}
+
+    public static bool IsValidHexString(string hex)
+    {
+        if (hex.Length % 2 != 0)
+            return false;
+
+        for (int i = 0; i < hex.Length; i++)
+        {
+            if (i % 2 != 0)
+                continue;
+
+            if (!byte.TryParse(hex.AsSpan(i, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte b))
+                return false;
+        }
+
+        return true;
     }
 }

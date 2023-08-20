@@ -1,0 +1,24 @@
+-------------------- rule
+
+GET /data/types/hex/default/gen/first
+
+----- response
+
+code:
+200
+
+body:
+{{ data: hex_default.first }}
+
+
+-------------------- rule
+
+GET /data/types/hex/default/gen/second
+
+----- response
+
+code:
+200
+
+body:
+{{ data: hex_default.second }}

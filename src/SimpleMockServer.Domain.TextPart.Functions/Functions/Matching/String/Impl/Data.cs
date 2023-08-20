@@ -20,7 +20,7 @@ internal class Data : DataBase, IStringMatchPrettyFunction
 
         var range = GetRange();
 
-        var isMatch = range.IsBelong(value);
+        var isMatch = range.ValueIsBelong(value);
 
         return isMatch;
     }
