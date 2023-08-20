@@ -1,8 +1,8 @@
-﻿namespace SimpleMockServer.Domain.DataModel.DataImpls.Float;
+namespace SimpleMockServer.Domain.DataModel.DataImpls.Float;
 
 public abstract class FloatDataRange : DataRange<decimal>
 {
-    protected FloatDataRange(DataName name) : base(name)
+    protected FloatDataRange(DataName name) : base(name, format: null)
     {
     }
 

@@ -14,4 +14,8 @@
     <ProjectReference Include="..\SimpleMockServer.Common\SimpleMockServer.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DataImpls\Hex\" />
+  </ItemGroup>
+
 </Project>

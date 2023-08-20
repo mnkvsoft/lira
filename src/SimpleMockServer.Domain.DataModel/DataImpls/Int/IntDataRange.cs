@@ -1,8 +1,8 @@
-﻿namespace SimpleMockServer.Domain.DataModel.DataImpls.Int;
+namespace SimpleMockServer.Domain.DataModel.DataImpls.Int;
 
 public abstract class IntDataRange : DataRange<long>
 {
-    protected IntDataRange(DataName name) : base(name)
+    protected IntDataRange(DataName name) : base(name, format: null)
     {
     }
 

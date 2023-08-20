@@ -1,8 +1,8 @@
-﻿using ArgValidation;
+using ArgValidation;
 
 namespace SimpleMockServer.Domain.DataModel;
 
-public abstract class Data<T> : Data where T : struct
+public abstract class Data<T> : Data
 {
     private readonly DataName _name;
 
