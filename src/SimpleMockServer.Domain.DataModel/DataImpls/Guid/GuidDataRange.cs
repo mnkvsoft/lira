@@ -15,7 +15,7 @@ public class GuidDataRange : DataRange
 
     public override object NextValue()
     {
-        System.Guid nextValue = _seq.Next().ToGuid();
+        System.Guid nextValue = _seq.Next().ToRandomGuid();
         if (_format == null)
             return nextValue;
 
@@ -27,6 +27,6 @@ public class GuidDataRange : DataRange
         if (!System.Guid.TryParse(value, out var guid))
             return false;
 
-        return _seq.Interval.InRange(guid.ToLong());
+        return _seq.Interval.InRange(guid.ToInt64());
     }
 }

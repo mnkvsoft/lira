@@ -2,7 +2,7 @@
 
 -------------------- case
 
-GET /data/types/guid/format/match/3e0084005800c80000e000b1005b802d
+GET /data/types/guid/format/match/c05016d96f582ab40000000000000080
 
 ----- expected
 
@@ -16,7 +16,7 @@ first
 
 -------------------- case
 
-GET /data/types/guid/format/match/20ff58ffe9ff91ffff2cff94ff8cff97
+GET /data/types/guid/format/match/d1a6ebcc8491f590ffffffffffffffff
 
 ----- expected
 

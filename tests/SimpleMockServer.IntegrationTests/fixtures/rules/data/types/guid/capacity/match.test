@@ -1,19 +1,19 @@
-// f9006900-cd00-a800-0053-001a006080fb -  -9223372036854775808 in int64
+// 9ffaaeb8-b75d-4a3a-0000-000000000080 -  -9223372036854775808 in int64
 
 -------------------- case
 
-GET /data/types/guid/capacity/match/f9006900-cd00-a800-0053-001a006080fb
+GET /data/types/guid/capacity/match/9ffaaeb8-b75d-4a3a-0000-000000000080
 
 ----- expected
 
 code:
 200
 
-// aa00ed0a-9d00-7300-0025-00d600448042 -  -9223372036854775798 in int64
+// 81f410b1-3651-910f-0a00-000000000080 -  -9223372036854775798 in int64
 
 -------------------- case
 
-GET /data/types/guid/capacity/match/aa00ed0a-9d00-7300-0025-00d600448042
+GET /data/types/guid/capacity/match/81f410b1-3651-910f-0a00-000000000080
 
 ----- expected
 
@@ -23,11 +23,11 @@ code:
 body:
 second
 
-// d0007b14-e000-f500-0029-00940039804e -  -9223372036854775788 in int64
+// 6aeefe78-2211-bfb1-1400-000000000080 -  -9223372036854775788 in int64
 
 -------------------- case
 
-GET /data/types/guid/capacity/match/d0007b14-e000-f500-0029-00940039804e
+GET /data/types/guid/capacity/match/6aeefe78-2211-bfb1-1400-000000000080
 
 ----- expected
 

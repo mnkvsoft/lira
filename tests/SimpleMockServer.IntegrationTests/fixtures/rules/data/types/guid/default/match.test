@@ -1,8 +1,8 @@
-// 3e008400-5800-c800-00e0-00b1005b802d - -9223372036854775808 in int64
+// 8dfc399f-a39e-e983-0000-000000000080 - -9223372036854775808 in int64
 
 -------------------- case
 
-GET /data/types/guid/default/match/3e008400-5800-c800-00e0-00b1005b802d
+GET /data/types/guid/default/match/8dfc399f-a39e-e983-0000-000000000080
 
 ----- expected
 
@@ -12,11 +12,11 @@ code:
 body:
 first
 
-// 20ff58ff-e9ff-91ff-ff2c-ff94ff8cff97 - -1 in int64
+// 190e6b4c-197a-f7ee-ffff-ffffffffffff - -1 in int64
 
 -------------------- case
 
-GET /data/types/guid/default/match/20ff58ff-e9ff-91ff-ff2c-ff94ff8cff97
+GET /data/types/guid/default/match/190e6b4c-197a-f7ee-ffff-ffffffffffff
 
 ----- expected
 
