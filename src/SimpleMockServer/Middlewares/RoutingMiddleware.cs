@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using SimpleMockServer.Domain;
 using SimpleMockServer.Domain.Configuration;
 using SimpleMockServer.Domain.Configuration.Rules;
@@ -23,6 +23,12 @@ class RoutingMiddleware : IMiddleware
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
+        if (context.Request.Path.StartsWithSegments("/sys"))
+        {
+            await next(context);
+            return;
+        }
+
         try
         {
             await HandleRequest(context);

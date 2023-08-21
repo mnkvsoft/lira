@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Text;
 using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
 using SimpleMockServer.Domain.Configuration.DataModel.Dto;
@@ -19,12 +19,20 @@ class HexParser
     
     public Data Parse(DataName name, DataOptionsDto dto)
     {
-        var intervals = IntParser.GetIntervals(dto.Ranges, new Interval<long>(long.MinValue, long.MaxValue), dto.Capacity);
-        
-        _logger.LogDataRanges(name, intervals);
-        
+        var interval = new Interval<long>(long.MinValue, long.MaxValue);
+        ulong capacity = IntParser.GetCapacity(dto.Ranges.Length, dto.Capacity, interval);
+        var intervals = IntParser.GetIntervals(dto.Ranges, interval, capacity);
+        int bytesCount = dto.BytesCount ?? 32;
+
+        var info = new StringBuilder().AddInfo(name, capacity, intervals, "Bytes count: " + bytesCount).ToString();
+        _logger.LogInformation(info);
+
         return new HexData(
             name,
-            intervals.ToDictionary(p => p.Key, p => new HexDataRange(p.Key, p.Value, dto.BytesCount ?? 32)));
+            intervals.ToDictionary(p => p.Key, p =>
+            {
+                return new HexDataRange(p.Key, p.Value, bytesCount);
+            }),
+            info);
     }
 }

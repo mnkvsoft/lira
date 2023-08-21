@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+using System.Globalization;
+using System.Text;
 using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
 using SimpleMockServer.Domain.Configuration.DataModel.Dto;
@@ -38,21 +39,25 @@ class FloatParser
                 throw new Exception($"The upper bound of the interval must be a multiple of '{unit}'");
         }
 
-        var intervals = GetIntervals(dto.Ranges, interval, dto.Capacity, unit);
+        decimal capacity = GetCapacity(dto.Ranges.Length, dto.Capacity, interval, unit);
+        var intervals = GetIntervals(dto.Ranges, interval, capacity, unit);
 
-        _logger.LogDataRanges(name, intervals);
+        var info = new StringBuilder().AddInfo(name, capacity, intervals, "Unit: " + unit).ToString();
+        _logger.LogInformation(info);
         
-        return new FloatData(name,
-            intervals.ToDictionary(p => p.Key, p => (DataRange<decimal>)new FloatSetIntervalDataRange(p.Key, p.Value, GetDecimals(unit))));
+        return new FloatData(
+            name,
+            intervals.ToDictionary(p => p.Key, p => (DataRange<decimal>)new FloatSetIntervalDataRange(p.Key, p.Value, GetDecimals(unit))),
+            info);
     }
 
     private static IReadOnlyDictionary<DataName, Interval<decimal>> GetIntervals(
         string[] ranges,
         Interval<decimal> interval,
-        string? capacityStr,
+        decimal capacity,
         decimal unit)
     {
-        decimal capacity = GetCapacity(ranges.Length, capacityStr, interval, unit);
+        
         var result = new Dictionary<DataName, Interval<decimal>>();
 
         for (int i = 0; i < ranges.Length; i++)

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+using System.Xml.Linq;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
@@ -101,6 +102,19 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
     {
         var (_, datas) = _loadTask.Result;
         return datas[name];
+    }
+
+    public Data? Find(DataName name)
+    {
+        var (_, datas) = _loadTask.Result;
+        datas.TryGetValue(name, out var data);
+        return data;
+    }
+
+    public IReadOnlyCollection<Data> GetAll()
+    {
+        var (_, datas) = _loadTask.Result;
+        return datas.Values;
     }
 
     private void WatchForFileChanges()

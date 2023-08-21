@@ -1,19 +1,19 @@
-﻿using System.Text;
-using Microsoft.Extensions.Logging;
+using System.Text;
 using SimpleMockServer.Common;
 using SimpleMockServer.Domain.DataModel;
 
 namespace SimpleMockServer.Domain.Configuration.DataModel;
 
-static class LoggerExtensions
+static class StringBuilderExtensions
 {
-    public static void LogDataRanges<T>(this ILogger logger,
+    public static StringBuilder AddInfo<T, TCapacity>(this StringBuilder sb,
         DataName name,
+        TCapacity capacity,
         IReadOnlyDictionary<DataName, Interval<T>> intervals,
         string? additionInfo = null)
         where T : struct, IComparable<T>
     {
-        var sb = new StringBuilder("Data: " + name).AppendLine();
+        sb.AppendLine("Capacity: " + capacity);
 
         if (additionInfo != null)
         {
@@ -21,12 +21,11 @@ static class LoggerExtensions
         }
 
         sb.AppendLine("Ranges:");
-
         foreach (var pair in intervals)
         {
             sb.AppendLine(pair.Key.ToString().PadRight(10, ' ') + " " + pair.Value);
         }
 
-        logger.LogInformation(sb.ToString());
+        return sb;
     }
 }

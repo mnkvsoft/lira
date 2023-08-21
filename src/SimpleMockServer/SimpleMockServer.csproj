@@ -21,6 +21,16 @@
       <ProjectReference Include="..\SimpleMockServer.Domain.Configuration\SimpleMockServer.Domain.Configuration.csproj" />
       <ProjectReference Include="..\SimpleMockServer.Configuration\SimpleMockServer.Configuration.csproj" />
       <ProjectReference Include="..\SimpleMockServer.ExternalCalling.Http.Configuration\SimpleMockServer.ExternalCalling.Http.Configuration.csproj" />
+    </ItemGroup>  
+
+    <ItemGroup>
+      <Folder Include="Controllers\" />
+    </ItemGroup>  
+
+    <ItemGroup>
+      <Content Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

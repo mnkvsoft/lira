@@ -1,3 +1,5 @@
+using System;
+using System.Text;
 using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
 using SimpleMockServer.Domain.Configuration.DataModel.Dto;
@@ -24,23 +26,25 @@ class IntParser
         var interval = string.IsNullOrEmpty(dto.Interval)
             ? new Interval<long>(1, long.MaxValue)
             : Interval<long>.Parse(dto.Interval, new PrettyNumberParser<long>());
-        
-        var intervals = GetIntervals(dto.Ranges, interval, dto.Capacity);
 
-        _logger.LogDataRanges(name, intervals, "Mode: " + mode);
-        
+        ulong capacity = GetCapacity(dto.Ranges.Length, dto.Capacity, interval);
+        var intervals = GetIntervals(dto.Ranges, interval, capacity);
+
+        var info = new StringBuilder().AddInfo(name, capacity, intervals, "Mode: " + mode).ToString();
+        _logger.LogInformation(info);
+
         if (mode == "seq")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,
                 p => (DataRange<long>)new IntSeqDataRange(p.Key, new Int64Sequence(p.Value)));
-            return new IntData(name, seqDatas);
+            return new IntData(name, seqDatas, info);
         }
 
         if (mode == "random")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,
                 p => (DataRange<long>)new IntSetIntervalDataRange(p.Key, p.Value));
-            return new IntData(name, seqDatas);
+            return new IntData(name, seqDatas, info);
         }
 
         throw new Exception($"An error occurred while creating '{name}' data. For number access only 'seq' or 'set' values providing type");
@@ -49,9 +53,8 @@ class IntParser
     public static IReadOnlyDictionary<DataName, Interval<long>> GetIntervals(
         string[] ranges,
         Interval<long> interval,
-        string? capacityStr)
+        ulong capacity)
     {
-        ulong capacity = GetCapacity(ranges.Length, capacityStr, interval);
         var result = new Dictionary<DataName, Interval<long>>();
 
         for (int i = 0; i < ranges.Length; i++)
@@ -67,7 +70,7 @@ class IntParser
         return result;
     }
 
-    private static ulong GetCapacity(int rangesCount, string? capacityStr, Interval<long> interval)
+    public static ulong GetCapacity(int rangesCount, string? capacityStr, Interval<long> interval)
     {
         ulong intervalLength = (ulong)(interval.To - interval.From);
 

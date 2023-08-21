@@ -2,7 +2,7 @@ using ArgValidation;
 
 namespace SimpleMockServer.Domain.DataModel;
 
-public abstract class Data<T> : Data
+public abstract class Data<T> : Data where T : notnull
 {
     private readonly DataName _name;
 
@@ -10,7 +10,7 @@ public abstract class Data<T> : Data
     private readonly DataRange<T> _defaultRange;
 
 
-    protected Data(DataName name, IReadOnlyDictionary<DataName, DataRange<T>> ranges) : base(name)
+    protected Data(DataName name, IReadOnlyDictionary<DataName, DataRange<T>> ranges, string info) : base(name, info)
     {
         Arg.NotEmpty(ranges, nameof(ranges));
         Arg.NotDefault(name, nameof(name));
@@ -30,5 +30,11 @@ public abstract class Data<T> : Data
     public override DataRange GetDefault()
     {
         return _defaultRange;
+    }
+
+    public override DataRange? Find(DataName name)
+    {
+        _ranges.TryGetValue(name, out var range);
+        return range;
     }
 }
