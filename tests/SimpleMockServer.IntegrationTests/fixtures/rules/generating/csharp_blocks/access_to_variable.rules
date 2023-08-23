@@ -4,7 +4,7 @@ GET /generating/csharp/access_to_variable
 
 ----- variables
 
-duration = {{ TimeSpan.FromDays(1) }}
+$duration = {{ TimeSpan.FromDays(1) }}
 
 ----- response
 

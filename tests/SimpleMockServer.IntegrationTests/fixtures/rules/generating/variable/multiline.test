@@ -1,0 +1,14 @@
+-------------------- case
+
+GET /generating/variable/multiline
+
+----- expected
+
+code:
+200
+
+body:
+line1
+line2
+line3
+single_line_value

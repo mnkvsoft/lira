@@ -1,2 +1,2 @@
-req_shared = value_from_req_shared
+$req_shared = value_from_req_shared
 

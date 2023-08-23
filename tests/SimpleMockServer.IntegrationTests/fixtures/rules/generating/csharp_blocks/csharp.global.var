@@ -1,1 +1,1 @@
-global_csharp_var = {{ 2 + 3 * 4 }}
+$global_csharp_var = {{ 2 + 3 * 4 }}

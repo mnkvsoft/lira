@@ -1,2 +1,2 @@
 // this is a comment, if it is not cleared then parsing of the file will fail
-test_comment_in_global = /* = comment = */ value
+$test_comment_in_global = /* = comment = */ value

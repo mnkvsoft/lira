@@ -1,6 +1,6 @@
 -------------------- variables
 
-file_level = {{ echo: value_from_file_level }}
+$file_level = {{ echo: value_from_file_level }}
 
 -------------------- rule
 
@@ -8,7 +8,7 @@ GET /generating/variable/global/with_request_var
 
 ----- variables
 
-local = {{ $global }} | {{ $req_shared }} | {{ $file_level }} | value_from_local
+$local = {{ $global }} | {{ $req_shared }} | {{ $file_level }} | value_from_local
 
 ----- response
 
