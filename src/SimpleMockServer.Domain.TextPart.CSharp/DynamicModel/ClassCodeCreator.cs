@@ -72,6 +72,7 @@ static class ClassCodeCreator
         private readonly static string ImportNamespaces =
             "using System;" + Nl +
             "using System.Text;" + Nl +
+            "using System.Linq;" + Nl +
             "using System.Collections;" + Nl +
             "using System.Collections.Generic;" + Nl + Nl +
 
@@ -80,6 +81,7 @@ static class ClassCodeCreator
 
             "using SimpleMockServer.Domain.TextPart;" + Nl +
             "using SimpleMockServer.Domain.TextPart.Variables;" + Nl +
+            "using static SimpleMockServer.Domain.TextPart.CSharp.Functions.JsonUtils;" + Nl +
             "[namespaces]";
 
         public const string Namespace = "namespace __DynamicGenerated;";

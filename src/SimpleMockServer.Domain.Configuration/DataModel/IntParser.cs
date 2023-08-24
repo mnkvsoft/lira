@@ -30,9 +30,11 @@ class IntParser
         ulong capacity = GetCapacity(dto.Ranges.Length, dto.Capacity, interval);
         var intervals = GetIntervals(dto.Ranges, interval, capacity);
 
-        var info = new StringBuilder().AddInfo(name, capacity, intervals, "Mode: " + mode).ToString();
-        _logger.LogInformation(info);
+        var additionInfo = "Mode: " + mode;
+        
+        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, capacity, intervals, additionInfo).ToString());
 
+        var info = new StringBuilder().AddInfo(capacity, intervals, additionInfo).ToString();
         if (mode == "seq")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,
@@ -61,7 +63,7 @@ class IntParser
         {
             string range = ranges[i];
             long from = (long)((ulong)i * capacity) + interval.From;
-            long to = i == ranges.Length - 1 ? interval.To : (long)((ulong)from + capacity - 1);
+            long to = (long)((ulong)from + capacity - 1);
             var name = new DataName(range);
 
             result.Add(name, new Interval<long>(from, to));

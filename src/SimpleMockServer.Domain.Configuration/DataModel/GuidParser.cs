@@ -22,12 +22,11 @@ class GuidParser
         ulong capacity = IntParser.GetCapacity(dto.Ranges.Length, dto.Capacity, interval);
         var intervals = IntParser.GetIntervals(dto.Ranges, interval, capacity);
 
-        var info = new StringBuilder().AddInfo(name, capacity, intervals).ToString();
-        _logger.LogInformation(info);
+        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, capacity, intervals).ToString());
 
         return new GuidData(
             name,
             intervals.ToDictionary(p => p.Key, p => new GuidDataRange(p.Key, new Int64Sequence(p.Value), dto.Format)),
-            info);
+            new StringBuilder().AddInfo( capacity, intervals).ToString());
     }
 }

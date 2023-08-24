@@ -9,16 +9,10 @@
 			"include": "#keywords"
 		},
 		{
-			"include": "#strings"
-		},
-		{
 			"include": "#methods"
 		},
 		{
 			"include": "#variables"
-		},
-		{
-			"include": "#constants"
 		},
 		{
 			"include": "#comments"
@@ -54,18 +48,11 @@
 			{
 				"name": "keyword.dynamic-part.rules",
 				"match": "{{|}}"
+			},
+			{
+				"name": "keyword.pass-to-pipeline.rules",
+				"match": ">>"
 			}
-			]
-		},
-		"strings": {
-			"name": "string.quoted.double.rules",
-			"begin": "\"",
-			"end": "\"",
-			"patterns": [
-				{
-					"name": "constant.character.escape.rules",
-					"match": "\\\\."
-				}
 			]
 		},
 		"variables": {
@@ -74,22 +61,10 @@
 				"match": "\\$\\S+ "
 			}]
 		},
-		"constants": {
-			"patterns": [
-			{
-				"name": "constant.numeric.rules",
-				"match": "\\d"
-			},
-			{
-				"name": "constant.guid.rules",
-				"match": "^({)?(\\()?\\d+(?(1)})(?(2)\\))$"
-			}
-			]
-		},
 		"methods": {
 			"patterns": [{
 				"name": "entity.name.function.rules",
-				"match": " (jpath|xpath|int|any|guid|data|echo|seq|req.header|req.body.all|req.body.form|req.body.jpath|req.body.xpath)"
+				"match": " (jpath|xpath|int|any|guid|data|echo|seq|req.header|req.body.all|req.body.form|req.body.jpath|req.body.xpath|random.string|random.int)"
 			}]
 		},
 		"comments": {

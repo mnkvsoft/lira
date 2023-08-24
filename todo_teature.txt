@@ -1,2 +1,2 @@
-- escape long string
-- number and string deserialize in one node
+- int data default random?
+- int, hex, float, data default capacity?

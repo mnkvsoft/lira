@@ -24,8 +24,8 @@ class HexParser
         var intervals = IntParser.GetIntervals(dto.Ranges, interval, capacity);
         int bytesCount = dto.BytesCount ?? 32;
 
-        var info = new StringBuilder().AddInfo(name, capacity, intervals, "Bytes count: " + bytesCount).ToString();
-        _logger.LogInformation(info);
+        var additionInfo = "Bytes count: " + bytesCount;
+        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, capacity, intervals, additionInfo).ToString());
 
         return new HexData(
             name,
@@ -33,6 +33,6 @@ class HexParser
             {
                 return new HexDataRange(p.Key, p.Value, bytesCount);
             }),
-            info);
+            new StringBuilder().AddInfo(capacity, intervals, additionInfo).ToString());
     }
 }

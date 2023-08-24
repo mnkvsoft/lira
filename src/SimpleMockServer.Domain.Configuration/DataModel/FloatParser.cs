@@ -42,13 +42,13 @@ class FloatParser
         decimal capacity = GetCapacity(dto.Ranges.Length, dto.Capacity, interval, unit);
         var intervals = GetIntervals(dto.Ranges, interval, capacity, unit);
 
-        var info = new StringBuilder().AddInfo(name, capacity, intervals, "Unit: " + unit).ToString();
-        _logger.LogInformation(info);
+        var additionInfo = "Unit: " + unit;
+        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, capacity, intervals, additionInfo).ToString());
         
         return new FloatData(
             name,
             intervals.ToDictionary(p => p.Key, p => (DataRange<decimal>)new FloatSetIntervalDataRange(p.Key, p.Value, GetDecimals(unit))),
-            info);
+            new StringBuilder().AddInfo(capacity, intervals, additionInfo).ToString());
     }
 
     private static IReadOnlyDictionary<DataName, Interval<decimal>> GetIntervals(

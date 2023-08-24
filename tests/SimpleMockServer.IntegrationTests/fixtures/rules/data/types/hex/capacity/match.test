@@ -2,7 +2,7 @@
 
 -------------------- case
 
-GET /data/types/hex/capacity/match/31981f0e9b000080b1bbfbbe8a23cbd2c7cb4a11899621d8dab6f7f94186c0e8
+GET /data/types/hex/capacity/match/71cabc66a700008022a8de4b3a7dd5b3aad9d9cb30023bf6ecb068e2104be23c
 
 ----- expected
 
@@ -13,7 +13,7 @@ code:
 
 -------------------- case
 
-GET /data/types/hex/capacity/match/26acd85bf7000080125575915d848331f398d082a9d23c346c58fb1d30644852
+GET /data/types/hex/capacity/match/8c0ed618bd0100801c007551f00c441311abeb8af15b1229cb1a014aef8d5ed6
 
 ----- expected
 
@@ -23,11 +23,11 @@ code:
 body:
 second
 
-// hex value in range [-9223370036854775808 - 9223372036854775807]
+// hex value in range [-9223370036854775808 - -9223369036854775809]
 
 -------------------- case
 
-GET /data/types/hex/capacity/match/209b04c75aad0d4ecb03ced7d6e70d37de5ac3742140329fdc3cb0c612ff4ff0
+GET /data/types/hex/capacity/match/6bb801600e0200802d95ef5260747ca85c373a8e506296c5fd848b63f215085d
 
 ----- expected
 

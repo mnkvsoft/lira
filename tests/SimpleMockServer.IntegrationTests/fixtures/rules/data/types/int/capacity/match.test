@@ -69,7 +69,7 @@ third
 
 -------------------- case
 
-GET /data/types/int/capacity/match/10
+GET /data/types/int/capacity/match/6
 
 ----- expected
 
@@ -81,7 +81,7 @@ third
 
 -------------------- case
 
-GET /data/types/int/capacity/match/11
+GET /data/types/int/capacity/match/7
 
 ----- expected
 
