@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/function/extract/path/{{ any name: some }}
+
+----- response
+
+code:
+200
+
+body:
+{{ req.path: some }}

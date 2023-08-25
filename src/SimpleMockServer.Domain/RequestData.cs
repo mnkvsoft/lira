@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 
 namespace SimpleMockServer.Domain;
 
@@ -18,6 +19,31 @@ public record RequestData
                 throw new Exception(nameof(PathNameMaps) + " already set");
             _pathNameMaps = value;
         }
+    }
+    
+    public string GetPathSegmentValue(string name)
+    {
+        var map = PathNameMaps?.FirstOrDefault(x => x.Name == name);
+        if (map == null)
+            throw new Exception($"Path segment with name '{name}' not defined");
+
+        return Path.Value.Split('/')[map.Index];
+    }
+    
+    public string? GetHeader(string name)
+    {
+        if (Headers.TryGetValue(name, out StringValues values))
+            return values.First();
+
+        return null;
+    }
+    
+    public string? GetQueryParam(string name)
+    {
+        if (Query.TryGetValue(name, out StringValues values))
+            return values.First();
+
+        return null;
     }
     
     public QueryString QueryString { get; }

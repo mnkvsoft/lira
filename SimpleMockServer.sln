@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{B539FC
 		.gitignore = .gitignore
 		global.json = global.json
 		todo_teature.txt = todo_teature.txt
+		readme.md = readme.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BE927F78-B04F-4B6F-97FD-9B8397AF9915}"
@@ -58,6 +59,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TextParts", "TextParts", "{72A44983-7297-4284-BD2C-24CC9D307612}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.TextPart.Functions.Utils", "src\SimpleMockServer.Domain.TextPart.Functions.Utils\SimpleMockServer.Domain.TextPart.Functions.Utils.csproj", "{2AB6AB20-AD74-4D66-ABA7-7C9BDA7B7286}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{21774504-6CD6-450E-AB05-ED537234E470}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

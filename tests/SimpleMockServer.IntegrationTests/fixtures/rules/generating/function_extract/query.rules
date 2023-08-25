@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/function/extract/query?p=extracted_value
+
+----- response
+
+code:
+200
+
+body:
+{{ req.query: p }}

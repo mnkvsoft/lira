@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/function/extract/query?p=extracted_value
+
+----- expected
+
+code:
+200
+
+body:
+extracted_value

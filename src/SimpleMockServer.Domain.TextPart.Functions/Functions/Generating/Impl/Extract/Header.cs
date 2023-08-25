@@ -5,12 +5,7 @@ internal class Header : IObjectTextPart, IWithStringArgumentFunction
 
     private string _headerName = "";
 
-    public object? Get(RequestData request)
-    {
-        if (request.Headers.TryGetValue(_headerName, out var result))
-            return result.First();
-        return null;
-    }
+    public object? Get(RequestData request) => request.GetHeader(_headerName);
 
     public void SetArgument(string argument)
     {

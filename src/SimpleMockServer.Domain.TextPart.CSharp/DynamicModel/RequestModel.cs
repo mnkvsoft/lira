@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Primitives;
-using SimpleMockServer.Domain.Extensions;
+﻿using SimpleMockServer.Domain.Extensions;
 using SimpleMockServer.Domain.TextPart.Functions.Utils;
 
 namespace SimpleMockServer.Domain.TextPart.CSharp.DynamicModel;
@@ -14,31 +13,12 @@ public class RequestModel
         _data = data;
         Body = new BodyModel(data.ReadBody());
     }
-    
-    public string? Header(string name)
-    {
-        if (_data.Headers.TryGetValue(name, out StringValues values))
-            return values.First();
 
-        return null;
-    }
-    
-    public string? Query(string name)
-    {
-        if (_data.Query.TryGetValue(name, out StringValues values))
-            return values.First();
+    public string? Header(string name) => _data.GetHeader(name);
 
-        return null;
-    }
+    public string? Query(string name) => _data.GetQueryParam(name);
     
-    public string Path(string name)
-    {
-        var map = _data.PathNameMaps?.FirstOrDefault(x => x.Name == name);
-        if (map == null)
-            throw new Exception($"Path segment with name '{name}' not defined");
-
-        return _data.Path.Value.Split('/')[map.Index];
-    }
+    public string Path(string name) => _data.GetPathSegmentValue(name);
     
     public record BodyModel(string Value)
     {
