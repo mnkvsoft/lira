@@ -64,6 +64,7 @@ class RoutingMiddleware : IMiddleware
                 var rule = matchesRules.First();
                 request.PathNameMaps = rule.PathNameMaps;
                 await rule.Execute(new HttpContextData(request, context.Response));
+                _logger.LogInformation("Was usage rule: " + rule.Name);
                 return;
             }
 

@@ -66,7 +66,7 @@ class DataLoader
             }
             catch (Exception e)
             {
-                throw new Exception($"An error has accured on parse data '{data.Key}'", e);
+                throw new Exception($"An error has occurred on parse data '{data.Key}'", e);
             }
         }
 

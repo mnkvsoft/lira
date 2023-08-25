@@ -65,7 +65,7 @@ internal class RuleFileParser
         for (var i = 0; i < ruleSections.Length; i++)
         {
             var fi = new FileInfo(ruleFile);
-            var ruleName = $"no. {i + 1} file: {fi.Name}";
+            var ruleName = $"no. {i + 1} file: {fi.FullName}";
 
             var ruleSection = ruleSections[i];
             

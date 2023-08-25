@@ -27,7 +27,7 @@
 			},
 			{
 				"name": "entity.name.type.section.name.rules",
-				"match": " (rule|response|variables|condition)"
+				"match": " (rule|response|variables|condition|call.http)"
 			}
 			]
 		},
@@ -43,7 +43,7 @@
 			},
 			{
 				"name": "keyword.block.rules",
-				"match": "(code|body|headers):"
+				"match": "(code|body|headers|delay):"
 			},
 			{
 				"name": "keyword.dynamic-part.rules",
@@ -64,7 +64,7 @@
 		"methods": {
 			"patterns": [{
 				"name": "entity.name.function.rules",
-				"match": " (jpath|xpath|int|any|guid|data|echo|seq|req.header|req.body.all|req.body.form|req.body.jpath|req.body.xpath|random.string|random.int)"
+				"match": " (jpath|xpath|form:|all|int|any|guid|data|echo|seq|req.header|req.body.all|req.body.form|req.body.jpath|req.body.xpath|random.string|random.int|read.file)"
 			}]
 		},
 		"comments": {

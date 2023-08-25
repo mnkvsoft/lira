@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Buffers;
+using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -72,11 +73,14 @@ static class CodeCompiler
             MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(System.Runtime.CompilerServices.DynamicAttribute).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(System.Text.Json.JsonDocument).Assembly.Location),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "mscorlib.dll")),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.dll")),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Core.dll")),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Runtime.dll")),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Collections.dll")),
+            MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Memory.dll")),
+            MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Security.Cryptography.dll")),
         };
 
         if (usageAssemblies != null)

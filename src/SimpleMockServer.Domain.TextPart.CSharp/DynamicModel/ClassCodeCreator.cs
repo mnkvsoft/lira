@@ -100,7 +100,7 @@ public class [className] : DynamicObjectTextPartBase, IObjectTextPart
     public dynamic? Get(RequestData [request])
     {
         var [externalRequestVariableName] = new RequestModel([request]);
-
+        
         [code]
     }
 }";

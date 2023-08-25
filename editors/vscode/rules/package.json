@@ -12,8 +12,8 @@
   "contributes": {
     "languages": [{
       "id": "rules",
-      "aliases": ["rules", "rules"],
-      "extensions": [".rules"],
+      "aliases": ["rules"],
+      "extensions": [".rules", ".req.var", ".global.var"],
       "configuration": "./language-configuration.json"
     }],
     "grammars": [{

@@ -1,0 +1,14 @@
+-------------------- case
+
+GET /generating/csharp/functions/json/add/to/root
+
+----- expected
+
+code:
+200
+
+body:
+{
+  "field1": "value",
+  "new_field": "new_value"
+}

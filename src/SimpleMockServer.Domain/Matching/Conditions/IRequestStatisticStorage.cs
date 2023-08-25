@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using SimpleMockServer.Common;
+using SimpleMockServer.Domain.Extensions;
 
 namespace SimpleMockServer.Domain.Matching.Conditions;
 
@@ -58,7 +59,8 @@ class RequestStatisticStorage : IRequestStatisticStorage
         await sw.WriteAsync(request.Method);
         await sw.WriteAsync(request.Path.ToString());
         await sw.WriteAsync(request.QueryString.ToString());
-        sw.Write(request.Headers.Select(x => x.Key + x.Value));
+        await sw.WriteAsync(request.ReadBody());
+        await sw.WriteAsync(string.Join("", request.Headers.Select(x => x.Key + x.Value)));
 
         await sw.FlushAsync();
         

@@ -2,7 +2,7 @@
 
 public abstract record ConfigurationState
 {
-    public record Ok : ConfigurationState;
+    public record Ok(DateTime LoadTime) : ConfigurationState;
 
-    public record Error(Exception Exception) : ConfigurationState;
+    public record Error(DateTime LoadTime, Exception Exception) : ConfigurationState;
 }

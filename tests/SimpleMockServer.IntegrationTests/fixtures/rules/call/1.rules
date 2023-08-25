@@ -28,6 +28,7 @@ delay:
 100 ms
 
 headers:
+Content-Type: application/json
 Request-Id: {{ req.header: Request-Id }}
 
 body:

@@ -79,7 +79,7 @@ public class Rule
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"An error accured while calling '{caller.GetType().Name}'");
+            _logger.LogError(ex, $"An error occurred while calling '{caller.GetType().Name}'");
         }
     }
 }

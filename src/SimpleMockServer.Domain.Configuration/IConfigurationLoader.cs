@@ -1,4 +1,3 @@
-using System.Xml.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -144,11 +143,11 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
         try
         {
             await _loadTask;
-            _providerState = new ConfigurationState.Ok();
+            _providerState = new ConfigurationState.Ok(DateTime.Now);
         }
         catch (Exception e)
         {
-            _providerState = new ConfigurationState.Error(e);
+            _providerState = new ConfigurationState.Error(DateTime.Now, e);
         }
 
         return _providerState;

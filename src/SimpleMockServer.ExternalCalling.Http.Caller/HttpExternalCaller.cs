@@ -1,4 +1,5 @@
-﻿using SimpleMockServer.Domain;
+﻿using System.Text;
+using SimpleMockServer.Domain;
 using SimpleMockServer.Domain.Generating;
 
 namespace SimpleMockServer.ExternalCalling.Http.Caller;
@@ -47,15 +48,27 @@ public class HttpExternalCaller : IExternalCaller
 
         req.RequestUri = new Uri(url);
 
+        string? contentType = null;
         if (_headers != null)
         {
             foreach (var header in _headers)
             {
-                req.Headers.Add(header.Name, header.TextParts.Generate(request));
+                string value = header.TextParts.Generate(request);
+                
+                if (header.Name == Header.ContentType)
+                {
+                    contentType = value;
+                    continue;
+                }
+                
+                req.Headers.Add(header.Name, value);
             }
         }
 
-        req.Content = new StringContent(_bodyParts?.Generate(request) ?? "");
+        if (string.IsNullOrWhiteSpace(contentType))
+            throw new Exception("Header Content-Type is required");
+        
+        req.Content = new StringContent(_bodyParts?.Generate(request) ?? "", Encoding.UTF8, contentType);
         return req;
     }
 }

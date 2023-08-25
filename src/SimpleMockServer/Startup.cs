@@ -1,3 +1,4 @@
+using SimpleMockServer.Common.Exceptions;
 using SimpleMockServer.ExternalCalling.Http.Configuration;
 using SimpleMockServer.Middlewares;
 using SimpleMockServer.Configuration;
@@ -95,6 +96,34 @@ public class Startup
                 else
                 {
                     await WriteDatas(context, new[] { data });
+                }
+            });
+            
+            endpoints.MapGet(
+            "/" + sys + "/state",
+            async context =>
+            {
+                var loader = context.RequestServices.GetRequiredService<IConfigurationLoader>();
+
+                var state = await loader.GetState();
+
+                if (state is ConfigurationState.Ok ok)
+                {
+                    context.Response.StatusCode = 200;
+                    await context.Response.WriteAsync($"Ok. Load time: {ok.LoadTime} " +
+                                                      $"({(int)(DateTime.Now - ok.LoadTime).TotalSeconds} second ago)");
+                }
+                else if(state is ConfigurationState.Error error)
+                {
+                    context.Response.StatusCode = 500;
+                    await context.Response.WriteAsync($"Error. Load time: {error.LoadTime} " +
+                                                      $"({(int)(DateTime.Now - error.LoadTime).TotalSeconds} second ago)" +
+                                                      Environment.NewLine + Environment.NewLine +
+                                                      error.Exception);
+                }
+                else
+                {
+                    throw new UnsupportedInstanceType(state);
                 }
             });
         });

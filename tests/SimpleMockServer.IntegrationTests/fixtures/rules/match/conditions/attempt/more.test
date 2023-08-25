@@ -2,6 +2,9 @@
 
 GET /match/conditions/attempt/more
 
+headers:
+x: 1
+
 ----- expected
 
 code:
@@ -13,6 +16,24 @@ attempt 1
 -------------------- case
 
 GET /match/conditions/attempt/more
+
+headers:
+x: 2
+
+----- expected
+
+code:
+200
+
+body:
+attempt 1
+
+-------------------- case
+
+GET /match/conditions/attempt/more
+
+headers:
+x: 1
 
 ----- expected
 

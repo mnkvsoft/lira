@@ -1,0 +1,23 @@
+-------------------- rule
+
+GET /generating/csharp/functions/json/add/to/root
+
+
+
+----- variables
+
+$json_var = 
+{ 
+    "field1" : "value"
+} 
+
+----- response
+
+code:
+200
+
+body:
+{{ 
+     json($json_var)
+        .add("new_field", "new_value")
+}}

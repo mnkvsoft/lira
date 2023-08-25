@@ -53,6 +53,9 @@ internal class StringMatchPrettyFunctionFactory : IStringMatchFunctionFactory
 
         if (prettyMatchFunction is IWithStringArgumentFunction withArgument)
         {
+            if(string.IsNullOrWhiteSpace(argument))
+                throw new Exception($"Function '{functionName}' has argument but it missing");
+                
             withArgument.SetArgument(argument);
         }
 

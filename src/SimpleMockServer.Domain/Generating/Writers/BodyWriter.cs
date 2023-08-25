@@ -15,7 +15,10 @@ public class BodyWriter
     {
         foreach (var part in _parts)
         {
-            await httpContextData.Response.WriteAsync(part.Get(httpContextData.Request));
+            string? text = part.Get(httpContextData.Request);
+            
+            if (text != null)
+                await httpContextData.Response.WriteAsync(text);
         }
     }
 }

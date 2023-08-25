@@ -2,8 +2,8 @@
   "int_default": {
     "type": "int",
     "ranges": [
-      "first",
-      "second"
+      "first.one",
+      "second.two"
     ]
   }
 }

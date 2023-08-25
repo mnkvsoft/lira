@@ -5,7 +5,6 @@ using SimpleMockServer.Domain.Configuration.Rules;
 using SimpleMockServer.Domain.Configuration.Rules.Parsers;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.TextPart;
-using SimpleMockServer.Domain.TextPart.Functions.Functions.Transform.Format;
 using SimpleMockServer.ExternalCalling.Http.Caller;
 using SimpleMockServer.FileSectionFormat;
 
@@ -49,11 +48,14 @@ public class HttpExternalCallerRegistrator : IExternalCallerRegistrator
         var headerBlock = section.GetBlockOrNull(BlockName.Headers);
         var headers = headerBlock == null ? null : await _generatingHttpDataParser.ParseHeaders(headerBlock, parsingContext);
 
+        if(headers?.FirstOrDefault(x => x.Name == Header.ContentType) == null)
+            throw new Exception("Header Content-Type is required");
+        
         var caller = new HttpExternalCaller(
             _httpClientFactory, 
             method, 
-            ObjectTextPartsExtensions.WrapToTextParts(urlParts), 
-            ObjectTextPartsExtensions.WrapToTextParts(bodyParts), 
+            urlParts.WrapToTextParts(), 
+            bodyParts.WrapToTextParts(), 
             headers);
         
         return caller;

@@ -1,4 +1,5 @@
-﻿using SimpleMockServer.Domain.DataModel;
+﻿using SimpleMockServer.Common.Extensions;
+using SimpleMockServer.Domain.DataModel;
 
 namespace SimpleMockServer.Domain.TextPart.Functions.Functions;
 
@@ -12,31 +13,15 @@ abstract class DataBase : IWithStringArgumentFunction
     }
 
     private DataName _name;
-    private DataName? _rangeName;
+    private DataName _rangeName;
 
     void IWithStringArgumentFunction.SetArgument(string argument)
     {
-        if (!argument.Contains("."))
-        {
-            _name = new DataName(argument);
-        }
-        else
-        {
-            var splitted = argument.Split(".");
+        var (name, nameRange) = argument.SplitToTwoPartsRequired(".");
 
-            if (splitted.Length > 2)
-                throw new ArgumentException($"Invalid data name: '{argument}'");
-
-            _name = new DataName(splitted[0]);
-            _rangeName = new DataName(splitted[1]);
-        }
+        _name = new DataName(name);
+        _rangeName = new DataName(nameRange);
     }
 
-    protected DataRange GetRange()
-    {
-        var data = _dataProvider.GetData(_name);
-
-        var range = _rangeName == null ? data.GetDefault() : data.Get(_rangeName.Value);
-        return range;
-    }
+    protected DataRange GetRange() => _dataProvider.GetData(_name).Get(_rangeName);
 }

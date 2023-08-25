@@ -7,8 +7,6 @@ public abstract class Data<T> : Data where T : notnull
     private readonly DataName _name;
 
     private readonly IReadOnlyDictionary<DataName, DataRange<T>> _ranges;
-    private readonly DataRange<T> _defaultRange;
-
 
     protected Data(DataName name, IReadOnlyDictionary<DataName, DataRange<T>> ranges, string info) : base(name, info)
     {
@@ -17,7 +15,6 @@ public abstract class Data<T> : Data where T : notnull
 
         _ranges = ranges;
         _name = name;
-        _defaultRange = ranges.First().Value;
     }
 
     public override DataRange Get(DataName rangeName)
@@ -25,11 +22,6 @@ public abstract class Data<T> : Data where T : notnull
         if (!_ranges.TryGetValue(rangeName, out var range))
             throw new Exception($"For data '{_name}' not found range '{rangeName}'");
         return range;
-    }
-
-    public override DataRange GetDefault()
-    {
-        return _defaultRange;
     }
 
     public override DataRange? Find(DataName name)

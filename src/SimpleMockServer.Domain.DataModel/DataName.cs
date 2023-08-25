@@ -9,8 +9,7 @@ public struct DataName : IEquatable<DataName>
     public DataName(string value)
     {
         Arg.Validate(value, nameof(value))
-            .NotNullOrWhitespace()
-            .NotContains(".");
+            .NotNullOrWhitespace();
 
         _value = value.ToLower();
     }

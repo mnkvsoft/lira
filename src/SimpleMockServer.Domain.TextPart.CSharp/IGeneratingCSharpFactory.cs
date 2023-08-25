@@ -218,18 +218,37 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
     {
         string methodBody;
 
-        var nl = Environment.NewLine;
         if (code.Contains("return"))
         {
-            methodBody = code;
+            methodBody = WrapToTryCatch(code, codeForException: code);
         }
         else
         {
-            methodBody = $"var _result_ = {code};" + nl +
-                         "return _result_;";
+            methodBody = WrapToTryCatch(
+                $"var _result_ = {code};" +
+                @"return _result_;",
+                codeForException: code);
         }
 
         return methodBody;
+    }
+
+    private static string WrapToTryCatch(string code, string codeForException)
+    {
+        return @"try
+            {
+                " + code + @"
+            }
+            catch (Exception e)
+            {
+                var nl = Environment.NewLine;
+                throw new Exception(" + "\"An error has occurred while execute code block: \" + nl + \"" + 
+               codeForException
+                   .Replace("\"", "\\\"")
+                   .Replace("\r\n", "\" + nl + \"")
+                   .Replace("\n", "\" + nl + \"") +
+               "\", e);" + @"
+            }";
     }
 
     private static string ReplaceVariableNames(string code, char variablePrefix, string requestParameterName)

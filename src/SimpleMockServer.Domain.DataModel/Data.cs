@@ -16,7 +16,6 @@ public abstract class Data
         Info = info;
     }
 
-    public abstract DataRange GetDefault();
     public abstract DataRange Get(DataName rangeName);
     public abstract DataRange? Find(DataName rangeName);
 }
