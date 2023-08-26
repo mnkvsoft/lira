@@ -234,7 +234,7 @@ GET /user?name=silvester
 ```http request
 -------------------- rule
 
-GET /user?name={{ any }}&ago{{ int }}
+GET /user?name={{ any }}&ago={{ int }}
 
 ----- response
 
@@ -250,7 +250,7 @@ GET /user?name=pavel&ago=36
 GET /user?name=denis&ago=35&height=180
 ```
 
-#### !!! Особенность работы
+#### :triangular_flag_on_post: Особенность работы
 
 Сопоставление по параметру строки запроса указывает шаблон только для этого параметра и не исключает присутствия других параметров в запросе
 
