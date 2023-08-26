@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.Text;
+using SimpleMockServer.Common;
 using SimpleMockServer.Domain;
 using SimpleMockServer.Domain.Configuration;
 using SimpleMockServer.Domain.Configuration.Rules;
@@ -11,9 +13,10 @@ class RoutingMiddleware : IMiddleware
     private readonly IConfigurationLoader _configurationLoader;
     private readonly ILogger _logger;
     private readonly bool _allowMultipleRules;
-    
 
-    public RoutingMiddleware(ILoggerFactory loggerFactory, IRulesProvider rulesProvider, IConfigurationLoader configurationLoader, IConfiguration configuration)
+
+    public RoutingMiddleware(ILoggerFactory loggerFactory, IRulesProvider rulesProvider, IConfigurationLoader configurationLoader,
+        IConfiguration configuration)
     {
         _rulesProvider = rulesProvider;
         _configurationLoader = configurationLoader;
@@ -56,31 +59,33 @@ class RoutingMiddleware : IMiddleware
 
         var request = new RequestData(req.Method, req.Path, req.QueryString, req.Headers, req.Query, req.Body);
 
+        Stopwatch sw = Stopwatch.StartNew();
         var matchesRules = await GetMatchedRules(request);
-
+        var searchMs = sw.GetElapsedDoubleMilliseconds();
+        sw.Restart();
         
-            if (matchesRules.Count == 1)
-            {
-                var rule = matchesRules.First();
-                request.PathNameMaps = rule.PathNameMaps;
-                await rule.Execute(new HttpContextData(request, context.Response));
-                _logger.LogInformation("Was usage rule: " + rule.Name);
-                return;
-            }
+        if (matchesRules.Count == 1)
+        {
+            var rule = matchesRules.First();
+            request.PathNameMaps = rule.PathNameMaps;
+            await rule.Execute(new HttpContextData(request, context.Response));
+            _logger.LogInformation($"Was usage rule (s: {searchMs} ms, e: {sw.GetElapsedDoubleMilliseconds()} ms): " + rule.Name);
+            return;
+        }
 
-            if (matchesRules.Count == 0)
-            {
-                context.Response.StatusCode = 404;
-                await context.Response.WriteAsync("Rule not found");
-                return;
-            }
+        if (matchesRules.Count == 0)
+        {
+            context.Response.StatusCode = 404;
+            await context.Response.WriteAsync("Rule not found");
+            return;
+        }
 
-            if (matchesRules.Count > 1)
-            {
-                context.Response.StatusCode = 404;
-                await context.Response.WriteAsync(GetErrorMessageForManyRules(matchesRules));
-                return;
-            }
+        if (matchesRules.Count > 1)
+        {
+            context.Response.StatusCode = 404;
+            await context.Response.WriteAsync(GetErrorMessageForManyRules(matchesRules));
+            return;
+        }
 
         throw new Exception("Unknown case");
     }
@@ -98,7 +103,7 @@ class RoutingMiddleware : IMiddleware
             foreach (var rule in allRules)
             {
                 var matchResult = await rule.IsMatch(request, requestId);
-                
+
                 if (matchResult is RuleMatchResult.Matched)
                     result.Add(rule);
             }
@@ -111,7 +116,7 @@ class RoutingMiddleware : IMiddleware
         foreach (var rule in allRules)
         {
             var matchResult = await rule.IsMatch(request, requestId);
-                
+
             if (matchResult is RuleMatchResult.Matched matched)
                 matchedRules.Add((rule, matched.Weight));
         }
@@ -123,7 +128,7 @@ class RoutingMiddleware : IMiddleware
 
         return matchedRules
             .Where(x => maxPriorityRule.Weight.CompareTo(x.Weight) == 0)
-            .Select(x=> x.Rule)
+            .Select(x => x.Rule)
             .ToArray();
     }
 
