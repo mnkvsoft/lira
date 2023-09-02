@@ -1,10 +1,10 @@
 ﻿using System.Text;
 
-namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Create.Random;
+namespace SimpleMockServer.Domain.TextPart.Functions.Functions.Generating.Impl.Create;
 
-internal class RandomString : IGlobalObjectTextPart, IWithIntArgumentFunction, IWithOptionalArgument
+internal class Str : IGlobalObjectTextPart, IWithIntArgumentFunction, IWithOptionalArgument
 {
-    public static string Name => "random.string";
+    public static string Name => "str";
     private int _length = 20;
     
     public object Get(RequestData request) => Get();

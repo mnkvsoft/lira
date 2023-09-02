@@ -130,10 +130,17 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
 
             withIntArgument.SetArgument(intValue);
         }
-        else if (function is IWithRangeArgumentFunction withRangeArgument)
+        else if (function is IWithLongRangeArgumentFunction withIntRangeArgument)
         {
             if (!Interval<long>.TryParse(argument, out var rangeValue))
-                throw new Exception($"Function '{functionName}' expected range argument. Current: '{argument}'");
+                throw new Exception($"Function '{functionName}' expected int range argument. Current: '{argument}'");
+
+            withIntRangeArgument.SetArgument(rangeValue);
+        }
+        else if (function is IWithDecimalRangeArgumentFunction withRangeArgument)
+        {
+            if (!Interval<decimal>.TryParse(argument, out var rangeValue))
+                throw new Exception($"Function '{functionName}' expected float range argument. Current: '{argument}'");
 
             withRangeArgument.SetArgument(rangeValue);
         }

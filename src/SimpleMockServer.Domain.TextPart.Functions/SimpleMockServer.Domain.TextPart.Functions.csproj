@@ -12,4 +12,9 @@
         <ProjectReference Include="..\SimpleMockServer.Domain\SimpleMockServer.Domain.csproj" />
         <ProjectReference Include="..\SimpleMockServer.Domain.TextPart.Variables\SimpleMockServer.Domain.TextPart.Variables.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
+    </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@
 public class RequestVariable : Variable
 {
     private readonly IReadOnlyCollection<IObjectTextPart> _parts;
-    private static object NullValue = new();
+    private static readonly object NullValue = new();
     
     public RequestVariable(string name, IReadOnlyCollection<IObjectTextPart> parts) : base(name)
     {

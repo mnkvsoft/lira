@@ -15,9 +15,7 @@ public class FloatSetIntervalDataRange : FloatDataRange
 
     public override decimal Next()
     {
-        decimal range = Interval.To - Interval.From;
-        double sample = Random.Shared.NextDouble();
-        decimal scaled = (decimal)sample * range + Interval.From;
+        decimal scaled = Random.Shared.NextDecimal(Interval);
         scaled = Math.Round(scaled, _decimals);
         return scaled;
     }
