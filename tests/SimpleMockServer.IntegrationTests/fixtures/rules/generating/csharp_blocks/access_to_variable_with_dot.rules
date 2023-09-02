@@ -1,0 +1,15 @@
+-------------------- rule
+
+GET /generating/csharp/access_to_variable_with_dot
+
+----- variables
+
+$duration.with.dot = {{ TimeSpan.FromDays(1) }}
+
+----- response
+
+code:
+200
+
+body:
+{{ $duration.with.dot + TimeSpan.FromMinutes(1) }}

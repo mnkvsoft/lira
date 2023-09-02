@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/csharp/access_to_variable_with_dot
+
+----- expected
+
+code:
+200
+
+body:
+1.00:01:00

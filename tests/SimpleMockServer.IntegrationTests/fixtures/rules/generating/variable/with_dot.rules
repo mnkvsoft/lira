@@ -1,0 +1,15 @@
+-------------------- rule
+
+GET /generating/variable/with_dot
+
+----- variables
+
+$var.with.dot = hello!
+
+----- response
+
+code:
+200
+
+body:
+{{ $var.with.dot }}

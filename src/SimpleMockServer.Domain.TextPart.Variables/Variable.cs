@@ -31,7 +31,7 @@ public abstract class Variable : IObjectTextPart, IEquatable<Variable>, IUniqueS
         return true;
     }
 
-    public static bool IsAllowedCharInName(char c) => char.IsLetter(c) || c == '_';
+    public static bool IsAllowedCharInName(char c) => char.IsLetter(c) || c == '_' || c == '.';
 
     public bool Equals(Variable? other)
     {
