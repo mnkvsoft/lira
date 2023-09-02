@@ -1,5 +1,5 @@
 ﻿using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
-using SimpleMockServer.Domain.TextPart.Variables;
+using SimpleMockServer.Domain.TextPart.Custom.Variables;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Variables;

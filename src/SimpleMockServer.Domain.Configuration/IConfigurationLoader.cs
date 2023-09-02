@@ -10,7 +10,7 @@ using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Configuration.Templating;
 using SimpleMockServer.Domain.Configuration.Variables;
 using SimpleMockServer.Domain.DataModel;
-using SimpleMockServer.Domain.TextPart.Variables;
+using SimpleMockServer.Domain.TextPart.Custom.Variables;
 
 namespace SimpleMockServer.Domain.Configuration;
 

@@ -2,10 +2,10 @@
 using SimpleMockServer.Common.Exceptions;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.TextPart;
-using SimpleMockServer.Domain.TextPart.CSharp;
-using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
-using SimpleMockServer.Domain.TextPart.Functions.Functions.Transform;
-using SimpleMockServer.Domain.TextPart.Variables;
+using SimpleMockServer.Domain.TextPart.Custom.Variables;
+using SimpleMockServer.Domain.TextPart.System.CSharp;
+using SimpleMockServer.Domain.TextPart.System.Functions.Functions.Generating;
+using SimpleMockServer.Domain.TextPart.System.Functions.Functions.Transform;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 

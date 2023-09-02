@@ -3,9 +3,9 @@ using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Templating;
 using SimpleMockServer.Domain.Matching.Request;
 using SimpleMockServer.Domain.Matching.Request.Matchers;
-using SimpleMockServer.Domain.TextPart.Functions;
-using SimpleMockServer.Domain.TextPart.Functions.Functions.Generating;
-using SimpleMockServer.Domain.TextPart.Functions.Functions.Matching.String;
+using SimpleMockServer.Domain.TextPart.System.Functions;
+using SimpleMockServer.Domain.TextPart.System.Functions.Functions.Generating;
+using SimpleMockServer.Domain.TextPart.System.Functions.Functions.Matching.String;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
