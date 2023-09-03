@@ -1,15 +1,14 @@
 ﻿using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
-using SimpleMockServer.Domain.TextPart.Custom.Variables;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Variables;
 
-class FileSectionVariablesParser
+class FileSectionDeclaredItemsParser
 {
-    private readonly VariablesParser _variablesParser;
+    private readonly DeclaredItemsParser _parser;
 
-    public FileSectionVariablesParser(VariablesParser variablesParser) => _variablesParser = variablesParser;
+    public FileSectionDeclaredItemsParser(DeclaredItemsParser parser) => _parser = parser;
 
-    public Task<VariableSet> Parse(FileSection variablesSection, ParsingContext parsingContext)
-        => _variablesParser.Parse(variablesSection.LinesWithoutBlock, parsingContext, (name, parts) => new RequestVariable(name, parts));
+    public Task<IReadonlyDeclaredItems> Parse(FileSection variablesSection, ParsingContext parsingContext)
+        => _parser.Parse(variablesSection.LinesWithoutBlock, parsingContext);
 }

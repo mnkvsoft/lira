@@ -16,7 +16,7 @@ public interface ITextPartsParser
 
 class TextPartsParser : ITextPartsParser
 {
-    public record Static(object Value) : IGlobalObjectTextPart
+    public record Static(object Value) : IObjectTextPart
     {
         public object Get(RequestData request) => Value;
 
@@ -67,20 +67,20 @@ class TextPartsParser : ITextPartsParser
         if (wasRead)
             return parts!;
 
-        TransformPipelineBase pipeline;
+        TransformPipeline pipeline;
         if (value.Contains("return"))
         {
             var csharpFunction = _generatingCSharpFactory.Create(
-                new GeneratingCSharpVariablesContext(context.Variables, Consts.ControlChars.VariablePrefix), 
+                new DeclaredPartsProvider(context.DeclaredItems), 
                 value);
             
-            pipeline = CreatePipeline(csharpFunction);
+            pipeline = new TransformPipeline(csharpFunction);
         }
         else
         {
             var pipelineItemsRaw = value.Split(Consts.ControlChars.PipelineSplitter);
 
-            pipeline = CreatePipeline(CreateStartFunction(pipelineItemsRaw[0].Trim(), context));
+            pipeline = new TransformPipeline(CreateStartFunction(pipelineItemsRaw[0].Trim(), context));
 
             for (int i = 1; i < pipelineItemsRaw.Length; i++)
             {
@@ -98,20 +98,13 @@ class TextPartsParser : ITextPartsParser
 
         return new[] { pipeline };
     }
-
-    private TransformPipelineBase CreatePipeline(IObjectTextPart startFunction)
-    {
-        if (startFunction is IGlobalObjectTextPart globalObjectTextPart)
-            return new GlobalTransformPipeline(globalObjectTextPart);
-        return new TransformPipeline(startFunction);
-    }
     
     private IObjectTextPart CreateStartFunction(string rawText, ParsingContext context)
     {
-        if (ContainsOnlyVariable(rawText))
+        if (ContainsOnlyDeclaredItem(rawText))
         {
             var varName = rawText.TrimStart(Consts.ControlChars.VariablePrefix);
-            var variable = context.Variables.GetOrThrow(varName);
+            var variable = context.DeclaredItems.Variables.GetOrThrow(varName);
             return variable;
         }
         
@@ -119,12 +112,12 @@ class TextPartsParser : ITextPartsParser
             return prettyFunction;
 
         return _generatingCSharpFactory.Create(
-            new GeneratingCSharpVariablesContext(context.Variables, Consts.ControlChars.VariablePrefix), 
+            new DeclaredPartsProvider(context.DeclaredItems), 
             rawText);
         
-        bool ContainsOnlyVariable(string s)
+        bool ContainsOnlyDeclaredItem(string s)
         {
-            return s.StartsWith(Consts.ControlChars.VariablePrefix) && Variable.IsValidName(s.TrimStart(Consts.ControlChars.VariablePrefix));
+            return s.StartsWith(Consts.ControlChars.VariablePrefix) && DeclaredItemName.IsValidName(s.TrimStart(Consts.ControlChars.VariablePrefix));
         }
     }    
 
@@ -182,5 +175,3 @@ class TextPartsParser : ITextPartsParser
         return (true, parts);
     }
 }
-
-

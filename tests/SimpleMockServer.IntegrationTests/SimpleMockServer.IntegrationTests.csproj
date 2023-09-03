@@ -164,10 +164,10 @@
     <None Update="fixtures\rules\generating\variable\header.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\variable\variables.req.var">
+    <None Update="fixtures\rules\generating\variable\variables.req.declare">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\variable\variables.global.var">
+    <None Update="fixtures\rules\generating\variable\variables.global.declare">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\variable\body.rules">
@@ -428,16 +428,16 @@
     <None Update="fixtures\rules\generating\template\global\my.templates">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\variable\variables._with_comments.global.var">
+    <None Update="fixtures\rules\generating\variable\variables_with_comments.global.declare">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\variable\variables_with_comments.req.var">
+    <None Update="fixtures\rules\generating\variable\variables_with_comments.req.declare">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\template\global\file.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\template\global\my.global.var">
+    <None Update="fixtures\rules\generating\template\global\my.declare">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\format\lazy.rules">
@@ -533,7 +533,7 @@
     <None Update="fixtures\rules\generating\csharp_blocks\global_variable.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\csharp.global.var">
+    <None Update="fixtures\rules\generating\csharp_blocks\csharp.declare">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\csharp_blocks\body_access\query.rules">

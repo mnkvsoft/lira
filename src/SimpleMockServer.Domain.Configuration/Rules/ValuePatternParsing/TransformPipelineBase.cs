@@ -2,22 +2,11 @@ using SimpleMockServer.Domain.TextPart;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 
-record TransformPipeline(IObjectTextPart ObjectTextPart) : TransformPipelineBase, IObjectTextPart
-{
-    public override object? Get(RequestData request) => ExecutePipeline(ObjectTextPart.Get(request));
-}
-
-record GlobalTransformPipeline(IGlobalObjectTextPart GlobalObjectTextPart) : TransformPipelineBase, IGlobalObjectTextPart
-{
-    public override object? Get(RequestData request) => ExecutePipeline(GlobalObjectTextPart.Get(request));
-    public object? Get() => ExecutePipeline(GlobalObjectTextPart.Get());
-}
-
-abstract record TransformPipelineBase : IObjectTextPart
+record TransformPipeline(IObjectTextPart ObjectTextPart) : IObjectTextPart
 {
     private readonly List<ITransformFunction> _transformFunctions = new();
         
-    protected object? ExecutePipeline(object? startValue)
+    private object? ExecutePipeline(object? startValue)
     {
         if (_transformFunctions.Count == 0)
             return startValue;
@@ -36,5 +25,5 @@ abstract record TransformPipelineBase : IObjectTextPart
         _transformFunctions.Add(transform);
     }
 
-    public abstract object? Get(RequestData request);
+    public object? Get(RequestData request) => ExecutePipeline(ObjectTextPart.Get(request));
 }

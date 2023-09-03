@@ -2,7 +2,7 @@
 
 namespace SimpleMockServer.Domain.TextPart.System.Functions.Functions.Generating.Impl.Create;
 
-internal class Now : IGlobalObjectTextPart
+internal class Now : IObjectTextPart
 {
     public static string Name => "now";
     
@@ -26,7 +26,5 @@ internal class Now : IGlobalObjectTextPart
             _timezoneOffset = -_timezoneOffset;
     }
 
-    public object Get(RequestData request) => Get();
-
-    public object Get() => DateTime.UtcNow.Add(_timezoneOffset);
+    public object Get(RequestData request) => DateTime.UtcNow.Add(_timezoneOffset);
 }

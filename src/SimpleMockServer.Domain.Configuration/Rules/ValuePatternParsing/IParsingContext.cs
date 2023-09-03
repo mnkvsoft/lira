@@ -1,5 +1,4 @@
 ﻿using SimpleMockServer.Domain.Configuration.Templating;
-using SimpleMockServer.Domain.TextPart.Custom.Variables;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -8,7 +7,7 @@ public interface IParsingContext
 }
     
 record ParsingContext(
-    IReadOnlyCollection<Variable> Variables, 
+    IReadonlyDeclaredItems DeclaredItems, 
     IReadOnlyCollection<Template> Templates, 
     string RootPath, 
     string CurrentPath) : IParsingContext;

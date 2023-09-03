@@ -1,37 +1,35 @@
-﻿using ArgValidation;
-using SimpleMockServer.Common;
+﻿using SimpleMockServer.Common;
 
 namespace SimpleMockServer.Domain.TextPart.Custom.Variables;
 
-public abstract record Variable : IObjectTextPart, IUniqueSetItem
+public record Variable : IObjectTextPart, IUniqueSetItem
 {
-    public string Name { get; }
-    public string EntityName => "Variable";
+    private readonly DeclaredItemName _name;
+    private readonly IReadOnlyCollection<IObjectTextPart> _parts;
+    private static readonly object NullValue = new();
 
-    protected Variable(string name)
+    public string Name => _name.Value;
+    public string EntityName => "variable";
+    
+    public Variable(DeclaredItemName name, IReadOnlyCollection<IObjectTextPart> parts)
     {
-        Arg.NotNullOrEmpty(name, nameof(name));
-
-        // restriction need for replace variable in csharp block
-        if (!IsValidName(name))
-            throw new ArgumentException($"Variable name must contains only letters or _. Current: '{name}'");
-        
-        Name = name;
+        _parts = parts;
+        _name = name;
     }
 
-    public static bool IsValidName(string value)
+    public object? Get(RequestData request)
     {
-        foreach (char c in value)
+        var key = "variable_" + _name;
+        if (request.Items.TryGetValue(key, out var value))
         {
-            if (IsAllowedCharInName(c))
-                continue;
-            return false;
+            if (value == NullValue)
+                return null;
+                
+            return value;
         }
 
-        return true;
+        object? newValue = _parts.Generate(request);
+        request.Items.Add(key, newValue ?? NullValue);
+        return newValue;
     }
-
-    public static bool IsAllowedCharInName(char c) => char.IsLetter(c) || c == '_' || c == '.';
-
-    public abstract dynamic? Get(RequestData request);
 }

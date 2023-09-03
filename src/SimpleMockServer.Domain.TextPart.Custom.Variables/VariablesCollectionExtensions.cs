@@ -2,11 +2,11 @@
 
 public static class VariablesCollectionExtensions
 {
-    public static Variable GetOrThrow(this IReadOnlyCollection<Variable> variables, string name)
+    public static Variable GetOrThrow(this IReadOnlyCollection<Variable> vars, string name)
     {
-        var result = variables.FirstOrDefault(v => v.Name == name);
+        var result = vars.FirstOrDefault(v => v.Name == name);
         if (result == null)
-            throw new InvalidOperationException($"Variable '{name}' not declared");
+            throw new InvalidOperationException($"Variable '{name}' not found");
         return result;
     }
 }

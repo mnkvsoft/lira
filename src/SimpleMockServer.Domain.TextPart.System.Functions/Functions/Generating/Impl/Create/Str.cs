@@ -2,17 +2,12 @@
 
 namespace SimpleMockServer.Domain.TextPart.System.Functions.Functions.Generating.Impl.Create;
 
-internal class Str : IGlobalObjectTextPart, IWithIntArgumentFunction, IWithOptionalArgument
+internal class Str : IObjectTextPart, IWithIntArgumentFunction, IWithOptionalArgument
 {
     public static string Name => "str";
     private int _length = 20;
     
-    public object Get(RequestData request) => Get();
-
-    public object Get()
-    {
-        return GetRandomString(_length);
-    }
+    public object Get(RequestData request) => GetRandomString(_length);
 
     public void SetArgument(int argument)
     {
@@ -25,15 +20,13 @@ internal class Str : IGlobalObjectTextPart, IWithIntArgumentFunction, IWithOptio
 
         for (int i = 0; i < length; i++)
         {
-            char randomChar = RandomSymbols[Random.Next(0, RandomSymbols.Length - 1)];
+            char randomChar = RandomSymbols[Random.Shared.Next(0, RandomSymbols.Length - 1)];
             sb.Append(randomChar);
         }
 
         return sb.ToString();
     }
 
-    private static readonly global::System.Random Random = new();
-    
     private static readonly string RandomSymbols =
         "1234567890" +
         "qwertyuiop" +

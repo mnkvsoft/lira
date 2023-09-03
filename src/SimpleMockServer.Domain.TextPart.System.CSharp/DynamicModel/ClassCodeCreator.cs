@@ -2,16 +2,6 @@
 
 static class ClassCodeCreator
 {
-    public static string CreateIGlobalObjectTextPart(
-        string className,
-        string code,
-        string requestParameterName,
-        IReadOnlyCollection<string> namespaces,
-        IReadOnlyCollection<string> usingStaticTypes)
-    {
-        return CreateClassCode(CodeTemplate.IGlobalObjectTextPart, className, code, requestParameterName, namespaces, usingStaticTypes);
-    }
-
     public static string CreateIObjectTextPart(
         string className,
         string code,
@@ -80,7 +70,7 @@ static class ClassCodeCreator
             "using SimpleMockServer.Domain;" + Nl +
 
             "using SimpleMockServer.Domain.TextPart;" + Nl +
-            "using SimpleMockServer.Domain.TextPart.Custom.Variables;" + Nl +
+            "using SimpleMockServer.Domain.TextPart.System.CSharp;" + Nl +
             "using static SimpleMockServer.Domain.TextPart.System.CSharp.Functions.JsonUtils;" + Nl +
             "[namespaces]";
 
@@ -93,7 +83,7 @@ static class ClassCodeCreator
             @"
 public class [className] : DynamicObjectTextPartBase, IObjectTextPart
 {
-    public [className](IReadOnlyCollection<Variable> variables) : base(variables)
+    public [className](IDeclaredPartsProvider declaredPartsProvider) : base(declaredPartsProvider)
     {
     }
 
@@ -118,28 +108,6 @@ public class [className] : ITransformFunction
     }
 }
 ";
-
-        public readonly static string IGlobalObjectTextPart =
-            ImportNamespaces + Nl + Nl +
-            "[usingstatic]" + Nl + Nl +
-            Namespace + Nl + Nl +
-            @"
-public class [className] : DynamicObjectTextPartBase, IGlobalObjectTextPart
-{
-    public [className](IReadOnlyCollection<Variable> variables) : base(variables)
-    {
-    }
-
-    public dynamic? Get(RequestData [request]) => GetInternal([request]);
-
-    public dynamic? Get() => GetInternal(null);
-
-    public dynamic? GetInternal(RequestData? [request])
-    {
-        [code]
-    }
-}";
-
     }
 }
 

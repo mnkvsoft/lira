@@ -5,7 +5,6 @@ using SimpleMockServer.Domain.Configuration.Rules.Parsers;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Configuration.Templating;
 using SimpleMockServer.Domain.Configuration.Variables;
-using SimpleMockServer.Domain.TextPart.Custom.Variables;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Rules;
@@ -17,7 +16,7 @@ internal class RuleFileParser
     private readonly RequestMatchersParser _requestMatchersParser;
     private readonly ResponseWriterParser _responseWriterParser;
     private readonly ConditionMatcherParser _conditionMatcherParser;
-    private readonly FileSectionVariablesParser _fileSectionVariablesParser;
+    private readonly FileSectionDeclaredItemsParser _fileSectionDeclaredItemsParser;
     private readonly ExternalCallerParser _externalCallerParser;
 
     public RuleFileParser(
@@ -25,14 +24,14 @@ internal class RuleFileParser
         RequestMatchersParser requestMatchersParser,
         ResponseWriterParser responseWriterParser,
         ConditionMatcherParser conditionMatcherParser,
-        FileSectionVariablesParser fileSectionVariablesParser,
+        FileSectionDeclaredItemsParser fileSectionDeclaredItemsParser,
         ExternalCallerParser externalCallerParser)
     {
         _loggerFactory = loggerFactory;
         _requestMatchersParser = requestMatchersParser;
         _responseWriterParser = responseWriterParser;
         _conditionMatcherParser = conditionMatcherParser;
-        _fileSectionVariablesParser = fileSectionVariablesParser;
+        _fileSectionDeclaredItemsParser = fileSectionDeclaredItemsParser;
         _externalCallerParser = externalCallerParser;
     }
 
@@ -57,8 +56,8 @@ internal class RuleFileParser
         var templates = GetTemplates(sections, parsingContext);
         ctx = ctx with { Templates = templates };
         
-        var variables = await GetVariables(sections, parsingContext);
-        ctx = ctx with { Variables = variables };
+        var variables = await GetDeclaredItems(sections, parsingContext);
+        ctx = ctx with { DeclaredItems = variables };
         
         var rules = new List<Rule>();
         var ruleSections = sections.Where(s => s.Name == Constants.SectionName.Rule).ToArray();
@@ -92,8 +91,8 @@ internal class RuleFileParser
         var templates = GetTemplates(childSections, parsingContext);
         var ctx = parsingContext with { Templates = templates };
         
-        var variables = await GetVariables(childSections, ctx);
-        ctx = ctx with { Variables = variables };
+        var variables = await GetDeclaredItems(childSections, ctx);
+        ctx = ctx with { DeclaredItems = variables };
         
         var existConditionSection = childSections.Any(x => x.Name == Constants.SectionName.Condition);
 
@@ -153,14 +152,14 @@ internal class RuleFileParser
         return result;
     }
     
-    private async Task<IReadOnlyCollection<Variable>> GetVariables(IReadOnlyCollection<FileSection> childSections, ParsingContext parsingContext)
+    private async Task<IReadonlyDeclaredItems> GetDeclaredItems(IReadOnlyCollection<FileSection> childSections, ParsingContext parsingContext)
     {
-        var result = new VariableSet(parsingContext.Variables);
+        var result = new DeclaredItems(parsingContext.DeclaredItems);
         
         var variablesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Variables);
         if (variablesSection != null)
         {
-            result.AddRange(await _fileSectionVariablesParser.Parse(variablesSection, parsingContext));
+            result.Add(await _fileSectionDeclaredItemsParser.Parse(variablesSection, parsingContext));
         }
         
         return result;

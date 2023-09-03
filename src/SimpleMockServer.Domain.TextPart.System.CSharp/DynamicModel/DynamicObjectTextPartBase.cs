@@ -1,25 +1,12 @@
-﻿using SimpleMockServer.Domain.TextPart.Custom.Variables;
-
-namespace SimpleMockServer.Domain.TextPart.System.CSharp.DynamicModel;
+﻿namespace SimpleMockServer.Domain.TextPart.System.CSharp.DynamicModel;
 public class DynamicObjectTextPartBase
 {
-    private readonly IReadOnlyCollection<Variable> _variables;
-    private readonly IReadOnlyCollection<GlobalVariable> _globalVariables;
+    private readonly IDeclaredPartsProvider _declaredPartsProvider;
 
-    public DynamicObjectTextPartBase(IReadOnlyCollection<Variable> variables)
+    public DynamicObjectTextPartBase(IDeclaredPartsProvider declaredPartsProvider)
     {
-        _variables = variables;
-        _globalVariables = _variables.Where(v => v is GlobalVariable).Cast<GlobalVariable>().ToList();
+        _declaredPartsProvider = declaredPartsProvider;
     }
 
-    public dynamic? GetVariable(string name, RequestData? request)
-    {
-        if (request != null)
-        {
-            return _variables.GetOrThrow(name).Get(request);    
-        }
-        
-        var globalVariable = (GlobalVariable)_globalVariables.GetOrThrow(name);
-        return globalVariable.Get();
-    }
+    public dynamic? GetDeclaredPart(string name, RequestData request) => _declaredPartsProvider.Get(name).Get(request);
 }

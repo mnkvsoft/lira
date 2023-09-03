@@ -10,7 +10,6 @@ using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Configuration.Templating;
 using SimpleMockServer.Domain.Configuration.Variables;
 using SimpleMockServer.Domain.DataModel;
-using SimpleMockServer.Domain.TextPart.Custom.Variables;
 
 namespace SimpleMockServer.Domain.Configuration;
 
@@ -72,7 +71,7 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
 
 
         var context = new ParsingContext(
-            new VariableSet(),
+            new DeclaredItems(),
             templates,
             RootPath: path,
             CurrentPath: path);
@@ -80,12 +79,12 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
         using var scope = _serviceScopeFactory.CreateScope();
         var provider = scope.ServiceProvider;
 
-        var globalVariablesParser = provider.GetRequiredService<GlobalVariablesParser>();
+        var globalVariablesParser = provider.GetRequiredService<DeclaredItemsLoader>();
 
         var variables = await globalVariablesParser.Load(context, path);
 
         var rulesLoader = provider.GetRequiredService<RulesLoader>();
-        var rules = await rulesLoader.LoadRules(path, context with { Variables = variables });
+        var rules = await rulesLoader.LoadRules(path, context with { DeclaredItems = variables });
 
         return new LoadResult(rules, datas);
     }

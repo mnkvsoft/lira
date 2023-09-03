@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
 using SimpleMockServer.Configuration;
-using SimpleMockServer.Domain.TextPart.Custom.Variables;
 using SimpleMockServer.Domain.TextPart.System.CSharp.Compilation;
 using SimpleMockServer.Domain.TextPart.System.CSharp.DynamicModel;
 
@@ -14,12 +13,10 @@ using SimpleMockServer.Domain.TextPart.System.CSharp.DynamicModel;
 
 namespace SimpleMockServer.Domain.TextPart.System.CSharp;
 
-public record GeneratingCSharpVariablesContext(IReadOnlyCollection<Variable> Variables, char VariablePrefix);
-
 public interface IGeneratingCSharpFactory : IDisposable
 {
     IObjectTextPart Create(
-        GeneratingCSharpVariablesContext variablesContext,
+        IDeclaredPartsProvider declaredPartsProvider,
         string code);
 
     ITransformFunction CreateTransform(string code);
@@ -27,7 +24,7 @@ public interface IGeneratingCSharpFactory : IDisposable
 
 class GeneratingCSharpFactory : IGeneratingCSharpFactory
 {
-    private static int RevisionCounter;
+    private static int _revisionCounter;
 
     private readonly ILogger _logger;
     private readonly string _path;
@@ -46,7 +43,7 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _path = configuration.GetRulesPath();
-        _revision = ++RevisionCounter;
+        _revision = ++_revisionCounter;
         _unLoader = unLoader;
         _compiler = compiler;
         _compilationStatistic = compilationStatistic;
@@ -83,13 +80,13 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
         return result;
     }
 
-    public IObjectTextPart Create(GeneratingCSharpVariablesContext variablesContext, string code)
+    public IObjectTextPart Create(IDeclaredPartsProvider declaredPartsProvider, string code)
     {
         var sw = Stopwatch.StartNew();
 
         var customAssemblies = GetCustomAssemblies();
 
-        var (className, classToCompile) = CreateClassCode(customAssemblies.Loaded, variablesContext, code);
+        var (className, classToCompile) = CreateClassCode(customAssemblies.Loaded, declaredPartsProvider, code);
 
         var classAssembly = Load(_compiler.Compile(
             new CompileUnit(
@@ -99,14 +96,14 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
                     Compiled: new Assembly[]
                     {
                         typeof(IObjectTextPart).Assembly, 
-                        typeof(Variable).Assembly, 
+                        // typeof(Variable).Assembly, 
                         typeof(RequestData).Assembly,
                         GetType().Assembly
                     },
                     Runtime: customAssemblies.PeImages))));
 
         var type = classAssembly.GetTypes().Single(t => t.Name == className);
-        var result = (IObjectTextPart)Activator.CreateInstance(type, variablesContext.Variables)!;
+        var result = (IObjectTextPart)Activator.CreateInstance(type, declaredPartsProvider)!;
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -167,25 +164,16 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
     }
 
     private static (string className, string classToCompile) CreateClassCode(IReadOnlyCollection<Assembly> customAssemblies,
-        GeneratingCSharpVariablesContext variablesContext, string code)
+        IDeclaredPartsProvider declaredPartsProvider, string code)
     {
         const string externalRequestVariableName = "@req";
         const string requestParameterName = "_request_";
 
-        bool isGlobalTextPart = !code.Contains(externalRequestVariableName);
-
-        code = ReplaceVariableNames(code, variablesContext.VariablePrefix, requestParameterName);
+        code = ReplaceVariableNames(code, declaredPartsProvider, requestParameterName);
 
         var className = GetClassName(code);
 
-        string classToCompile = isGlobalTextPart
-            ? ClassCodeCreator.CreateIGlobalObjectTextPart(
-                className,
-                GetMethodBody(code),
-                requestParameterName,
-                GetNamespaces(customAssemblies),
-                GetUsingStatic(customAssemblies))
-            : ClassCodeCreator.CreateIObjectTextPart(
+        string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
                 className,
                 GetMethodBody(code),
                 requestParameterName,
@@ -251,7 +239,7 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
             }";
     }
 
-    private static string ReplaceVariableNames(string code, char variablePrefix, string requestParameterName)
+    private static string ReplaceVariableNames(string code, IDeclaredPartsProvider declaredPartsProvider, string requestParameterName)
     {
         using var enumerator = code.GetEnumerator();
 
@@ -283,7 +271,7 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
 
             if (curVariable.Length != 0)
             {
-                if (Variable.IsAllowedCharInName(c))
+                if (declaredPartsProvider.IsAllowInName(c))
                 {
                     curVariable.Append(c);
                     continue;
@@ -299,15 +287,16 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
                 }
             }
 
-            if (c == '$')
+            
+            if (declaredPartsProvider.IsStartPart(c))
                 curVariable.Append(c);
         }
 
         foreach (var name in variablesToReplace)
         {
             code = code.Replace(name,
-                $"GetVariable(" +
-                $"\"{name.TrimStart(variablePrefix)}\", {requestParameterName})");
+                $"GetDeclaredPart(" +
+                $"\"{name}\", {requestParameterName})");
         }
 
         return code;

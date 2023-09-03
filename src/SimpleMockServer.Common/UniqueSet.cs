@@ -12,7 +12,7 @@ public abstract class UniqueSet<T> : IReadOnlyCollection<T> where T : IUniqueSet
 {
     private readonly HashSet<T> _set = new();
 
-    public UniqueSet()
+    protected UniqueSet()
     {
     }
 

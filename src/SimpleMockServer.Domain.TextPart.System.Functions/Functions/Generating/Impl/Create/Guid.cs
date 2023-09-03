@@ -1,10 +1,8 @@
 ﻿namespace SimpleMockServer.Domain.TextPart.System.Functions.Functions.Generating.Impl.Create;
 
-internal class Guid : IGlobalObjectTextPart
+internal class Guid : IObjectTextPart
 {
     public static string Name => "guid";
 
-    public object Get(RequestData request) => Get();
-
-    public object Get() => global::System.Guid.NewGuid();
+    public object Get(RequestData _) => global::System.Guid.NewGuid();
 }

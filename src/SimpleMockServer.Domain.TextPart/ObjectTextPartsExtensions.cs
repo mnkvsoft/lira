@@ -9,10 +9,10 @@ public static class ObjectTextPartsExtensions
         return parts.Count == 1 ? parts.First().Get(request) : string.Concat(parts.Select(p => p.Get(request)));
     }
     
-    public static object? Generate(this IReadOnlyCollection<IGlobalObjectTextPart> parts)
-    {
-        return parts.Count == 1 ? parts.First().Get() : string.Concat(parts.Select(p => p.Get()));
-    }
+    // public static object? Generate(this IReadOnlyCollection<IGlobalObjectTextPart> parts)
+    // {
+    //     return parts.Count == 1 ? parts.First().Get() : string.Concat(parts.Select(p => p.Get()));
+    // }
     
     public static TextParts WrapToTextParts(this IReadOnlyCollection<IObjectTextPart> parts)
     {
