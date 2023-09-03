@@ -1,0 +1,12 @@
+-------------------- rule
+
+GET /generating/declare/complex
+
+----- response
+
+code:
+200
+
+body:
+{{ $var.random.int }}
+{{ $var.random.int }}

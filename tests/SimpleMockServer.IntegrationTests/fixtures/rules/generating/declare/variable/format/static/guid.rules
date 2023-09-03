@@ -1,8 +1,8 @@
 -------------------- rule
 
-GET /generating/variable/format/static/guid
+GET /generating/declare/variable/format/static/guid
 
------ variables
+----- declare
 
 $order_id = a29fa809-b301-443d-afec-9c38f275d096
 

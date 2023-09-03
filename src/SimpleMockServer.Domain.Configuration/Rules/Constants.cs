@@ -5,7 +5,7 @@ class Constants
     public static class SectionName
     {
         public const string Rule = "rule";
-        public const string Variables = "variables";
+        public const string Declare = "declare";
         public const string Templates = "templates";
         public const string Condition = "condition";
         public const string Response = "response";

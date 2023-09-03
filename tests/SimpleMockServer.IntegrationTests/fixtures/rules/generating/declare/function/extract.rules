@@ -1,0 +1,15 @@
+-------------------- rule
+
+GET /generating/declare/function/extract
+
+----- declare
+
+#req.id = {{ req.header: Request-Id }}
+
+----- response
+
+code:
+200
+
+body:
+{{ req.id }}

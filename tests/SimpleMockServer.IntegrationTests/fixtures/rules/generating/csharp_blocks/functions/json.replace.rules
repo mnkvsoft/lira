@@ -4,7 +4,7 @@ GET /generating/csharp/functions/json/replace
 
 
 
------ variables
+----- declare
 
 $json_var = 
 { 

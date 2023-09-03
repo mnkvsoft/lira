@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/declare/function/header
+
+----- response
+
+code:
+200
+
+headers:
+Content-Type: {{ global.content_type }}

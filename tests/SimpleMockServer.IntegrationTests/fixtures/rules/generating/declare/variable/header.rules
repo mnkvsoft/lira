@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/variable/header
+GET /generating/declare/variable/header
 
 ----- response
 

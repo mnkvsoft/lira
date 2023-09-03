@@ -1,0 +1,21 @@
+-------------------- declare
+
+#multiline = 
+line1
+line2
+line3
+
+#singleline = single_line_value
+
+-------------------- rule
+
+GET /generating/declare/function/multiline
+
+----- response
+
+code:
+200
+
+body:
+{{ multiline }}
+{{ singleline }}

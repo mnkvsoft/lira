@@ -1,0 +1,14 @@
+-------------------- case
+
+GET /generating/declare/extract
+
+headers:
+Request-Id: requestId!
+
+----- expected
+
+code:
+200
+
+body:
+requestId!

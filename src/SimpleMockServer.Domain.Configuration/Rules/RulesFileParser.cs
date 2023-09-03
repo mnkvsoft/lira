@@ -49,7 +49,7 @@ internal class RuleFileParser
             knownBlockForSections: knownSectionsBlocks,
             maxNestingDepth: 3);
 
-        AssertContainsOnlySections(sections, new[] { Constants.SectionName.Rule, Constants.SectionName.Variables, Constants.SectionName.Templates });
+        AssertContainsOnlySections(sections, new[] { Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Templates });
         
         var ctx = parsingContext with { CurrentPath = ruleFile.GetDirectory() };
         
@@ -101,7 +101,7 @@ internal class RuleFileParser
 
         if (existConditionSection)
         {
-            AssertContainsOnlySections(childSections, new[] { Constants.SectionName.Condition, Constants.SectionName.Variables, Constants.SectionName.Variables });
+            AssertContainsOnlySections(childSections, new[] { Constants.SectionName.Condition, Constants.SectionName.Declare, Constants.SectionName.Declare });
 
             if (childSections.Count < 2)
                 throw new Exception($"Must be at least 2 '{Constants.SectionName.Condition}' sections");
@@ -133,7 +133,7 @@ internal class RuleFileParser
 
         AssertContainsOnlySections(
             childSections,
-            externalCallerSections.NewWith(Constants.SectionName.Response, Constants.SectionName.Variables, Constants.SectionName.Templates));
+            externalCallerSections.NewWith(Constants.SectionName.Response, Constants.SectionName.Declare, Constants.SectionName.Templates));
 
         responseWriter = await _responseWriterParser.Parse(ruleSection, ctx);
         externalCallers = await _externalCallerParser.Parse(childSections, ctx);
@@ -156,7 +156,7 @@ internal class RuleFileParser
     {
         var result = new DeclaredItems(parsingContext.DeclaredItems);
         
-        var variablesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Variables);
+        var variablesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Declare);
         if (variablesSection != null)
         {
             result.Add(await _fileSectionDeclaredItemsParser.Parse(variablesSection, parsingContext));

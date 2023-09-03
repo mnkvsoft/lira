@@ -2,7 +2,7 @@
 
 GET /generating/csharp/access_to_variable_with_dot
 
------ variables
+----- declare
 
 $duration.with.dot = {{ TimeSpan.FromDays(1) }}
 

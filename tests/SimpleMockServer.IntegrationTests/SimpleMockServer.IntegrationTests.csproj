@@ -164,10 +164,7 @@
     <None Update="fixtures\rules\generating\variable\header.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\variable\variables.req.declare">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\variable\variables.global.declare">
+    <None Update="fixtures\rules\generating\variable\variables.declare">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\variable\body.rules">
@@ -428,10 +425,7 @@
     <None Update="fixtures\rules\generating\template\global\my.templates">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\variable\variables_with_comments.global.declare">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\variable\variables_with_comments.req.declare">
+    <None Update="fixtures\rules\generating\variable\variables_with_comments.declare">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\template\global\file.txt">
@@ -879,6 +873,42 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\variable\with_dot.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\declare\function\body.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\declare\function\body.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\declare\function\functions.declare">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\declare\function\header.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\declare\function\header.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\declare\functions.declare">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\declare\function\extract.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\declare\complex.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\declare\comlex.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\declare\function\fullname.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp_blocks\access_to_declared_function.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp_blocks\access_to_declared_function.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

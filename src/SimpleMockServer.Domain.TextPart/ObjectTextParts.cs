@@ -2,7 +2,6 @@
 
 namespace SimpleMockServer.Domain.TextPart;
 
-// todo: cache result when all static parts
 public class ObjectTextParts : IReadOnlyCollection<IObjectTextPart>
 {
     private readonly IReadOnlyCollection<IObjectTextPart> _parts;

@@ -24,6 +24,5 @@ record DataOptionsDto(
     [property: JsonPropertyName("bytes_count")]
     int? BytesCount,
     
-    // todo: проверить будет ли исключение в случае дубликата
     [property: JsonPropertyName("ranges")]
     string[] Ranges);

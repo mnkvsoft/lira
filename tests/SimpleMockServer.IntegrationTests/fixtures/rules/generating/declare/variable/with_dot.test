@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/declare/variable/with_dot
+
+----- expected
+
+code:
+200
+
+body:
+hello!

@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/declare/variable/body
+
+----- response
+
+code:
+200
+
+body:
+{{ $greetings }}

@@ -1,8 +1,8 @@
 -------------------- rule
 
-GET /generating/variable/data
+GET /generating/declare/variable/data
 
------ variables
+----- declare
 
 $orderId = order_{{ data: generating_variable_seq.default }}
 

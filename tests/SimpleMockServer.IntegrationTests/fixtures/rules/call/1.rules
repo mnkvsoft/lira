@@ -2,7 +2,7 @@
 
 POST /call/http
 
------ variables
+----- declare
 
 $newId           = {{ echo: 1 }}
 $createdAt       = {{ echo: 2023-04-23 10:45 }}

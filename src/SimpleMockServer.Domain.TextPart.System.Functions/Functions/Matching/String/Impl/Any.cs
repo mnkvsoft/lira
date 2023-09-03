@@ -12,9 +12,4 @@ internal class Any : IStringMatchPrettyFunction
     {
         return true;
     }
-
-    public void SetArgument(string argument)
-    {
-        throw new NotImplementedException();
-    }
 }

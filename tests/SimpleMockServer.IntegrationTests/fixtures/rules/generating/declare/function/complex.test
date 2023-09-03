@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/declare/variable/complex
+
+----- expected
+
+code:
+200
+
+body:
+value_from_global | value_from_file_level | value_from_local

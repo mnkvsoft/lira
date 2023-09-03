@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/variable/body
+GET /generating/declare/function/body
 
 ----- response
 
@@ -8,4 +8,4 @@ code:
 200
 
 body:
-{{ $greetings }}
+{{ greetings }}

@@ -1,8 +1,8 @@
 -------------------- rule
 
-GET /generating/variable/format/static/int
+GET /generating/declare/variable/format/static/int
 
------ variables
+----- declare
 
 $order_id = 1
 

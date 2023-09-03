@@ -1,0 +1,15 @@
+-------------------- rule
+
+GET /generating/declare/function/fullname
+
+----- declare
+
+#hi = hello!
+
+----- response
+
+code:
+200
+
+body:
+{{ #hi }}

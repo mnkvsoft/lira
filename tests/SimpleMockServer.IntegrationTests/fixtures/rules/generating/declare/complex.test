@@ -1,0 +1,12 @@
+-------------------- case
+
+GET /generating/declare/complex
+
+----- expected
+
+code:
+200
+
+body:
+246
+246

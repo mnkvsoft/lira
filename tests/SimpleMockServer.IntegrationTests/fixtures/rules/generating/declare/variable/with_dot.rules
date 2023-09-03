@@ -1,8 +1,8 @@
 -------------------- rule
 
-GET /generating/variable/with_dot
+GET /generating/declare/variable/with_dot
 
------ variables
+----- declare
 
 $var.with.dot = hello!
 

@@ -4,9 +4,9 @@ GET /generating/csharp/functions/json/add/to/root
 
 
 
------ variables
+----- declare
 
-$json_var = 
+#json_var = 
 { 
     "field1" : "value"
 } 
@@ -18,6 +18,6 @@ code:
 
 body:
 {{ 
-     json($json_var)
+     json(#json_var)
         .add("new_field", "new_value")
 }}

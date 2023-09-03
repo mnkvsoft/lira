@@ -1,8 +1,8 @@
 -------------------- rule
 
-GET /generating/variable/format/function
+GET /generating/declare/variable/format/function
 
------ variables
+----- declare
 
 $order_id = {{ echo: a29fa809-b301-443d-afec-9c38f275d096 }}
 

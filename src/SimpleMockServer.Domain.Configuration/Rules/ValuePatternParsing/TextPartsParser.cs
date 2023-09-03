@@ -101,21 +101,31 @@ class TextPartsParser : ITextPartsParser
     
     private IObjectTextPart CreateStartFunction(string rawText, ParsingContext context)
     {
-        if (ContainsOnlyDeclaredItem(rawText))
+        if (ContainsOnlyVariable(rawText))
         {
             var varName = rawText.TrimStart(Consts.ControlChars.VariablePrefix);
             var variable = context.DeclaredItems.Variables.GetOrThrow(varName);
             return variable;
         }
-        
+
+        var declaredFunction = context.DeclaredItems.Functions.FirstOrDefault(x => x.Name == rawText.TrimStart(Consts.ControlChars.FunctionPrefix));
+
         if (_generatingFunctionFactory.TryCreate(rawText, out var prettyFunction))
+        {
+            if (declaredFunction != null)
+                throw new Exception($"Declared function '{rawText}' but has system function with same name");
+            
             return prettyFunction;
+        }
+
+        if (declaredFunction != null)
+            return declaredFunction;
 
         return _generatingCSharpFactory.Create(
             new DeclaredPartsProvider(context.DeclaredItems), 
             rawText);
         
-        bool ContainsOnlyDeclaredItem(string s)
+        bool ContainsOnlyVariable(string s)
         {
             return s.StartsWith(Consts.ControlChars.VariablePrefix) && DeclaredItemName.IsValidName(s.TrimStart(Consts.ControlChars.VariablePrefix));
         }

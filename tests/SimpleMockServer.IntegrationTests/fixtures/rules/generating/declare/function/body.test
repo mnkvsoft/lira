@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /generating/variable/format/static/int
+GET /generating/declare/function/body
 
 ----- expected
 
@@ -8,4 +8,4 @@ code:
 200
 
 body:
-1.00
+hello world!

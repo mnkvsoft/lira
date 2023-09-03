@@ -1,4 +1,4 @@
--------------------- variables
+-------------------- declare
 
 $multiline = 
 line1
@@ -9,7 +9,7 @@ $singleline = single_line_value
 
 -------------------- rule
 
-GET /generating/variable/multiline
+GET /generating/declare/variable/multiline
 
 ----- response
 
