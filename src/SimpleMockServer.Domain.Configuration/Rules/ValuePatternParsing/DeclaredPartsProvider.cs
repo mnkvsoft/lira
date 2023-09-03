@@ -1,6 +1,7 @@
 ﻿using SimpleMockServer.Domain.TextPart;
-using SimpleMockServer.Domain.TextPart.Custom.Variables;
-using SimpleMockServer.Domain.TextPart.System.CSharp;
+using SimpleMockServer.Domain.TextPart.Impl.CSharp;
+using SimpleMockServer.Domain.TextPart.Impl.Custom;
+using SimpleMockServer.Domain.TextPart.Impl.Custom.VariableModel;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -24,7 +25,7 @@ class DeclaredPartsProvider : IDeclaredPartsProvider
         throw new Exception($"Unknown declaration '{name}'");
     }
 
-    public bool IsAllowInName(char c) => DeclaredItemName.IsAllowedCharInName(c);
+    public bool IsAllowInName(char c) => CustomItemName.IsAllowedCharInName(c);
 
     public bool IsStartPart(char c) => c is Consts.ControlChars.VariablePrefix or Consts.ControlChars.FunctionPrefix;
 }

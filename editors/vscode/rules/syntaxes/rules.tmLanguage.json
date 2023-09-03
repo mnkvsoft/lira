@@ -15,6 +15,9 @@
 			"include": "#variables"
 		},
 		{
+			"include": "#functions"
+		},
+		{
 			"include": "#comments"
 		}
 	],
@@ -27,7 +30,7 @@
 			},
 			{
 				"name": "entity.name.type.section.name.rules",
-				"match": " (rule|response|variables|condition|call.http)"
+				"match": " (rule|response|declare|condition|call.http)"
 			}
 			]
 		},
@@ -58,13 +61,19 @@
 		"variables": {
 			"patterns": [{
 				"name": "entity.name.variable.rules",
-				"match": "\\$\\S+ "
+				"match": "\\$\\S+( |,)"
+			}]
+		},
+		"functions": {
+			"patterns": [{
+				"name": "entity.name.variable.rules",
+				"match": "\\#\\S+( |,)"
 			}]
 		},
 		"methods": {
 			"patterns": [{
 				"name": "entity.name.function.rules",
-				"match": " (regex|jpath|xpath|form:|all|int|any|guid|data|echo|seq|req.header|req.body.all|req.body.form|req.body.jpath|req.body.xpath|random.string|random.int|read.file)"
+				"match": " (regex|jpath|xpath|form:|all|int|any|guid|data|echo|seq|req.header|req.body.all|req.body.form|req.body.jpath|req.body.xpath|str|read.file)"
 			}]
 		},
 		"comments": {

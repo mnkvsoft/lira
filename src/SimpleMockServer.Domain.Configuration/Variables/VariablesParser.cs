@@ -2,7 +2,8 @@
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.TextPart;
-using SimpleMockServer.Domain.TextPart.Custom.Variables;
+using SimpleMockServer.Domain.TextPart.Impl.Custom;
+using SimpleMockServer.Domain.TextPart.Impl.Custom.VariableModel;
 
 namespace SimpleMockServer.Domain.Configuration.Variables;
 
@@ -29,12 +30,12 @@ class DeclaredItemsParser
             switch (name[0])
             {
                 case Consts.ControlChars.VariablePrefix:
-                    var variable = new Variable(new DeclaredItemName(name.TrimStart(Consts.ControlChars.VariablePrefix)), parts);
+                    var variable = new Variable(new CustomItemName(name.TrimStart(Consts.ControlChars.VariablePrefix)), parts);
                     all.Variables.Add(variable);
                     onlyNew.Variables.Add(variable);
                     break;
                 case Consts.ControlChars.FunctionPrefix:
-                    var function = new Function(new DeclaredItemName(name.TrimStart(Consts.ControlChars.FunctionPrefix)), parts);
+                    var function = new Function(new CustomItemName(name.TrimStart(Consts.ControlChars.FunctionPrefix)), parts);
                     all.Functions.Add(function);
                     onlyNew.Functions.Add(function);
                     break;

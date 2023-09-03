@@ -20,11 +20,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SimpleMockServer.Configuration\SimpleMockServer.Configuration.csproj" />
-    <ProjectReference Include="..\SimpleMockServer.Domain.TextPart.Custom.Variables\SimpleMockServer.Domain.TextPart.Custom.Variables.csproj" />
     <ProjectReference Include="..\SimpleMockServer.Common\SimpleMockServer.Common.csproj" />
     <ProjectReference Include="..\SimpleMockServer.Domain.DataModel\SimpleMockServer.Domain.DataModel.csproj" />
-    <ProjectReference Include="..\SimpleMockServer.Domain.TextPart.System.CSharp\SimpleMockServer.Domain.TextPart.System.CSharp.csproj" />
-    <ProjectReference Include="..\SimpleMockServer.Domain.TextPart.System.Functions\SimpleMockServer.Domain.TextPart.System.Functions.csproj" />
+    <ProjectReference Include="..\SimpleMockServer.Domain.TextPart.Impl.CSharp\SimpleMockServer.Domain.TextPart.Impl.CSharp.csproj" />
+    <ProjectReference Include="..\SimpleMockServer.Domain.TextPart.Impl.Custom\SimpleMockServer.Domain.TextPart.Impl.Custom.csproj" />
+    <ProjectReference Include="..\SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions\SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.csproj" />
     <ProjectReference Include="..\SimpleMockServer.Domain.TextPart\SimpleMockServer.Domain.TextPart.csproj" />
     <ProjectReference Include="..\SimpleMockServer.Domain\SimpleMockServer.Domain.csproj" />
     <ProjectReference Include="..\SimpleMockServer.FileSectionFormat\SimpleMockServer.FileSectionFormat.csproj" />

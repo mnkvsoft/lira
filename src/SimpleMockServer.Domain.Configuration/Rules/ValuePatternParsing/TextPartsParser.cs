@@ -2,10 +2,11 @@
 using SimpleMockServer.Common.Exceptions;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.TextPart;
-using SimpleMockServer.Domain.TextPart.Custom.Variables;
-using SimpleMockServer.Domain.TextPart.System.CSharp;
-using SimpleMockServer.Domain.TextPart.System.Functions.Functions.Generating;
-using SimpleMockServer.Domain.TextPart.System.Functions.Functions.Transform;
+using SimpleMockServer.Domain.TextPart.Impl.CSharp;
+using SimpleMockServer.Domain.TextPart.Impl.Custom;
+using SimpleMockServer.Domain.TextPart.Impl.Custom.VariableModel;
+using SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Generating;
+using SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Transform;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -127,7 +128,7 @@ class TextPartsParser : ITextPartsParser
         
         bool ContainsOnlyVariable(string s)
         {
-            return s.StartsWith(Consts.ControlChars.VariablePrefix) && DeclaredItemName.IsValidName(s.TrimStart(Consts.ControlChars.VariablePrefix));
+            return s.StartsWith(Consts.ControlChars.VariablePrefix) && CustomItemName.IsValidName(s.TrimStart(Consts.ControlChars.VariablePrefix));
         }
     }    
 

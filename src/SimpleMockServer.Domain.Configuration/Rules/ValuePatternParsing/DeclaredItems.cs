@@ -1,4 +1,5 @@
-﻿using SimpleMockServer.Domain.TextPart.Custom.Variables;
+﻿using SimpleMockServer.Domain.TextPart.Impl.Custom;
+using SimpleMockServer.Domain.TextPart.Impl.Custom.VariableModel;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 
