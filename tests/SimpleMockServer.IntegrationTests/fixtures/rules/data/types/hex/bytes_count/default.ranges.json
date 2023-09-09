@@ -1,0 +1,10 @@
+{
+  "hex_bytes_count": {
+    "type": "hex",
+    "bytes_count": 64,
+    "ranges": [
+      "first",
+      "second"
+    ]
+  }
+}

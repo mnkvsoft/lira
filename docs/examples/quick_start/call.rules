@@ -1,0 +1,47 @@
+-------------------- rule
+
+POST /pay
+
+headers:
+example: call
+
+----- declare
+
+$id = {{ seq }}
+
+----- response
+
+code:
+200
+
+body:
+{
+    "id": {{ $id }}, 
+    "status": "pending"
+}
+
+----- call.http
+
+POST http://localhost/api/callback
+
+delay: 
+100 ms
+
+headers:
+Content-Type: application/json
+
+body:
+{
+    "id": {{ $id }}, 
+    "status": "ok"
+}
+
+
+-------------------- rule
+
+POST /api/callback
+
+----- response
+
+code:
+200

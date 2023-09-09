@@ -1,0 +1,23 @@
+-------------------- rule
+
+POST /pay
+
+headers:
+example: conditions
+
+----- declare
+
+$requestId = {{ guid }}
+
+----- response
+
+code:
+200
+
+headers:
+Request-Id: {{ $requestId }}
+
+body:
+{
+    "request_id": "{{ $requestId }}"
+}

@@ -1,0 +1,21 @@
+-------------------- rule
+
+POST /pay/by/{{ any name: tool }}
+
+headers:
+example: extract_request_data
+
+----- response
+
+code:
+200
+
+headers:
+Request-Id: {{ req.header: Id}}
+
+body:
+{
+    "tool": "{{ req.path: tool }}",
+    "is_fast": "{{ req.query: fast }}",
+    "account": "{{ req.body.jpath: $.account }}"
+}

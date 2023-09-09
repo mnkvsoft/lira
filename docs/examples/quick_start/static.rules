@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /hi
+
+----- response
+
+code:
+200
+
+body:
+hello!

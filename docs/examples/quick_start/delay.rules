@@ -1,0 +1,14 @@
+-------------------- rule
+
+GET /delay
+
+----- response
+
+delay:
+2000 ms
+
+code:
+200
+
+body:
+long query

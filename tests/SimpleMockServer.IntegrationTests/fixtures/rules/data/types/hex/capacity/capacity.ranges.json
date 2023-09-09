@@ -1,0 +1,11 @@
+{
+  "hex_capacity": {
+    "type": "hex",
+    "capacity": "1T",
+    "ranges": [
+      "first",
+      "second",
+      "third"
+    ]
+  }
+}

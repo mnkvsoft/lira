@@ -1,0 +1,20 @@
+-------------------- rule
+
+POST /pay?example=custom_function
+
+headers:
+example: custom_function
+
+----- declare
+
+#pay.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
+
+----- response
+
+code:
+200
+
+body:
+{
+    "created_at": "{{ pay.now }}"
+}

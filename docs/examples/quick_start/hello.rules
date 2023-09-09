@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /hello/{{ any name: person }}
+
+----- response
+
+code:
+200
+
+body:
+hello {{ req.path: person }}!
