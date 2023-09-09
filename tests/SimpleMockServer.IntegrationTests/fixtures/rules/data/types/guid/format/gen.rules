@@ -8,7 +8,7 @@ code:
 200
 
 body:
-{{ data: guid_format.first }}
+{{ range: guid_format.first }}
 
 
 -------------------- rule
@@ -21,4 +21,4 @@ code:
 200
 
 body:
-{{ data: guid_format.second }}
+{{ range: guid_format.second }}

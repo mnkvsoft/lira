@@ -12,8 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{B539FC
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		global.json = global.json
-		todo_teature.txt = todo_teature.txt
 		readme.md = readme.md
+		todo_teature.txt = todo_teature.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BE927F78-B04F-4B6F-97FD-9B8397AF9915}"
@@ -54,20 +54,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TextParts", "TextParts", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{21774504-6CD6-450E-AB05-ED537234E470}"
 	ProjectSection(SolutionItems) = preProject
+		docs\data.md = docs\data.md
 		docs\guide.md = docs\guide.md
 		docs\match_functions.md = docs\match_functions.md
-		docs\data.md = docs\data.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Impl", "Impl", "{801BCB31-DB66-4C7C-97A0-CB67BA63CD91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.TextPart.Utils", "src\SimpleMockServer.Domain.TextPart.Utils\SimpleMockServer.Domain.TextPart.Utils.csproj", "{12800204-B057-41B1-8707-710C9A1F5EDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.TextPart.Utils", "src\SimpleMockServer.Domain.TextPart.Utils\SimpleMockServer.Domain.TextPart.Utils.csproj", "{12800204-B057-41B1-8707-710C9A1F5EDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions", "src\SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions\SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.csproj", "{ADC3BDBF-549D-4043-A544-27DC0A4DD244}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions", "src\SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions\SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.csproj", "{ADC3BDBF-549D-4043-A544-27DC0A4DD244}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.TextPart.Impl.CSharp", "src\SimpleMockServer.Domain.TextPart.Impl.CSharp\SimpleMockServer.Domain.TextPart.Impl.CSharp.csproj", "{DA9A0A48-84B2-4048-857A-5A73782630CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.TextPart.Impl.CSharp", "src\SimpleMockServer.Domain.TextPart.Impl.CSharp\SimpleMockServer.Domain.TextPart.Impl.CSharp.csproj", "{DA9A0A48-84B2-4048-857A-5A73782630CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMockServer.Domain.TextPart.Impl.Custom", "src\SimpleMockServer.Domain.TextPart.Impl.Custom\SimpleMockServer.Domain.TextPart.Impl.Custom.csproj", "{3C26AB7B-B3A9-40BC-977C-194380ABC8A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMockServer.Domain.TextPart.Impl.Custom", "src\SimpleMockServer.Domain.TextPart.Impl.Custom\SimpleMockServer.Domain.TextPart.Impl.Custom.csproj", "{3C26AB7B-B3A9-40BC-977C-194380ABC8A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -160,10 +160,10 @@ Global
 		{D4124250-A017-4E8E-9C96-49AF7D67FCA8} = {72A44983-7297-4284-BD2C-24CC9D307612}
 		{72A44983-7297-4284-BD2C-24CC9D307612} = {044C763C-B375-4A31-9A6E-DCDE605EEDFB}
 		{801BCB31-DB66-4C7C-97A0-CB67BA63CD91} = {72A44983-7297-4284-BD2C-24CC9D307612}
+		{12800204-B057-41B1-8707-710C9A1F5EDD} = {801BCB31-DB66-4C7C-97A0-CB67BA63CD91}
 		{ADC3BDBF-549D-4043-A544-27DC0A4DD244} = {801BCB31-DB66-4C7C-97A0-CB67BA63CD91}
 		{DA9A0A48-84B2-4048-857A-5A73782630CF} = {801BCB31-DB66-4C7C-97A0-CB67BA63CD91}
 		{3C26AB7B-B3A9-40BC-977C-194380ABC8A2} = {801BCB31-DB66-4C7C-97A0-CB67BA63CD91}
-		{12800204-B057-41B1-8707-710C9A1F5EDD} = {801BCB31-DB66-4C7C-97A0-CB67BA63CD91}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5607801-446F-4C0E-B08E-5A39EE462311}

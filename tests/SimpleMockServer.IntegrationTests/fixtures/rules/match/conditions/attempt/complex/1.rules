@@ -4,8 +4,8 @@ GET /match/conditions/attempt/complex/1
 
 -------------------- condition
 
-$attempt >= 1
-$attempt <= 2
+@attempt >= 1
+@attempt <= 2
 
 ----- response
 
@@ -17,8 +17,8 @@ attempt 1, 2
 
 -------------------- condition
 
-$attempt >= 3
-$attempt <= 4
+@attempt >= 3
+@attempt <= 4
 
 ----- response
 

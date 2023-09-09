@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/float/unit/match/{{ data: float_unit.first }}
+GET /data/types/float/unit/match/{{ range: float_unit.first }}
 
 ----- response
 
@@ -13,7 +13,7 @@ first
 
 -------------------- rule
 
-GET /data/types/float/unit/match/{{ data: float_unit.second }}
+GET /data/types/float/unit/match/{{ range: float_unit.second }}
 
 ----- response
 
@@ -26,7 +26,7 @@ second
 
 -------------------- rule
 
-GET /data/types/float/unit/match/{{ data: float_unit.third }}
+GET /data/types/float/unit/match/{{ range: float_unit.third }}
 
 ----- response
 

@@ -1,4 +1,4 @@
-﻿using SimpleMockServer.Common;
+using SimpleMockServer.Common;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Configuration.PrettyParsers;
 using SimpleMockServer.Domain.Matching.Conditions;
@@ -19,8 +19,8 @@ class ConditionMatcherParser
 
     static class ConditionMatcherName
     {
-        public static readonly string Attempt = Consts.ControlChars.VariablePrefix + "attempt";
-        public static readonly string Elapsed = Consts.ControlChars.VariablePrefix + "elapsed";
+        public static readonly string Attempt = Consts.ControlChars.SystemVariablePrefix + "attempt";
+        public static readonly string Elapsed = Consts.ControlChars.SystemVariablePrefix + "elapsed";
     }
 
     public ConditionMatcherSet Parse(FileSection conditionSection)

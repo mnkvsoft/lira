@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/pretty/match/{{ data: pretty_capacity.first }}
+GET /data/pretty/match/{{ range: pretty_capacity.first }}
 
 ----- response
 
@@ -13,7 +13,7 @@ first
 
 -------------------- rule
 
-GET /data/pretty/match/{{ data: pretty_capacity.second }}
+GET /data/pretty/match/{{ range: pretty_capacity.second }}
 
 ----- response
 
@@ -26,7 +26,7 @@ second
 
 -------------------- rule
 
-GET /data/pretty/match/{{ data: pretty_capacity.third }}
+GET /data/pretty/match/{{ range: pretty_capacity.third }}
 
 ----- response
 

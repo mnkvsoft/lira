@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/float/capacity/match/{{ data: float_capacity.first }}
+GET /data/types/float/capacity/match/{{ range: float_capacity.first }}
 
 ----- response
 
@@ -13,7 +13,7 @@ first
 
 -------------------- rule
 
-GET /data/types/float/capacity/match/{{ data: float_capacity.second }}
+GET /data/types/float/capacity/match/{{ range: float_capacity.second }}
 
 ----- response
 
@@ -26,7 +26,7 @@ second
 
 -------------------- rule
 
-GET /data/types/float/capacity/match/{{ data: float_capacity.third }}
+GET /data/types/float/capacity/match/{{ range: float_capacity.third }}
 
 ----- response
 

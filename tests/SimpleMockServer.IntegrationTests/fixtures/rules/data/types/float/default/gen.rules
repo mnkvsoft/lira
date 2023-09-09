@@ -8,7 +8,7 @@ code:
 200
 
 body:
-{{ data: float_default.first }}
+{{ range: float_default.first }}
 
 
 -------------------- rule
@@ -21,4 +21,4 @@ code:
 200
 
 body:
-{{ data: float_default.second }}
+{{ range: float_default.second }}

@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/hex/bytes_count/match/{{ data: hex_bytes_count.first }}
+GET /data/types/hex/bytes_count/match/{{ range: hex_bytes_count.first }}
 
 ----- response
 
@@ -13,7 +13,7 @@ first
 
 -------------------- rule
 
-GET /data/types/hex/bytes_count/match/{{ data: hex_bytes_count.second }}
+GET /data/types/hex/bytes_count/match/{{ range: hex_bytes_count.second }}
 
 ----- response
 

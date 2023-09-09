@@ -1,4 +1,4 @@
-﻿using SimpleMockServer.Domain.DataModel;
+using SimpleMockServer.Domain.DataModel;
 
 namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Generating.Impl.Create;
 internal class Data : DataBase, IObjectTextPart
@@ -7,7 +7,7 @@ internal class Data : DataBase, IObjectTextPart
     {
     }
 
-    public static string Name => "data";
+    public static string Name => "range";
 
     public object Get(RequestData request) => GetRange().NextValue().ToString()!;
 }

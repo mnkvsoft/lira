@@ -4,7 +4,7 @@ GET /match/conditions/attempt/less_or_equals
 
 -------------------- condition
 
-$attempt <= 2
+@attempt <= 2
 
 ----- response
 
@@ -16,7 +16,7 @@ attempt <= 2
 
 -------------------- condition
 
-$attempt = 3
+@attempt = 3
 
 ----- response
 

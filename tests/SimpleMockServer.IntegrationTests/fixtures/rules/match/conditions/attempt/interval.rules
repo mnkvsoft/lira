@@ -4,7 +4,7 @@ GET /match/conditions/attempt/interval
 
 -------------------- condition
 
-$attempt in [1-2]
+@attempt in [1-2]
 
 ----- response
 
@@ -16,7 +16,7 @@ attempt [1-2]
 
 -------------------- condition
 
-$attempt in [3-4]
+@attempt in [3-4]
 
 ----- response
 
