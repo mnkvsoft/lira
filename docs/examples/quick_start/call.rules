@@ -1,9 +1,6 @@
 -------------------- rule
 
-POST /pay
-
-headers:
-example: call
+POST /pay?example=call
 
 ----- declare
 

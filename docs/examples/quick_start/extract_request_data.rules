@@ -2,9 +2,6 @@
 
 POST /pay/by/{{ any name: tool }}
 
-headers:
-example: extract_request_data
-
 ----- response
 
 code:

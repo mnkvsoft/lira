@@ -1,0 +1,18 @@
+{
+    "amount": {
+      "type": "float",
+      "ranges": [
+        "ok",
+        "reject",
+        "refund_reject"
+      ]
+    },
+    "payment_id": {
+      "type": "int",
+      "ranges": [
+        "ok",
+        "refund_reject"
+      ]
+    }
+  }
+  

@@ -1,23 +1,46 @@
--------------------- rule
+---------------------------- rule
 
-POST /pay
+GET /pay/status
 
-headers:
-example: conditions
+--------------- condition
 
------ declare
-
-$requestId = {{ guid }}
+@elapsed < 2 second
 
 ----- response
 
 code:
 200
 
-headers:
-Request-Id: {{ $requestId }}
+body:
+{
+    "status": "registered"
+}
+
+--------------- condition
+
+@elapsed in [2 second - 4 second]
+
+----- response
+
+code:
+200
 
 body:
 {
-    "request_id": "{{ $requestId }}"
+    "status": "pending"
+}
+
+
+--------------- condition
+
+@elapsed > 4 second
+
+----- response
+
+code:
+200
+
+body:
+{
+    "status": "ok"
 }

@@ -1,0 +1,33 @@
+-------------------- rule
+
+POST /pay?example=range.easy
+
+body:
+jpath: $.amount >> {{ range: amount.ok }}
+
+----- response
+
+code:
+200
+
+body:
+{
+    "status": "ok"
+}
+
+-------------------- rule
+
+POST /pay
+
+body:
+jpath: $.amount >> {{ range: amount.reject }}
+
+----- response
+
+code:
+200
+
+body:
+{
+    "status": "reject"
+}

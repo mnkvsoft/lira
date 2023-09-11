@@ -2,9 +2,6 @@
 
 POST /pay?example=custom_function
 
-headers:
-example: custom_function
-
 ----- declare
 
 #pay.now = {{ now >> format: dd MMM yyyy hh:mm tt }}

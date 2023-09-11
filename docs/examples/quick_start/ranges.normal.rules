@@ -1,0 +1,67 @@
+// ok refund rule
+
+-------------------- rule
+
+POST /pay?example=range.normal
+
+body:
+jpath: $.amount >> {{ range: amount.ok }}
+
+----- response
+
+code:
+200
+
+body:
+{
+    "payment_id": {{ range: payment_id.ok }},
+    "status": "ok"
+}
+
+-------------------- rule
+
+POST /pay/refund/{{ range: payment_id.ok}}
+
+----- response
+
+code:
+200
+
+body:
+{
+    "status": "ok"
+}
+
+// reject refund rule
+
+-------------------- rule
+
+POST /pay?example=range.normal
+
+body:
+jpath: $.amount >> {{ range: amount.refund_reject }}
+
+----- response
+
+code:
+200
+
+body:
+{
+    "payment_id": {{ range: payment_id.refund_reject }},
+    "status": "ok"
+}
+
+-------------------- rule
+
+POST /pay/refund/{{ range: payment_id.refund_reject}}
+
+----- response
+
+code:
+200
+
+body:
+{
+    "status": "reject"
+}

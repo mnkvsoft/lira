@@ -39,7 +39,7 @@ public class Startup
             string sys = _configuration.GetValue<string>("SystemEndpointStartSegment")!;
 
             endpoints.MapGet(
-                "/" + sys + "/data/val/{name}/{rangeName}/{count:int?}",
+                "/" + sys + "/range/val/{name}/{rangeName}/{count:int?}",
                 async (HttpContext context, string name, string rangeName, int? count) =>
                 {
                     var dataProvider = context.RequestServices.GetRequiredService<IDataProvider>();
