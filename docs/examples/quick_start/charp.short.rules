@@ -1,0 +1,13 @@
+-------------------- rule
+
+GET /very/old/event
+
+----- response
+
+code:
+200
+
+body:
+{
+    "date": {{ DateTime.Now.AddYears(-100 - Random.Shared.Next(1, 100)) }}
+}

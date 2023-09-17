@@ -1,6 +1,6 @@
 -------------------- rule
 
-POST /pay/{{ any }}?fast={{ any }}
+POST /payment/{{ any }}?fast={{ any }}
 
 headers:
 Request-Id: {{ guid }}
@@ -15,6 +15,6 @@ code:
 
 body:
 {
-    "payment_id": 12345,
+    "id": 12345,
     "status": "ok"
 }

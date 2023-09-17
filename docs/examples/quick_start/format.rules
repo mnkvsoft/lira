@@ -1,0 +1,18 @@
+-------------------- rule
+
+GET /format
+
+----- response
+
+code:
+200
+
+body:
+// short function
+{{ guid >> format: N }}
+
+// raw C# block
+{{ Guid.NewGuid().ToString("D") }}
+
+//  C# block with format function
+{{ Guid.NewGuid() >> format: B }}

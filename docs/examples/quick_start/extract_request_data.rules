@@ -1,6 +1,12 @@
 -------------------- rule
 
-POST /pay/by/{{ any name: tool }}
+POST /payment/{{ any name: tool }}?fast={{ any }}
+
+headers:
+Id: {{ any }}
+
+body:
+jpath: $.account >> {{ any }}
 
 ----- response
 

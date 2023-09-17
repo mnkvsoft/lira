@@ -32,6 +32,18 @@
     <None Update="fixtures\rules\call\1.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\comments\multi_line\end.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\comments\multi_line\end.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\comments\single_line\end.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\comments\single_line\end.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="fixtures\rules\data\types\hex\bytes_count\default.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

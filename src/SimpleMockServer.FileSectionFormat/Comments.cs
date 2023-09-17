@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace SimpleMockServer.FileSectionFormat;
 
@@ -33,7 +33,10 @@ internal static class Comments
 
             int endCommentIndex = text.IndexOf(endComment, StringComparison.OrdinalIgnoreCase);
             if (endCommentIndex == -1)
+            {
+                text = "";
                 break;
+            }
 
             text = text.Substring(isMultiline ? endCommentIndex + endComment.Length : endCommentIndex);
             startCommentIndex = text.IndexOf(startComment, StringComparison.OrdinalIgnoreCase);

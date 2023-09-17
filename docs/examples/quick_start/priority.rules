@@ -1,0 +1,38 @@
+-------------------- rule
+
+GET /priority/{{ any }}
+
+----- response
+
+code:
+200
+
+body:
+rule with ANY
+
+-------------------- rule
+
+GET /priority/{{ guid }}
+
+----- response
+
+code:
+200
+
+body:
+rule with GUID
+
+-------------------- rule
+
+GET /priority/{{ guid }}
+
+headers:
+Request-Id: {{ any }}
+
+----- response
+
+code:
+200
+
+body:
+rule with GUID and header

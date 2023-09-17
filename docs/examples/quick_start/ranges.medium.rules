@@ -2,7 +2,10 @@
 
 -------------------- rule
 
-POST /pay?example=range.normal
+POST /payment
+
+headers:
+example: range.medium
 
 body:
 jpath: $.amount >> {{ range: amount.ok }}
@@ -14,13 +17,16 @@ code:
 
 body:
 {
-    "payment_id": {{ range: payment_id.ok }},
+    "id": {{ range: payment_id.ok }},
     "status": "ok"
 }
 
 -------------------- rule
 
-POST /pay/refund/{{ range: payment_id.ok}}
+POST /payment/refund/{{ range: payment_id.ok}}
+
+headers:
+example: range.medium
 
 ----- response
 
@@ -36,7 +42,10 @@ body:
 
 -------------------- rule
 
-POST /pay?example=range.normal
+POST /payment
+
+headers:
+example: range.medium
 
 body:
 jpath: $.amount >> {{ range: amount.refund_reject }}
@@ -48,13 +57,16 @@ code:
 
 body:
 {
-    "payment_id": {{ range: payment_id.refund_reject }},
+    "id": {{ range: payment_id.refund_reject }},
     "status": "ok"
 }
 
 -------------------- rule
 
-POST /pay/refund/{{ range: payment_id.refund_reject}}
+POST /payment/refund/{{ range: payment_id.refund_reject}}
+
+headers:
+example: range.medium
 
 ----- response
 

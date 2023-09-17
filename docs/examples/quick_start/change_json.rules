@@ -1,0 +1,49 @@
+-------------------- declare
+
+#template.order = 
+{
+    "id": {{ int }},
+    "status": "paid",
+    "amount": {{ float }},
+    "transaction_id": "{{ guid }}",
+    "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
+    "customer": "{{ str }}"
+}
+
+-------------------- rule
+
+POST /order
+
+headers:
+example: change_json
+
+----- response
+
+code:
+200
+
+body:
+{{ 
+    json( #template.order )
+        .replace("$.status", "pending")
+        .replace("$.customer", "vasily pupkin")
+}}
+
+-------------------- rule
+
+GET /order
+
+headers:
+example: change_json
+
+----- response
+
+code:
+200
+
+body:
+{{ 
+    json( #template.order )
+        .replace("$.status", "refunded")
+        .replace("$.customer", "nikolas john")
+}}

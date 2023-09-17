@@ -1,0 +1,16 @@
+-------------------- rule
+
+GET /person
+
+headers:
+example: declare.shared.global
+
+----- response
+
+code:
+200
+
+body:
+{
+    "age": {{ age }}
+}

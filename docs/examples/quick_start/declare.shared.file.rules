@@ -1,0 +1,37 @@
+-------------------- declare
+
+#amount = {{ float: [1 - 100] }}
+
+-------------------- rule
+
+GET /payment
+
+headers:
+example: declare.shared.file
+
+----- response
+
+code:
+200
+
+body:
+{
+    "amount": {{ amount }}
+}
+
+-------------------- rule
+
+GET /account
+
+headers:
+example: declare.shared.file
+
+----- response
+
+code:
+200
+
+body:
+{
+    "balance": {{ amount }}
+}

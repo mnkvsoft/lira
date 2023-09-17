@@ -1,10 +1,13 @@
 -------------------- rule
 
-POST /pay?example=custom_function
+POST /payment
+
+headers:
+example: custom_function
 
 ----- declare
 
-#pay.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
+#payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
 
 ----- response
 
@@ -13,5 +16,8 @@ code:
 
 body:
 {
-    "created_at": "{{ pay.now }}"
+    "created_at": "{{ #payment.now }}"
+    
+    // the '#' symbol can be omitted when calling a function
+    // "created_at": "{{ payment.now }}"
 }

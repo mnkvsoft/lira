@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /comments/single_line/end
+
+----- response
+
+code:
+200
+
+body:
+hello! // comment at the end

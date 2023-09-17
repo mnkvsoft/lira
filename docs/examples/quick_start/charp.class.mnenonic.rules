@@ -1,0 +1,40 @@
+-------------------- rule
+
+POST /payment/card
+
+headers:
+example: charp.class.mnenonic
+
+body:
+jpath: $.number >> {{ any }}
+
+----- response
+
+code:
+200
+
+body:
+mnemonic was generated from 'number' field: {{ 
+    CardNumber.GetMnemonic(@req.Body.ByJPath("$.number")) 
+}}
+
+
+-------------------- rule
+
+POST /payment/card
+
+headers:
+example: charp.class.mnenonic
+
+body:
+jpath: $.pan >> {{ any }}
+
+----- response
+
+code:
+200
+
+body:
+mnemonic was generated from 'pan' field: {{ 
+    CardNumber.GetMnemonic(@req.Body.ByJPath("$.pan")) 
+}}

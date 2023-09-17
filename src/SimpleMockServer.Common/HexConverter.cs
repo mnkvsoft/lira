@@ -29,31 +29,6 @@ public static class HexConverter
                      .ToArray();
     }
 
-    //public static bool TryToBytes(string hex, [MaybeNullWhen(false)] out byte[] bytes)
-    //{
-    //    bytes = null;
-    //    if (hex.Length % 2 != 0)
-    //        return false;
-
-    //    bytes = new byte[hex.Length / 2];
-
-    //    for (int i = 0; i < hex.Length; i++)
-    //    {
-    //        if (i % 2 != 0)
-    //            continue;
-
-    //        if (!byte.TryParse(hex.AsSpan(i, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte b))
-    //        {
-    //            bytes = null;
-    //            return false;
-    //        }
-
-    //        bytes[i / 2] = b;
-    //    }
-
-    //    return true;
-    //}
-
     public static bool IsValidHexString(string hex)
     {
         if (hex.Length % 2 != 0)

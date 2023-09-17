@@ -1,6 +1,9 @@
 -------------------- rule
 
-POST /pay?example=range.easy
+POST /payment
+
+headers:
+example: range.easy
 
 body:
 jpath: $.amount >> {{ range: amount.ok }}
@@ -17,7 +20,7 @@ body:
 
 -------------------- rule
 
-POST /pay
+POST /payment
 
 body:
 jpath: $.amount >> {{ range: amount.reject }}

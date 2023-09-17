@@ -1,3 +1,6 @@
 - int data default random?
 - int, hex, float, data default capacity?
-- usage templates and read.file in dynamic blocks 
+- usage templates and read.file in dynamic blocks
+- implement store data between requests
+- verify request
+- abort request

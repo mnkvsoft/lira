@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /comments/single_line/end
+
+----- expected
+
+code:
+200
+
+body:
+hello!

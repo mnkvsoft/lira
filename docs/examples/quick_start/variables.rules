@@ -1,6 +1,9 @@
 -------------------- rule
 
-POST /pay?example=variables
+POST /payment
+
+headers:
+example: variables
 
 ----- declare
 
@@ -12,7 +15,7 @@ code:
 200
 
 headers:
-Request-Id: {{ $requestId }}
+Request-Id: {{ $requestId >> format: N }}
 
 body:
 {
