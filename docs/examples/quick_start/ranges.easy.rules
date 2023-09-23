@@ -6,7 +6,7 @@ headers:
 example: range.easy
 
 body:
-jpath: $.amount >> {{ range: amount.ok }}
+jpath: $.amount >> {{ range: amount/ok }}
 
 ----- response
 
@@ -23,7 +23,7 @@ body:
 POST /payment
 
 body:
-jpath: $.amount >> {{ range: amount.reject }}
+jpath: $.amount >> {{ range: amount/reject }}
 
 ----- response
 

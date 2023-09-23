@@ -14,7 +14,7 @@ simple mock server
 - создать каталог `c:/rules` в котором будут находится правила для **SMS** (можно задать любой другой каталог)
 - выполнить команду:
 
-`docker run -p 80:80  -v c:/rules:/app/rules  mnkvsoft/lira`
+`docker run -p 80:80 -e TZ=Europe/Moscow -v c:/rules:/app/rules  mnkvsoft/lira`
 
 Убедиться, что сервер запущен можно перейдя в браузере по адресу:
 
