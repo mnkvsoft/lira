@@ -1,0 +1,24 @@
+-------------------- rule
+
+GET /data/types/int/default/gen/first
+
+----- response
+
+code:
+200
+
+body:
+{{ range: int_default.first.one }}
+
+
+-------------------- rule
+
+GET /data/types/int/default/gen/second
+
+----- response
+
+code:
+200
+
+body:
+{{ range: int_default.second.two }}

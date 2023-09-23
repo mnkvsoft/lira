@@ -1,0 +1,13 @@
+{
+  "int_mode_random": {
+    "type": "int",
+    "mode": "random",
+    "interval": "1 - 10",
+    "capacity": "3",
+    "ranges": [
+      "first",
+      "second",
+      "third"
+    ]
+  }
+}

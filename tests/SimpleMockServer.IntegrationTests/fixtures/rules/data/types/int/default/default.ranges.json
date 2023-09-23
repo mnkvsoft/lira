@@ -1,0 +1,9 @@
+{
+  "int_default": {
+    "type": "int",
+    "ranges": [
+      "first.one",
+      "second.two"
+    ]
+  }
+}

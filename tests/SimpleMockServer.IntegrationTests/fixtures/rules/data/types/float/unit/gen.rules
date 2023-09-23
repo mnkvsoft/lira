@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /data/types/float/unit/gen/first
+
+----- response
+
+code:
+200
+
+body:
+{{ range: float_unit.first }}
+
+
+-------------------- rule
+
+GET /data/types/float/unit/gen/second
+
+----- response
+
+code:
+200
+
+body:
+{{ range: float_unit.second }}
+
+
+-------------------- rule
+
+GET /data/types/float/unit/gen/third
+
+----- response
+
+code:
+200
+
+body:
+{{ range: float_unit.third }}

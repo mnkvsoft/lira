@@ -1,0 +1,12 @@
+{
+  "float_capacity": {
+    "type": "float",
+    "interval": "1 - 10",
+    "capacity": "3.55",
+    "ranges": [
+      "first",
+      "second",
+      "third"
+    ]
+  }
+}

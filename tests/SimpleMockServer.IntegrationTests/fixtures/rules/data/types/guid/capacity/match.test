@@ -1,0 +1,39 @@
+// 9ffaaeb8-b75d-4a3a-0000-000000000080 -  -9223372036854775808 in int64
+
+-------------------- case
+
+GET /data/types/guid/capacity/match/9ffaaeb8-b75d-4a3a-0000-000000000080
+
+----- expected
+
+code:
+200
+
+// 81f410b1-3651-910f-0a00-000000000080 -  -9223372036854775798 in int64
+
+-------------------- case
+
+GET /data/types/guid/capacity/match/81f410b1-3651-910f-0a00-000000000080
+
+----- expected
+
+code:
+200
+
+body:
+second
+
+// 6aeefe78-2211-bfb1-1400-000000000080 -  -9223372036854775788 in int64
+
+-------------------- case
+
+GET /data/types/guid/capacity/match/6aeefe78-2211-bfb1-1400-000000000080
+
+----- expected
+
+code:
+200
+
+body:
+third
+

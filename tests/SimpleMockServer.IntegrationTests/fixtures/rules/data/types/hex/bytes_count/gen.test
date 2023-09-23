@@ -1,0 +1,21 @@
+-------------------- case
+
+GET /data/types/hex/bytes_count/gen/first
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check
+
+-------------------- case
+
+GET /data/types/hex/bytes_count/gen/second
+
+----- expected
+
+code:
+200
+
+// todo: need implementation body check

@@ -1,0 +1,24 @@
+-------------------- rule
+
+GET /data/types/hex/default/match/{{ range: hex_default.first }}
+
+----- response
+
+code:
+200
+
+body:
+first
+
+
+-------------------- rule
+
+GET /data/types/hex/default/match/{{ range: hex_default.second }}
+
+----- response
+
+code:
+200
+
+body:
+second

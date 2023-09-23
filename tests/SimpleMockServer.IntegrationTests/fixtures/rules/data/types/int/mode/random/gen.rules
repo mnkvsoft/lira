@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /data/types/int/mode/random/gen/first
+
+----- response
+
+code:
+200
+
+body:
+{{ range: int_mode_random.first }}
+
+
+-------------------- rule
+
+GET /data/types/int/mode/random/gen/second
+
+----- response
+
+code:
+200
+
+body:
+{{ range: int_mode_random.second }}
+
+
+-------------------- rule
+
+GET /data/types/int/mode/random/gen/third
+
+----- response
+
+code:
+200
+
+body:
+{{ range: int_mode_random.third }}

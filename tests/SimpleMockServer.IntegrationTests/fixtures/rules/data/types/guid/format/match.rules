@@ -1,0 +1,24 @@
+-------------------- rule
+
+GET /data/types/guid/format/match/{{ range: guid_format.first }}
+
+----- response
+
+code:
+200
+
+body:
+first
+
+
+-------------------- rule
+
+GET /data/types/guid/format/match/{{ range: guid_format.second }}
+
+----- response
+
+code:
+200
+
+body:
+second

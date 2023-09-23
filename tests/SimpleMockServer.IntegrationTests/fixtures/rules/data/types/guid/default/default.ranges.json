@@ -1,0 +1,9 @@
+{
+  "guid_default": {
+    "type": "guid",
+    "ranges": [
+      "first",
+      "second"
+    ]
+  }
+}
