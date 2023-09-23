@@ -1,4 +1,4 @@
-﻿namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Generating.Impl.Extract;
+﻿namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Extract;
 
 internal class Path : IObjectTextPart, IWithStringArgumentFunction
 {

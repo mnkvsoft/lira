@@ -1,4 +1,4 @@
-﻿namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions;
+﻿namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions;
 
 class UnknownFunctionException : Exception
 {

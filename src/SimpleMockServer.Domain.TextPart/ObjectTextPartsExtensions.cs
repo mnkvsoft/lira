@@ -19,8 +19,6 @@ public static class ObjectTextPartsExtensions
 
     private record TextPartAdapter(IObjectTextPart ObjectTextPart) : ITextPart
     {
-        private static NumberFormatInfo NumberFormatInfo = new NumberFormatInfo().Apply(x => x.NumberDecimalSeparator = ".");
-
         public string? Get(RequestData request)
         {
             dynamic? obj = ObjectTextPart.Get(request);
@@ -30,9 +28,6 @@ public static class ObjectTextPartsExtensions
 
             if (obj is DateTime date)
                 return date.ToString("O");
-
-            if (obj is decimal dec)
-                return dec.ToString(NumberFormatInfo);
 
             return obj.ToString();
         }

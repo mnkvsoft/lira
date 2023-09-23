@@ -1,4 +1,4 @@
-﻿namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Transform.Format;
+﻿namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Transform.Format;
 
 record FormatFunction(string Format) : ITransformFunction
 {

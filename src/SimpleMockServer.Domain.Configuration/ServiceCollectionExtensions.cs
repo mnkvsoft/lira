@@ -8,7 +8,7 @@ using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Configuration.Variables;
 using SimpleMockServer.Domain.DataModel;
 using SimpleMockServer.Domain.TextPart.Impl.CSharp;
-using SimpleMockServer.Domain.TextPart.PreDefinedFunctions;
+using SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions;
 
 namespace SimpleMockServer.Domain.Configuration;
 

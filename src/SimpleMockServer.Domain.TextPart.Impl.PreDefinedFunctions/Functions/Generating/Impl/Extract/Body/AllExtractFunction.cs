@@ -1,7 +1,7 @@
 ﻿using SimpleMockServer.Domain.Extensions;
 using SimpleMockServer.Domain.Matching.Request.Matchers;
 
-namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Generating.Impl.Extract.Body;
+namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Extract.Body;
 
 public class AllExtractFunction : IBodyExtractFunction, IObjectTextPart
 {

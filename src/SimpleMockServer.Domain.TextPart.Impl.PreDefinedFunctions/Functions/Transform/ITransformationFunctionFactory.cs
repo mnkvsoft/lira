@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Transform.Format;
+using SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Transform.Format;
 
-namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Transform;
+namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Transform;
 
 public interface ITransformFunctionFactory
 {

@@ -30,7 +30,7 @@ public class GeneratingHttpDataParser
 
             var parts = await _partsParser.Parse(headerPattern, parsingContext);
 
-            headers.Add(new GeneratingHeader(headerName, ObjectTextPartsExtensions.WrapToTextParts(parts)));
+            headers.Add(new GeneratingHeader(headerName, parts.WrapToTextParts()));
         }
         return headers;
     }

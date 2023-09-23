@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Matching.Request;
 
-namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Matching.String;
+namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String;
 
 public interface IStringMatchFunctionFactory
 {

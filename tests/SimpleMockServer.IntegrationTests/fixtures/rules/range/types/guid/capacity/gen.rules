@@ -34,4 +34,4 @@ code:
 200
 
 body:
-{{ range: guid_capacity.third }}
+{{ range: guid_capacity/third }}

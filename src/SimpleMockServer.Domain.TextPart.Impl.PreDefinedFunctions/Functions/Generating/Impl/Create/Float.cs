@@ -1,6 +1,6 @@
 using SimpleMockServer.Common;
 
-namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Generating.Impl.Create;
+namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Create;
 
 internal class Float : IObjectTextPart, IWithDecimalRangeArgumentFunction, IWithOptionalArgument
 {

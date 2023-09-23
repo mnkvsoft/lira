@@ -5,8 +5,8 @@ using SimpleMockServer.Domain.TextPart;
 using SimpleMockServer.Domain.TextPart.Impl.CSharp;
 using SimpleMockServer.Domain.TextPart.Impl.Custom;
 using SimpleMockServer.Domain.TextPart.Impl.Custom.VariableModel;
-using SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Generating;
-using SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Transform;
+using SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating;
+using SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Transform;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 

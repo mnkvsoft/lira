@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using SimpleMockServer.Domain.Matching.Request;
 
-namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Matching.String.Impl;
+namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String.Impl;
 
 internal class Regex : IStringMatchPrettyFunction, IWithStringArgumentFunction
 {

@@ -1,4 +1,3 @@
-/*
 -------------------- rule
 
 GET /range/types/int/interval/match/{{ range: int_interval/first }}
@@ -36,4 +35,3 @@ code:
 
 body:
 third
-*/

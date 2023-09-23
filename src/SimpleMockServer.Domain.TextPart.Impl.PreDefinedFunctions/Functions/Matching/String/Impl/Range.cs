@@ -1,11 +1,11 @@
 using SimpleMockServer.Domain.DataModel;
 using SimpleMockServer.Domain.Matching.Request;
 
-namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Matching.String.Impl;
+namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String.Impl;
 
-internal class Data : DataBase, IStringMatchPrettyFunction
+internal class Range : DataBase, IStringMatchPrettyFunction
 {
-    public Data(IDataProvider dataProvider) : base(dataProvider)
+    public Range(IDataProvider dataProvider) : base(dataProvider)
     {
     }
 

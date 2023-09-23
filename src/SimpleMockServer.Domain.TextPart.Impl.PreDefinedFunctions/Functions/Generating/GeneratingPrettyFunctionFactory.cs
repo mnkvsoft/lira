@@ -4,9 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using SimpleMockServer.Common;
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.Matching.Request.Matchers;
-using SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Generating.Impl.Extract.Body;
+using SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Extract.Body;
 
-namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Generating;
+namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating;
 
 public interface IBodyExtractFunctionFactory
 {

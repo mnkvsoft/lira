@@ -1,4 +1,4 @@
-namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions;
+namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions;
 
 internal interface IWithArgument
 {

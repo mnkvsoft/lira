@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /range/types/guid/capacity/match/{{ range: guid_capacity.first }}
+GET /range/types/guid/capacity/match/{{ range: guid_capacity/first }}
 
 ----- response
 
@@ -13,7 +13,7 @@ first
 
 -------------------- rule
 
-GET /range/types/guid/capacity/match/{{ range: guid_capacity.second }}
+GET /range/types/guid/capacity/match/{{ range: guid_capacity/second }}
 
 ----- response
 

@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Generating;
-using SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Matching.String;
-using SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Transform;
+using SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating;
+using SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String;
+using SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Transform;
 
-namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions;
+namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions;
 
 public static class ServiceCollectionExtensions
 {

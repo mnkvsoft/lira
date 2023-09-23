@@ -1,11 +1,13 @@
 ﻿using System.Web;
+using SimpleMockServer.Common.Exceptions;
 using SimpleMockServer.Common.Extensions;
+using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.Domain.Configuration.Templating;
 using SimpleMockServer.Domain.Matching.Request;
 using SimpleMockServer.Domain.Matching.Request.Matchers;
-using SimpleMockServer.Domain.TextPart.PreDefinedFunctions;
-using SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Generating;
-using SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Matching.String;
+using SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions;
+using SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating;
+using SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String;
 using SimpleMockServer.FileSectionFormat;
 
 namespace SimpleMockServer.Domain.Configuration.Rules.Parsers;
@@ -120,13 +122,13 @@ class RequestMatchersParser
 
         if (!path.StartsWith('/'))
             throw new Exception($"Matching path must start with '/'. Current value: '{path}'");
-
-        var rawSegments = path.Split('/');
         
-        var patterns = new List<TextPatternPart>(rawSegments.Length);
+        List<string> rawSegments = GetRawSegments(path);
+
+        var patterns = new List<TextPatternPart>(rawSegments.Count);
 
         var maps = new List<PathNameMap>();
-        for (var i = 0; i < rawSegments.Length; i++)
+        for (var i = 0; i < rawSegments.Count; i++)
         {
             var rawValue = rawSegments[i];
             string? segmentName = null;
@@ -145,6 +147,58 @@ class RequestMatchersParser
         }
 
         return (new PathRequestMatcher(patterns), maps);
+    }
+
+    // because dynamic blocks can have a symbol / then parse like this
+    private static List<string> GetRawSegments(string path)
+    {
+        var parsed = PatternParser.Parse(path);
+        var rawSegments = new List<string>(15);
+
+        string? remainder = null;
+        foreach (PatternPart patternPart in parsed)
+        {
+            if (patternPart is PatternPart.Static @static)
+            {
+                var segmentsTemp = @static.Value.Split('/');
+                for (int i = 0; i < segmentsTemp.Length; i++)
+                {
+                    string s = segmentsTemp[i];
+                    
+                    if (i == 0 && remainder != null)
+                    {
+                        rawSegments.Add(remainder + s);
+                        remainder = null;
+                        continue;
+                    }
+                    
+                    if (i == segmentsTemp.Length - 1)
+                    {
+                        remainder = s;
+                        break;
+                    }
+
+                    rawSegments.Add(s);
+                }
+            }
+            else if (patternPart is PatternPart.Dynamic dynamic)
+            {
+                string value = Consts.ExecutedBlock.Begin + dynamic.Value + Consts.ExecutedBlock.End;
+                if (remainder != null)
+                    remainder += value;
+                else
+                    remainder = value;
+            }
+            else
+            {
+                throw new UnsupportedInstanceType(patternPart);
+            }
+        }
+
+        if (remainder != null)
+            rawSegments.Add(remainder);
+        
+        return rawSegments;
     }
 
     private QueryStringRequestMatcher CreateQueryStringMatcher(string queryString, IReadOnlyCollection<Template> templates)

@@ -1,7 +1,7 @@
 using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.DataModel;
 
-namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions;
+namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions;
 
 abstract class DataBase : IWithStringArgumentFunction
 {

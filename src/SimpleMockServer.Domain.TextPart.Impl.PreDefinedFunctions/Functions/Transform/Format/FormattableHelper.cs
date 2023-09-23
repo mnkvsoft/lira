@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions.Transform.Format;
+namespace SimpleMockServer.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Transform.Format;
 
 internal static class FormattableHelper
 {
