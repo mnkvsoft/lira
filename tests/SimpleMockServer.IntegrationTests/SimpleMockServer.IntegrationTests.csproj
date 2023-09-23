@@ -44,49 +44,49 @@
     <None Update="fixtures\rules\comments\single_line\end.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\bytes_count\default.ranges.json">
+    <None Update="fixtures\rules\range\types\hex\bytes_count\default.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\bytes_count\gen.rules">
+    <None Update="fixtures\rules\range\types\hex\bytes_count\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\bytes_count\gen.test">
+    <None Update="fixtures\rules\range\types\hex\bytes_count\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\bytes_count\match.rules">
+    <None Update="fixtures\rules\range\types\hex\bytes_count\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\bytes_count\match.test">
+    <None Update="fixtures\rules\range\types\hex\bytes_count\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\capacity\capacity.ranges.json">
+    <None Update="fixtures\rules\range\types\hex\capacity\capacity.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\capacity\gen.rules">
+    <None Update="fixtures\rules\range\types\hex\capacity\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\capacity\gen.test">
+    <None Update="fixtures\rules\range\types\hex\capacity\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\capacity\match.rules">
+    <None Update="fixtures\rules\range\types\hex\capacity\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\capacity\match.test">
+    <None Update="fixtures\rules\range\types\hex\capacity\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\default\default.ranges.json">
+    <None Update="fixtures\rules\range\types\hex\default\default.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\default\gen.rules">
+    <None Update="fixtures\rules\range\types\hex\default\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\default\gen.test">
+    <None Update="fixtures\rules\range\types\hex\default\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\default\match.rules">
+    <None Update="fixtures\rules\range\types\hex\default\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\hex\default\match.test">
+    <None Update="fixtures\rules\range\types\hex\default\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\delay\response.rules">
@@ -680,169 +680,169 @@
     <None Update="fixtures\rules\data\guid\capacity\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\default\gen.test">
+    <None Update="fixtures\rules\range\types\float\default\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\default\match.test">
+    <None Update="fixtures\rules\range\types\float\default\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\default\gen.rules">
+    <None Update="fixtures\rules\range\types\float\default\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\default\default.ranges.json">
+    <None Update="fixtures\rules\range\types\float\default\default.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\default\match.rules">
+    <None Update="fixtures\rules\range\types\float\default\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\capacity\capacity.ranges.json">
+    <None Update="fixtures\rules\range\types\guid\capacity\capacity.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\capacity\gen.rules">
+    <None Update="fixtures\rules\range\types\guid\capacity\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\capacity\gen.test">
+    <None Update="fixtures\rules\range\types\guid\capacity\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\capacity\match.rules">
+    <None Update="fixtures\rules\range\types\guid\capacity\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\capacity\match.test">
+    <None Update="fixtures\rules\range\types\guid\capacity\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\default\default.ranges.json">
+    <None Update="fixtures\rules\range\types\guid\default\default.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\default\gen.rules">
+    <None Update="fixtures\rules\range\types\guid\default\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\default\gen.test">
+    <None Update="fixtures\rules\range\types\guid\default\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\default\match.rules">
+    <None Update="fixtures\rules\range\types\guid\default\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\default\match.test">
+    <None Update="fixtures\rules\range\types\guid\default\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\capacity\capacity.ranges.json">
+    <None Update="fixtures\rules\range\types\int\capacity\capacity.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\capacity\gen.rules">
+    <None Update="fixtures\rules\range\types\int\capacity\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\capacity\gen.test">
+    <None Update="fixtures\rules\range\types\int\capacity\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\capacity\match.rules">
+    <None Update="fixtures\rules\range\types\int\capacity\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\capacity\match.test">
+    <None Update="fixtures\rules\range\types\int\capacity\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\default\default.ranges.json">
+    <None Update="fixtures\rules\range\types\int\default\default.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\default\gen.rules">
+    <None Update="fixtures\rules\range\types\int\default\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\default\gen.test">
+    <None Update="fixtures\rules\range\types\int\default\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\default\match.rules">
+    <None Update="fixtures\rules\range\types\int\default\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\default\match.test">
+    <None Update="fixtures\rules\range\types\int\default\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\interval\gen.rules">
+    <None Update="fixtures\rules\range\types\int\interval\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\interval\gen.test">
+    <None Update="fixtures\rules\range\types\int\interval\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\interval\interval.ranges.json">
+    <None Update="fixtures\rules\range\types\int\interval\interval.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\interval\match.rules">
+    <None Update="fixtures\rules\range\types\int\interval\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\interval\match.test">
+    <None Update="fixtures\rules\range\types\int\interval\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\mode\random\gen.rules">
+    <None Update="fixtures\rules\range\types\int\mode\random\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\mode\random\gen.test">
+    <None Update="fixtures\rules\range\types\int\mode\random\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\mode\random\match.rules">
+    <None Update="fixtures\rules\range\types\int\mode\random\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\mode\random\match.test">
+    <None Update="fixtures\rules\range\types\int\mode\random\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\int\mode\random\random.ranges.json">
+    <None Update="fixtures\rules\range\types\int\mode\random\random.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\interval\interval.ranges.json">
+    <None Update="fixtures\rules\range\types\float\interval\interval.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\interval\gen.rules">
+    <None Update="fixtures\rules\range\types\float\interval\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\interval\gen.test">
+    <None Update="fixtures\rules\range\types\float\interval\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\interval\match.rules">
+    <None Update="fixtures\rules\range\types\float\interval\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\interval\match.test">
+    <None Update="fixtures\rules\range\types\float\interval\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\capacity\capacity.ranges.json">
+    <None Update="fixtures\rules\range\types\float\capacity\capacity.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\capacity\gen.rules">
+    <None Update="fixtures\rules\range\types\float\capacity\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\capacity\gen.test">
+    <None Update="fixtures\rules\range\types\float\capacity\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\capacity\match.rules">
+    <None Update="fixtures\rules\range\types\float\capacity\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\capacity\match.test">
+    <None Update="fixtures\rules\range\types\float\capacity\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\unit\unit.ranges.json">
+    <None Update="fixtures\rules\range\types\float\unit\unit.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\unit\gen.rules">
+    <None Update="fixtures\rules\range\types\float\unit\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\unit\gen.test">
+    <None Update="fixtures\rules\range\types\float\unit\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\unit\match.rules">
+    <None Update="fixtures\rules\range\types\float\unit\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\float\unit\match.test">
+    <None Update="fixtures\rules\range\types\float\unit\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\format\format.ranges.json">
+    <None Update="fixtures\rules\range\types\guid\format\format.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\format\gen.rules">
+    <None Update="fixtures\rules\range\types\guid\format\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\format\gen.test">
+    <None Update="fixtures\rules\range\types\guid\format\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\format\match.rules">
+    <None Update="fixtures\rules\range\types\guid\format\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\data\types\guid\format\match.test">
+    <None Update="fixtures\rules\range\types\guid\format\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\variable\multiline.rules">
