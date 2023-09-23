@@ -1,9 +1,0 @@
-{
-  "hex_default": {
-    "type": "hex",
-    "ranges": [
-      "first",
-      "second"
-    ]
-  }
-}
