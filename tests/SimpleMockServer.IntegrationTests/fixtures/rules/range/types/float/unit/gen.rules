@@ -8,7 +8,7 @@ code:
 200
 
 body:
-{{ range: float_unit.first }}
+{{ range: float_unit/first }}
 
 
 -------------------- rule
@@ -21,7 +21,7 @@ code:
 200
 
 body:
-{{ range: float_unit.second }}
+{{ range: float_unit/second }}
 
 
 -------------------- rule
@@ -34,4 +34,4 @@ code:
 200
 
 body:
-{{ range: float_unit.third }}
+{{ range: float_unit/third }}

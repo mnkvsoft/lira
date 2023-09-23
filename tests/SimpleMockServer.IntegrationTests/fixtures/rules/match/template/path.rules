@@ -1,6 +1,6 @@
 -------------------- templates
 
-userid = user_{{ range: match_template.first }}
+userid = user_{{ range: match_template/first }}
 
 -------------------- rule
 

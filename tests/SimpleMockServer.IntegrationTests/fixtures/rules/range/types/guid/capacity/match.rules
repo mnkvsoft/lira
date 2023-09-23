@@ -26,7 +26,7 @@ second
 
 -------------------- rule
 
-GET /range/types/guid/capacity/match/{{ range: guid_capacity.third }}
+GET /range/types/guid/capacity/match/{{ range: guid_capacity/third }}
 
 ----- response
 

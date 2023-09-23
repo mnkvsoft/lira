@@ -3,7 +3,7 @@
 
 GET /match/conditions/attempt/equals
 
-$userId = {{ range: userId.rich }}
+$userId = {{ range: userId/rich }}
 
 ----- response
 

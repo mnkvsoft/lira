@@ -8,7 +8,7 @@ code:
 200
 
 body:
-{{ range: float_capacity.first }}
+{{ range: float_capacity/first }}
 
 
 -------------------- rule
@@ -21,7 +21,7 @@ code:
 200
 
 body:
-{{ range: float_capacity.second }}
+{{ range: float_capacity/second }}
 
 
 -------------------- rule
@@ -34,4 +34,4 @@ code:
 200
 
 body:
-{{ range: float_capacity.third }}
+{{ range: float_capacity/third }}

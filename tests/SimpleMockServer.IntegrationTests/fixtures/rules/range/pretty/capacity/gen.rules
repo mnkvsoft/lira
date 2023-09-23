@@ -8,7 +8,7 @@ code:
 200
 
 body:
-{{ range: pretty_capacity.first }}
+{{ range: pretty_capacity/first }}
 
 
 -------------------- rule
@@ -21,7 +21,7 @@ code:
 200
 
 body:
-{{ range: pretty_capacity.second }}
+{{ range: pretty_capacity/second }}
 
 
 -------------------- rule
@@ -34,4 +34,4 @@ code:
 200
 
 body:
-{{ range: pretty_capacity.third }}
+{{ range: pretty_capacity/third }}

@@ -8,7 +8,7 @@ code:
 200
 
 body:
-{{ range: hex_capacity.first }}
+{{ range: hex_capacity/first }}
 
 
 -------------------- rule
@@ -21,7 +21,7 @@ code:
 200
 
 body:
-{{ range: hex_capacity.second }}
+{{ range: hex_capacity/second }}
 
 
 -------------------- rule
@@ -34,4 +34,4 @@ code:
 200
 
 body:
-{{ range: hex_capacity.third }}
+{{ range: hex_capacity/third }}

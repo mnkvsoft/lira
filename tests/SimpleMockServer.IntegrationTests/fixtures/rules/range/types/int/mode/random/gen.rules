@@ -8,7 +8,7 @@ code:
 200
 
 body:
-{{ range: int_mode_random.first }}
+{{ range: int_mode_random/first }}
 
 
 -------------------- rule
@@ -21,7 +21,7 @@ code:
 200
 
 body:
-{{ range: int_mode_random.second }}
+{{ range: int_mode_random/second }}
 
 
 -------------------- rule
@@ -34,4 +34,4 @@ code:
 200
 
 body:
-{{ range: int_mode_random.third }}
+{{ range: int_mode_random/third }}

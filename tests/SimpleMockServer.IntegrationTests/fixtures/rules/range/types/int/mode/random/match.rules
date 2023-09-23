@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /range/types/int/mode/random/match/{{ range: int_mode_random.first }}
+GET /range/types/int/mode/random/match/{{ range: int_mode_random/first }}
 
 ----- response
 
@@ -13,7 +13,7 @@ first
 
 -------------------- rule
 
-GET /range/types/int/mode/random/match/{{ range: int_mode_random.second }}
+GET /range/types/int/mode/random/match/{{ range: int_mode_random/second }}
 
 ----- response
 
@@ -26,7 +26,7 @@ second
 
 -------------------- rule
 
-GET /range/types/int/mode/random/match/{{ range: int_mode_random.third }}
+GET /range/types/int/mode/random/match/{{ range: int_mode_random/third }}
 
 ----- response
 

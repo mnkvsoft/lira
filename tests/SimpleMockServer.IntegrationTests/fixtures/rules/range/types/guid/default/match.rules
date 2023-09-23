@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /range/types/guid/default/match/{{ range: guid_default.first }}
+GET /range/types/guid/default/match/{{ range: guid_default/first }}
 
 ----- response
 
@@ -13,7 +13,7 @@ first
 
 -------------------- rule
 
-GET /range/types/guid/default/match/{{ range: guid_default.second }}
+GET /range/types/guid/default/match/{{ range: guid_default/second }}
 
 ----- response
 

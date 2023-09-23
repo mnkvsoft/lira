@@ -8,7 +8,7 @@ code:
 200
 
 body:
-{{ range: int_interval.first }}
+{{ range: int_interval/first }}
 
 
 -------------------- rule
@@ -21,7 +21,7 @@ code:
 200
 
 body:
-{{ range: int_interval.second }}
+{{ range: int_interval/second }}
 
 
 -------------------- rule
@@ -34,4 +34,4 @@ code:
 200
 
 body:
-{{ range: int_interval.third }}
+{{ range: int_interval/third }}

@@ -78,7 +78,7 @@ public class Startup
               {
                   var dataProvider = context.RequestServices.GetRequiredService<IDataProvider>();
                   var datas = dataProvider.GetAll();
-                  await WriteDatas(context, datas);
+                  await WriteRanges(context, datas);
               });
 
             endpoints.MapGet(
@@ -95,7 +95,7 @@ public class Startup
                 }
                 else
                 {
-                    await WriteDatas(context, new[] { data });
+                    await WriteRanges(context, new[] { data });
                 }
             });
             
@@ -131,7 +131,7 @@ public class Startup
         app.UseMiddleware<RoutingMiddleware>();
     }
 
-    private static async Task WriteDatas(HttpContext context, IReadOnlyCollection<Data> datas)
+    private static async Task WriteRanges(HttpContext context, IReadOnlyCollection<Data> datas)
     {
         var nl = Environment.NewLine;
 

@@ -4,7 +4,7 @@ GET /generating/declare/variable/data
 
 ----- declare
 
-$orderId = order_{{ data: generating_variable_seq.default }}
+$orderId = order_{{ range: generating_variable_seq/default }}
 
 ----- response
 

@@ -578,7 +578,7 @@ headers:
 example: range.easy
 
 body:
-jpath: $.amount >> {{ range: amount.ok }}
+jpath: $.amount >> {{ range: amount/ok }}
 
 ----- response
 
@@ -595,7 +595,7 @@ body:
 POST /payment
 
 body:
-jpath: $.amount >> {{ range: amount.reject }}
+jpath: $.amount >> {{ range: amount/reject }}
 
 ----- response
 
@@ -709,7 +709,7 @@ headers:
 example: range.medium
 
 body:
-jpath: $.amount >> {{ range: amount.ok }}
+jpath: $.amount >> {{ range: amount/ok }}
 
 ----- response
 
@@ -718,13 +718,13 @@ code:
 
 body:
 {
-    "id": {{ range: payment_id.ok }},
+    "id": {{ range: payment_id/ok }},
     "status": "ok"
 }
 
 -------------------- rule
 
-POST /payment/refund/{{ range: payment_id.ok}}
+POST /payment/refund/{{ range: payment_id/ok}}
 
 headers:
 example: range.medium
@@ -749,7 +749,7 @@ headers:
 example: range.medium
 
 body:
-jpath: $.amount >> {{ range: amount.refund_reject }}
+jpath: $.amount >> {{ range: amount/refund_reject }}
 
 ----- response
 
@@ -758,13 +758,13 @@ code:
 
 body:
 {
-    "id": {{ range: payment_id.refund_reject }},
+    "id": {{ range: payment_id/refund_reject }},
     "status": "ok"
 }
 
 -------------------- rule
 
-POST /payment/refund/{{ range: payment_id.refund_reject}}
+POST /payment/refund/{{ range: payment_id/refund_reject}}
 
 headers:
 example: range.medium

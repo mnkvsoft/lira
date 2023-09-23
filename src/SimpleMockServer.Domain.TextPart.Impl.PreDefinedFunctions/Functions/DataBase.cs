@@ -1,4 +1,4 @@
-﻿using SimpleMockServer.Common.Extensions;
+using SimpleMockServer.Common.Extensions;
 using SimpleMockServer.Domain.DataModel;
 
 namespace SimpleMockServer.Domain.TextPart.PreDefinedFunctions.Functions;
@@ -17,7 +17,7 @@ abstract class DataBase : IWithStringArgumentFunction
 
     void IWithStringArgumentFunction.SetArgument(string argument)
     {
-        var (name, nameRange) = argument.SplitToTwoPartsRequired(".");
+        var (name, nameRange) = argument.SplitToTwoPartsRequired("/");
 
         _name = new DataName(name);
         _rangeName = new DataName(nameRange);
