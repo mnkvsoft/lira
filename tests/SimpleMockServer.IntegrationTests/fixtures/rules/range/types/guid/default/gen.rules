@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/guid/default/gen/first
+GET /range/types/guid/default/gen/first
 
 ----- response
 
@@ -13,7 +13,7 @@ body:
 
 -------------------- rule
 
-GET /data/types/guid/default/gen/second
+GET /range/types/guid/default/gen/second
 
 ----- response
 

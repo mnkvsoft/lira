@@ -2,7 +2,7 @@
 
 -------------------- case
 
-GET /data/types/guid/capacity/match/9ffaaeb8-b75d-4a3a-0000-000000000080
+GET /range/types/guid/capacity/match/9ffaaeb8-b75d-4a3a-0000-000000000080
 
 ----- expected
 
@@ -13,7 +13,7 @@ code:
 
 -------------------- case
 
-GET /data/types/guid/capacity/match/81f410b1-3651-910f-0a00-000000000080
+GET /range/types/guid/capacity/match/81f410b1-3651-910f-0a00-000000000080
 
 ----- expected
 
@@ -27,7 +27,7 @@ second
 
 -------------------- case
 
-GET /data/types/guid/capacity/match/6aeefe78-2211-bfb1-1400-000000000080
+GET /range/types/guid/capacity/match/6aeefe78-2211-bfb1-1400-000000000080
 
 ----- expected
 

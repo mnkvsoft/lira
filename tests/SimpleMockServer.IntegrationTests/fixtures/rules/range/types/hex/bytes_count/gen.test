@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /data/types/hex/bytes_count/gen/first
+GET /range/types/hex/bytes_count/gen/first
 
 ----- expected
 
@@ -11,7 +11,7 @@ code:
 
 -------------------- case
 
-GET /data/types/hex/bytes_count/gen/second
+GET /range/types/hex/bytes_count/gen/second
 
 ----- expected
 

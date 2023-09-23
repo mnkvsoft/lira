@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /data/types/float/default/match/0
+GET /range/types/float/default/match/0
 
 ----- expected
 
@@ -9,7 +9,7 @@ code:
 
 -------------------- case
 
-GET /data/types/float/default/match/0.01
+GET /range/types/float/default/match/0.01
 
 ----- expected
 
@@ -21,7 +21,7 @@ first
 
 -------------------- case
 
-GET /data/types/float/default/match/500000
+GET /range/types/float/default/match/500000
 
 ----- expected
 
@@ -33,7 +33,7 @@ first
 
 -------------------- case
 
-GET /data/types/float/default/match/500000.01
+GET /range/types/float/default/match/500000.01
 
 ----- expected
 
@@ -45,7 +45,7 @@ second
 
 -------------------- case
 
-GET /data/types/float/default/match/1000000
+GET /range/types/float/default/match/1000000
 
 ----- expected
 
@@ -57,7 +57,7 @@ second
 
 -------------------- case
 
-GET /data/types/float/default/match/1000000.01
+GET /range/types/float/default/match/1000000.01
 
 ----- expected
 

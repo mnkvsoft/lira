@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /data/types/float/default/gen/first
+GET /range/types/float/default/gen/first
 
 ----- expected
 
@@ -11,7 +11,7 @@ code:
 
 -------------------- case
 
-GET /data/types/float/default/gen/first
+GET /range/types/float/default/gen/first
 
 ----- expected
 
@@ -22,7 +22,7 @@ code:
 
 -------------------- case
 
-GET /data/types/float/default/gen/second
+GET /range/types/float/default/gen/second
 
 ----- expected
 
@@ -33,7 +33,7 @@ code:
 
 -------------------- case
 
-GET /data/types/float/default/gen/second
+GET /range/types/float/default/gen/second
 
 ----- expected
 

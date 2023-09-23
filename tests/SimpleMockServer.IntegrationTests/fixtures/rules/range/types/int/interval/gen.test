@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/int/interval/gen/first
+GET /range/types/int/interval/gen/first
 
 ----- expected
 
@@ -13,7 +13,7 @@ body:
 
 -------------------- rule
 
-GET /data/types/int/interval/gen/second
+GET /range/types/int/interval/gen/second
 
 ----- expected
 
@@ -26,7 +26,7 @@ body:
 
 -------------------- rule
 
-GET /data/types/int/interval/gen/third
+GET /range/types/int/interval/gen/third
 
 ----- expected
 

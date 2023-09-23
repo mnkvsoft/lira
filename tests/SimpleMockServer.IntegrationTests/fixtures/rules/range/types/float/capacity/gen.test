@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/float/capacity/gen/first
+GET /range/types/float/capacity/gen/first
 
 ----- expected
 
@@ -11,7 +11,7 @@ code:
 
 -------------------- rule
 
-GET /data/types/float/capacity/gen/second
+GET /range/types/float/capacity/gen/second
 
 ----- expected
 
@@ -23,7 +23,7 @@ code:
 
 -------------------- rule
 
-GET /data/types/float/capacity/gen/third
+GET /range/types/float/capacity/gen/third
 
 ----- expected
 

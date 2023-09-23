@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /data/types/hex/default/gen/first
+GET /range/types/hex/default/gen/first
 
 ----- expected
 
@@ -11,7 +11,7 @@ code:
 
 -------------------- case
 
-GET /data/types/hex/default/gen/second
+GET /range/types/hex/default/gen/second
 
 ----- expected
 

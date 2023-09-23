@@ -2,7 +2,7 @@
 
 -------------------- case
 
-GET /data/types/hex/capacity/match/71cabc66a700008022a8de4b3a7dd5b3aad9d9cb30023bf6ecb068e2104be23c
+GET /range/types/hex/capacity/match/71cabc66a700008022a8de4b3a7dd5b3aad9d9cb30023bf6ecb068e2104be23c
 
 ----- expected
 
@@ -13,7 +13,7 @@ code:
 
 -------------------- case
 
-GET /data/types/hex/capacity/match/8c0ed618bd0100801c007551f00c441311abeb8af15b1229cb1a014aef8d5ed6
+GET /range/types/hex/capacity/match/8c0ed618bd0100801c007551f00c441311abeb8af15b1229cb1a014aef8d5ed6
 
 ----- expected
 
@@ -27,7 +27,7 @@ second
 
 -------------------- case
 
-GET /data/types/hex/capacity/match/6bb801600e0200802d95ef5260747ca85c373a8e506296c5fd848b63f215085d
+GET /range/types/hex/capacity/match/6bb801600e0200802d95ef5260747ca85c373a8e506296c5fd848b63f215085d
 
 ----- expected
 

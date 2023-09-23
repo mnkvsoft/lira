@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /data/types/int/default/gen/first
+GET /range/types/int/default/gen/first
 
 ----- expected
 
@@ -12,7 +12,7 @@ body:
 
 -------------------- case
 
-GET /data/types/int/default/gen/first
+GET /range/types/int/default/gen/first
 
 ----- expected
 
@@ -24,7 +24,7 @@ body:
 
 -------------------- case
 
-GET /data/types/int/default/gen/second
+GET /range/types/int/default/gen/second
 
 ----- expected
 
@@ -36,7 +36,7 @@ body:
 
 -------------------- case
 
-GET /data/types/int/default/gen/second
+GET /range/types/int/default/gen/second
 
 ----- expected
 

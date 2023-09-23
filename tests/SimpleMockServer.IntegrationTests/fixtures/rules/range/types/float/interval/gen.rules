@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/float/interval/gen/first
+GET /range/types/float/interval/gen/first
 
 ----- response
 
@@ -13,7 +13,7 @@ body:
 
 -------------------- rule
 
-GET /data/types/float/interval/gen/second
+GET /range/types/float/interval/gen/second
 
 ----- response
 
@@ -26,7 +26,7 @@ body:
 
 -------------------- rule
 
-GET /data/types/float/interval/gen/third
+GET /range/types/float/interval/gen/third
 
 ----- response
 

@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/hex/capacity/match/{{ range: hex_capacity.first }}
+GET /range/types/hex/capacity/match/{{ range: hex_capacity.first }}
 
 ----- response
 
@@ -13,7 +13,7 @@ first
 
 -------------------- rule
 
-GET /data/types/hex/capacity/match/{{ range: hex_capacity.second }}
+GET /range/types/hex/capacity/match/{{ range: hex_capacity.second }}
 
 ----- response
 
@@ -26,7 +26,7 @@ second
 
 -------------------- rule
 
-GET /data/types/hex/capacity/match/{{ range: hex_capacity.third }}
+GET /range/types/hex/capacity/match/{{ range: hex_capacity.third }}
 
 ----- response
 

@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /data/types/int/default/match/0
+GET /range/types/int/default/match/0
 
 ----- expected
 
@@ -9,7 +9,7 @@ code:
 
 -------------------- case
 
-GET /data/types/int/default/match/1
+GET /range/types/int/default/match/1
 
 ----- expected
 
@@ -21,7 +21,7 @@ first
 
 -------------------- case
 
-GET /data/types/int/default/match/4611686018427387903
+GET /range/types/int/default/match/4611686018427387903
 
 ----- expected
 
@@ -33,7 +33,7 @@ first
 
 -------------------- case
 
-GET /data/types/int/default/match/4611686018427387904
+GET /range/types/int/default/match/4611686018427387904
 
 ----- expected
 
@@ -45,7 +45,7 @@ second
 
 -------------------- case
 
-GET /data/types/int/default/match/9223372036854775806
+GET /range/types/int/default/match/9223372036854775806
 
 ----- expected
 
@@ -57,7 +57,7 @@ second
 
 -------------------- case
 
-GET /data/types/int/default/match/9223372036854775807
+GET /range/types/int/default/match/9223372036854775807
 
 ----- expected
 

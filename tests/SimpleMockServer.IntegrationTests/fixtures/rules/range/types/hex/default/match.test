@@ -2,7 +2,7 @@
 
 -------------------- case
 
-GET /data/types/hex/default/match/65798e33de5f2ea7249678ecff6bd19fb50b0fe6dc5a298af10acca40684fb8a
+GET /range/types/hex/default/match/65798e33de5f2ea7249678ecff6bd19fb50b0fe6dc5a298af10acca40684fb8a
 
 ----- expected
 
@@ -16,7 +16,7 @@ first
 
 -------------------- case
 
-GET /data/types/hex/default/match/1f572e7904001e430c8b8fa15b8aad690b6f28bcbaba2f05d32b4be3be540acc
+GET /range/types/hex/default/match/1f572e7904001e430c8b8fa15b8aad690b6f28bcbaba2f05d32b4be3be540acc
 
 ----- expected
 

@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/int/capacity/match/{{ range: int_capacity.first }}
+GET /range/types/int/capacity/match/{{ range: int_capacity.first }}
 
 ----- response
 
@@ -13,7 +13,7 @@ first
 
 -------------------- rule
 
-GET /data/types/int/capacity/match/{{ range: int_capacity.second }}
+GET /range/types/int/capacity/match/{{ range: int_capacity.second }}
 
 ----- response
 
@@ -26,7 +26,7 @@ second
 
 -------------------- rule
 
-GET /data/types/int/capacity/match/{{ range: int_capacity.third }}
+GET /range/types/int/capacity/match/{{ range: int_capacity.third }}
 
 ----- response
 

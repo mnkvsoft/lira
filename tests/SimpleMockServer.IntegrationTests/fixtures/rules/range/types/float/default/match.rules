@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/float/default/match/{{ range: float_default.first }}
+GET /range/types/float/default/match/{{ range: float_default.first }}
 
 ----- response
 
@@ -13,7 +13,7 @@ first
 
 -------------------- rule
 
-GET /data/types/float/default/match/{{ range: float_default.second }}
+GET /range/types/float/default/match/{{ range: float_default.second }}
 
 ----- response
 

@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /data/pretty/match/999
+GET /range/pretty/match/999
 
 ----- expected
 
@@ -9,7 +9,7 @@ code:
 
 -------------------- case
 
-GET /data/pretty/match/1000
+GET /range/pretty/match/1000
 
 ----- expected
 
@@ -21,7 +21,7 @@ first
 
 -------------------- case
 
-GET /data/pretty/match/2000
+GET /range/pretty/match/2000
 
 ----- expected
 
@@ -33,7 +33,7 @@ second
 
 -------------------- case
 
-GET /data/pretty/match/3000
+GET /range/pretty/match/3000
 
 ----- expected
 

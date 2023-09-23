@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/float/interval/match/{{ range: float_interval.first }}
+GET /range/types/float/interval/match/{{ range: float_interval.first }}
 
 ----- response
 
@@ -13,7 +13,7 @@ first
 
 -------------------- rule
 
-GET /data/types/float/interval/match/{{ range: float_interval.second }}
+GET /range/types/float/interval/match/{{ range: float_interval.second }}
 
 ----- response
 
@@ -26,7 +26,7 @@ second
 
 -------------------- rule
 
-GET /data/types/float/interval/match/{{ range: float_interval.third }}
+GET /range/types/float/interval/match/{{ range: float_interval.third }}
 
 ----- response
 

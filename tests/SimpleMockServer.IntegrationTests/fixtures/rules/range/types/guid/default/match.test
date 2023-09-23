@@ -2,7 +2,7 @@
 
 -------------------- case
 
-GET /data/types/guid/default/match/8dfc399f-a39e-e983-0000-000000000080
+GET /range/types/guid/default/match/8dfc399f-a39e-e983-0000-000000000080
 
 ----- expected
 
@@ -16,7 +16,7 @@ first
 
 -------------------- case
 
-GET /data/types/guid/default/match/190e6b4c-197a-f7ee-ffff-ffffffffffff
+GET /range/types/guid/default/match/190e6b4c-197a-f7ee-ffff-ffffffffffff
 
 ----- expected
 

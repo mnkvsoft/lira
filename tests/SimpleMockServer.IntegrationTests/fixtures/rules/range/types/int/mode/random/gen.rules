@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/int/mode/random/gen/first
+GET /range/types/int/mode/random/gen/first
 
 ----- response
 
@@ -13,7 +13,7 @@ body:
 
 -------------------- rule
 
-GET /data/types/int/mode/random/gen/second
+GET /range/types/int/mode/random/gen/second
 
 ----- response
 
@@ -26,7 +26,7 @@ body:
 
 -------------------- rule
 
-GET /data/types/int/mode/random/gen/third
+GET /range/types/int/mode/random/gen/third
 
 ----- response
 

@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /data/types/int/interval/match/999
+GET /range/types/int/interval/match/999
 
 ----- expected
 
@@ -9,7 +9,7 @@ code:
 
 -------------------- case
 
-GET /data/types/int/interval/match/1000
+GET /range/types/int/interval/match/1000
 
 ----- expected
 
@@ -21,7 +21,7 @@ first
 
 -------------------- case
 
-GET /data/types/int/interval/match/3999
+GET /range/types/int/interval/match/3999
 
 ----- expected
 
@@ -33,7 +33,7 @@ first
 
 -------------------- case
 
-GET /data/types/int/interval/match/4000
+GET /range/types/int/interval/match/4000
 
 ----- expected
 
@@ -45,7 +45,7 @@ second
 
 -------------------- case
 
-GET /data/types/int/interval/match/6999
+GET /range/types/int/interval/match/6999
 
 ----- expected
 
@@ -57,7 +57,7 @@ second
 
 -------------------- case
 
-GET /data/types/int/interval/match/7000
+GET /range/types/int/interval/match/7000
 
 ----- expected
 
@@ -69,7 +69,7 @@ third
 
 -------------------- case
 
-GET /data/types/int/interval/match/9999
+GET /range/types/int/interval/match/9999
 
 ----- expected
 
@@ -81,7 +81,7 @@ third
 
 -------------------- case
 
-GET /data/types/int/interval/match/10000
+GET /range/types/int/interval/match/10000
 
 ----- expected
 

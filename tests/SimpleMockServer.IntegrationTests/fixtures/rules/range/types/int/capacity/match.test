@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /data/types/int/capacity/match/0
+GET /range/types/int/capacity/match/0
 
 ----- expected
 
@@ -9,7 +9,7 @@ code:
 
 -------------------- case
 
-GET /data/types/int/capacity/match/1
+GET /range/types/int/capacity/match/1
 
 ----- expected
 
@@ -21,7 +21,7 @@ first
 
 -------------------- case
 
-GET /data/types/int/capacity/match/2
+GET /range/types/int/capacity/match/2
 
 ----- expected
 
@@ -33,7 +33,7 @@ first
 
 -------------------- case
 
-GET /data/types/int/capacity/match/3
+GET /range/types/int/capacity/match/3
 
 ----- expected
 
@@ -45,7 +45,7 @@ second
 
 -------------------- case
 
-GET /data/types/int/capacity/match/4
+GET /range/types/int/capacity/match/4
 
 ----- expected
 
@@ -57,7 +57,7 @@ second
 
 -------------------- case
 
-GET /data/types/int/capacity/match/5
+GET /range/types/int/capacity/match/5
 
 ----- expected
 
@@ -69,7 +69,7 @@ third
 
 -------------------- case
 
-GET /data/types/int/capacity/match/6
+GET /range/types/int/capacity/match/6
 
 ----- expected
 
@@ -81,7 +81,7 @@ third
 
 -------------------- case
 
-GET /data/types/int/capacity/match/7
+GET /range/types/int/capacity/match/7
 
 ----- expected
 

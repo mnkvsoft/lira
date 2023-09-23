@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/float/capacity/gen/first
+GET /range/types/float/capacity/gen/first
 
 ----- response
 
@@ -13,7 +13,7 @@ body:
 
 -------------------- rule
 
-GET /data/types/float/capacity/gen/second
+GET /range/types/float/capacity/gen/second
 
 ----- response
 
@@ -26,7 +26,7 @@ body:
 
 -------------------- rule
 
-GET /data/types/float/capacity/gen/third
+GET /range/types/float/capacity/gen/third
 
 ----- response
 

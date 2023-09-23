@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /data/types/hex/default/gen/first
+GET /range/types/hex/default/gen/first
 
 ----- response
 
@@ -13,7 +13,7 @@ body:
 
 -------------------- rule
 
-GET /data/types/hex/default/gen/second
+GET /range/types/hex/default/gen/second
 
 ----- response
 
