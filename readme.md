@@ -51,6 +51,11 @@ hello {{ req.path: person }}!
 hello Nikolas!
 ```
 
+
+!!!!!!!!!!!!!!!! Подсветка синтаксиса
+
+
+
 ### Примеры правил
 
 Для создания правил добавляем файлы с расширением `.rules` в каталог `c:/rules`
@@ -1001,7 +1006,7 @@ curl --location --request POST 'http://localhost/payment' \
 
 
 
-
+!!!!! Переопределение
 
 
 

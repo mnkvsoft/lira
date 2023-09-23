@@ -8,6 +8,7 @@ RUN dotnet publish "./SimpleMockServer/SimpleMockServer.csproj" -c Release -o /a
   --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine AS final
+RUN apk add --no-cache tzdata
 
 WORKDIR /app
 EXPOSE 80
