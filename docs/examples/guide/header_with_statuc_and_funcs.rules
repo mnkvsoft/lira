@@ -1,0 +1,16 @@
+-------------------- rule
+
+POST /user
+
+headers:
+Token: 11{{ any }}22
+Request-Time: {{ any }}
+No-Cache: true
+
+----- response
+
+code:
+200
+
+body:
+matches by one header by static and functions 

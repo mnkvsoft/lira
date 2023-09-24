@@ -1,0 +1,17 @@
+-------------------- rule
+
+POST /payment/card?amount=100
+
+headers:
+example: static
+
+body:
+number=1111222233334444
+
+----- response
+
+code:
+200
+
+body:
+static rules matched

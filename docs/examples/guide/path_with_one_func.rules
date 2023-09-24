@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /user/{{ any }}/{{ int }}
+
+----- response
+
+code:
+200
+
+body:
+any user with id matched

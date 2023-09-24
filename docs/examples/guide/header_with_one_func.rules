@@ -1,0 +1,14 @@
+-------------------- rule
+
+POST /user
+
+headers:
+Request-Id: {{ guid }}
+
+----- response
+
+code:
+200
+
+body:
+matches by one header by function 

@@ -1,0 +1,17 @@
+-------------------- rule
+
+POST /user
+
+headers:
+example: body_with_one_func
+
+body:
+{{ int }}
+
+----- response
+
+code:
+200
+
+body:
+matches body by one function

@@ -1,0 +1,12 @@
+
+-------------------- rule
+
+GET /user/ivanov_{{ any }}_petrovich
+
+----- response
+
+code:
+200
+
+body:
+ivanov user matched

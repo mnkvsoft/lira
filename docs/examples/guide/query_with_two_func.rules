@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /user?name={{ any }}&ago={{ int }}
+
+----- response
+
+code:
+200
+
+body:
+any user with ago matched

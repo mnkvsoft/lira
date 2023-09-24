@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /test
+
+----- response
+
+code:
+200
+
+body:
+{{ now }}
