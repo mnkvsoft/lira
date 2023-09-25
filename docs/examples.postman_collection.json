@@ -1176,7 +1176,7 @@
 						"header": [
 							{
 								"key": "example",
-								"value": "body_with_one_func",
+								"value": "body_jpath",
 								"type": "text"
 							},
 							{
@@ -1194,15 +1194,21 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "12345"
+							"raw": "{\r\n    \"number\": \"1111222233334444\",\r\n    \"owner\": \"Rodrygo\",\r\n    \"amount\": 123.99\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
-							"raw": "{{base_url}}/user",
+							"raw": "{{base_url}}/payment/card",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"user"
+								"payment",
+								"card"
 							]
 						}
 					},
