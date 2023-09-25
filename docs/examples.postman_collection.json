@@ -7,20 +7,471 @@
 	},
 	"item": [
 		{
-			"name": "priority",
+			"name": "quick_start",
 			"item": [
 				{
-					"name": "any",
+					"name": "priority",
+					"item": [
+						{
+							"name": "any",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/priority/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"priority",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "guid",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/priority/6EC35301-1CF0-4F9B-8472-8CD8EBA02105",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"priority",
+										"6EC35301-1CF0-4F9B-8472-8CD8EBA02105"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "guid and header",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Request-Id",
+										"value": "1",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/priority/6EC35301-1CF0-4F9B-8472-8CD8EBA02105",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"priority",
+										"6EC35301-1CF0-4F9B-8472-8CD8EBA02105"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "static",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/priority/1",
+							"raw": "{{base_url}}/hi",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"priority",
+								"hi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "format.gettype",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/get_type",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"get_type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "format",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/format",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"format"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "charp.full",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "csharp.full",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"number\": \"2222333344445678\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/payment/card",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"card"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "charp.class.mnenonic.number",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "charp.class.mnenonic",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"number\": \"2222333344445678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment/card",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"card"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "charp.class.mnenonic.pan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "charp.class.mnenonic",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pan\": \"2222333344445678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment/card",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"card"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "charp.class.sign",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "charp.class.sign",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "multiline_functions.post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "multiline_functions",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "change_json.post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "change_json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "change_json.get",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "change_json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "multiline_functions.get",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "multiline_functions",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "charp.short",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/very/old/event",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"very",
+								"old",
+								"event"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "comments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/comments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delay",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/delay",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"delay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "declare.shared.file.payment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "declare.shared.file",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "declare.shared.file.account",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "declare.shared.file",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/account",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"account"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "declare.shared.global",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "declare.shared.global",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/person",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"person"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ranges.val.amount.ok",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/sys/range/val/amount/ok/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"sys",
+								"range",
+								"val",
+								"amount",
+								"ok",
 								"1"
 							]
 						}
@@ -28,42 +479,426 @@
 					"response": []
 				},
 				{
-					"name": "guid",
+					"name": "ranges.val.amount.reject",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/priority/6EC35301-1CF0-4F9B-8472-8CD8EBA02105",
+							"raw": "{{base_url}}/sys/range/val/amount/reject/1",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"priority",
-								"6EC35301-1CF0-4F9B-8472-8CD8EBA02105"
+								"sys",
+								"range",
+								"val",
+								"amount",
+								"reject",
+								"1"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "guid and header",
+					"name": "ranges.val.amount.refund_reject",
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"key": "Request-Id",
-								"value": "1",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"url": {
-							"raw": "{{base_url}}/priority/6EC35301-1CF0-4F9B-8472-8CD8EBA02105",
+							"raw": "{{base_url}}/sys/range/val/amount/refund_reject/1",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"priority",
-								"6EC35301-1CF0-4F9B-8472-8CD8EBA02105"
+								"sys",
+								"range",
+								"val",
+								"amount",
+								"refund_reject",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "extract_request_data",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Id",
+								"value": "987",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"account\": \"9876543210\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment/account?fast=false",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"account"
+							],
+							"query": [
+								{
+									"key": "fast",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ranges.easy.ok",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "range.easy",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"amount\": 201534.92\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ranges.medium.ok.payment",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "range.medium",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"amount\": 118297.44\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ranges.medium.reject.payment",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "range.medium",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"amount\": 742387.47\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ranges.medium.ok.refund",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "range.medium",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payment/refund/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"refund",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ranges.medium.reject.refund",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "range.medium",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payment/refund/4611686018427387904",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"refund",
+								"4611686018427387904"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ranges.easy.reject",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "range.easy",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"amount\": 401386.54\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "conditions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Id",
+								"value": "987",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/pay/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pay",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "custom_function",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "custom_function",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "variables",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "variables",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "call",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "call",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "generation_dynamic",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "match_dynamic",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Request-Id",
+								"value": "{{$guid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"number\": 4444111122223333\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment/card?fast=true",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"card"
+							],
+							"query": [
+								{
+									"key": "fast",
+									"value": "true"
+								}
 							]
 						}
 					},
@@ -72,834 +907,380 @@
 			]
 		},
 		{
-			"name": "static",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/hi",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"hi"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "format.gettype",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/get_type",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"get_type"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "format",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/format",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"format"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "charp.full",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "csharp.full",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"number\": \"2222333344445678\"\r\n}"
+			"name": "guide",
+			"item": [
+				{
+					"name": "static",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "static",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "number=1111222233334444"
+						},
+						"url": {
+							"raw": "{{base_url}}/payment/card?amount=100",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"card"
+							],
+							"query": [
+								{
+									"key": "amount",
+									"value": "100"
+								}
+							]
+						}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/payment/card",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment",
-						"card"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "charp.class.mnenonic.number",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "charp.class.mnenonic",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"number\": \"2222333344445678\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "path_with_start_end",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "static",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user/ivanov_petr_petrovich",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"ivanov_petr_petrovich"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/payment/card",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment",
-						"card"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "charp.class.mnenonic.pan",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "charp.class.mnenonic",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"pan\": \"2222333344445678\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "query_with_start_end",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "static",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user?name=anna",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "anna"
+								}
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/payment/card",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment",
-						"card"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "charp.class.sign",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "charp.class.sign",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/payment",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "multiline_functions.post",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "multiline_functions",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/order",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"order"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "change_json.post",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "change_json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/order",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"order"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "change_json.get",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "example",
-						"value": "change_json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/order",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"order"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "multiline_functions.get",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "example",
-						"value": "multiline_functions",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/order",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"order"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "charp.short",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/very/old/event",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"very",
-						"old",
-						"event"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "comments",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/comments",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"comments"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "delay",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/delay",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"delay"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "declare.shared.file.payment",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "example",
-						"value": "declare.shared.file",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/payment",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "declare.shared.file.account",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "example",
-						"value": "declare.shared.file",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/account",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"account"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "declare.shared.global",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "example",
-						"value": "declare.shared.global",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/person",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"person"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "ranges.val.amount.ok",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/sys/range/val/amount/ok/1",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"sys",
-						"range",
-						"val",
-						"amount",
-						"ok",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "ranges.val.amount.reject",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/sys/range/val/amount/reject/1",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"sys",
-						"range",
-						"val",
-						"amount",
-						"reject",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "ranges.val.amount.refund_reject",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/sys/range/val/amount/refund_reject/1",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"sys",
-						"range",
-						"val",
-						"amount",
-						"refund_reject",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "extract_request_data",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Id",
-						"value": "987",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"account\": \"9876543210\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "path_with_one_func",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "static",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "number=1111222233334444"
+						},
+						"url": {
+							"raw": "{{base_url}}/user/123",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"123"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/payment/account?fast=false",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment",
-						"account"
-					],
-					"query": [
-						{
-							"key": "fast",
-							"value": "false"
+				{
+					"name": "query_with_one_func",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "static",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "number=1111222233334444"
+						},
+						"url": {
+							"raw": "{{base_url}}/user?name=nikolas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "nikolas"
+								}
+							]
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "ranges.easy.ok",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "range.easy",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"amount\": 201534.92\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/payment",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "ranges.medium.ok.payment",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "range.medium",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"amount\": 118297.44\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "header_with_one_func",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Request-Id",
+								"value": "11111111-1111-1111-1111-111111111111",
+								"type": "text"
+							},
+							{
+								"key": "Token",
+								"value": "12345",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/payment",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "ranges.medium.reject.payment",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "range.medium",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"amount\": 742387.47\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "header_with_statuc_and_funcs",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Token",
+								"value": "11__22",
+								"type": "text"
+							},
+							{
+								"key": "Request-Time",
+								"value": "14:21:01.123",
+								"type": "text"
+							},
+							{
+								"key": "No-Cache",
+								"value": "true",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/payment",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "ranges.medium.ok.refund",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "range.medium",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/payment/refund/1",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment",
-						"refund",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "ranges.medium.reject.refund",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "range.medium",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/payment/refund/4611686018427387904",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment",
-						"refund",
-						"4611686018427387904"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "ranges.easy.reject",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "range.easy",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"amount\": 401386.54\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "body_with_one_func",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "body_with_one_func",
+								"type": "text"
+							},
+							{
+								"key": "Request-Time",
+								"value": "14:21:01.123",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "No-Cache",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "12345"
+						},
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/payment",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "conditions",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Id",
-						"value": "987",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/pay/status",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"pay",
-						"status"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "custom_function",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "custom_function",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/payment",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "variables",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "variables",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/payment",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "call",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "example",
-						"value": "call",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/payment",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "generation_dynamic",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/order",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"order"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "match_dynamic",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Request-Id",
-						"value": "{{$guid}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"pan\": 4444111122223333\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "body_jpath",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "body_with_one_func",
+								"type": "text"
+							},
+							{
+								"key": "Request-Time",
+								"value": "14:21:01.123",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "No-Cache",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "12345"
+						},
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/payment/card?fast=true",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"payment",
-						"card"
-					],
-					"query": [
-						{
-							"key": "fast",
-							"value": "true"
+				{
+					"name": "path_with_two_func",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "static",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "number=1111222233334444"
+						},
+						"url": {
+							"raw": "{{base_url}}/user/ivan_petrovich/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"ivan_petrovich",
+								"3"
+							]
 						}
-					]
+					},
+					"response": []
+				},
+				{
+					"name": "query_with_two_func",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "static",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "number=1111222233334444"
+						},
+						"url": {
+							"raw": "{{base_url}}/user?name=pavel&ago=36",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "pavel"
+								},
+								{
+									"key": "ago",
+									"value": "36"
+								}
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	],
 	"variable": [
