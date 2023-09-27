@@ -57,6 +57,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{21774504-6
 		docs\data.md = docs\data.md
 		docs\guide.md = docs\guide.md
 		docs\match_functions.md = docs\match_functions.md
+		readme.md = readme.md
+		docs\matching.md = docs\matching.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Impl", "Impl", "{801BCB31-DB66-4C7C-97A0-CB67BA63CD91}"

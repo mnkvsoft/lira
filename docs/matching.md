@@ -427,7 +427,7 @@ code:
 200
 
 body:
-payment by card from Rodrygo
+payment by card from Rodrygo. Matched by Json Path
 ```
 Запрос подпадающий под правило
 ```
@@ -442,3 +442,174 @@ curl --location 'http://localhost/payment/card' \
 ```
 
 
+
+### xpath
+
+Используется для извлечения данных из тела в формате `xml` с использованием языка [XPath](https://ru.wikipedia.org/wiki/XPath).
+
+Синтаксис функции
+```
+xpath: <XPath выражение>
+```
+
+#### Пример
+
+[body_xpath.rules](examples/guide/body_xpath.rules)
+```
+-------------------- rule
+
+POST /payment/card
+
+headers:
+example: body_xpath
+
+body:
+xpath: /root/number/text() >> {{ int }}
+xpath: /root/owner/text() >> Rodrygo
+
+----- response
+
+code:
+200
+
+body:
+payment by card from Rodrygo. Matched by XPath
+```
+Запрос подпадающий под правило
+```
+curl --location 'http://localhost/payment/card' \
+--header 'example: body_xpath' \
+--header 'Content-Type: application/xml' \
+--data '<root>
+    <number>1111222233334444</number>
+    <owner>Rodrygo</owner>
+    <amount>123.99</amount>
+</root>'
+```
+
+
+
+
+### form
+
+Используется для извлечения данных из тела в формате `x-www-form-urlencoded`
+
+Синтаксис функции
+```
+form: <наименование параметра>
+```
+
+#### Пример
+
+[body_form.rules](examples/guide/body_xpath.rules)
+```
+-------------------- rule
+
+POST /payment/card
+
+headers:
+example: body_form
+
+body:
+form: number >> {{ int }}
+form: owner  >> Rodrygo
+
+----- response
+
+code:
+200
+
+body:
+payment by card from Rodrygo. Matched by Form
+```
+Запрос подпадающий под правило
+```
+curl --location 'http://localhost/payment/card' \
+--header 'example: body_form' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'number=1111222233334444' \
+--data-urlencode 'owner=Rodrygo'
+```
+
+
+## Сопоставление по условию
+Используется при необходимости выдавать разные варианты ответа на один и тот же запрос. 
+Условия описываются в секции `condition`. Условия могут быть заданы либо по номеру попытки, 
+либо по количеству времени прошедшему с момента первого запроса
+
+В качестве данных, используемых для определения уникальности запроса, используются все данные запроса
+(метод, путь, параметры строки запроса, заголовки, тело)
+
+### Сопоставление по номеру попытки
+
+Для сопоставления по номеру попытки используется системная переменная `@attempt`
+**Синтаксис секции**
+```
+[@attempt <условие 1> <номер попытки>]
+...
+[@attempt <условие N> <номер попытки>]
+```
+
+***условие*** - может быть задано одним из операторов `=`,`>`, `>=`,`<`,`<=`,`in`
+
+Оператор `in` определяет интервал, в который должна входить переменная `@attempt`. 
+Эквивалентно записи
+```
+[@attempt >= <верхний интервал>]
+[@attempt <= <нижний интервал>]
+```
+
+***номер попытки***
+
+#### Пример
+
+
+
+
+
+
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+```
+-------------------- rule
+
+POST /payment/card
+
+headers:
+example: body_xpath
+
+body:
+xpath: /root/number/text() >> {{ int }}
+xpath: /root/owner/text() >> Rodrygo
+
+----- response
+
+code:
+200
+
+body:
+payment by card from Rodrygo. Matched by XPath
+```
+
+```
+-------------------- rule
+
+POST /payment/card
+
+~ headers
+example: body_xpath
+
+~ body
+xpath: /root/number/text() >> {{ int }}
+xpath: /root/owner/text() >> Rodrygo
+
+----- response
+
+~ code
+200
+
+~ body
+payment by card from Rodrygo. Matched by XPath
+```

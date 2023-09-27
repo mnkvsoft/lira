@@ -27,7 +27,7 @@
 
 Для запуска сервера необходимо выполнить следующую команду:
 
-`docker run --name lira -p <port>:80 [-e TZ=timezone] -v <rules_path>:/app/rules  mnkvsoft/lira`
+`docker run -p <port>:80 [-e TZ=timezone] -v <rules_path>:/app/rules  mnkvsoft/lira`
 
 либо добавить следующие строки в docker-compose
 
