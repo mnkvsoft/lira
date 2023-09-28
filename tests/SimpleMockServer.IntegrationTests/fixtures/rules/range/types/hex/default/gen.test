@@ -4,7 +4,7 @@ GET /range/types/hex/default/gen/first
 
 ----- expected
 
-code:
+~ code
 200
 
 // todo: need implementation body check
@@ -15,7 +15,7 @@ GET /range/types/hex/default/gen/second
 
 ----- expected
 
-code:
+~ code
 200
 
 // todo: need implementation body check

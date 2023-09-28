@@ -43,14 +43,7 @@ public class Rules_Tests : TestBase
         Console.WriteLine("Execute file: " + prettyTestFileName);
         string realTestFilePath = fixturesDirectory + prettyTestFileName;
 
-        var sections = await SectionFileParser.Parse(realTestFilePath,
-            new Dictionary<string, IReadOnlySet<string>>
-            {
-                { "expected", new HashSet<string> { "body", "code", "headers", "elapsed" } },
-                { "case", new HashSet<string> { "headers", "body", "delay", "wait" } },
-                { "call.http", new HashSet<string> { "headers", "body", "elapsed" } },
-            },
-            maxNestingDepth: 3);
+        var sections = await SectionFileParser.Parse(realTestFilePath);
 
         foreach (var caseSection in sections)
         {

@@ -4,11 +4,11 @@ GET /delay
 
 ----- response
 
-delay:
+~ delay
 2000 ms
 
-code:
+~ code
 200
 
-body:
+~ body
 long query

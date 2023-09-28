@@ -4,8 +4,8 @@ GET /generating/function/header/with_start
 
 ----- expected
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Custom:start_hello!

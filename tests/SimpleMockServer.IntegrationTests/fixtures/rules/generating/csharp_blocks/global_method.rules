@@ -4,8 +4,8 @@ GET /generating/csharp/global_method
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ req.body.all >> echo(@value) }}

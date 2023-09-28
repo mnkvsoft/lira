@@ -8,8 +8,8 @@ $duration.with.dot = {{ TimeSpan.FromDays(1) }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ $duration.with.dot + TimeSpan.FromMinutes(1) }}

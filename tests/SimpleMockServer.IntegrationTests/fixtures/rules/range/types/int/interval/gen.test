@@ -4,10 +4,10 @@ GET /range/types/int/interval/gen/first
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 1000
 
 
@@ -17,10 +17,10 @@ GET /range/types/int/interval/gen/second
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 4000
 
 
@@ -30,8 +30,8 @@ GET /range/types/int/interval/gen/third
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 7000

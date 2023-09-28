@@ -12,8 +12,8 @@ $local = {{ $global }} | {{ $file_level }} | value_from_local
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ $local }}

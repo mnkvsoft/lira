@@ -2,15 +2,15 @@
 
 GET /generating/csharp/body_access/body/jpath
 
-body: 
+~ body 
 {
   "firstName": "John",
 }
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 John

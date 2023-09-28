@@ -8,8 +8,8 @@ GET /match/template/path/{{ @@userid }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ @@userid }}

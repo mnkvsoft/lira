@@ -4,10 +4,10 @@ GET /match/multiple/path/function_with_prefix_and_suffix/prefix_{{ any }}_suffix
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 prefix and suffix
 
 -------------------- rule
@@ -16,8 +16,8 @@ GET /match/multiple/path/function_with_prefix_and_suffix/prefix_{{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 only prefix

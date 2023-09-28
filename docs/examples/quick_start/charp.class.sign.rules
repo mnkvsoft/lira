@@ -2,7 +2,7 @@
 
 POST /payment
 
-headers:
+~ headers
 example: charp.class.sign
 
 ----- declare
@@ -16,10 +16,10 @@ example: charp.class.sign
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{
     json( #response )
         .add("sign", SignatureCalculator.Get(#response, "very_secret_key"))

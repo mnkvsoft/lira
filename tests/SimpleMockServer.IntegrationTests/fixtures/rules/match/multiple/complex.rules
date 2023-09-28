@@ -4,24 +4,24 @@ POST /match/multiple/complex?a=1
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 query string rule
 
 -------------------- rule
 
 POST /match/multiple/complex
 
-body:
+~ body
 {{ jpath: $.first_name }} >> Vasiliy
 {{ jpath: $.last_name }} >> {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 body rule

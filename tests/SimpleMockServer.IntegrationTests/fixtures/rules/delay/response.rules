@@ -4,8 +4,8 @@ GET /delay/response
 
 ----- response
 
-delay:
+~ delay
 1 second
 
-code:
+~ code
 200

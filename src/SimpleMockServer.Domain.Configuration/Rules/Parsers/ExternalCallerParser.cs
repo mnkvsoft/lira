@@ -1,5 +1,4 @@
-﻿using SimpleMockServer.Common.Extensions;
-using SimpleMockServer.Domain.Configuration.PrettyParsers;
+﻿using SimpleMockServer.Domain.Configuration.PrettyParsers;
 using SimpleMockServer.Domain.Configuration.Rules.ValuePatternParsing;
 using SimpleMockServer.FileSectionFormat;
 
@@ -14,21 +13,14 @@ class ExternalCallerParser
         _externalCallerRegistrators = externalCallerRegistrators;
     }
 
-    public Dictionary<string, IReadOnlySet<string>> GetSectionsKnowsBlocks()
+    public IReadOnlySet<string> GetSectionNames()
     {
-        var result = new Dictionary<string, IReadOnlySet<string>>();
+        var result = new HashSet<string>();
 
         foreach (var registrator in _externalCallerRegistrators)
         {
             var sectionName = GetSectionName(registrator);
-            var knownBlocks = new HashSet<string>
-            {
-                Constants.BlockName.Common.Delay
-            };
-
-            knownBlocks.AddRangeOrThrowIfContains(registrator.GetSectionKnowsBlocks());
-
-            result.Add(sectionName, knownBlocks);
+            result.Add(sectionName);
         }
 
         return result;

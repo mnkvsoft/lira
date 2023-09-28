@@ -4,8 +4,8 @@ GET /generating/csharp/global_variable
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ $global_csharp_var }}

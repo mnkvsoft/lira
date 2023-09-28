@@ -4,8 +4,8 @@ GET /generating/csharp/body_access/path/{{ int  name: id }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ @req.Path("id") }}

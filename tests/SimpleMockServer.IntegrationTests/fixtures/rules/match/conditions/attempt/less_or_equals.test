@@ -4,10 +4,10 @@ GET /match/conditions/attempt/less_or_equals
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt <= 2
 
 -------------------- case
@@ -16,10 +16,10 @@ GET /match/conditions/attempt/less_or_equals
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt <= 2
 
 -------------------- case
@@ -28,10 +28,10 @@ GET /match/conditions/attempt/less_or_equals
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt = 3
 
 -------------------- case
@@ -40,5 +40,5 @@ GET /match/conditions/attempt/less_or_equals
 
 ----- expected
 
-code:
+~ code
 404

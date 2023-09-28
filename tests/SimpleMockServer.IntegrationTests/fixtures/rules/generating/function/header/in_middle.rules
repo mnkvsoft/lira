@@ -4,8 +4,8 @@ GET /generating/function/header/in_middle
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Custom: start_{{echo:hello!}}_end

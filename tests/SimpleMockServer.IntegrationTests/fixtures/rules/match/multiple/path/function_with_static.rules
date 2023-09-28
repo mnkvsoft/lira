@@ -4,10 +4,10 @@ GET /match/multiple/path/function_with_static/123
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 static
 
 -------------------- rule
@@ -16,8 +16,8 @@ GET /match/multiple/path/function_with_static/{{ int }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 function

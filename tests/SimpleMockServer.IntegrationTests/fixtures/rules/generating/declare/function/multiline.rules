@@ -13,9 +13,9 @@ GET /generating/declare/function/multiline
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ multiline }}
 {{ singleline }}

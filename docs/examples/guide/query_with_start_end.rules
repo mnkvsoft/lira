@@ -4,8 +4,8 @@ GET /user?name=a{{ any }}a
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 user a***a matched

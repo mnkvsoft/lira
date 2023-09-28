@@ -2,17 +2,17 @@
 
 POST /payment/card
 
-headers:
+~ headers
 example: body_jpath
 
-body:
+~ body
 jpath: $.number >> {{ int }}
 jpath: $.owner >> Rodrygo
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 payment by card from Rodrygo. Matched by Json Path

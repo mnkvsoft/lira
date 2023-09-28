@@ -4,7 +4,7 @@ GET /range/types/float/capacity/gen/first
 
 ----- expected
 
-code:
+~ code
 200
 
 // todo: need implementation body check
@@ -15,7 +15,7 @@ GET /range/types/float/capacity/gen/second
 
 ----- expected
 
-code:
+~ code
 200
 
 // todo: need implementation body check
@@ -27,7 +27,7 @@ GET /range/types/float/capacity/gen/third
 
 ----- expected
 
-code:
+~ code
 200
 
 // todo: need implementation body check

@@ -5,7 +5,7 @@ GET /match/static/query
 
 ----- expected
 
-code:
+~ code
 404
 
 // matched
@@ -15,5 +15,5 @@ GET /match/static/query?a=1
 
 ----- expected
 
-code:
+~ code
 200

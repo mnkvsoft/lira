@@ -2,10 +2,10 @@
 
 POST /match/function/body/extract/jpath
 
-body:
+~ body
 {{ jpath: $.address.city }} >> Nara
 
 ----- response
 
-code:
+~ code
 200

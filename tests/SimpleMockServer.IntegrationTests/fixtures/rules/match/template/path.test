@@ -4,8 +4,8 @@ GET /match/template/path/user_1
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 user_1

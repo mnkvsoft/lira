@@ -4,10 +4,10 @@ GET /range/types/int/default/gen/first
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ range: int_default/first.one }}
 
 
@@ -17,8 +17,8 @@ GET /range/types/int/default/gen/second
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ range: int_default/second.two }}

@@ -1,0 +1,8 @@
+-------------------- rule
+
+GET /rule_file_format/short_block
+
+----- response
+
+~ code: 200
+~ body: someone

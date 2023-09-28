@@ -4,8 +4,8 @@ GET /generating/csharp/chain_second_block_is_csharp
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ req.body.all >> chain_second_block_is_csharp.Cleaner.Clean(@value) }}

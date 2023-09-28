@@ -4,10 +4,10 @@ GET /very/old/event
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "date": {{ DateTime.Now.AddYears(-100 - Random.Shared.Next(1, 100)) }}
 }

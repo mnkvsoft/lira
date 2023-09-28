@@ -6,10 +6,10 @@ GET /range/types/hex/bytes_count/match/2cadc8abd4ef34f432b06614c2b89716d12f656db
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 first
 
 // hex valus in range [-1 - 9223372036854775807]
@@ -20,8 +20,8 @@ GET /range/types/hex/bytes_count/match/562ee0227d48dc48ec15e56287af74863a95287a4
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 second

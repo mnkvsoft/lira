@@ -2,15 +2,15 @@
 
 GET /person
 
-headers:
+~ headers
 example: declare.shared.global
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "age": {{ age }}
 }

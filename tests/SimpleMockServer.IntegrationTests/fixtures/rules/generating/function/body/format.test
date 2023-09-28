@@ -4,8 +4,8 @@ GET /generating/function/body/format
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 2.00

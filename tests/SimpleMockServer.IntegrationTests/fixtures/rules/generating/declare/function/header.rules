@@ -4,8 +4,8 @@ GET /generating/declare/function/header
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Content-Type: {{ global.content_type }}

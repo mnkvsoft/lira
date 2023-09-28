@@ -2,13 +2,13 @@
 
 POST /user
 
-headers:
+~ headers
 Request-Id: {{ guid }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 matches by one header by function 

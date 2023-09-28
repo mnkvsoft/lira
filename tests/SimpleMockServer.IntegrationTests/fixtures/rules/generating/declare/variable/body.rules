@@ -4,8 +4,8 @@ GET /generating/declare/variable/body
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ $greetings }}

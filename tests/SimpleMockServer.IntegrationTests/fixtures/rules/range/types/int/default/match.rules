@@ -4,10 +4,10 @@ GET /range/types/int/default/match/{{ range: int_default/first.one }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 first
 
 
@@ -17,8 +17,8 @@ GET /range/types/int/default/match/{{ range: int_default/second.two }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 second

@@ -4,8 +4,8 @@ GET /generating/function/extract/query?p=extracted_value
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 extracted_value

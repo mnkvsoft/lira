@@ -4,7 +4,7 @@ GET /range/types/guid/format/gen/first
 
 ----- expected
 
-code:
+~ code
 200
 
 // todo: need implementation body check
@@ -15,7 +15,7 @@ GET /range/types/guid/format/gen/second
 
 ----- expected
 
-code:
+~ code
 200
 
 // todo: need implementation body check

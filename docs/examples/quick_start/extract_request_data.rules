@@ -2,21 +2,21 @@
 
 POST /payment/{{ any name: tool }}?fast={{ any }}
 
-headers:
+~ headers
 Id: {{ any }}
 
-body:
+~ body
 jpath: $.account >> {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Request-Id: {{ req.header: Id}}
 
-body:
+~ body
 {
     "tool": "{{ req.path: tool }}",
     "is_fast": "{{ req.query: fast }}",

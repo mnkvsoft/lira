@@ -4,10 +4,10 @@ GET /range/pretty/gen/first
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 1000
 
 
@@ -17,10 +17,10 @@ GET /range/pretty/gen/second
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 2000
 
 
@@ -30,8 +30,8 @@ GET /range/pretty/gen/third
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 3000

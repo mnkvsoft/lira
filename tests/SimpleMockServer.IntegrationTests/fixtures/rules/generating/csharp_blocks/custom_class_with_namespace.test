@@ -2,13 +2,13 @@
 
 GET /generating/csharp/custom_class_with_namespace
 
-body:
+~ body
 echo
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 echo

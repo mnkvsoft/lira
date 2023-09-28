@@ -46,7 +46,7 @@
 			},
 			{
 				"name": "keyword.block.rules",
-				"match": "(code|body|headers|delay):"
+				"match": "~ [a-zA-Z]+"
 			},
 			{
 				"name": "keyword.dynamic-part.rules",

@@ -4,7 +4,7 @@ GET /range/types/float/default/gen/first
 
 ----- expected
 
-code:
+~ code
 200
 
 // todo: need implementation body check
@@ -15,7 +15,7 @@ GET /range/types/float/default/gen/first
 
 ----- expected
 
-code:
+~ code
 200
 
 // todo: need implementation body check
@@ -26,7 +26,7 @@ GET /range/types/float/default/gen/second
 
 ----- expected
 
-code:
+~ code
 200
 
 // todo: need implementation body check
@@ -37,7 +37,7 @@ GET /range/types/float/default/gen/second
 
 ----- expected
 
-code:
+~ code
 200
 
 // todo: need implementation body check

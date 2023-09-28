@@ -4,7 +4,7 @@ GET /range/pretty/match/999
 
 ----- expected
 
-code:
+~ code
 404
 
 -------------------- case
@@ -13,10 +13,10 @@ GET /range/pretty/match/1000
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 first
 
 -------------------- case
@@ -25,10 +25,10 @@ GET /range/pretty/match/2000
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 second
 
 -------------------- case
@@ -37,8 +37,8 @@ GET /range/pretty/match/3000
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 third

@@ -8,8 +8,8 @@ template.from.rule.section = hello {{ echo: from }} template
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ @@template.from.rule.section }}

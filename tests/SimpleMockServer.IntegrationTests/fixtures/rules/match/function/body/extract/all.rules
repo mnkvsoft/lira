@@ -2,11 +2,11 @@
 
 POST /match/function/body/extract/all
 
-body:
+~ body
 matched_value
 
 
 ----- response
 
-code:
+~ code
 200

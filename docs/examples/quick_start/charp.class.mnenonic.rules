@@ -2,18 +2,18 @@
 
 POST /payment/card
 
-headers:
+~ headers
 example: charp.class.mnenonic
 
-body:
+~ body
 jpath: $.number >> {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 mnemonic was generated from 'number' field: {{ 
     CardNumber.GetMnemonic(@req.Body.ByJPath("$.number")) 
 }}
@@ -23,18 +23,18 @@ mnemonic was generated from 'number' field: {{
 
 POST /payment/card
 
-headers:
+~ headers
 example: charp.class.mnenonic
 
-body:
+~ body
 jpath: $.pan >> {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 mnemonic was generated from 'pan' field: {{ 
     CardNumber.GetMnemonic(@req.Body.ByJPath("$.pan")) 
 }}

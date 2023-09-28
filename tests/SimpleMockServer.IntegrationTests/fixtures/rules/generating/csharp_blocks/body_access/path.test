@@ -4,8 +4,8 @@ GET /generating/csharp/body_access/path/1
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 1

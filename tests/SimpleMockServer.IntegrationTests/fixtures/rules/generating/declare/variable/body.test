@@ -4,8 +4,8 @@ GET /generating/declare/variable/body
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 hello world!

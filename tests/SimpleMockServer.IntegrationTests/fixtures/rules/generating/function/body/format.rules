@@ -4,8 +4,8 @@ GET /generating/function/body/format
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{echo:2 >> format:#.00#}}

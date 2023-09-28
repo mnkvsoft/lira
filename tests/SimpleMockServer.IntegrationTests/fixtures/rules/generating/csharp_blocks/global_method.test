@@ -2,13 +2,13 @@
 
 GET /generating/csharp/global_method
 
-body:
+~ body
 au
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 au-au...

@@ -5,8 +5,8 @@ GET /user/ivanov_{{ any }}_petrovich
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 ivanov user matched

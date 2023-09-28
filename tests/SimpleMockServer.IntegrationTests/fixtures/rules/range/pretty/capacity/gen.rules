@@ -4,10 +4,10 @@ GET /range/pretty/gen/first
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ range: pretty_capacity/first }}
 
 
@@ -17,10 +17,10 @@ GET /range/pretty/gen/second
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ range: pretty_capacity/second }}
 
 
@@ -30,8 +30,8 @@ GET /range/pretty/gen/third
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ range: pretty_capacity/third }}

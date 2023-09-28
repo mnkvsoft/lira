@@ -14,10 +14,10 @@ GET /user/{{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 matched by path!
 ```
 
@@ -30,10 +30,10 @@ GET /user/nikolas?lastname={{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 matched by query parameter!
 ```
 
@@ -44,15 +44,15 @@ matched by query parameter!
 
 GET /user/nikolas
 
-headers:
+~ headers
 Token: {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 matched by header!
 ```
 
@@ -63,15 +63,15 @@ matched by header!
 
 GET /user/nikolas
 
-body:
+~ body
 {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 matched by body!
 ```
 
@@ -100,10 +100,10 @@ GET /user/{{ regex: \d\d\d }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 matche by regex!
 ```
 

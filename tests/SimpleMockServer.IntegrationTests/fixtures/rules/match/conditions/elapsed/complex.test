@@ -4,38 +4,38 @@ GET /match/conditions/elapsed/complex
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 elapsed <= 100 ms
 
 -------------------- case
 
 GET /match/conditions/elapsed/complex
 
-delay: 
+~ delay 
 00:00:00.100
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 elapsed between 100 and 200 ms
 
 -------------------- case
 
 GET /match/conditions/elapsed/complex
 
-delay: 
+~ delay 
 00:00:00.100
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 elapsed > 200 ms

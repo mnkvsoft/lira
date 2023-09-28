@@ -2,13 +2,13 @@
 
 GET /generating/csharp/body_access/body/all
 
-body: 
+~ body 
 some body...
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 some body...

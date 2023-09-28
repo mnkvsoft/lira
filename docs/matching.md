@@ -14,18 +14,18 @@
 
 POST /payment/card?amount=100
 
-headers:
+~ headers
 example: static
 
-body:
+~ body
 number=1111222233334444
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 static rules matched
 ```
 
@@ -96,10 +96,10 @@ GET /user/ivanov_{{ any }}_petrovich
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 ivanov user matched
 ```
 Запросы подпадающие под правило
@@ -117,10 +117,10 @@ GET /user/{{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 any user matched
 ```
 Запросы подпадающие под правило
@@ -140,10 +140,10 @@ GET /user/{{ any }}/{{ int }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 any user with id matched
 ```
 Запросы подпадающие под правило
@@ -174,10 +174,10 @@ GET /user?name={{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 any user by query param matched
 ```
 Запросы подпадающие под правило
@@ -206,10 +206,10 @@ GET /user?name=a{{ any }}a
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 user a***a matched
 ```
 Запросы подпадающие под правило
@@ -229,10 +229,10 @@ GET /user?name={{ any }}&ago={{ int }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 any user with ago matched
 ```
 
@@ -265,15 +265,15 @@ curl --location 'http://localhost/user?name=denis&ago=35&height=180'
 
 POST /user
 
-headers:
+~ headers
 Request-Id: {{ guid }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 matches by one header by function 
 ```
 Запросы подпадающие под правило
@@ -307,17 +307,17 @@ curl --location --request POST 'http://localhost/user' \
 
 POST /user
 
-headers:
+~ headers
 Token: 11{{ any }}22
 Request-Time: {{ any }}
 No-Cache: true
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 matches by one header by static and functions  
 ```
 Запросы подпадающие под правило
@@ -355,18 +355,18 @@ curl --location --request POST 'http://localhost/user' \
 
 POST /user
 
-headers:
+~ headers
 example: body_with_one_func
 
-body:
+~ body
 {{ int }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 matches body by one function
 ```
 Запрос подпадающий под правило
@@ -414,19 +414,19 @@ jpath: <JSON Path выражение>
 
 POST /payment/card
 
-headers:
+~ headers
 example: body_jpath
 
-body:
+~ body
 jpath: $.number >> {{ int }}
 jpath: $.owner >> Rodrygo
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 payment by card from Rodrygo. Matched by Json Path
 ```
 Запрос подпадающий под правило
@@ -460,19 +460,19 @@ xpath: <XPath выражение>
 
 POST /payment/card
 
-headers:
+~ headers
 example: body_xpath
 
-body:
+~ body
 xpath: /root/number/text() >> {{ int }}
 xpath: /root/owner/text() >> Rodrygo
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 payment by card from Rodrygo. Matched by XPath
 ```
 Запрос подпадающий под правило
@@ -507,19 +507,19 @@ form: <наименование параметра>
 
 POST /payment/card
 
-headers:
+~ headers
 example: body_form
 
-body:
+~ body
 form: number >> {{ int }}
 form: owner  >> Rodrygo
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 payment by card from Rodrygo. Matched by Form
 ```
 Запрос подпадающий под правило
@@ -577,19 +577,19 @@ curl --location 'http://localhost/payment/card' \
 
 POST /payment/card
 
-headers:
+~ headers
 example: body_xpath
 
-body:
+~ body
 xpath: /root/number/text() >> {{ int }}
 xpath: /root/owner/text() >> Rodrygo
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 payment by card from Rodrygo. Matched by XPath
 ```
 

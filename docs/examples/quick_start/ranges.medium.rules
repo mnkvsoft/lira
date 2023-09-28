@@ -4,18 +4,18 @@
 
 POST /payment
 
-headers:
+~ headers
 example: range.medium
 
-body:
+~ body
 jpath: $.amount >> {{ range: amount/ok }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "id": {{ range: payment_id/ok }},
     "status": "ok"
@@ -25,15 +25,15 @@ body:
 
 POST /payment/refund/{{ range: payment_id/ok}}
 
-headers:
+~ headers
 example: range.medium
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "ok"
 }
@@ -44,18 +44,18 @@ body:
 
 POST /payment
 
-headers:
+~ headers
 example: range.medium
 
-body:
+~ body
 jpath: $.amount >> {{ range: amount/refund_reject }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "id": {{ range: payment_id/refund_reject }},
     "status": "ok"
@@ -65,15 +65,15 @@ body:
 
 POST /payment/refund/{{ range: payment_id/refund_reject}}
 
-headers:
+~ headers
 example: range.medium
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "reject"
 }

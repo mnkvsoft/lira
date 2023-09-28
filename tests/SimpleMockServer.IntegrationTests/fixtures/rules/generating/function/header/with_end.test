@@ -4,8 +4,8 @@ GET /generating/function/header/with_end
 
 ----- expected
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Custom: hello!_end

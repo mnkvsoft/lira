@@ -5,7 +5,7 @@ GET /match/function/path/impl/guid/NOT_GUID/some
 
 ----- expected
 
-code:
+~ code
 404
 
 // matched
@@ -15,5 +15,5 @@ GET /match/function/path/impl/guid/0B5043CA-2E3F-4EB7-9EC5-15039370AEB4/some
 
 ----- expected
 
-code:
+~ code
 200

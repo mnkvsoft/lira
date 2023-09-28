@@ -2,16 +2,16 @@
 
 POST /payment/card?amount=100
 
-headers:
+~ headers
 example: static
 
-body:
+~ body
 number=1111222233334444
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 static rules matched

@@ -2,15 +2,15 @@
 
 POST /match/multiple/body/only_function
 
-body:
+~ body
 {{ all }} >> {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 any
 
 -------------------- rule
@@ -18,13 +18,13 @@ any
 POST /match/multiple/body/only_function
 
 
-body:
+~ body
 {{ all }} >> {{ int }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 int

@@ -4,8 +4,8 @@ GET /generating/function/header/format
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Custom: {{echo:2 >> format:#.00#}}

@@ -5,7 +5,7 @@ GET /match/static/method/post
 
 ----- expected
 
-code:
+~ code
 404
 
 // matched
@@ -15,5 +15,5 @@ POST /match/static/method/post
 
 ----- expected
 
-code:
+~ code
 200

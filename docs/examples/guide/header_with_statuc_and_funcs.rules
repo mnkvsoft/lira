@@ -2,15 +2,15 @@
 
 POST /user
 
-headers:
+~ headers
 Token: 11{{ any }}22
 Request-Time: {{ any }}
 No-Cache: true
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 matches by one header by static and functions 

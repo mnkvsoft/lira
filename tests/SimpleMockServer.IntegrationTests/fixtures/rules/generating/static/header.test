@@ -4,8 +4,8 @@ GET /generating/static/header
 
 ----- expected
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Custom: some

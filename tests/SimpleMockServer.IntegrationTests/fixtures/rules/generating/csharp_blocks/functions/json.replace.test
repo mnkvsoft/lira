@@ -4,10 +4,10 @@ GET /generating/csharp/functions/json/replace
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 {
   "field1": "new_value",
   "field2": 2

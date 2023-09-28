@@ -3,7 +3,7 @@
 
 GET /match/static/1
 
-headers:
+~ headers
 Content-Type:text/plain
 
 -------------------- condition
@@ -13,13 +13,13 @@ more:1
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Content-Type:text/plain
 
-body:
+~ body
 matched by path /match/static/1 only
 
 
@@ -27,10 +27,10 @@ matched by path /match/static/1 only
 
 GET /match/static/1
 
-headers: 
+~ headers 
 Content-Type:text/plain
 
-body:
+~ body
 matched by path /match/static/1 only
 
 
@@ -38,17 +38,17 @@ matched by path /match/static/1 only
 
 GET /match/static/1
 
-headers:
+~ headers
 Content-Type:text/plain
 
 ----- response
 
 200
 
-headers:
+~ headers
 Content-Type:text/plain
 
-body:
+~ body
 matched by path /match/static/1 only
 
 
@@ -56,9 +56,9 @@ matched by path /match/static/1 only
 
 GET /match/static/1
 
-headers: 
+~ headers 
 Content-Type:text/plain
 
-body:
+~ body
 matched by path /match/static/1 only
 */

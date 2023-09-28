@@ -2,14 +2,14 @@
 
 GET /generating/format
 
-headers:
+~ headers
 Request-Id: {18027efa-6abb-4555-b78a-3a12453ff21c}
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 {18027efa-6abb-4555-b78a-3a12453ff21c}
 18027efa6abb4555b78a3a12453ff21c

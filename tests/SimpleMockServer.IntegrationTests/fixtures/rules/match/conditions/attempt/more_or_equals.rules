@@ -8,10 +8,10 @@ GET /match/conditions/attempt/more_or_equals
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt 1
 
 -------------------- condition
@@ -20,8 +20,8 @@ attempt 1
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt more or equals than 2

@@ -4,7 +4,7 @@ GET /range/types/int/mode/random/match/0
 
 ----- expected
 
-code:
+~ code
 404
 
 -------------------- case
@@ -13,10 +13,10 @@ GET /range/types/int/mode/random/match/1
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 first
 
 -------------------- case
@@ -25,10 +25,10 @@ GET /range/types/int/mode/random/match/2
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 first
 
 -------------------- case
@@ -37,10 +37,10 @@ GET /range/types/int/mode/random/match/3
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 first
 
 -------------------- case
@@ -49,10 +49,10 @@ GET /range/types/int/mode/random/match/4
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 second
 
 -------------------- case
@@ -61,10 +61,10 @@ GET /range/types/int/mode/random/match/5
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 second
 
 -------------------- case
@@ -73,10 +73,10 @@ GET /range/types/int/mode/random/match/6
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 second
 
 -------------------- case
@@ -85,10 +85,10 @@ GET /range/types/int/mode/random/match/7
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 third
 
 -------------------- case
@@ -97,10 +97,10 @@ GET /range/types/int/mode/random/match/8
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 third
 
 -------------------- case
@@ -109,10 +109,10 @@ GET /range/types/int/mode/random/match/9
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 third
 
 -------------------- case
@@ -121,10 +121,10 @@ GET /range/types/int/mode/random/match/9
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 third
 
 -------------------- case
@@ -133,5 +133,5 @@ GET /range/types/int/mode/random/match/10
 
 ----- expected
 
-code:
+~ code
 404

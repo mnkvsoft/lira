@@ -4,8 +4,8 @@ GET /generating/declare/variable/header
 
 ----- expected
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Content-Type: application/my

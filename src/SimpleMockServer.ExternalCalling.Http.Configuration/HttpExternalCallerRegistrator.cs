@@ -60,6 +60,4 @@ public class HttpExternalCallerRegistrator : IExternalCallerRegistrator
         
         return caller;
     }
-
-    public IReadOnlyCollection<string> GetSectionKnowsBlocks() => BlockNameHelper.GetBlockNames<BlockName>();
 }

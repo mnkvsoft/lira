@@ -4,10 +4,10 @@ GET /generating/csharp/large_block
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ 
 
 int days = 1 + 3;

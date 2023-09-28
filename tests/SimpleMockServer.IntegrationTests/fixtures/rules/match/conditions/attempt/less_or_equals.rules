@@ -8,10 +8,10 @@ GET /match/conditions/attempt/less_or_equals
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt <= 2
 
 -------------------- condition
@@ -20,8 +20,8 @@ attempt <= 2
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt = 3

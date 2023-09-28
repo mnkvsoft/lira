@@ -2,7 +2,7 @@
 
 POST /payment
 
-headers:
+~ headers
 example: custom_function
 
 ----- declare
@@ -11,10 +11,10 @@ example: custom_function
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "created_at": "{{ #payment.now }}"
     

@@ -2,10 +2,10 @@
 
 POST /match/function/body/extract/form
 
-body:
+~ body
 {{ form: name }} >> Johnny Dapp
 
 ----- response
 
-code:
+~ code
 200

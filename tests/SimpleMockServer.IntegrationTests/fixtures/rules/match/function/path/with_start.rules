@@ -4,5 +4,5 @@ GET /match/function/path/with_start/start_{{int}}/some
 
 ----- response
 
-code:
+~ code
 200

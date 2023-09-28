@@ -4,10 +4,10 @@ GET /range/types/hex/default/match/{{ range: hex_default/first }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 first
 
 
@@ -17,8 +17,8 @@ GET /range/types/hex/default/match/{{ range: hex_default/second }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 second

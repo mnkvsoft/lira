@@ -4,8 +4,8 @@ GET /generating/declare/variable/global/with_request_var
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 value_from_global_var | value_from_file_level | value_from_local

@@ -13,9 +13,9 @@ GET /generating/declare/variable/multiline
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ $multiline }}
 {{ $singleline }}

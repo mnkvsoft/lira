@@ -2,18 +2,18 @@
 
 POST /payment/{{ any }}?fast={{ any }}
 
-headers:
+~ headers
 Request-Id: {{ guid }}
 
-body:
+~ body
 jpath: $.number >> 4444{{ int }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "id": 12345,
     "status": "ok"

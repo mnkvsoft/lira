@@ -2,13 +2,13 @@
 
 GET /generating/csharp/body_access/header
 
-headers: 
+~ headers 
 Request-Id: some_request_id
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 some_request_id

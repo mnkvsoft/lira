@@ -4,5 +4,5 @@ GET /match/static/path
 
 ----- response
 
-code:
+~ code
 200

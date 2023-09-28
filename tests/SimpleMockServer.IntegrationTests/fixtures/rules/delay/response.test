@@ -4,8 +4,8 @@ GET /delay/response
 
 ----- expected
 
-code:
+~ code
 200
 
-elapsed:
+~ elapsed
 00:00:01

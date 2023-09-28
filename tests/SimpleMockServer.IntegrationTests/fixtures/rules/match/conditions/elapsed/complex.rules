@@ -8,10 +8,10 @@ GET /match/conditions/elapsed/complex
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 elapsed <= 100 ms
 
 -------------------- condition
@@ -21,10 +21,10 @@ elapsed <= 100 ms
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 elapsed between 100 and 200 ms
 
 -------------------- condition
@@ -33,8 +33,8 @@ elapsed between 100 and 200 ms
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 elapsed > 200 ms

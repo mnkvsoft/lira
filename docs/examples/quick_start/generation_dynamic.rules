@@ -4,13 +4,13 @@ GET /order
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Request-Time: {{ now >> format: H:mm:ss }}
 
-body:
+~ body
 {
     "id": {{ int }},
     "amount": {{ float }},

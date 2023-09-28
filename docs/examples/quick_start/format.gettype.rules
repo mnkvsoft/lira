@@ -4,10 +4,10 @@ GET /get_type
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ guid >> @value.GetType() }}
 {{ float >> @value.GetType() }}
 {{ date >> @value.GetType() }}

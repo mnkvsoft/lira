@@ -6,15 +6,15 @@
 
 GET /payment
 
-headers:
+~ headers
 example: declare.shared.file
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "amount": {{ amount }}
 }
@@ -23,15 +23,15 @@ body:
 
 GET /account
 
-headers:
+~ headers
 example: declare.shared.file
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "balance": {{ amount }}
 }

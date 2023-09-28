@@ -4,10 +4,10 @@ GET /match/conditions/attempt/interval
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt [1-2]
 
 -------------------- case
@@ -16,10 +16,10 @@ GET /match/conditions/attempt/interval
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt [1-2]
 
 -------------------- case
@@ -28,10 +28,10 @@ GET /match/conditions/attempt/interval
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt [3-4]
 
 -------------------- case
@@ -40,10 +40,10 @@ GET /match/conditions/attempt/interval
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt [3-4]
 
 -------------------- case
@@ -52,5 +52,5 @@ GET /match/conditions/attempt/interval
 
 ----- expected
 
-code:
+~ code
 404

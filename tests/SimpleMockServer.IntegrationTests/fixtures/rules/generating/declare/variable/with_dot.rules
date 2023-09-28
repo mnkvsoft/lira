@@ -8,8 +8,8 @@ $var.with.dot = hello!
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ $var.with.dot }}

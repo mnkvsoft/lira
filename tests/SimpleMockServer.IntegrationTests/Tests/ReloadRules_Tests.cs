@@ -21,7 +21,7 @@ public class ReloadRules_Tests : TestBase
             @"----- rule" + Nl +
             "GET /test" + Nl +
             "--- response" + Nl +
-            "code:" + Nl +
+            "~ code" + Nl +
             "200");
 
         await Task.Delay(PhysicalFileProviderPoolingInterval);
@@ -42,7 +42,7 @@ public class ReloadRules_Tests : TestBase
             @"----- rule" + Nl +
             "GET /test" + Nl +
             "--- response" + Nl +
-            "code:" + Nl +
+            "~ code" + Nl +
             "200"
             
         );
@@ -73,7 +73,7 @@ public class ReloadRules_Tests : TestBase
             @"----- rule" + Nl +
             "GET /test" + Nl +
             "--- response" + Nl +
-            "code:" + Nl +
+            "~ code" + Nl +
             "200"
             
         );
@@ -90,7 +90,7 @@ public class ReloadRules_Tests : TestBase
             @"----- rule" + Nl +
             "GET /test" + Nl +
             "--- response" + Nl +
-            "code:" + Nl +
+            "~ code" + Nl +
             "204"
             
         );

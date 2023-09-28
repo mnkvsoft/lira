@@ -2,13 +2,13 @@
 
 GET /generating/csharp/body_access/header
 
-headers:
+~ headers
 Request-Id: {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ @req.Header("Request-Id") }}

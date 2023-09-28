@@ -4,8 +4,8 @@ GET /generating/csharp/large_block
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 4.00:00:00

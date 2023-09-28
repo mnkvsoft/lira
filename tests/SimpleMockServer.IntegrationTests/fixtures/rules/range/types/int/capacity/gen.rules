@@ -4,10 +4,10 @@ GET /range/types/int/capacity/gen/first
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ range: int_capacity/first }}
 
 
@@ -17,10 +17,10 @@ GET /range/types/int/capacity/gen/second
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ range: int_capacity/second }}
 
 
@@ -30,8 +30,8 @@ GET /range/types/int/capacity/gen/third
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ range: int_capacity/third }}

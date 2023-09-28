@@ -7,10 +7,10 @@ $userId = {{ range: userId/rich }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "user_id": {{ $userId }}
 }
@@ -19,10 +19,10 @@ body:
 
 POST http://callback.com/api?a=1
 
-headers:
+~ headers
 Token: af5kdjdg7423j53ll44865jdds
 
-body:
+~ body
 {
     "user_id": {{ $userId }}
 }

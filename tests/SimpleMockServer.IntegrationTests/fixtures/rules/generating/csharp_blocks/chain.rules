@@ -4,8 +4,8 @@ GET /generating/csharp/chain
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ 1 + 1 >> format: #.00# }}

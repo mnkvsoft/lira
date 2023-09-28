@@ -4,8 +4,8 @@ GET /generating/function/body/in_middle
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 start_hello!_end

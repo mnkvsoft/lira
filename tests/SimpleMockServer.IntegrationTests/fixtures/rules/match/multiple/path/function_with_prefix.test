@@ -4,8 +4,8 @@ GET /match/multiple/path/function_with_prefix/prefix_123
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 with prefix

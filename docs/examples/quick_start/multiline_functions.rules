@@ -14,28 +14,28 @@
 
 POST /order
 
-headers:
+~ headers
 example: multiline_functions
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ template.order }}
 
 -------------------- rule
 
 GET /order
 
-headers:
+~ headers
 example: multiline_functions
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ template.order }}

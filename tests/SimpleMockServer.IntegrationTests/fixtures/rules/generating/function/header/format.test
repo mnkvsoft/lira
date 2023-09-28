@@ -4,8 +4,8 @@ GET /generating/function/header/format
 
 ----- expected
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Custom: 2.00

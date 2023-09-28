@@ -8,10 +8,10 @@ GET /pay/status
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "registered"
 }
@@ -22,10 +22,10 @@ body:
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "pending"
 }
@@ -37,10 +37,10 @@ body:
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "ok"
 }

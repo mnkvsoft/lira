@@ -4,9 +4,9 @@ GET /generating/declare/complex
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 246
 246

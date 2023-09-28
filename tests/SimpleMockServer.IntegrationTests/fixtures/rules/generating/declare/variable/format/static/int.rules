@@ -8,8 +8,8 @@ $order_id = 1
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ $order_id >> format:#.00# }}

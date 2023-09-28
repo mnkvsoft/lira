@@ -4,10 +4,10 @@ GET /range/types/int/capacity/gen/first
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 1
 
 
@@ -17,10 +17,10 @@ GET /range/types/int/capacity/gen/second
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 3
 
 
@@ -30,8 +30,8 @@ GET /range/types/int/capacity/gen/third
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 5

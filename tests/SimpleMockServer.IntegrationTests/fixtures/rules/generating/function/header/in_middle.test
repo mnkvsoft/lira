@@ -4,8 +4,8 @@ GET /generating/function/header/in_middle
 
 ----- expected
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Custom:start_hello!_end

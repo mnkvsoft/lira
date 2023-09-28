@@ -2,13 +2,13 @@
 
 GET /generating/csharp/chain_second_block_is_csharp
 
-body:
+~ body
 string with whitespaces
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 stringwithwhitespaces

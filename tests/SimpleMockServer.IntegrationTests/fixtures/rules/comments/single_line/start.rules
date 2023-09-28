@@ -5,5 +5,5 @@ GET /comments/single_line/start
 
 ----- response
 
-code:
+~ code
 200

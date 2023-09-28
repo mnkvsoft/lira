@@ -34,6 +34,8 @@ class RequestMatchersParser
         builder.AddRange(matchers);
         pathNameMaps = pathMaps;
         
+        ruleSection.AssertContainsOnlyKnownBlocks(BlockNameHelper.GetBlockNames<Constants.BlockName.Rule>());
+        
         foreach (var block in ruleSection.Blocks)
         {
             if (block.Name == Constants.BlockName.Rule.Path)

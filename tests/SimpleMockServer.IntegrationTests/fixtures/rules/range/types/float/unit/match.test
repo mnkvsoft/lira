@@ -4,7 +4,7 @@ GET /range/types/float/unit/match/0.00099
 
 ----- expected
 
-code:
+~ code
 404
 
 -------------------- case
@@ -13,10 +13,10 @@ GET /range/types/float/unit/match/0.001
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 first
 
 -------------------- case
@@ -25,10 +25,10 @@ GET /range/types/float/unit/match/0.7
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 first
 
 -------------------- case
@@ -37,10 +37,10 @@ GET /range/types/float/unit/match/0.701
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 second
 
 -------------------- case
@@ -49,10 +49,10 @@ GET /range/types/float/unit/match/1.4
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 second
 
 -------------------- case
@@ -61,10 +61,10 @@ GET /range/types/float/unit/match/1.401
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 third
 
 -------------------- case
@@ -73,10 +73,10 @@ GET /range/types/float/unit/match/1.5
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 third
 
 -------------------- case
@@ -85,5 +85,5 @@ GET /range/types/float/unit/match/1.500001
 
 ----- expected
 
-code:
+~ code
 404

@@ -4,8 +4,8 @@ GET /generating/declare/function/body
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ greetings }}

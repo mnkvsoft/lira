@@ -4,8 +4,8 @@ GET /generating/from_file/absolute
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ read.file: /generating/from_file/absolute.txt }}

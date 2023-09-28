@@ -2,10 +2,10 @@
 
 GET /match/static/header
 
-headers:
+~ headers
 Request-Id: 012345
 
 ----- response
 
-code:
+~ code
 200

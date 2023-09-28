@@ -4,8 +4,8 @@ GET /generating/function/body/with_end
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 hello!_end

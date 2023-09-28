@@ -4,5 +4,5 @@ GET /match/function/path/impl/int/{{int}}/some
 
 ----- response
 
-code:
+~ code
 200

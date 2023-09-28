@@ -13,10 +13,10 @@ GET /generating/csharp/functions/json/add/to/root
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ 
      json(#json_var)
         .add("new_field", "new_value")

@@ -2,7 +2,7 @@
 
 POST /payment
 
-headers:
+~ headers
 example: variables
 
 ----- declare
@@ -11,13 +11,13 @@ $requestId = {{ guid }}
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Request-Id: {{ $requestId >> format: N }}
 
-body:
+~ body
 {
     "request_id": "{{ $requestId }}"
 }

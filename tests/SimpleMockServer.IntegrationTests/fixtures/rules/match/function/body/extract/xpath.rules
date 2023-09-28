@@ -2,10 +2,10 @@
 
 POST /match/function/body/extract/xpath
 
-body:
+~ body
 {{ xpath://employee[1]/text() }} >> Johnny Dapp
 
 ----- response
 
-code:
+~ code
 200

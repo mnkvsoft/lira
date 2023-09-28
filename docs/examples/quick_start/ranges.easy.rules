@@ -2,18 +2,18 @@
 
 POST /payment
 
-headers:
+~ headers
 example: range.easy
 
-body:
+~ body
 jpath: $.amount >> {{ range: amount/ok }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "ok"
 }
@@ -22,15 +22,15 @@ body:
 
 POST /payment
 
-body:
+~ body
 jpath: $.amount >> {{ range: amount/reject }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "reject"
 }

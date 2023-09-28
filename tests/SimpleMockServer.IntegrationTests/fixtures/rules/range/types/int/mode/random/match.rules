@@ -4,10 +4,10 @@ GET /range/types/int/mode/random/match/{{ range: int_mode_random/first }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 first
 
 
@@ -17,10 +17,10 @@ GET /range/types/int/mode/random/match/{{ range: int_mode_random/second }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 second
 
 
@@ -30,8 +30,8 @@ GET /range/types/int/mode/random/match/{{ range: int_mode_random/third }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 third

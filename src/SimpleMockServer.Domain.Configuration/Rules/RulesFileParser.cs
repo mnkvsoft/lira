@@ -37,18 +37,10 @@ internal class RuleFileParser
 
     public async Task<IReadOnlyCollection<Rule>> Parse(string ruleFile, ParsingContext parsingContext)
     {
-        var knownSectionsBlocks = _externalCallerParser.GetSectionsKnowsBlocks();
+        var externalCallerSections = _externalCallerParser.GetSectionNames();
 
-        var externalCallerSections = knownSectionsBlocks.Keys.ToList();
-
-        knownSectionsBlocks.Add("rule", BlockNameHelper.GetBlockNames<Constants.BlockName.Rule>());
-        knownSectionsBlocks.Add("response", BlockNameHelper.GetBlockNames<Constants.BlockName.Response>());
-
-        var sections = await SectionFileParser.Parse(
-            ruleFile,
-            knownBlockForSections: knownSectionsBlocks,
-            maxNestingDepth: 3);
-
+        var sections = await SectionFileParser.Parse(ruleFile);
+        
         AssertContainsOnlySections(sections, new[] { Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Templates });
         
         var ctx = parsingContext with { CurrentPath = ruleFile.GetDirectory() };

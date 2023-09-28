@@ -4,5 +4,5 @@ POST /match/static/method/post
 
 ----- response
 
-code:
+~ code
 200

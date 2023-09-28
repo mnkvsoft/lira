@@ -4,8 +4,8 @@ GET /generating/function/header/with_start
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Custom: start_{{echo:hello!}}

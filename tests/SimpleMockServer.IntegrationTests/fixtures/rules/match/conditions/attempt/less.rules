@@ -8,10 +8,10 @@ GET /match/conditions/attempt/less
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt less than 2
 
 -------------------- condition
@@ -20,8 +20,8 @@ attempt less than 2
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt 2

@@ -4,5 +4,5 @@ GET /match/function/query?with_start=start_{{int}}
 
 ----- response
 
-code:
+~ code
 200

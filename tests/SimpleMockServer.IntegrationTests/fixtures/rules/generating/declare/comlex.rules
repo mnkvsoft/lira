@@ -4,9 +4,9 @@ GET /generating/declare/complex
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ $var.random.int }}
 {{ $var.random.int }}

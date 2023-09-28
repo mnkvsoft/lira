@@ -4,9 +4,9 @@ GET /generating/from_file/absolute
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 static value
 value from function

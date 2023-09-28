@@ -3,14 +3,14 @@
 
 POST /match/function/body/extract/jpath
 
-body:
+~ body
 {
   "not" : "matched"
 }
 
 ----- expected
 
-code:
+~ code
 404
 
 // matched
@@ -18,7 +18,7 @@ code:
 
 POST /match/function/body/extract/jpath
 
-body:
+~ body
 {
   "firstName": "John",
   "lastName": "doe",
@@ -42,5 +42,5 @@ body:
 
 ----- expected
 
-code:
+~ code
 200

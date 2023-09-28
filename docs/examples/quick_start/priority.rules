@@ -4,10 +4,10 @@ GET /priority/{{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 rule with ANY
 
 -------------------- rule
@@ -16,23 +16,23 @@ GET /priority/{{ guid }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 rule with GUID
 
 -------------------- rule
 
 GET /priority/{{ guid }}
 
-headers:
+~ headers
 Request-Id: {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 rule with GUID and header

@@ -3,12 +3,12 @@
 
 POST /match/function/body/extract/xpath
 
-body:
+~ body
 <not_matched />
 
 ----- expected
 
-code:
+~ code
 404
 
 
@@ -17,7 +17,7 @@ code:
 
 POST /match/function/body/extract/xpath
 
-body:
+~ body
 <root xmlns:foo="http://www.foo.org/" xmlns:bar="http://www.bar.org">
 	<employees>
 		<employee id="1">Johnny Dapp</employee>
@@ -40,5 +40,5 @@ body:
 
 ----- expected
 
-code:
+~ code
 200

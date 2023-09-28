@@ -8,8 +8,8 @@ GET /generating/declare/function/fullname
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ #hi }}

@@ -4,10 +4,10 @@ GET /range/types/hex/bytes_count/gen/first
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ range: hex_bytes_count/first }}
 
 
@@ -17,8 +17,8 @@ GET /range/types/hex/bytes_count/gen/second
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ range: hex_bytes_count/second }}

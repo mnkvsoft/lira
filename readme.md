@@ -33,10 +33,10 @@ GET /hello/{{ any name: person }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 hello {{ req.path: person }}!
 ```
 
@@ -79,10 +79,10 @@ GET /hi
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 hello!
 ```
 
@@ -109,13 +109,13 @@ GET /delay
 
 ----- response
 
-delay:
+~ delay
 2000 ms
 
-code:
+~ code
 200
 
-body:
+~ body
 long query
 ```
 
@@ -140,18 +140,18 @@ long query
 
 POST /payment/{{ any }}?fast={{ any }}
 
-headers:
+~ headers
 Request-Id: {{ guid }}
 
-body:
+~ body
 jpath: $.number >> 4444{{ int }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "id": 12345,
     "status": "ok"
@@ -194,13 +194,13 @@ GET /order
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Request-Time: {{ now >> format: H:mm:ss }}
 
-body:
+~ body
 {
     "id": {{ int }},
     "amount": {{ float }},
@@ -243,21 +243,21 @@ Request-Time: 12:07:16
 
 POST /payment/{{ any name: tool }}?fast={{ any }}
 
-headers:
+~ headers
 Id: {{ any }}
 
-body:
+~ body
 jpath: $.account >> {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Request-Id: {{ req.header: Id}}
 
-body:
+~ body
 {
     "tool": "{{ req.path: tool }}",
     "is_fast": "{{ req.query: fast }}",
@@ -306,7 +306,7 @@ Request-Id: 987
 
 POST /payment
 
-headers:
+~ headers
 example: variables
 
 ----- declare
@@ -315,13 +315,13 @@ $requestId = {{ guid }}
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Request-Id: {{ $requestId >> format: N }}
 
-body:
+~ body
 {
     "request_id": "{{ $requestId }}"
 }
@@ -356,7 +356,7 @@ Request-Id: 1cfc7bc5ea6146a79dc2820fe7c6c63c
 
 POST /payment
 
-headers:
+~ headers
 example: call
 
 ----- declare
@@ -365,10 +365,10 @@ $id = {{ seq }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "id": {{ $id }}, 
     "status": "pending"
@@ -378,13 +378,13 @@ body:
 
 POST http://localhost/api/callback
 
-delay: 
+~ delay 
 100 ms
 
-headers:
+~ headers
 Content-Type: application/json
 
-body:
+~ body
 {
     "id": {{ $id }}, 
     "status": "ok"
@@ -397,7 +397,7 @@ POST /api/callback
 
 ----- response
 
-code:
+~ code
 200
 ```
 Запрос
@@ -444,10 +444,10 @@ GET /comments
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 // single line comment 
 /*
     it's multiline
@@ -482,10 +482,10 @@ GET /priority/{{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 rule with ANY
 
 -------------------- rule
@@ -494,25 +494,25 @@ GET /priority/{{ guid }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 rule with GUID
 
 -------------------- rule
 
 GET /priority/{{ guid }}
 
-headers:
+~ headers
 Request-Id: {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 rule with GUID and header
 ```
 Запрос
@@ -575,18 +575,18 @@ rule with GUID and header
 
 POST /payment
 
-headers:
+~ headers
 example: range.easy
 
-body:
+~ body
 jpath: $.amount >> {{ range: amount/ok }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "ok"
 }
@@ -595,15 +595,15 @@ body:
 
 POST /payment
 
-body:
+~ body
 jpath: $.amount >> {{ range: amount/reject }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "reject"
 }
@@ -706,18 +706,18 @@ curl --location 'http://localhost/payment' \
 
 POST /payment
 
-headers:
+~ headers
 example: range.medium
 
-body:
+~ body
 jpath: $.amount >> {{ range: amount/ok }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "id": {{ range: payment_id/ok }},
     "status": "ok"
@@ -727,15 +727,15 @@ body:
 
 POST /payment/refund/{{ range: payment_id/ok}}
 
-headers:
+~ headers
 example: range.medium
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "ok"
 }
@@ -746,18 +746,18 @@ body:
 
 POST /payment
 
-headers:
+~ headers
 example: range.medium
 
-body:
+~ body
 jpath: $.amount >> {{ range: amount/refund_reject }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "id": {{ range: payment_id/refund_reject }},
     "status": "ok"
@@ -767,15 +767,15 @@ body:
 
 POST /payment/refund/{{ range: payment_id/refund_reject}}
 
-headers:
+~ headers
 example: range.medium
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "reject"
 }
@@ -893,10 +893,10 @@ GET /pay/status
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "registered"
 }
@@ -907,10 +907,10 @@ body:
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "pending"
 }
@@ -922,10 +922,10 @@ body:
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "status": "ok"
 }
@@ -968,7 +968,7 @@ curl --location 'http://localhost/pay/status'
 
 POST /payment
 
-headers:
+~ headers
 example: custom_function
 
 ----- declare
@@ -977,10 +977,10 @@ example: custom_function
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "created_at": "{{ #payment.now }}"
     
@@ -1031,15 +1031,15 @@ curl --location --request POST 'http://localhost/payment' \
 
 GET /payment
 
-headers:
+~ headers
 example: declare.shared.file
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "amount": {{ amount }}
 }
@@ -1048,15 +1048,15 @@ body:
 
 GET /account
 
-headers:
+~ headers
 example: declare.shared.file
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "balance": {{ amount }}
 }
@@ -1109,15 +1109,15 @@ curl --location 'http://localhost/account' \
 
 GET /person
 
-headers:
+~ headers
 example: declare.shared.global
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "age": {{ age }}
 }
@@ -1159,30 +1159,30 @@ curl --location 'http://localhost/person' \
 
 POST /order
 
-headers:
+~ headers
 example: multiline_functions
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ template.order }}
 
 -------------------- rule
 
 GET /order
 
-headers:
+~ headers
 example: multiline_functions
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ template.order }}
 ```
 Запрос
@@ -1248,15 +1248,15 @@ curl --location 'http://localhost/order' \
 
 POST /order
 
-headers:
+~ headers
 example: change_json
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ 
     json( #template.order )
         .replace("$.status", "pending")
@@ -1267,15 +1267,15 @@ body:
 
 GET /order
 
-headers:
+~ headers
 example: change_json
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ 
     json( #template.order )
         .replace("$.status", "refunded")
@@ -1334,10 +1334,10 @@ GET /very/old/event
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "date": {{ DateTime.Now.AddYears(-100 - Random.Shared.Next(1, 100)) }}
 }
@@ -1362,18 +1362,18 @@ curl --location 'http://localhost/very/old/event'
 
 POST /payment/card
 
-headers:
+~ headers
 example: csharp.full 
 
-body:
+~ body
 jpath: $.number >> {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "mnemonic": {{ 
         string cardNumber = @req.Body.ByJPath("$.number");
@@ -1465,18 +1465,18 @@ public static class CardNumber
 
 POST /payment/card
 
-headers:
+~ headers
 example: charp.class.mnenonic
 
-body:
+~ body
 jpath: $.number >> {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 mnemonic was generated from 'number' field: {{ 
     CardNumber.GetMnemonic(@req.Body.ByJPath("$.number")) 
 }}
@@ -1486,18 +1486,18 @@ mnemonic was generated from 'number' field: {{
 
 POST /payment/card
 
-headers:
+~ headers
 example: charp.class.mnenonic
 
-body:
+~ body
 jpath: $.pan >> {{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 mnemonic was generated from 'pan' field: {{ 
     CardNumber.GetMnemonic(@req.Body.ByJPath("$.pan")) 
 }}
@@ -1563,7 +1563,7 @@ public static class SignatureCalculator
 
 POST /payment
 
-headers:
+~ headers
 example: charp.class.sign
 
 ----- declare
@@ -1577,10 +1577,10 @@ example: charp.class.sign
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{
     json( #response )
         .add("sign", SignatureCalculator.Get(#response, "very_secret_key"))
@@ -1619,10 +1619,10 @@ GET /get_type
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ guid >> @value.GetType() }}
 {{ float >> @value.GetType() }}
 {{ date >> @value.GetType() }}
@@ -1651,10 +1651,10 @@ GET /format
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 // short function
 {{ guid >> format: N }}
 

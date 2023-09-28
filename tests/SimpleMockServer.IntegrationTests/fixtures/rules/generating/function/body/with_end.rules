@@ -4,8 +4,8 @@ GET /generating/function/body/with_end
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ echo:hello! }}_end

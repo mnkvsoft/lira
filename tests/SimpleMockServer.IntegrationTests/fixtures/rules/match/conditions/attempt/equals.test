@@ -4,10 +4,10 @@ GET /match/conditions/attempt/equals
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt 1
 
 -------------------- case
@@ -16,10 +16,10 @@ GET /match/conditions/attempt/equals
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt 2
 
 -------------------- case
@@ -28,5 +28,5 @@ GET /match/conditions/attempt/equals
 
 ----- expected
 
-code:
+~ code
 404

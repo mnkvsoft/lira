@@ -4,8 +4,8 @@ GET /generating/declare/variable/format/static/int
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 1.00

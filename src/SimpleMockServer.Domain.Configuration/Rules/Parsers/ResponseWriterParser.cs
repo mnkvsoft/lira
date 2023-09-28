@@ -31,6 +31,8 @@ class ResponseWriterParser
 
     private static TimeSpan? GetDelay(FileSection responseSection)
     {
+        responseSection.AssertContainsOnlyKnownBlocks(BlockNameHelper.GetBlockNames<Constants.BlockName.Response>());
+        
         var block = responseSection.GetBlock(Constants.BlockName.Response.Delay);
 
         if (block == null)
@@ -86,7 +88,7 @@ class ResponseWriterParser
     private static int ParseHttpCode(string str)
     {
         if (!int.TryParse(str, out var httpCode))
-            throw new Exception($"Invalid http code: '{str}'");
+            throw new Exception($"Invalid http ~ code '{str}'");
         return httpCode;
     }
 }

@@ -2,10 +2,10 @@
 
 POST /match/function/body/extract/form
 
-body:
+~ body
 name=Johnny Dapp
 
 ----- expected
 
-code:
+~ code
 200

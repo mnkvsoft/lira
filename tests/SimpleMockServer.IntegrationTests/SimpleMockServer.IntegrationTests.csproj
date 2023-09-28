@@ -923,6 +923,12 @@
     <None Update="fixtures\rules\generating\csharp_blocks\access_to_declared_function.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\rule_file_format\short_block.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\rule_file_format\short_block.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -2,43 +2,43 @@
 
 GET /match/conditions/attempt/more
 
-headers:
+~ headers
 x: 1
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt 1
 
 -------------------- case
 
 GET /match/conditions/attempt/more
 
-headers:
+~ headers
 x: 2
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt 1
 
 -------------------- case
 
 GET /match/conditions/attempt/more
 
-headers:
+~ headers
 x: 1
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt more than 1

@@ -4,8 +4,8 @@ GET /generating/function/header/with_end
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Custom: {{ echo:hello! }}_end

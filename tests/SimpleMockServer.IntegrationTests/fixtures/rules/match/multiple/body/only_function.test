@@ -2,13 +2,13 @@
 
 POST /match/multiple/body/only_function
 
-body:
+~ body
 100
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 int

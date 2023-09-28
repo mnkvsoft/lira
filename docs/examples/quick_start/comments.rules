@@ -4,10 +4,10 @@ GET /comments
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 // single line comment 
 /*
     it's multiline

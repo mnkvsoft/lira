@@ -4,8 +4,8 @@ GET /generating/declare/variable/header
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 Content-Type: {{ $global_content_type }}

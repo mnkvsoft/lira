@@ -4,8 +4,8 @@ GET /user?name={{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 any user by query param matched

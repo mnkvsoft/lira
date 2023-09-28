@@ -5,7 +5,7 @@ GET /match/function/query?with_start_and_end=start_not_matched_{{int}}_end_not_m
 
 ----- expected
 
-code:
+~ code
 404
 
 // matched
@@ -15,5 +15,5 @@ GET /match/function/query?with_start_and_end=start_123_end
 
 ----- expected
 
-code:
+~ code
 200

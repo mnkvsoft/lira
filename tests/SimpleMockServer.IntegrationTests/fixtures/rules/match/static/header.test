@@ -5,7 +5,7 @@ GET /match/static/header
 
 ----- expected
 
-code:
+~ code
 404
 
 
@@ -14,10 +14,10 @@ code:
 
 GET /match/static/header
 
-headers:
+~ headers
 Request-Id: 012345
 
 ----- expected
 
-code:
+~ code
 200

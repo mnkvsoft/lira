@@ -4,5 +4,5 @@ GET /comments/single_line/start
 
 ----- expected
 
-code:
+~ code
 200

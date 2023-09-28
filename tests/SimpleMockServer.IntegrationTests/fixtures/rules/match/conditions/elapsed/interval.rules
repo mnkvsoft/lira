@@ -8,10 +8,10 @@ GET /match/conditions/elapsed/interval
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 elapsed < 100 ms
 
 -------------------- condition
@@ -20,8 +20,8 @@ elapsed < 100 ms
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 elapsed in [100 ms - 200 ms]

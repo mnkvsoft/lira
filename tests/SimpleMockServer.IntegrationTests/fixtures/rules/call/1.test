@@ -2,23 +2,23 @@
 
 POST /call/http
 
-body:
+~ body
 {
     "external_id": "12345"
 }
 
-headers:
+~ headers
 Request-Id: 64F67BF9-28C8-41F8-9D8B-75E0A64B8A16
 
-wait:
+~ wait
 00:00:01
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "id": 1,
     "createdAt": "2023-04-23 10:45",
@@ -29,13 +29,13 @@ body:
 
 POST http://fakeserver:9876/api/callback?a=1
 
-elapsed: 
+~ elapsed 
 00:00:00.100
 
-headers:
+~ headers
 Request-Id: 64F67BF9-28C8-41F8-9D8B-75E0A64B8A16
 
-body:
+~ body
 {
     "id": 1,
     "external_id": "12345"

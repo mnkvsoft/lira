@@ -4,8 +4,8 @@ GET /generating/function/extract/query?p=extracted_value
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ req.query: p }}

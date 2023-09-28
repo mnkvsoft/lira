@@ -2,7 +2,7 @@
 
 GET /generating/csharp/body_access/body/xpath
 
-body: 
+~ body 
 <root xmlns:foo="http://www.foo.org/" xmlns:bar="http://www.bar.org">
 	<employees>
 		<employee id="1">Johnny Dapp</employee>
@@ -25,8 +25,8 @@ body:
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 Johnny Dapp

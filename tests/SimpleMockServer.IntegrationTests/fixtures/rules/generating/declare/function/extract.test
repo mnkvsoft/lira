@@ -2,13 +2,13 @@
 
 GET /generating/declare/extract
 
-headers:
+~ headers
 Request-Id: requestId!
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 requestId!

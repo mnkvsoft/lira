@@ -8,8 +8,8 @@ GET /generating/template/file_section
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ @@template.from.file.section }}

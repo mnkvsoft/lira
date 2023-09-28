@@ -4,10 +4,10 @@ GET /format
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 // short function
 {{ guid >> format: N }}
 

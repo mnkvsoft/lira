@@ -4,8 +4,8 @@ GET /generating/static/body
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 some

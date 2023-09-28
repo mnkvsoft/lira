@@ -6,7 +6,7 @@ GET /range/types/hex/capacity/match/71cabc66a700008022a8de4b3a7dd5b3aad9d9cb3002
 
 ----- expected
 
-code:
+~ code
 200
 
 // hex value in range [-9223371036854775808 - -9223370036854775809] 
@@ -17,10 +17,10 @@ GET /range/types/hex/capacity/match/8c0ed618bd0100801c007551f00c441311abeb8af15b
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 second
 
 // hex value in range [-9223370036854775808 - -9223369036854775809]
@@ -31,9 +31,9 @@ GET /range/types/hex/capacity/match/6bb801600e0200802d95ef5260747ca85c373a8e5062
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 third
 

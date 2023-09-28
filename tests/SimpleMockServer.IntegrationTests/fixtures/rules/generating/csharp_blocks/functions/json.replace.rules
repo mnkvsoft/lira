@@ -14,10 +14,10 @@ $json_var =
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ 
      json($json_var)
         .replace("$.field1", "new_value") 

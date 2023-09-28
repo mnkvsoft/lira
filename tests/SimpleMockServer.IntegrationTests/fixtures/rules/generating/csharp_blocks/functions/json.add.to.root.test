@@ -4,10 +4,10 @@ GET /generating/csharp/functions/json/add/to/root
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 {
   "field1": "value",
   "new_field": "new_value"

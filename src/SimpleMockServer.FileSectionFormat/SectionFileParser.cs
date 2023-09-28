@@ -8,12 +8,9 @@ public static class SectionFileParser
 {
     private const int MinSectionBlockCharsLength = 3;
     private const char SectionStartChar = '-';
-    private const char BlockEndChar = ':';
+    private const char BlockStartChar = '~';
 
-    public static async Task<IReadOnlyList<FileSection>> Parse(
-        string ruleFile,
-        IReadOnlyDictionary<string, IReadOnlySet<string>> knownBlockForSections,
-        int maxNestingDepth)
+    public static async Task<IReadOnlyList<FileSection>> Parse(string ruleFile)
     {
         string text = await File.ReadAllTextAsync(ruleFile);
         var lines =  TextCleaner.DeleteEmptiesAndComments(text);
@@ -26,12 +23,9 @@ public static class SectionFileParser
         if (sectionLengths.Count == 0)
             throw new FileBlockFormatException("Sections not found");
 
-        if (sectionLengths.Count > maxNestingDepth)
-            throw new FileBlockFormatException($"Max nesting depth: {maxNestingDepth}. Current: {sectionLengths.Count}");
-
         int[] orderedSectionLengths = sectionLengths.OrderByDescending(x => x).ToArray();
         int index = 0;
-        var rootSections = GetSections(orderedSectionLengths, ref index, lines, knownBlockForSections);
+        var rootSections = GetSections(orderedSectionLengths, ref index, lines);
         return rootSections;
     }
 
@@ -54,8 +48,7 @@ public static class SectionFileParser
     static IReadOnlyList<FileSection> GetSections(
         int[] orderedSectionLengths,
         ref int index,
-        IReadOnlyList<string> lines,
-        IReadOnlyDictionary<string, IReadOnlySet<string>> knownBlockForSections)
+        IReadOnlyList<string> lines)
     {
         int currentLength = orderedSectionLengths[index];
 
@@ -130,9 +123,11 @@ public static class SectionFileParser
             FileBlock? currentBlock = null;
             foreach (var line in sectionBlocksLines)
             {
-                if (knownBlockForSections.ContainsKey(sectionName) && IsBlock(line, knownBlockForSections[sectionName], out var blockName))
+                if (IsBlock(line, out var blockName, out var shortBlockValue))
                 {
                     currentBlock = new FileBlock(blockName);
+                    if(shortBlockValue != null)
+                        currentBlock.Add(shortBlockValue);
                     section.Blocks.AddOrThrowIfContains(currentBlock);
                     continue;
                 }
@@ -146,8 +141,7 @@ public static class SectionFileParser
             if (childSectionsBlocksLines.Count > 0)
             {
                 index++;
-                section.ChildSections.AddRange(GetSections(orderedSectionLengths, ref index, childSectionsBlocksLines,
-                    knownBlockForSections));
+                section.ChildSections.AddRange(GetSections(orderedSectionLengths, ref index, childSectionsBlocksLines));
             }
         }
 
@@ -172,17 +166,16 @@ public static class SectionFileParser
         return line.StartsWith(new string(SectionStartChar, MinSectionBlockCharsLength));
     }
 
-    private static bool IsBlock(string cleanLine, IReadOnlySet<string> knownBlocks,
-        [MaybeNullWhen(returnValue: false)] out string blockName)
+    private static bool IsBlock(string cleanLine,
+        [MaybeNullWhen(returnValue: false)] out string blockName, out string? shortBlockValue)
     {
         blockName = null;
-        foreach (string block in knownBlocks)
+        shortBlockValue = null;
+
+        if (cleanLine.StartsWith(BlockStartChar + " "))
         {
-            if (cleanLine.StartsWith(block + BlockEndChar))
-            {
-                blockName = block;
-                return true;
-            }
+            (blockName, shortBlockValue) = cleanLine.TrimStart(BlockStartChar).SplitToTwoParts(":").Trim();
+            return true;
         }
 
         return false;

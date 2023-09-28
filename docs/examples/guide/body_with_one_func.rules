@@ -2,16 +2,16 @@
 
 POST /user
 
-headers:
+~ headers
 example: body_with_one_func
 
-body:
+~ body
 {{ int }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 matches body by one function

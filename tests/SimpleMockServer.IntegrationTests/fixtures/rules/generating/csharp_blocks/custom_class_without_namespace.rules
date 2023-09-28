@@ -4,8 +4,8 @@ GET /generating/csharp/custom_class_without_namespace
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ req.body.all >> Echo.Ho(@value) }}

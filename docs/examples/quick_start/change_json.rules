@@ -14,15 +14,15 @@
 
 POST /order
 
-headers:
+~ headers
 example: change_json
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ 
     json( #template.order )
         .replace("$.status", "pending")
@@ -33,15 +33,15 @@ body:
 
 GET /order
 
-headers:
+~ headers
 example: change_json
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ 
     json( #template.order )
         .replace("$.status", "refunded")

@@ -4,10 +4,10 @@ GET /generating/format
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 
 // if format not required then write as is
 {{ req.header: Request-Id }}

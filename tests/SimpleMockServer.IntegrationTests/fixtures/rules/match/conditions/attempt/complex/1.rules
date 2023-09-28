@@ -9,10 +9,10 @@ GET /match/conditions/attempt/complex/1
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt 1, 2
 
 -------------------- condition
@@ -22,8 +22,8 @@ attempt 1, 2
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt 3, 4

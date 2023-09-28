@@ -4,7 +4,7 @@ GET /range/types/int/default/match/0
 
 ----- expected
 
-code:
+~ code
 404
 
 -------------------- case
@@ -13,10 +13,10 @@ GET /range/types/int/default/match/1
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 first
 
 -------------------- case
@@ -25,10 +25,10 @@ GET /range/types/int/default/match/4611686018427387903
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 first
 
 -------------------- case
@@ -37,10 +37,10 @@ GET /range/types/int/default/match/4611686018427387904
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 second
 
 -------------------- case
@@ -49,10 +49,10 @@ GET /range/types/int/default/match/9223372036854775806
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 second
 
 -------------------- case
@@ -61,5 +61,5 @@ GET /range/types/int/default/match/9223372036854775807
 
 ----- expected
 
-code:
+~ code
 404

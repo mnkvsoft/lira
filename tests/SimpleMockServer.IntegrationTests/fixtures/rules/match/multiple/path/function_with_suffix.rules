@@ -4,10 +4,10 @@ GET /match/multiple/path/function_with_suffix/{{ any }}_suffix
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 with suffix
 
 -------------------- rule
@@ -16,8 +16,8 @@ GET /match/multiple/path/function_with_suffix/{{ any }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 without suffix

@@ -4,8 +4,8 @@ GET /generating/function/extract/path/{{ any name: some }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ req.path: some }}

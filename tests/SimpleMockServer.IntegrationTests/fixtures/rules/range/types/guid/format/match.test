@@ -6,10 +6,10 @@ GET /range/types/guid/format/match/c05016d96f582ab40000000000000080
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 first
 
 // 20ff58ff-e9ff-91ff-ff2c-ff94ff8cff97 - -1 in int64
@@ -20,8 +20,8 @@ GET /range/types/guid/format/match/d1a6ebcc8491f590ffffffffffffffff
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 second

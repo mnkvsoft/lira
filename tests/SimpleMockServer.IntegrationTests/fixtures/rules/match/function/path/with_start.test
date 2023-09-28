@@ -5,7 +5,7 @@ GET /match/function/path/with_start/start_not_matched_{{int}}/some
 
 ----- expected
 
-code:
+~ code
 404
 
 // matched
@@ -15,5 +15,5 @@ GET /match/function/path/with_start/start_123/some
 
 ----- expected
 
-code:
+~ code
 200

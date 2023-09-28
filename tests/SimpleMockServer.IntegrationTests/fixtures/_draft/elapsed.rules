@@ -8,10 +8,10 @@ elapsed_from_first_request >> more: 00:00:01.000
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt 1
 
 -------------------- condition
@@ -20,8 +20,8 @@ attempt >> equals: 2
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 attempt 2

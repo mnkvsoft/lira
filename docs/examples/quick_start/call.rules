@@ -2,7 +2,7 @@
 
 POST /payment
 
-headers:
+~ headers
 example: call
 
 ----- declare
@@ -11,10 +11,10 @@ $id = {{ seq }}
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "id": {{ $id }}, 
     "status": "pending"
@@ -24,13 +24,13 @@ body:
 
 POST http://localhost/api/callback
 
-delay: 
+~ delay 
 100 ms
 
-headers:
+~ headers
 Content-Type: application/json
 
-body:
+~ body
 {
     "id": {{ $id }}, 
     "status": "ok"
@@ -43,5 +43,5 @@ POST /api/callback
 
 ----- response
 
-code:
+~ code
 200

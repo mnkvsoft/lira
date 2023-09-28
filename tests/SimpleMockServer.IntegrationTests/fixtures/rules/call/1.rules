@@ -10,10 +10,10 @@ $callback_server = http://fakeserver:9876
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {
     "id": {{ $newId }},
     "createdAt": "{{ $createdAt }}",
@@ -24,14 +24,14 @@ body:
 
 POST {{ $callback_server }}/api/callback?a={{echo: 1}}
 
-delay: 
+~ delay 
 100 ms
 
-headers:
+~ headers
 Content-Type: application/json
 Request-Id: {{ req.header: Request-Id }}
 
-body:
+~ body
 {
     "id": {{ $newId }},
     "external_id": "{{ req.body.jpath: $.external_id }}"

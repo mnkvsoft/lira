@@ -8,8 +8,8 @@ GET /generating/csharp/access_to_declared_function
 
 ----- response
 
-code:
+~ code
 200
 
-body:
+~ body
 {{ #duration.day + TimeSpan.FromMinutes(1) }}

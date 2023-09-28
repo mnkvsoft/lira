@@ -4,10 +4,10 @@ GET /generating/declare/variable/multiline
 
 ----- expected
 
-code:
+~ code
 200
 
-body:
+~ body
 line1
 line2
 line3

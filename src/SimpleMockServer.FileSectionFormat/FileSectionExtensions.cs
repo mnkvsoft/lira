@@ -2,6 +2,13 @@
 
 public static class FileSectionExtensions
 {
+    public static void AssertContainsOnlyKnownBlocks(this FileSection section, IReadOnlySet<string> knownBlockNames)
+    {
+        var unknownBlocks = section.Blocks.Where(b => !knownBlockNames.Contains(b.Name)).ToList();
+        if (unknownBlocks.Any())
+            throw new Exception($"Section '{section.Name}' has unknown blocks: {string.Join(", ", unknownBlocks)}");
+    }
+    
     public static FileSection GetSingleChildSection(this FileSection section, string name)
     {
         var sections = section.ChildSections.Where(x => x.Name == name).ToArray();

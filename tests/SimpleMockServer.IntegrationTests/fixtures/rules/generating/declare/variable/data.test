@@ -4,13 +4,13 @@ GET /generating/declare/variable/data
 
 ----- expected
 
-code:
+~ code
 200
 
-headers:
+~ headers
 OrderId: order_1
 
-body:
+~ body
 {
     "order_id": "order_1"
 }

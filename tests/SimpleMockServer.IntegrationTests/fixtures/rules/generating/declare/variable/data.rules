@@ -8,13 +8,13 @@ $orderId = order_{{ range: generating_variable_seq/default }}
 
 ----- response
 
-code:
+~ code
 200
 
-headers:
+~ headers
 OrderId: {{ $orderId }}
 
-body:
+~ body
 {
     "order_id": "{{ $orderId }}"
 }
