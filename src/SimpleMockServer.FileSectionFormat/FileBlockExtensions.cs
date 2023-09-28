@@ -24,7 +24,7 @@ public static class FileBlockExtensions
 
     public static string GetStringValue(this FileBlock block)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
         for (int i = 0; i < block.Lines.Count; i++)
         {

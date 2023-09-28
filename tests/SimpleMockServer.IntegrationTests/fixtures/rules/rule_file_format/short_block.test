@@ -4,7 +4,7 @@ GET /rule_file_format/short_block
 
 ----- expected
 
-~ code: 
+~ code
 200
 
 ~ body
