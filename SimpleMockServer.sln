@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{B539FC
 		global.json = global.json
 		readme.md = readme.md
 		todo_teature.txt = todo_teature.txt
+		editors\vscode\rules\syntaxes\rules.tmLanguage.json = editors\vscode\rules\syntaxes\rules.tmLanguage.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BE927F78-B04F-4B6F-97FD-9B8397AF9915}"

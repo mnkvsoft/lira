@@ -2,9 +2,12 @@
 
 GET /payment/status
 
+~ headers
+example: conditions_attempt
+
 --------------- condition
 
-@elapsed < 2 second
+@attempt < 2
 
 ----- response
 
@@ -18,7 +21,7 @@ GET /payment/status
 
 --------------- condition
 
-@elapsed in [2 second - 4 second]
+@attempt in [2 - 4]
 
 ----- response
 
@@ -33,7 +36,7 @@ GET /payment/status
 
 --------------- condition
 
-@elapsed > 4 second
+@attempt > 4
 
 ----- response
 

@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "0529f620-fe72-4938-83e8-a759e9fba538",
+		"_postman_id": "2ead6d07-e572-44a5-a89a-4fc0c669f1b6",
 		"name": "examples",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "29626915"
+		"_exporter_id": "13641331"
 	},
 	"item": [
 		{
@@ -767,12 +767,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/pay/status",
+							"raw": "{{base_url}}/payment/status",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"pay",
+								"payment",
 								"status"
 							]
 						}
@@ -963,6 +963,65 @@
 							"path": [
 								"user",
 								"ivanov_petr_petrovich"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "conditions_attempt",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "conditions_attempt",
+								"type": "text"
+							},
+							{
+								"key": "1",
+								"value": "67",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payment/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "conditions_elapsed",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "conditions_elapsed",
+								"type": "text"
+							},
+							{
+								"key": "1",
+								"value": "1",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payment/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"status"
 							]
 						}
 					},
@@ -1200,6 +1259,102 @@
 									"language": "json"
 								}
 							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment/card",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"card"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "body_xpath",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "body_xpath",
+								"type": "text"
+							},
+							{
+								"key": "Request-Time",
+								"value": "14:21:01.123",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "No-Cache",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<root>\r\n    <number>1111222233334444</number>\r\n    <owner>Rodrygo</owner>\r\n    <amount>123.99</amount>\r\n</root>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment/card",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"card"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "body_form",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "body_form",
+								"type": "text"
+							},
+							{
+								"key": "Request-Time",
+								"value": "14:21:01.123",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "No-Cache",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "number",
+									"value": "1111222233334444",
+									"type": "text"
+								},
+								{
+									"key": "owner",
+									"value": "Rodrygo",
+									"type": "text"
+								}
+							]
 						},
 						"url": {
 							"raw": "{{base_url}}/payment/card",

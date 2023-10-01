@@ -2,9 +2,12 @@
 
 GET /payment/status
 
+~ headers
+example: conditions_elapsed
+
 --------------- condition
 
-@elapsed < 2 second
+@elapsed < 2 seconds
 
 ----- response
 

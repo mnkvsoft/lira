@@ -885,7 +885,7 @@ curl --location --request POST 'http://localhost/payment/refund/4611686018427387
 ```
 ---------------------------- rule
 
-GET /pay/status
+GET /payment/status
 
 --------------- condition
 
