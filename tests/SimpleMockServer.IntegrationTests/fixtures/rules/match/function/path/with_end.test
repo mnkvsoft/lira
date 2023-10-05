@@ -1,4 +1,4 @@
-// not matched
+## not matched
 -------------------- case
 
 GET /match/function/path/with_end/{{int}}_end_not_matched/some
@@ -8,7 +8,7 @@ GET /match/function/path/with_end/{{int}}_end_not_matched/some
 ~ code
 404
 
-// matched
+## matched
 -------------------- case
 
 GET /match/function/path/with_end/123_end/some

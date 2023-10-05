@@ -1,4 +1,4 @@
-// not matched
+## not matched
 -------------------- case
 
 GET /match/static/method/post
@@ -8,7 +8,7 @@ GET /match/static/method/post
 ~ code
 404
 
-// matched
+## matched
 -------------------- case
 
 POST /match/static/method/post

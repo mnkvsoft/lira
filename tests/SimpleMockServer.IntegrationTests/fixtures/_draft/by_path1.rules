@@ -1,4 +1,4 @@
-/*
+###
 ---------------------------------------- rule
 
 GET /match/static/1
@@ -61,4 +61,4 @@ Content-Type:text/plain
 
 ~ body
 matched by path /match/static/1 only
-*/
+###

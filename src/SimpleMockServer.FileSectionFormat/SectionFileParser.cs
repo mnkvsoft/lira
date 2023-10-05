@@ -185,7 +185,7 @@ public static class SectionFileParser
 
     private static string GetStartSectionString(string line)
     {
-        StringBuilder startBlock = new StringBuilder();
+        var startBlock = new StringBuilder();
         foreach (char c in line)
         {
             if (c == ' ')

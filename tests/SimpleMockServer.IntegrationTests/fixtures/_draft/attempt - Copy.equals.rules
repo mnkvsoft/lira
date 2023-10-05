@@ -1,4 +1,4 @@
-/*
+###
 ---------------------------------------- rule
 
 GET /match/conditions/attempt/equals
@@ -26,4 +26,4 @@ Token: af5kdjdg7423j53ll44865jdds
 {
     "user_id": {{ $userId }}
 }
-*/
+###

@@ -7,7 +7,7 @@ GET /range/types/hex/capacity/gen/first
 ~ code
 200
 
-// todo: need implementation body check
+## todo: need implementation body check
 
 -------------------- rule
 
@@ -18,7 +18,7 @@ GET /range/types/hex/capacity/gen/second
 ~ code
 200
 
-// todo: need implementation body check
+## todo: need implementation body check
 
 -------------------- rule
 
@@ -29,4 +29,4 @@ GET /range/types/hex/capacity/gen/third
 ~ code
 200
 
-// todo: need implementation body check
+## todo: need implementation body check

@@ -1,4 +1,4 @@
-// 8dfc399f-a39e-e983-0000-000000000080 - -9223372036854775808 in int64
+## 8dfc399f-a39e-e983-0000-000000000080 - -9223372036854775808 in int64
 
 -------------------- case
 
@@ -12,7 +12,7 @@ GET /range/types/guid/default/match/8dfc399f-a39e-e983-0000-000000000080
 ~ body
 first
 
-// 190e6b4c-197a-f7ee-ffff-ffffffffffff - -1 in int64
+## 190e6b4c-197a-f7ee-ffff-ffffffffffff - -1 in int64
 
 -------------------- case
 

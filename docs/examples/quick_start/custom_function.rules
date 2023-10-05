@@ -18,6 +18,6 @@ example: custom_function
 {
     "created_at": "{{ #payment.now }}"
     
-    // the '#' symbol can be omitted when calling a function
-    // "created_at": "{{ payment.now }}"
+    ## the '#' symbol can be omitted when calling a function
+    ## "created_at": "{{ payment.now }}"
 }

@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /comments/single_line/end
+GET /comments/multi_line/end
 
 ----- expected
 

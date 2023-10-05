@@ -7,7 +7,7 @@ GET /range/types/hex/bytes_count/gen/first
 ~ code
 200
 
-// todo: need implementation body check
+## todo: need implementation body check
 
 -------------------- case
 
@@ -18,4 +18,4 @@ GET /range/types/hex/bytes_count/gen/second
 ~ code
 200
 
-// todo: need implementation body check
+## todo: need implementation body check

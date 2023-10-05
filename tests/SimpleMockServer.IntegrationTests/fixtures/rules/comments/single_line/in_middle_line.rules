@@ -9,5 +9,5 @@ GET /comments/single_line/in_middle_line
 
 ~ body
 start text
-middle text // comment in middle
+middle text## comment in middle
 end text

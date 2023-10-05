@@ -6,19 +6,17 @@ internal static class Comments
 {
     static class CommentChar
     {
-        public const string SingleLine = "//";
-        public const string MultiLineStart = "/*";
-        public const string MultiLineEnd = "*/";
+        public const string SingleLine = "##";
+        public const string MultiLineStart = "###";
+        public const string MultiLineEnd = "###";
     }
     
     public static string[] Delete(string text)
     {
-        text = Delete(text, " " + CommentChar.SingleLine, Environment.NewLine, isMultiline: false);
         text = Delete(text, CommentChar.MultiLineStart, CommentChar.MultiLineEnd, isMultiline: true);
+        text = Delete(text, CommentChar.SingleLine, Environment.NewLine, isMultiline: false);
 
-        return text.Split(Environment.NewLine)
-            .Where(l => !l.StartsWith(CommentChar.SingleLine))
-            .ToArray();
+        return text.Split(Environment.NewLine).ToArray();
     }
 
     private static string Delete(string text, string startComment, string endComment, bool isMultiline)
@@ -29,7 +27,7 @@ internal static class Comments
         while (startCommentIndex != -1)
         {
             result.Append(text.Substring(0, startCommentIndex));
-            text = text.Substring(startCommentIndex);
+            text = text.Substring(startCommentIndex + startComment.Length);
 
             int endCommentIndex = text.IndexOf(endComment, StringComparison.OrdinalIgnoreCase);
             if (endCommentIndex == -1)

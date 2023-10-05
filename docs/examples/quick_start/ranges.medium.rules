@@ -1,4 +1,4 @@
-// ok refund rule
+## ok refund rule
 
 -------------------- rule
 
@@ -38,7 +38,7 @@ example: range.medium
     "status": "ok"
 }
 
-// reject refund rule
+## reject refund rule
 
 -------------------- rule
 

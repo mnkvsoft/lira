@@ -1,4 +1,4 @@
-// not matched
+## not matched
 -------------------- case
 
 GET /match/function/path/impl/guid/NOT_GUID/some
@@ -8,7 +8,7 @@ GET /match/function/path/impl/guid/NOT_GUID/some
 ~ code
 404
 
-// matched
+## matched
 -------------------- case
 
 GET /match/function/path/impl/guid/0B5043CA-2E3F-4EB7-9EC5-15039370AEB4/some
