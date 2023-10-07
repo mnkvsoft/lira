@@ -4,7 +4,7 @@ GET /generating/declare/variable/data
 
 ----- declare
 
-$orderId = order_{{ range: generating_variable_seq/default }}
+$$orderId = order_{{ range: generating_variable_seq/default }}
 
 ----- response
 
@@ -12,9 +12,9 @@ $orderId = order_{{ range: generating_variable_seq/default }}
 200
 
 ~ headers
-OrderId: {{ $orderId }}
+OrderId: {{ $$orderId }}
 
 ~ body
 {
-    "order_id": "{{ $orderId }}"
+    "order_id": "{{ $$orderId }}"
 }

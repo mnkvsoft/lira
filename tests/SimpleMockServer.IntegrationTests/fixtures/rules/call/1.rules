@@ -4,9 +4,9 @@ POST /call/http
 
 ----- declare
 
-$newId           = {{ echo: 1 }}
-$createdAt       = {{ echo: 2023-04-23 10:45 }}
-$callback_server = http://fakeserver:9876
+$$newId           = {{ echo: 1 }}
+$$createdAt       = {{ echo: 2023-04-23 10:45 }}
+$$callback_server = http://fakeserver:9876
 
 ----- response
 
@@ -15,14 +15,14 @@ $callback_server = http://fakeserver:9876
 
 ~ body
 {
-    "id": {{ $newId }},
-    "createdAt": "{{ $createdAt }}",
+    "id": {{ $$newId }},
+    "createdAt": "{{ $$createdAt }}",
     "status": "inprocess"
 }
 
 ----- call.http
 
-POST {{ $callback_server }}/api/callback?a={{echo: 1}}
+POST {{ $$callback_server }}/api/callback?a={{echo: 1}}
 
 ~ delay 
 100 ms
@@ -33,8 +33,8 @@ Request-Id: {{ req.header: Request-Id }}
 
 ~ body
 {
-    "id": {{ $newId }},
+    "id": {{ $$newId }},
     "external_id": "{{ req.body.jpath: $.external_id }}"
-    "createdAt": "{{ $createdAt }}",
+    "createdAt": "{{ $$createdAt }}",
     "status": "success"
 }

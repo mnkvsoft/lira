@@ -6,7 +6,7 @@ public static class VariablesCollectionExtensions
     {
         var result = vars.FirstOrDefault(v => v.Name == name);
         if (result == null)
-            throw new InvalidOperationException($"Variable '{name}' not found");
+            throw new InvalidOperationException($"Variable '{name}' not found. Available: {string.Join(", ", vars.Select(v => $"'{ v.Name}'"))}");
         return result;
     }
 }

@@ -4,7 +4,7 @@ GET /generating/declare/variable/with_dot
 
 ----- declare
 
-$var.with.dot = hello!
+$$var.with.dot = hello!
 
 ----- response
 
@@ -12,4 +12,4 @@ $var.with.dot = hello!
 200
 
 ~ body
-{{ $var.with.dot }}
+{{ $$var.with.dot }}

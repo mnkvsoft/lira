@@ -8,4 +8,4 @@ GET /generating/declare/variable/header
 200
 
 ~ headers
-Content-Type: {{ $global_content_type }}
+Content-Type: {{ $$global_content_type }}

@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;
-using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SimpleMockServer.Common;
@@ -239,60 +238,71 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
             }";
     }
 
+    // private static string ReplaceVariableNames(string code, IDeclaredPartsProvider declaredPartsProvider, string requestParameterName)
+    // {
+    //     using var enumerator = code.GetEnumerator();
+    //
+    //     bool isString = false;
+    //     var variablesToReplace = new List<string>();
+    //
+    //     var curVariable = new StringBuilder();
+    //     while (enumerator.MoveNext())
+    //     {
+    //         char c = enumerator.Current;
+    //
+    //         if (isString)
+    //         {
+    //             if (c != '"')
+    //                 continue;
+    //
+    //             if (c == '"')
+    //             {
+    //                 isString = false;
+    //                 continue;
+    //             }
+    //         }
+    //
+    //         if (c == '"')
+    //         {
+    //             isString = true;
+    //             continue;
+    //         }
+    //
+    //         if (curVariable.Length != 0)
+    //         {
+    //             if (declaredPartsProvider.IsAllowInName(c))
+    //             {
+    //                 curVariable.Append(c);
+    //                 continue;
+    //             }
+    //             else
+    //             {
+    //                 string varName = curVariable.ToString();
+    //
+    //                 if (!variablesToReplace.Contains(varName))
+    //                     variablesToReplace.Add(varName);
+    //
+    //                 curVariable.Clear();
+    //             }
+    //         }
+    //
+    //         if (declaredPartsProvider.IsStartPart(c))
+    //             curVariable.Append(c);
+    //     }
+    //
+    //     foreach (var name in variablesToReplace)
+    //     {
+    //         code = code.Replace(name,
+    //             $"GetDeclaredPart(" +
+    //             $"\"{name}\", {requestParameterName})");
+    //     }
+    //
+    //     return code;
+    // }
+
     private static string ReplaceVariableNames(string code, IDeclaredPartsProvider declaredPartsProvider, string requestParameterName)
     {
-        using var enumerator = code.GetEnumerator();
-
-        bool isString = false;
-        var variablesToReplace = new List<string>();
-
-        var curVariable = new StringBuilder();
-        while (enumerator.MoveNext())
-        {
-            char c = enumerator.Current;
-
-            if (isString)
-            {
-                if (c != '"')
-                    continue;
-
-                if (c == '"')
-                {
-                    isString = false;
-                    continue;
-                }
-            }
-
-            if (c == '"')
-            {
-                isString = true;
-                continue;
-            }
-
-            if (curVariable.Length != 0)
-            {
-                if (declaredPartsProvider.IsAllowInName(c))
-                {
-                    curVariable.Append(c);
-                    continue;
-                }
-                else
-                {
-                    string varName = curVariable.ToString();
-
-                    if (!variablesToReplace.Contains(varName))
-                        variablesToReplace.Add(varName);
-
-                    curVariable.Clear();
-                }
-            }
-
-            
-            if (declaredPartsProvider.IsStartPart(c))
-                curVariable.Append(c);
-        }
-
-        foreach (var name in variablesToReplace)
+        foreach (var name in declaredPartsProvider.GetAllNamesDeclared())
         {
             code = code.Replace(name,
                 $"GetDeclaredPart(" +
@@ -301,7 +311,7 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
 
         return code;
     }
-
+    
     private static string GetClassName(string code)
     {
         return "_" + Sha1.Create(code);

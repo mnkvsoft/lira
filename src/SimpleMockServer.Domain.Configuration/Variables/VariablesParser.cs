@@ -27,27 +27,29 @@ class DeclaredItemsParser
         {
             ObjectTextParts parts = await _textPartsParser.Parse(pattern, newContext);
 
-            switch (name[0])
+           
+            if(name.StartsWith(Consts.ControlChars.VariablePrefix))
             {
-                case Consts.ControlChars.VariablePrefix:
-                    var variable = new Variable(new CustomItemName(name.TrimStart(Consts.ControlChars.VariablePrefix)), parts);
-                    all.Variables.Add(variable);
-                    onlyNew.Variables.Add(variable);
-                    break;
-                case Consts.ControlChars.FunctionPrefix:
-                    var function = new Function(new CustomItemName(name.TrimStart(Consts.ControlChars.FunctionPrefix)), parts);
-                    all.Functions.Add(function);
-                    onlyNew.Functions.Add(function);
-                    break;
-                default:
-                    throw new Exception($"Unknown declaration type: '{name}'");
+                var variable = new Variable(new CustomItemName(name.TrimStart(Consts.ControlChars.VariablePrefix)), parts);
+                all.Variables.Add(variable);
+                onlyNew.Variables.Add(variable);
+            }
+            else if (name.StartsWith(Consts.ControlChars.FunctionPrefix))
+            {
+                var function = new Function(new CustomItemName(name.TrimStart(Consts.ControlChars.FunctionPrefix)), parts);
+                all.Functions.Add(function);
+                onlyNew.Functions.Add(function);
+            }
+            else
+            {
+                throw new Exception($"Unknown declaration type: '{name}'");
             }
         }
 
         return onlyNew;
     }
 
-    private static Dictionary<string, string> GetNameToPatternMap(IReadOnlyCollection<string> lines, params char[] namePrefixes)
+    private static Dictionary<string, string> GetNameToPatternMap(IReadOnlyCollection<string> lines, params string[] namePrefixes)
     {
         var nameToValueMap = new Dictionary<string, string>();
 
@@ -94,7 +96,7 @@ class DeclaredItemsParser
         return nameToValueMap;
     }
 
-    private static bool IsDefineVariable(string line, char[] namePrefixes)
+    private static bool IsDefineVariable(string line, string[] namePrefixes)
     {
         if (namePrefixes.Any(line.StartsWith))
         {

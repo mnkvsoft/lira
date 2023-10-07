@@ -3,7 +3,7 @@
 
 GET /match/conditions/attempt/equals
 
-$userId = {{ range: userId/rich }}
+$$userId = {{ range: userId/rich }}
 
 ----- response
 
@@ -12,7 +12,7 @@ $userId = {{ range: userId/rich }}
 
 ~ body
 {
-    "user_id": {{ $userId }}
+    "user_id": {{ $$userId }}
 }
 
 ----- callback
@@ -24,6 +24,6 @@ Token: af5kdjdg7423j53ll44865jdds
 
 ~ body
 {
-    "user_id": {{ $userId }}
+    "user_id": {{ $$userId }}
 }
 ###

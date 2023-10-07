@@ -1,1 +1,1 @@
-template = static_{{ $variable }}_{{ echo: fromFunction }}_{{ read.file: file.txt }}
+template = static_{{ $$variable }}_{{ echo: fromFunction }}_{{ read.file: file.txt }}

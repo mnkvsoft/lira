@@ -1,27 +1,6 @@
 ﻿namespace SimpleMockServer.Common.Extensions;
 public static class StringExtensions
 {
-    public static Stream ToStream(this string s)
-    {
-        using var stream = new MemoryStream();
-        using var writer = new StreamWriter(stream);
-        writer.Write(s);
-        writer.Flush();
-        stream.Position = 0;
-        return stream;
-    }
-
-    public static bool ContainsOnlyLetters(this string s)
-    {
-        foreach (char c in s)
-        {
-            if (!char.IsLetter(c))
-                return false;
-        }
-
-        return true;
-    }
-
     public static string TrimStart(this string value, string trimString)
     {
         if (string.IsNullOrEmpty(trimString))

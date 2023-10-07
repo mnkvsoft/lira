@@ -1,6 +1,6 @@
 -------------------- declare
 
-$file_level = {{ echo: value_from_file_level }}
+$$file_level = {{ echo: value_from_file_level }}
 
 -------------------- rule
 
@@ -8,7 +8,7 @@ GET /generating/declare/variable/global/with_request_var
 
 ----- declare
 
-$local = {{ $global }} | {{ $file_level }} | value_from_local
+$$local = {{ $$global }} | {{ $$file_level }} | value_from_local
 
 ----- response
 
@@ -16,4 +16,4 @@ $local = {{ $global }} | {{ $file_level }} | value_from_local
 200
 
 ~ body
-{{ $local }}
+{{ $$local }}

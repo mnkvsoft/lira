@@ -4,7 +4,7 @@ GET /generating/declare/variable/format/static/guid
 
 ----- declare
 
-$order_id = a29fa809-b301-443d-afec-9c38f275d096
+$$order_id = a29fa809-b301-443d-afec-9c38f275d096
 
 ----- response
 
@@ -12,4 +12,4 @@ $order_id = a29fa809-b301-443d-afec-9c38f275d096
 200
 
 ~ body
-{{ $order_id >> format: B }}
+{{ $$order_id >> format: B }}

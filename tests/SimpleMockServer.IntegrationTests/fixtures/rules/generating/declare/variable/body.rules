@@ -8,4 +8,4 @@ GET /generating/declare/variable/body
 200
 
 ~ body
-{{ $greetings }}
+{{ $$greetings }}

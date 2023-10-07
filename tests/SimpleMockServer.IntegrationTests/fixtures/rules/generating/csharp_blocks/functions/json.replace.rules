@@ -6,7 +6,7 @@ GET /generating/csharp/functions/json/replace
 
 ----- declare
 
-$json_var = 
+$$json_var = 
 { 
     "field1" : "value",
     "field2" : 1
@@ -19,7 +19,7 @@ $json_var =
 
 ~ body
 {{ 
-     json($json_var)
+     json($$json_var)
         .replace("$.field1", "new_value") 
         .replace("$.field2", 2)        
 }}

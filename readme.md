@@ -448,13 +448,13 @@ GET /comments
 200
 
 ~ body
-// single line comment 
-/*
+## single line comment 
+###
     it's multiline
     comment
-*/ 
-hello! // a comment in the middle of a line must be preceded by a whitespace
-http://hello // two slashes in the word http:// are not perceived as a comment, because missing whitespace
+### 
+hello!## comment the rest of the line
+hello ### comment in the middle of the line ### world!
 ```
 Запрос
 ```
@@ -700,7 +700,7 @@ curl --location 'http://localhost/payment' \
 [ranges.medium.rules](docs/examples/quick_start/ranges.medium.rules)
 
 ```
-// ok refund rule
+## ok refund rule
 
 -------------------- rule
 
@@ -740,7 +740,7 @@ example: range.medium
     "status": "ok"
 }
 
-// reject refund rule
+## reject refund rule
 
 -------------------- rule
 
@@ -984,8 +984,8 @@ example: custom_function
 {
     "created_at": "{{ #payment.now }}"
     
-    // the '#' symbol can be omitted when calling a function
-    // "created_at": "{{ payment.now }}"
+    ## the '#' symbol can be omitted when calling a function
+    ## "created_at": "{{ payment.now }}"
 }
 ```
 Запрос
@@ -1655,13 +1655,14 @@ GET /format
 200
 
 ~ body
-// short function
+
+## short function
 {{ guid >> format: N }}
 
-// raw C# block
+## raw C# block
 {{ Guid.NewGuid().ToString("D") }}
 
-//  C# block with format function
+##  C# block with format function
 {{ Guid.NewGuid() >> format: B }}
 ```
 

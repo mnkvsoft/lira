@@ -88,7 +88,7 @@ class ResponseWriterParser
     private static int ParseHttpCode(string str)
     {
         if (!int.TryParse(str, out var httpCode))
-            throw new Exception($"Invalid http ~ code '{str}'");
+            throw new Exception($"Invalid http code: '{str}'");
         return httpCode;
     }
 }

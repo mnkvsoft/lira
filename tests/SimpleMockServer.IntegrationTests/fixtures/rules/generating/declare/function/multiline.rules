@@ -1,11 +1,11 @@
 -------------------- declare
 
-#multiline = 
+$multiline = 
 line1
 line2
 line3
 
-#singleline = single_line_value
+$singleline = single_line_value
 
 -------------------- rule
 

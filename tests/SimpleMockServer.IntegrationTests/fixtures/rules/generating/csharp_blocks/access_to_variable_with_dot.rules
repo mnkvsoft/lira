@@ -4,7 +4,7 @@ GET /generating/csharp/access_to_variable_with_dot
 
 ----- declare
 
-$duration.with.dot = {{ TimeSpan.FromDays(1) }}
+$$duration.with.dot = {{ TimeSpan.FromDays(1) }}
 
 ----- response
 
@@ -12,4 +12,4 @@ $duration.with.dot = {{ TimeSpan.FromDays(1) }}
 200
 
 ~ body
-{{ $duration.with.dot + TimeSpan.FromMinutes(1) }}
+{{ $$duration.with.dot + TimeSpan.FromMinutes(1) }}
