@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="ArgValidation" Version="1.10.0" />
+    </ItemGroup>  
+
+    <ItemGroup>
+      <InternalsVisibleTo Include="Lira.UnitTests" />
+      <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    </ItemGroup>  
+
+    <ItemGroup>
+      <ProjectReference Include="..\Lira.Common\Lira.Common.csproj" />
+      <ProjectReference Include="..\Lira.Domain.Configuration\Lira.Domain.Configuration.csproj" />
+      <ProjectReference Include="..\Lira.Configuration\Lira.Configuration.csproj" />
+      <ProjectReference Include="..\Lira.ExternalCalling.Http.Configuration\Lira.ExternalCalling.Http.Configuration.csproj" />
+    </ItemGroup>  
+
+    <ItemGroup>
+      <Content Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+</Project>

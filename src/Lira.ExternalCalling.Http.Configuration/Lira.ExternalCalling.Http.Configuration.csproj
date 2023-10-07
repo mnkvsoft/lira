@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lira.Domain.Configuration\Lira.Domain.Configuration.csproj" />
+    <ProjectReference Include="..\Lira.Configuration\Lira.Configuration.csproj" />
+    <ProjectReference Include="..\Lira.ExternalCalling.Http.Caller\Lira.ExternalCalling.Http.Caller.csproj" />
+  </ItemGroup>
+
+</Project>

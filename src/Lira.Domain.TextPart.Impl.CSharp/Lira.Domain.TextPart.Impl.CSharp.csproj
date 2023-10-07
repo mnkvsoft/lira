@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Lira.Configuration\Lira.Configuration.csproj" />
+        <ProjectReference Include="..\Lira.Domain.TextPart.Utils\Lira.Domain.TextPart.Utils.csproj" />
+        <ProjectReference Include="..\Lira.Domain.TextPart\Lira.Domain.TextPart.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.6.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Lira.Common\Lira.Common.csproj" />
+      <ProjectReference Include="..\Lira.Domain.TextPart\Lira.Domain.TextPart.csproj" />
+      <ProjectReference Include="..\Lira.Domain\Lira.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

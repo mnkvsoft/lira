@@ -1,8 +1,8 @@
 version: '3.9'
 services:
   private:
-    container_name: simplemockserver
-    image: simplemockserver
+    container_name: lira
+    image: lira
     ports:
       - "8888:80"
     volumes:

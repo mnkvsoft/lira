@@ -1,0 +1,6 @@
+﻿namespace Lira.Domain.Matching.Conditions.Matchers;
+
+public interface IComparableMatchFunction<TComparable> where TComparable : IComparable<TComparable>
+{
+    bool IsMatch(TComparable value);
+}

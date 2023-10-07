@@ -1,0 +1,19 @@
+﻿using Lira.Domain.Extensions;
+using Lira.Domain.Matching.Request.Matchers;
+
+namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Extract.Body;
+
+public class AllExtractFunction : IBodyExtractFunction, IObjectTextPart
+{
+    public static string Name => "req.body.all";
+
+    public string? Extract(string? value)
+    {
+        return value;
+    }
+
+    public object Get(RequestData request)
+    {
+        return request.ReadBody();
+    }
+}
