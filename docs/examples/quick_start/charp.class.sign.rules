@@ -7,7 +7,7 @@ example: charp.class.sign
 
 ----- declare
 
-#response = 
+$response = 
 {
     "id" : {{ int }},
     "created_at": "{{ now }}",
@@ -21,6 +21,6 @@ example: charp.class.sign
 
 ~ body
 {{
-    json( #response )
-        .add("sign", SignatureCalculator.Get(#response, "very_secret_key"))
+    json($response)
+        .add("sign", SignatureCalculator.Get($response, "very_secret_key"))
 }}

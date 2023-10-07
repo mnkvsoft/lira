@@ -7,7 +7,7 @@ example: variables
 
 ----- declare
 
-$requestId = {{ guid }}
+$$requestId = {{ guid }}
 
 ----- response
 
@@ -15,9 +15,9 @@ $requestId = {{ guid }}
 200
 
 ~ headers
-Request-Id: {{ $requestId >> format: N }}
+Request-Id: {{ $$requestId >> format: N }}
 
 ~ body
 {
-    "request_id": "{{ $requestId }}"
+    "request_id": "{{ $$requestId }}"
 }

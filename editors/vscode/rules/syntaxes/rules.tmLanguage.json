@@ -57,7 +57,7 @@
 		"variables": {
 			"patterns": [{
 				"name": "entity.name.variable.rules",
-				"match": "\\$([a-zA-Z]|\\.)+"
+				"match": "\\$\\$([a-zA-Z]|\\.)+"
 			},
 			{
 				"name": "entity.name.variable.rules",
@@ -69,7 +69,12 @@
 			"patterns": [{
 				"name": "entity.name.function.rules",
 				"match": "(regex|jpath|xpath|form:|all|int|any|guid|range|echo|seq|req.path|req.query|req.header|req.body.all|req.body.form|req.body.jpath|req.body.xpath|str|read.file|date|now|now.utc|float)"
-			}]
+			},
+			{
+				"name": "entity.name.function.rules",
+				"match": "\\$([a-zA-Z]|\\.)+"
+			}
+			]
 		},
 		"comments": {
             "patterns": [

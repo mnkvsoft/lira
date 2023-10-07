@@ -34,8 +34,4 @@ class DeclaredPartsProvider : IDeclaredPartsProvider
                 .Union(_items.Functions.Select(f => Consts.ControlChars.FunctionPrefix + f.Name))
                 .ToArray();
     }
-
-    // public bool IsAllowInName(char c) => CustomItemName.IsAllowedCharInName(c);
-    //
-    // public bool IsStartPart(char c) => c is Consts.ControlChars.VariablePrefix or Consts.ControlChars.FunctionPrefix;
 }

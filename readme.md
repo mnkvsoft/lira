@@ -311,7 +311,7 @@ example: variables
 
 ----- declare
 
-$requestId = {{ guid }}
+$$requestId = {{ guid }}
 
 ----- response
 
@@ -319,11 +319,11 @@ $requestId = {{ guid }}
 200
 
 ~ headers
-Request-Id: {{ $requestId >> format: N }}
+Request-Id: {{ $$requestId >> format: N }}
 
 ~ body
 {
-    "request_id": "{{ $requestId }}"
+    "request_id": "{{ $$requestId }}"
 }
 ```
 Запрос
@@ -361,7 +361,7 @@ example: call
 
 ----- declare
 
-$id = {{ seq }}
+$$id = {{ seq }}
 
 ----- response
 
@@ -370,7 +370,7 @@ $id = {{ seq }}
 
 ~ body
 {
-    "id": {{ $id }}, 
+    "id": {{ $$id }}, 
     "status": "pending"
 }
 
@@ -386,7 +386,7 @@ Content-Type: application/json
 
 ~ body
 {
-    "id": {{ $id }}, 
+    "id": {{ $$id }}, 
     "status": "ok"
 }
 
@@ -973,7 +973,7 @@ example: custom_function
 
 ----- declare
 
-#payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
+$payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
 
 ----- response
 
@@ -982,7 +982,7 @@ example: custom_function
 
 ~ body
 {
-    "created_at": "{{ #payment.now }}"
+    "created_at": "{{ $payment.now }}"
     
     ## the '#' symbol can be omitted when calling a function
     ## "created_at": "{{ payment.now }}"
@@ -1025,7 +1025,7 @@ curl --location --request POST 'http://localhost/payment' \
 ```
 -------------------- declare
 
-#amount = {{ float: [1 - 100] }}
+$amount = {{ float: [1 - 100] }}
 
 -------------------- rule
 
@@ -1097,7 +1097,7 @@ curl --location 'http://localhost/account' \
 [declare.shared.global.declare](docs/examples/quick_start/declare.shared.global.declare)
 
 ```
-#age = {{ int: [1 - 122]}}
+$age = {{ int: [1 - 122]}}
 ```
 
 Создадим правило
@@ -1145,7 +1145,7 @@ curl --location 'http://localhost/person' \
 ```
 -------------------- declare
 
-#template.order = 
+$template.order = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -1234,7 +1234,7 @@ curl --location 'http://localhost/order' \
 ```
 -------------------- declare
 
-#template.order = 
+$template.order = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -1258,7 +1258,7 @@ example: change_json
 
 ~ body
 {{ 
-    json( #template.order )
+    json($template.order)
         .replace("$.status", "pending")
         .replace("$.customer", "vasily pupkin")
 }}
@@ -1277,7 +1277,7 @@ example: change_json
 
 ~ body
 {{ 
-    json( #template.order )
+    json($template.order)
         .replace("$.status", "refunded")
         .replace("$.customer", "nikolas john")
 }}
@@ -1568,7 +1568,7 @@ example: charp.class.sign
 
 ----- declare
 
-#response = 
+$response = 
 {
     "id" : {{ int }},
     "created_at": "{{ now }}",
@@ -1582,8 +1582,8 @@ example: charp.class.sign
 
 ~ body
 {{
-    json( #response )
-        .add("sign", SignatureCalculator.Get(#response, "very_secret_key"))
+    json($response)
+        .add("sign", SignatureCalculator.Get($response, "very_secret_key"))
 }}
 ```
 Запрос

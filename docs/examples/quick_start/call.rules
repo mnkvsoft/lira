@@ -7,7 +7,7 @@ example: call
 
 ----- declare
 
-$id = {{ seq }}
+$$id = {{ seq }}
 
 ----- response
 
@@ -16,7 +16,7 @@ $id = {{ seq }}
 
 ~ body
 {
-    "id": {{ $id }}, 
+    "id": {{ $$id }}, 
     "status": "pending"
 }
 
@@ -32,7 +32,7 @@ Content-Type: application/json
 
 ~ body
 {
-    "id": {{ $id }}, 
+    "id": {{ $$id }}, 
     "status": "ok"
 }
 

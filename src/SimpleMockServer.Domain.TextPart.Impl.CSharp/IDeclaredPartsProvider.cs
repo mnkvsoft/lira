@@ -4,8 +4,5 @@ public interface IDeclaredPartsProvider
 {
     IObjectTextPart Get(string name);
 
-    // bool IsAllowInName(char c);
-    // bool IsStartPart(char c);
-
     IReadOnlyCollection<string> GetAllNamesDeclared();
 }
