@@ -1012,11 +1012,6 @@ curl --location --request POST 'http://localhost/payment' \
 
 
 
-!!!!! Переопределение
-
-
-
-
 
 ### Общие переменные и функции
 Переменные и функции можно задекларировать на уровне файла с правилами 
@@ -1233,7 +1228,7 @@ curl --location 'http://localhost/order' \
 блоком `C#` - кода, который будет рассмотрен ниже. 
 
 :triangular_flag_on_post: При вызовах функций в C# - блоках 
-символ `#` используемый при объявлении функций не может быть опущен
+символ `$` используемый при объявлении функций не может быть опущен
 
 [change_json.rules](docs/examples/quick_start/change_json.rules)
 ```
@@ -1603,6 +1598,52 @@ curl --location --request POST 'http://localhost/payment' \
   "created_at": "09/17/2023 16:19:33",
   "status": "ok",
   "sign": "d4bfbc5b9077d41f7105ad65b047f3f94232d617"
+}
+```
+
+
+
+
+### Переопределение системных функций
+Системные функции могут быть переопределены пользовательскими.
+Т.е. если по какой-то причине логика генерации значения системной функции
+не подходит, то ее можно заменить своей
+
+В примере ниже фукция `now` генерирует дату без составляющей времени 
+
+[override.rules](docs/examples/quick_start/override.rules)
+```
+-------------------- rule
+
+GET /order
+
+~ headers
+example: override
+
+----- declare
+
+$now = {{ DateTime.Now.ToString("yyyy-MM-dd") }}
+
+----- response
+
+~ code
+200
+
+~ body
+{
+    "created_at": "{{ now }}"
+}
+```
+
+Запрос
+```
+curl --location 'http://localhost/order' \
+--header 'example: override'
+```
+Ответ
+```
+{
+    "created_at": "2023-10-08"
 }
 ```
 

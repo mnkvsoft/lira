@@ -7,6 +7,7 @@ using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating;
 using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Transform;
+using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -27,12 +28,18 @@ class TextPartsParser : ITextPartsParser
     private readonly IGeneratingFunctionFactory _generatingFunctionFactory;
     private readonly IGeneratingCSharpFactory _generatingCSharpFactory;
     private readonly ITransformFunctionFactory _transformFunctionFactory;
-
-    public TextPartsParser(IGeneratingFunctionFactory generatingFunctionFactory, ITransformFunctionFactory transformFunctionFactory, IGeneratingCSharpFactory generatingCSharpFactory)
+    private readonly ILogger _logger;
+    
+    public TextPartsParser(
+        IGeneratingFunctionFactory generatingFunctionFactory, 
+        ITransformFunctionFactory transformFunctionFactory, 
+        IGeneratingCSharpFactory generatingCSharpFactory,
+        ILoggerFactory loggerFactory)
     {
         _generatingFunctionFactory = generatingFunctionFactory;
         _transformFunctionFactory = transformFunctionFactory;
         _generatingCSharpFactory = generatingCSharpFactory;
+        _logger = loggerFactory.CreateLogger(GetType());
     }
 
     public async Task<ObjectTextParts> Parse(string pattern, IParsingContext parsingContext)
@@ -114,7 +121,10 @@ class TextPartsParser : ITextPartsParser
         if (_generatingFunctionFactory.TryCreate(rawText, out var prettyFunction))
         {
             if (declaredFunction != null)
-                throw new Exception($"Declared function '{rawText}' but has system function with same name");
+            {
+                _logger.LogInformation($"System function '{rawText}' was replaced by custom declared");
+                return declaredFunction;
+            }
             
             return prettyFunction;
         }

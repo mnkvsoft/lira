@@ -4,3 +4,4 @@
 - implement store data between requests
 - verify request
 - abort request
+- describe file section format

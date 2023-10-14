@@ -1,0 +1,20 @@
+-------------------- rule
+
+GET /order
+
+~ headers
+example: override
+
+----- declare
+
+$now = {{ DateTime.Now.ToString("yyyy-MM-dd") }}
+
+----- response
+
+~ code
+200
+
+~ body
+{
+    "created_at": "{{ now }}"
+}

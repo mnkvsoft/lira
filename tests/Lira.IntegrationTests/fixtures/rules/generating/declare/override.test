@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/declare/override
+
+----- expected
+
+~ code
+200
+
+~ body
+5

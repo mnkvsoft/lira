@@ -1,0 +1,15 @@
+-------------------- rule
+
+GET /generating/declare/override
+
+----- declare
+
+$int = {{ 5 }}
+
+----- response
+
+~ code
+200
+
+~ body
+{{ int }}
