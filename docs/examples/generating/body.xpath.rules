@@ -1,0 +1,11 @@
+-------------------- rule
+
+POST /order
+
+~ headers
+example: body.xpath
+
+----- response
+
+~ body
+{{ req.body.xpath: /order/amount/text() }}

@@ -31,10 +31,10 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
 
         _bodyExtractFunctionsMap = new Dictionary<string, Func<string, IBodyExtractFunction>>
         {
-            {FunctionName.ExtractBody.All, _ => new AllExtractFunction()},
-            {"jpath", arg => new JsonPathExtractFunction().Apply(x => x.SetArgument(arg))},
-            {"xpath", arg => new XPathExtractFunction().Apply(x => x.SetArgument(arg))},
-            {"form", arg => new FormExtractFunction().Apply(x => x.SetArgument(arg))},
+            { FunctionName.ExtractBody.All, _ => new AllExtractFunction() },
+            { "jpath", arg => new JsonPathExtractFunction().Apply(x => x.SetArgument(arg)) },
+            { "xpath", arg => new XPathExtractFunction().Apply(x => x.SetArgument(arg)) },
+            { "form", arg => new FormExtractFunction().Apply(x => x.SetArgument(arg)) },
         };
 
         foreach (var functionType in GetMatchFunctionTypes())
@@ -54,7 +54,7 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
 
             _functionNameToType.Add(functionName, functionType);
         }
-        
+
         _serviceProvider = serviceProvider;
     }
 
@@ -92,62 +92,10 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
         if (function == null)
             throw new Exception("Unknown function type: " + functionType);
 
-        if (function is IWithArgument)
-        {
-            if (function is not IWithOptionalArgument)
-            {
-                if(string.IsNullOrEmpty(argument))
-                    throw new Exception($"Function '{functionName}' not support arguments");
-
-                SetTypedArgument(function, argument, functionName);
-            }
-
-            if (!string.IsNullOrEmpty(argument))
-            {
-                SetTypedArgument(function, argument, functionName);
-            }
-        }
-        else
-        {
-            if (!string.IsNullOrEmpty(argument))
-                throw new Exception($"Function '{functionName}' not support arguments");
-        }
+        ArgumentFunctionsUtils.SetArgumentIfNeed(function, argument, functionName);
 
         result = function;
         return true;
-    }
-
-    private static void SetTypedArgument(IObjectTextPart function, string argument, string functionName)
-    {
-        if (function is IWithStringArgumentFunction withStringArgument)
-        {
-            withStringArgument.SetArgument(argument);
-        }
-        else if (function is IWithIntArgumentFunction withIntArgument)
-        {
-            if (!int.TryParse(argument, out int intValue))
-                throw new Exception($"Function '{functionName}' expected int argument. Current: '{argument}'");
-
-            withIntArgument.SetArgument(intValue);
-        }
-        else if (function is IWithLongRangeArgumentFunction withIntRangeArgument)
-        {
-            if (!Interval<long>.TryParse(argument, out var rangeValue))
-                throw new Exception($"Function '{functionName}' expected int range argument. Current: '{argument}'");
-
-            withIntRangeArgument.SetArgument(rangeValue);
-        }
-        else if (function is IWithDecimalRangeArgumentFunction withRangeArgument)
-        {
-            if (!Interval<decimal>.TryParse(argument, out var rangeValue))
-                throw new Exception($"Function '{functionName}' expected float range argument. Current: '{argument}'");
-
-            withRangeArgument.SetArgument(rangeValue);
-        }
-        else
-        {
-            throw new Exception($"Function '{functionName}' contains unknown argument");
-        }
     }
 
     public static void AddMatchFunctions(IServiceCollection sc)

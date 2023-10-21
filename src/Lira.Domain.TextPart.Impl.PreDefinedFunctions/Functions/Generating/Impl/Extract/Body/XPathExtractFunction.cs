@@ -4,9 +4,10 @@ using Lira.Domain.TextPart.Utils;
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Extract.Body;
 
-public class XPathExtractFunction : IBodyExtractFunction, IObjectTextPart, IWithStringArgumentFunction
+class XPathExtractFunction : WithArgumentFunction<string>, IBodyExtractFunction, IObjectTextPart
 {
     public static string Name => "req.body.xpath";
+    public override bool ArgumentIsRequired => true;
 
     private string _xpath = "";
 
@@ -14,5 +15,5 @@ public class XPathExtractFunction : IBodyExtractFunction, IObjectTextPart, IWith
 
     public object? Get(RequestData request) => Extract(request.ReadBody());
 
-    public void SetArgument(string argument) => _xpath = argument;
+    public override void SetArgument(string argument) => _xpath = argument;
 }

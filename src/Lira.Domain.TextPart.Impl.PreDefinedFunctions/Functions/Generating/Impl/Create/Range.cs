@@ -8,6 +8,6 @@ internal class Range : DataBase, IObjectTextPart
     }
 
     public static string Name => "range";
-
+    public override bool ArgumentIsRequired => true;
     public object Get(RequestData request) => GetRange().NextValue().ToString()!;
 }

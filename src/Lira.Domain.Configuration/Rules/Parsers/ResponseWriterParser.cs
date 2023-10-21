@@ -32,7 +32,7 @@ class ResponseWriterParser
     private static TimeSpan? GetDelay(FileSection responseSection)
     {
         responseSection.AssertContainsOnlyKnownBlocks(BlockNameHelper.GetBlockNames<Constants.BlockName.Response>());
-        
+
         var block = responseSection.GetBlock(Constants.BlockName.Response.Delay);
 
         if (block == null)
@@ -46,19 +46,15 @@ class ResponseWriterParser
 
     private static int GetHttpCode(FileSection responseSection)
     {
-        int httpCode;
-
         if (responseSection.LinesWithoutBlock.Count > 0)
-        {
-            httpCode = ParseHttpCode(responseSection.GetSingleLine());
-        }
-        else
-        {
-            var codeBlock = responseSection.GetBlockRequired(Constants.BlockName.Response.Code);
-            httpCode = ParseHttpCode(codeBlock.GetSingleLine());
-        }
+            return ParseHttpCode(responseSection.GetSingleLine());
+        
+        var codeBlock = responseSection.GetBlock(Constants.BlockName.Response.Code);
 
-        return httpCode;
+        if (codeBlock == null)
+            return 200;
+        
+        return ParseHttpCode(codeBlock.GetSingleLine());
     }
 
     private async Task<BodyWriter?> GetBodyWriter(FileSection responseSection, ParsingContext parsingContext)
@@ -85,7 +81,7 @@ class ResponseWriterParser
         return null;
     }
 
-    private static int ParseHttpCode(string str)
+    private static int ParseHttpCode(string? str)
     {
         if (!int.TryParse(str, out var httpCode))
             throw new Exception($"Invalid http code: '{str}'");

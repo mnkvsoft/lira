@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lira.Common;
 
@@ -26,5 +27,23 @@ public static class StringConverter<T> where T : struct
             throw new FormatException($"Cannot convert string '{str}' to type {typeof(T)}");
 
         return result;
+    }
+}
+
+public static class StringConverter
+{
+    public static bool TryConvert(Type type, string str, [MaybeNullWhen(false)] out object result)
+    {
+        result = null;
+        TypeConverter converter = TypeDescriptor.GetConverter(type);
+        
+        if (!converter.IsValid(str))
+            return false;
+        
+        result = converter.ConvertFromInvariantString(str);
+        if (result == null)
+            return false;
+
+        return true;
     }
 }

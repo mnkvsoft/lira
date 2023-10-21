@@ -1,14 +1,16 @@
 ﻿namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Create;
 
-internal class Echo : IObjectTextPart, IWithStringArgumentFunction
+internal class Echo : WithArgumentFunction<string>, IObjectTextPart
 {
     public static string Name => "echo";
-
+    public override bool ArgumentIsRequired => true;
+    
     private object? _value;
 
     public object? Get(RequestData request) => _value;
 
-    public void SetArgument(string? argument)
+
+    public override void SetArgument(string? argument)
     {
         _value = GetValue(argument);
     }

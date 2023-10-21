@@ -26,6 +26,8 @@ LIRA очень широкий спектр сценариев использо�
 ### Добавление первого правила
 Необходимо создать в каталоге `c:/rules` текстовый файл `hello.rules` следующего содержания:
 
+[hello.rules](docs/examples/quick_start/hello.rules)
+
 ```
 -------------------- rule
 
@@ -1376,7 +1378,7 @@ jpath: $.number >> {{ any }}
 ~ body
 {
     "mnemonic": {{ 
-        string cardNumber = @req.Body.ByJPath("$.number");
+        string cardNumber = @req.Body.JPath("$.number");
 
         string paymentSystem;
         switch(cardNumber[0])
@@ -1478,7 +1480,7 @@ jpath: $.number >> {{ any }}
 
 ~ body
 mnemonic was generated from 'number' field: {{ 
-    CardNumber.GetMnemonic(@req.Body.ByJPath("$.number")) 
+    CardNumber.GetMnemonic(@req.Body.JPath("$.number")) 
 }}
 
 
@@ -1499,7 +1501,7 @@ jpath: $.pan >> {{ any }}
 
 ~ body
 mnemonic was generated from 'pan' field: {{ 
-    CardNumber.GetMnemonic(@req.Body.ByJPath("$.pan")) 
+    CardNumber.GetMnemonic(@req.Body.JPath("$.pan")) 
 }}
 ```
 Запрос

@@ -1,0 +1,12 @@
+-------------------- rule
+
+POST /order
+
+~ headers
+example: body.form
+
+----- response
+
+~ body
+{{ req.body.form: amount }}
+{{ req.body.form: description }}

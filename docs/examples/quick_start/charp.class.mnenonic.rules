@@ -15,7 +15,7 @@ jpath: $.number >> {{ any }}
 
 ~ body
 mnemonic was generated from 'number' field: {{ 
-    CardNumber.GetMnemonic(@req.Body.ByJPath("$.number")) 
+    CardNumber.GetMnemonic(@req.Body.JPath("$.number")) 
 }}
 
 
@@ -36,5 +36,5 @@ jpath: $.pan >> {{ any }}
 
 ~ body
 mnemonic was generated from 'pan' field: {{ 
-    CardNumber.GetMnemonic(@req.Body.ByJPath("$.pan")) 
+    CardNumber.GetMnemonic(@req.Body.JPath("$.pan")) 
 }}

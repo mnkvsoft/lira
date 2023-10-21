@@ -1,0 +1,10 @@
+-------------------- rule
+
+POST /order
+
+~ headers
+example: http_code_in_section
+
+----- response
+
+403

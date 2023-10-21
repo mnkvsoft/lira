@@ -2,12 +2,23 @@
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions;
 
-internal interface IWithLongRangeArgumentFunction : IWithArgument
+internal interface IWithRangeArgumentFunction : IWithArgument
 {
-    void SetArgument(Interval<long> argument);
+    void SetArgument(object from, object to);
+}
+internal interface IWithRangeArgumentFunction<T> : IWithArgument where T : struct, IComparable<T>
+{
+    void SetArgument(Interval<T> interval);
 }
 
-internal interface IWithDecimalRangeArgumentFunction : IWithArgument
+abstract class WithRangeArgumentFunction<T> : IWithRangeArgumentFunction, IWithRangeArgumentFunction<T> where T : struct, IComparable<T>
 {
-    void SetArgument(Interval<decimal> argument);
+   public abstract void SetArgument(Interval<T> argument);
+   public void SetArgument(object from, object to)
+   {
+       SetArgument(new Interval<T>((T)from, (T)to));
+   }
+
+   abstract public bool ArgumentIsRequired { get; }
 }
+

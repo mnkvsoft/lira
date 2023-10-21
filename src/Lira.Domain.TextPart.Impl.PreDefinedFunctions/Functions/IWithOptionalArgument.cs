@@ -1,6 +1,6 @@
-﻿namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions;
-
-internal interface IWithOptionalArgument
-{
-    
-}
+﻿// namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions;
+//
+// internal interface IWithOptionalArgument
+// {
+//     
+// }

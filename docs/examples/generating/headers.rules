@@ -1,0 +1,15 @@
+-------------------- rule
+
+GET /story
+
+~ headers
+example: headers
+
+----- response
+
+~ code
+200
+
+~ headers
+Story: This event happened "{{ date }}" on the street "{{ str }}". It was raining heavily, it was getting dark...
+Request-Id: {{ guid }}

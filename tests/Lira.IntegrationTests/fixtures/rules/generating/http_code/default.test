@@ -1,0 +1,8 @@
+-------------------- case
+
+GET /generating/http_code/default
+
+----- expected
+
+~ code
+200

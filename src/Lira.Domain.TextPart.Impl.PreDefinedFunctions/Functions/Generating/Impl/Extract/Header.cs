@@ -1,13 +1,14 @@
 ﻿namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Extract;
-internal class Header : IObjectTextPart, IWithStringArgumentFunction
+internal class Header : WithArgumentFunction<string>, IObjectTextPart
 {
     public static string Name => "req.header";
-
+    public override bool ArgumentIsRequired => true;
     private string _headerName = "";
 
     public object? Get(RequestData request) => request.GetHeader(_headerName);
 
-    public void SetArgument(string argument)
+
+    public override void SetArgument(string argument)
     {
         _headerName = argument;
     }

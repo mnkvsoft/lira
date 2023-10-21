@@ -8,4 +8,4 @@ GET /generating/csharp/body_access/body/xpath
 200
 
 ~ body
-{{ @req.Body.ByXPath("//employee[1]/text()") }}
+{{ @req.Body.XPath("//employee[1]/text()") }}

@@ -1,11 +1,7 @@
 -------------------- rule
 
-GET /test
+GET /generating/http_code/without_block
 
 ----- response
 
-~ code
 200
-
-~ body
-{{ float: 1.1 - 1.2 }}

@@ -16,7 +16,7 @@ jpath: $.number >> {{ any }}
 ~ body
 {
     "mnemonic": "{{ 
-        string cardNumber = @req.Body.ByJPath("$.number");
+        string cardNumber = @req.Body.JPath("$.number");
 
         string paymentSystem;
         switch(cardNumber[0])

@@ -36,6 +36,7 @@ internal class StringMatchPrettyFunctionFactory : IStringMatchFunctionFactory
 
             _functionNameToType.Add(functionName, functionType);
         }
+
         _serviceProvider = serviceProvider;
     }
 
@@ -48,16 +49,7 @@ internal class StringMatchPrettyFunctionFactory : IStringMatchFunctionFactory
 
         var prettyMatchFunction = (IStringMatchPrettyFunction)_serviceProvider.GetRequiredService(functionType);
 
-        if (argument != null && prettyMatchFunction is not IWithStringArgumentFunction)
-            throw new Exception($"Function '{functionName}' not support arguments");
-
-        if (prettyMatchFunction is IWithStringArgumentFunction withArgument)
-        {
-            if(string.IsNullOrWhiteSpace(argument))
-                throw new Exception($"Function '{functionName}' has argument but it missing");
-                
-            withArgument.SetArgument(argument);
-        }
+        ArgumentFunctionsUtils.SetArgumentIfNeed(prettyMatchFunction, argument, functionName);
 
         return prettyMatchFunction;
     }
@@ -77,5 +69,3 @@ internal class StringMatchPrettyFunctionFactory : IStringMatchFunctionFactory
         return result;
     }
 }
-
-

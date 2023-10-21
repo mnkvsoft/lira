@@ -2,14 +2,16 @@
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Create;
 
-internal class Str : IObjectTextPart, IWithIntArgumentFunction, IWithOptionalArgument
+internal class Str : WithArgumentFunction<int>, IObjectTextPart
 {
     public static string Name => "str";
+    public override bool ArgumentIsRequired => false;
+    
     private int _length = 20;
     
     public object Get(RequestData request) => GetRandomString(_length);
 
-    public void SetArgument(int argument)
+    public override void SetArgument(int argument)
     {
         _length = argument;
     }

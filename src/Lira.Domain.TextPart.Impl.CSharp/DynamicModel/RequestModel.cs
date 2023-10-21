@@ -23,8 +23,8 @@ public class RequestModel
     public record BodyModel(string Value)
     {
         public string? All() => Value;
-        public string? ByJPath(string jpath) => BodyUtils.GetByJPath(Value, jpath);
-        public string? ByXPath(string xpath) => BodyUtils.GetByXPath(Value, xpath);
-        public string? ByForm(string paramName) => BodyUtils.GetByForm(Value, paramName);
+        public string? JPath(string jsonpath) => BodyUtils.GetByJPath(Value, jsonpath);
+        public string? XPath(string xpath) => BodyUtils.GetByXPath(Value, xpath);
+        public string? Form(string paramName) => BodyUtils.GetByForm(Value, paramName);
     }
 }

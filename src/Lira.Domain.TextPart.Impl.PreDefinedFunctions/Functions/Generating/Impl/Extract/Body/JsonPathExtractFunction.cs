@@ -4,9 +4,10 @@ using Lira.Domain.TextPart.Utils;
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Extract.Body;
 
-public class JsonPathExtractFunction : IBodyExtractFunction, IObjectTextPart, IWithStringArgumentFunction
+class JsonPathExtractFunction : WithArgumentFunction<string>, IBodyExtractFunction, IObjectTextPart
 {
     public static string Name => "req.body.jpath";
+    public override bool ArgumentIsRequired => true;
 
     private string _jpath = "";
 
@@ -14,5 +15,5 @@ public class JsonPathExtractFunction : IBodyExtractFunction, IObjectTextPart, IW
 
     public object? Get(RequestData request) => Extract(request.ReadBody());
 
-    public void SetArgument(string argument) => _jpath = argument;
+    public override void SetArgument(string argument) => _jpath = argument;
 }

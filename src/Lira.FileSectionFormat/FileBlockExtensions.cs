@@ -15,6 +15,7 @@ public static class FileBlockExtensions
 
         return lines[0];
     }
+    
     public static T? GetValue<T>(this FileBlock block)
     {
         var line = GetSingleLine(block);

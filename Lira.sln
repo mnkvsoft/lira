@@ -60,6 +60,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{21774504-6
 		docs\matching.md = docs\matching.md
 		docs\highlight_setup.md = docs\highlight_setup.md
 		docs\ranges.md = docs\ranges.md
+		docs\generating.md = docs\generating.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Impl", "Impl", "{801BCB31-DB66-4C7C-97A0-CB67BA63CD91}"

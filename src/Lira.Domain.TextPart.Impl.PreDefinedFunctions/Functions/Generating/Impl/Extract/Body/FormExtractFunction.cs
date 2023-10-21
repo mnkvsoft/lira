@@ -4,9 +4,10 @@ using Lira.Domain.TextPart.Utils;
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Extract.Body;
 
-public class FormExtractFunction : IBodyExtractFunction, IObjectTextPart, IWithStringArgumentFunction
+class FormExtractFunction : WithArgumentFunction<string>, IBodyExtractFunction, IObjectTextPart
 {
     public static string Name => "req.body.form";
+    public override bool ArgumentIsRequired => true;
     
     private string _formParamName = "";
 
@@ -14,5 +15,5 @@ public class FormExtractFunction : IBodyExtractFunction, IObjectTextPart, IWithS
 
     public object? Get(RequestData request) => Extract(request.ReadBody());
 
-    public void SetArgument(string argument) => _formParamName = argument;
+    public override void SetArgument(string argument) => _formParamName = argument;
 }

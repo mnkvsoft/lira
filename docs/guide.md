@@ -27,7 +27,7 @@
 
 Для запуска сервера необходимо выполнить следующую команду:
 
-`docker run -p <port>:80 [-e TZ=timezone] -v <rules_path>:/app/rules  mnkvsoft/lira`
+`docker run -p <port>:80 [-e TZ=timezone] [-e AllowMultipleRules=false] -v <rules_path>:/app/rules  mnkvsoft/lira`
 
 либо добавить следующие строки в docker-compose
 
@@ -47,6 +47,9 @@ lira:
 и другие файлы (далее **рабочий каталог**), обрабатываемые сервером
 
 ***timezone*** - часовой пояс, например `Europe/Moscow`
+
+***AllowMultipleRules=false*** - отключить возможность приоритизации правил.
+[Подробнее](matching.md#приоритизация-правил)
 
 ## Обработка рабочего каталога
 

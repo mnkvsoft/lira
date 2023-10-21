@@ -1,0 +1,13 @@
+-------------------- rule
+
+POST /order
+
+~ headers
+example: http_code_default
+
+----- response
+
+~ body
+{
+    "status": "ok"
+}

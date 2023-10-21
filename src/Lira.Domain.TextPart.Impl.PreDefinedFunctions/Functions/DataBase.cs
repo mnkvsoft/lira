@@ -3,10 +3,11 @@ using Lira.Domain.DataModel;
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions;
 
-abstract class DataBase : IWithStringArgumentFunction
+abstract class DataBase : WithArgumentFunction<string>
 {
     private readonly IDataProvider _dataProvider;
-
+    public override bool ArgumentIsRequired => true;
+    
     protected DataBase(IDataProvider dataProvider)
     {
         _dataProvider = dataProvider;
@@ -15,7 +16,7 @@ abstract class DataBase : IWithStringArgumentFunction
     private DataName _name;
     private DataName _rangeName;
 
-    void IWithStringArgumentFunction.SetArgument(string argument)
+    public override void SetArgument(string argument)
     {
         var (name, nameRange) = argument.SplitToTwoPartsRequired("/");
 
