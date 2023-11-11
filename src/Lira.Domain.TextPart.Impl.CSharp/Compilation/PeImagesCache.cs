@@ -78,8 +78,6 @@ class PeImagesCache : IDisposable
 
     public void Dispose()
     {
-        // logging
-        
         foreach (var pair in _hashToEntryMap)
         {
             var hash = pair.Key;

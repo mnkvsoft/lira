@@ -6,7 +6,7 @@ namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Imp
 
 class FormExtractFunction : WithArgumentFunction<string>, IBodyExtractFunction, IObjectTextPart
 {
-    public static string Name => "req.body.form";
+    public override string Name => "req.body.form";
     public override bool ArgumentIsRequired => true;
     
     private string _formParamName = "";

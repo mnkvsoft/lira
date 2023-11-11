@@ -21,20 +21,15 @@ internal class StringMatchPrettyFunctionFactory : IStringMatchFunctionFactory
 
         foreach (var functionType in GetMatchFunctionTypes())
         {
-            var nameProperty = functionType.GetProperties().SingleOrDefault(x => x.Name == "Name");
+            var function = serviceProvider.GetRequiredFunction(functionType);
 
-            if (nameProperty == null)
-                throw new Exception($"Match function '{functionType}' must define static Name property");
-
-            var functionName = (string?)nameProperty.GetValue(null, null);
-
-            if (string.IsNullOrEmpty(functionName))
+            if (string.IsNullOrEmpty(function.Name))
                 throw new Exception("Empty function name in type " + functionType.FullName);
 
-            if (_functionNameToType.TryGetValue(functionName, out var value))
-                throw new Exception($"Function with name {functionName} already define in type {value.FullName}");
+            if (_functionNameToType.TryGetValue(function.Name, out var value))
+                throw new Exception($"Function with name {function.Name} already define in type {value.FullName}");
 
-            _functionNameToType.Add(functionName, functionType);
+            _functionNameToType.Add(function.Name, functionType);
         }
 
         _serviceProvider = serviceProvider;
@@ -47,11 +42,14 @@ internal class StringMatchPrettyFunctionFactory : IStringMatchFunctionFactory
         if (!_functionNameToType.TryGetValue(functionName, out var functionType))
             throw new UnknownFunctionException(value);
 
-        var prettyMatchFunction = (IStringMatchPrettyFunction)_serviceProvider.GetRequiredService(functionType);
+        var function = _serviceProvider.GetRequiredFunction(functionType);
 
-        ArgumentFunctionsUtils.SetArgumentIfNeed(prettyMatchFunction, argument, functionName);
+        if (function is not IStringMatchPrettyFunction matchPrettyFunction)
+            throw new Exception($"Function {functionType} not implemented {nameof(IStringMatchPrettyFunction)}");
+        
+        function.SetArgumentIfNeed(argument);
 
-        return prettyMatchFunction;
+        return matchPrettyFunction;
     }
 
     public static void AddMatchFunctions(IServiceCollection sc)

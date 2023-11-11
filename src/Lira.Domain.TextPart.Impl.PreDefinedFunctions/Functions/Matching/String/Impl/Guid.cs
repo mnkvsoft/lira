@@ -2,10 +2,10 @@
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String.Impl;
 
-internal class Guid : IStringMatchPrettyFunction
+internal class Guid : FunctionBase, IStringMatchPrettyFunction
 {
     
-    public static string Name => "guid";
+    public override string Name => "guid";
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Type;
 

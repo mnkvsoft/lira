@@ -27,10 +27,10 @@ public static class JsonUtils
         return new Json(JObject.Parse(json));
     }
 
-    public static string replace(this string json, string path, object newValue)
-    {
-        return JObject.Parse(json).ReplacePath(path, newValue).ToString();
-    }
+    // public static string replace(this string json, string path, object newValue)
+    // {
+    //     return JObject.Parse(json).ReplacePath(path, newValue).ToString();
+    // }
 
     private static JObject ReplacePath(this JObject root, string path, object newValue)
     {

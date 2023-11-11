@@ -5,12 +5,13 @@ namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.Strin
 
 internal class Regex : WithArgumentFunction<string>, IStringMatchPrettyFunction
 {
-    public static string Name => "regex";
+    public override string Name => "regex";
     public override bool ArgumentIsRequired => true;
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
 
     private global::System.Text.RegularExpressions.Regex _regex = null!;
-    
+
+
     public bool IsMatch(string? value)
     {
         return _regex.IsMatch(value ?? "");

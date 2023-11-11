@@ -3,29 +3,29 @@ using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions;
 
-static class ArgumentFunctionsUtils
+static class FunctionBaseExtensions
 {
-    public static void SetArgumentIfNeed(object function, string? argument, string functionName)
+    public static void SetArgumentIfNeed(this FunctionBase function, string? argument)
     {
         if (function is IWithArgument withArgument)
         {
             if (withArgument.ArgumentIsRequired)
             {
                 if (string.IsNullOrEmpty(argument))
-                    throw new Exception($"Function '{functionName}' argument required");
+                    throw new Exception($"Function '{function.Name}' argument required");
 
-                SetTypedArgument(withArgument, argument, functionName);
+                SetTypedArgument(withArgument, argument, function.Name);
             }
 
             if (!string.IsNullOrEmpty(argument))
             {
-                SetTypedArgument(withArgument, argument, functionName);
+                SetTypedArgument(withArgument, argument, function.Name);
             }
         }
         else
         {
             if (!string.IsNullOrEmpty(argument))
-                throw new Exception($"Function '{functionName}' not support arguments");
+                throw new Exception($"Function '{function.Name}' not support arguments");
         }
     }
     

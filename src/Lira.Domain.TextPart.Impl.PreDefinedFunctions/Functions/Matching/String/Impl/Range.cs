@@ -9,9 +9,10 @@ internal class Range : DataBase, IStringMatchPrettyFunction
     {
     }
 
-    public static string Name => "range";
+    public override string Name => "range";
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
+
 
     public bool IsMatch(string? value)
     {

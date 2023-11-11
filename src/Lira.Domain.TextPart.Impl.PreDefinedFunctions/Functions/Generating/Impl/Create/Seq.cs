@@ -1,10 +1,10 @@
 ﻿namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Create;
 
-internal class Seq : IObjectTextPart
+internal class Seq : FunctionBase, IObjectTextPart
 {
     private static long _counter;
 
-    public static string Name => "seq";
+    public override string Name => "seq";
 
     public object Get(RequestData request) => Interlocked.Increment(ref _counter);
 }

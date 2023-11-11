@@ -2,9 +2,9 @@
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String.Impl;
 
-internal class Any : IStringMatchPrettyFunction
+internal class Any : FunctionBase, IStringMatchPrettyFunction
 {
-    public static string Name => "any";
+    public override string Name => "any";
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Any;
 

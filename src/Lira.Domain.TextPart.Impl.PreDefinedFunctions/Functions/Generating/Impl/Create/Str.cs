@@ -4,7 +4,7 @@ namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Imp
 
 internal class Str : WithArgumentFunction<int>, IObjectTextPart
 {
-    public static string Name => "str";
+    public override string Name => "str";
     public override bool ArgumentIsRequired => false;
     
     private int _length = 20;

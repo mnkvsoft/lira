@@ -1,0 +1,23 @@
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: generating/variables
+
+----- declare
+
+$$requestId = {{ guid }}
+
+----- response
+
+~ code
+200
+
+~ headers
+Request-Id: {{ $$requestId }}
+
+~ body
+{
+    "request_id": "{{ $$requestId }}"
+}

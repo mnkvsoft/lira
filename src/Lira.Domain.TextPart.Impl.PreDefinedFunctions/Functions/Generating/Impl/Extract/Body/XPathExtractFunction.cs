@@ -6,7 +6,7 @@ namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Imp
 
 class XPathExtractFunction : WithArgumentFunction<string>, IBodyExtractFunction, IObjectTextPart
 {
-    public static string Name => "req.body.xpath";
+    public override string Name => "req.body.xpath";
     public override bool ArgumentIsRequired => true;
 
     private string _xpath = "";

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Lira.Domain;
 using Lira.Common.Exceptions;
 using Lira.ExternalCalling.Http.Configuration;
@@ -8,6 +9,7 @@ using Lira.Domain.DataModel;
 
 namespace Lira;
 
+[SuppressMessage("Usage", "ASP0014:Suggest using top level route registrations")]
 public class Startup
 {
     private readonly IConfiguration _configuration;

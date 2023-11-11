@@ -3,9 +3,9 @@ using Lira.Domain.Matching.Request.Matchers;
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Extract.Body;
 
-public class AllExtractFunction : IBodyExtractFunction, IObjectTextPart
+class AllExtractFunction : FunctionBase, IBodyExtractFunction, IObjectTextPart
 {
-    public static string Name => "req.body.all";
+    public override string Name => "req.body.all";
 
     public string? Extract(string? value)
     {

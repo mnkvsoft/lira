@@ -2,7 +2,7 @@
 
 internal class Path : WithArgumentFunction<string>, IObjectTextPart
 {
-    public static string Name => "req.path";
+    public override string Name => "req.path";
     public override bool ArgumentIsRequired => true;
     private string _segmentName = "";
 

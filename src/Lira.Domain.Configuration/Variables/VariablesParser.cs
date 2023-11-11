@@ -23,26 +23,31 @@ class DeclaredItemsParser
 
         var onlyNew = new DeclaredItems();
 
-        foreach (var (name, pattern) in GetNameToPatternMap(lines, Consts.ControlChars.VariablePrefix, Consts.ControlChars.FunctionPrefix))
+        foreach (var (nameWithType, pattern) in GetNameToPatternMap(lines, Consts.ControlChars.VariablePrefix, Consts.ControlChars.FunctionPrefix))
         {
             ObjectTextParts parts = await _textPartsParser.Parse(pattern, newContext);
 
-           
-            if(name.StartsWith(Consts.ControlChars.VariablePrefix))
+            var (name, type) = nameWithType.SplitToTwoParts(":").Trim();
+            if (type != null)
             {
-                var variable = new Variable(new CustomItemName(name.TrimStart(Consts.ControlChars.VariablePrefix)), parts);
+                
+            }
+            
+            if(nameWithType.StartsWith(Consts.ControlChars.VariablePrefix))
+            {
+                var variable = new Variable(new CustomItemName(nameWithType.TrimStart(Consts.ControlChars.VariablePrefix)), parts);
                 all.Variables.Add(variable);
                 onlyNew.Variables.Add(variable);
             }
-            else if (name.StartsWith(Consts.ControlChars.FunctionPrefix))
+            else if (nameWithType.StartsWith(Consts.ControlChars.FunctionPrefix))
             {
-                var function = new Function(new CustomItemName(name.TrimStart(Consts.ControlChars.FunctionPrefix)), parts);
+                var function = new Function(new CustomItemName(nameWithType.TrimStart(Consts.ControlChars.FunctionPrefix)), parts);
                 all.Functions.Add(function);
                 onlyNew.Functions.Add(function);
             }
             else
             {
-                throw new Exception($"Unknown declaration type: '{name}'");
+                throw new Exception($"Unknown declaration type: '{nameWithType}'");
             }
         }
 

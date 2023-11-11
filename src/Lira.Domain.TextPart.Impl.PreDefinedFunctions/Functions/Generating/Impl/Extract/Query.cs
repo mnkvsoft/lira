@@ -2,7 +2,7 @@
 
 internal class Query : WithArgumentFunction<string>, IObjectTextPart
 {
-    public static string Name => "req.query";
+    public override string Name => "req.query";
     public override bool ArgumentIsRequired => true;
     
     private string _queryParamName = "";

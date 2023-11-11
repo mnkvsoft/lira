@@ -1,0 +1,24 @@
+-------------------- rule
+
+GET /comments
+
+~ headers
+example: guide/comments
+
+----- response
+
+~ code
+200
+
+~ body
+## single line comment 
+###
+    it's multiline
+    comment
+### 
+hello!## comment the rest of the line
+hello ### comment in the middle of the line ### world
+###
+it's 
+not closed
+multiline comment

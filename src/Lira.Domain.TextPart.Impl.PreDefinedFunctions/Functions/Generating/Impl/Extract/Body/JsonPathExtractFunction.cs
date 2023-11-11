@@ -6,7 +6,7 @@ namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Imp
 
 class JsonPathExtractFunction : WithArgumentFunction<string>, IBodyExtractFunction, IObjectTextPart
 {
-    public static string Name => "req.body.jpath";
+    public override string Name => "req.body.jpath";
     public override bool ArgumentIsRequired => true;
 
     private string _jpath = "";

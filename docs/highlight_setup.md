@@ -2,7 +2,7 @@
 
 ### Перейти в каталог
 
-- **Windows**: %USERPROFILE%\.vscode\extensions
+- **Windows**: %USERPROFILE%\\.vscode\extensions
 - **macOS**: ~/.vscode/extensions
 - **Linux**: ~/.vscode/extensions
 

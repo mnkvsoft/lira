@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /test
+GET /test/{{ float: [1 - 10] }}
 
 ----- response
 
@@ -8,4 +8,9 @@ GET /test
 200
 
 ~ body
-{{ float: 1.1 - 1.2 }}
+{{ date }}
+{{ date.past }}
+{{ date.future }}
+{{ date.utc }}
+{{ date.utc.past }}
+{{ date.utc.future }}

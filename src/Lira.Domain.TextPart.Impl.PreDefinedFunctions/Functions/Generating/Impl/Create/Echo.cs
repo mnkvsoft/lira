@@ -2,7 +2,7 @@
 
 internal class Echo : WithArgumentFunction<string>, IObjectTextPart
 {
-    public static string Name => "echo";
+    public override string Name => "echo";
     public override bool ArgumentIsRequired => true;
     
     private object? _value;

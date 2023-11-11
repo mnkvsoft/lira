@@ -1,0 +1,10 @@
+-------------------- rule
+
+GET /generating/format
+
+----- response
+
+~ body
+{{ date >> format: MM/dd/yyyy }}
+{{ int >> format: #.00# }}
+{{ guid >> format: N }}
