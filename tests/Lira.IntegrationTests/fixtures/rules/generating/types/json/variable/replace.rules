@@ -1,0 +1,22 @@
+-------------------- rule
+
+GET /generating/types/json/variable/replace
+
+----- declare
+
+$$template:json = 
+{
+    "status": "pending"
+}
+
+----- response
+
+~ body
+{{ 
+    $$template
+        .replace("$.status", "approved")
+        .replace("$.status", "ok") 
+}}
+{{ 
+    $$template
+}}

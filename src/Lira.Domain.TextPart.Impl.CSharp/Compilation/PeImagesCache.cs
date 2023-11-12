@@ -87,14 +87,29 @@ class PeImagesCache : IDisposable
             
             if (entry.IsNew)
             {
-                File.WriteAllBytes(filePath, entry.PeImage.Bytes);
+                IgnoreIoExceptionForTests(() => File.WriteAllBytes(filePath, entry.PeImage.Bytes));
                 continue;
             }
 
             if (entry.WasUsed)
                 continue;
             
-            File.Delete(filePath);
+            IgnoreIoExceptionForTests(() => File.Delete(filePath));
+        }
+    }
+
+    // todo: when running tests in parallel, similar errors occur, think about how to make it more graceful
+    static void IgnoreIoExceptionForTests(Action action)
+    {
+        try
+        {
+            action();
+        }
+        catch (IOException e) when(e.Message.Contains("The process cannot access the file"))
+        {
+        }
+        catch (UnauthorizedAccessException e) when(e.Message.Contains("Access to the path"))
+        {
         }
     }
 }

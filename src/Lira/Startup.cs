@@ -76,7 +76,7 @@ public class Startup
 
             endpoints.MapGet(
               "/" + sys + "/data/info",
-              async (HttpContext context) =>
+              async context =>
               {
                   var dataProvider = context.RequestServices.GetRequiredService<IDataProvider>();
                   var datas = dataProvider.GetAll();

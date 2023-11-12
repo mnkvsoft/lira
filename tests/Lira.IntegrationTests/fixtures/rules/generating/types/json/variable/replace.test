@@ -1,0 +1,16 @@
+-------------------- case
+
+GET /generating/types/json/variable/replace
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "status": "ok"
+}
+{
+  "status": "pending"
+}

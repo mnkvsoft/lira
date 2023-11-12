@@ -18,11 +18,9 @@ public interface ITextPartsParser
 
 class TextPartsParser : ITextPartsParser
 {
-    public record Static(object Value) : IObjectTextPart
+    private record Static(object Value) : IObjectTextPart
     {
         public object Get(RequestData request) => Value;
-
-        public object Get() => Value;
     }
 
     private readonly IGeneratingFunctionFactory _generatingFunctionFactory;

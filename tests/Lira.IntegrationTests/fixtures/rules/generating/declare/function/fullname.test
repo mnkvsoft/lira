@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /generating/declare/fullname
+GET /generating/declare/function/fullname
 
 ----- expected
 

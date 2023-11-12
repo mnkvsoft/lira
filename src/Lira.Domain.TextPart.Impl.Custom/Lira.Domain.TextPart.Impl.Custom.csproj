@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Lira.Common\Lira.Common.csproj" />
+      <ProjectReference Include="..\Lira.Domain.TextPart.Types\Lira.Domain.TextPart.Types.csproj" />
       <ProjectReference Include="..\Lira.Domain.TextPart\Lira.Domain.TextPart.csproj" />
       <ProjectReference Include="..\Lira.Domain\Lira.Domain.csproj" />
     </ItemGroup>

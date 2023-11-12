@@ -74,6 +74,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lira.Domain.TextPart.Impl.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lira.Domain.TextPart.Impl.Custom", "src\Lira.Domain.TextPart.Impl.Custom\Lira.Domain.TextPart.Impl.Custom.csproj", "{3C26AB7B-B3A9-40BC-977C-194380ABC8A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lira.Domain.TextPart.Types", "src\Lira.Domain.TextPart.Types\Lira.Domain.TextPart.Types.csproj", "{0766174A-0D61-4F45-B33C-E01B89847E11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -144,6 +146,10 @@ Global
 		{3C26AB7B-B3A9-40BC-977C-194380ABC8A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C26AB7B-B3A9-40BC-977C-194380ABC8A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C26AB7B-B3A9-40BC-977C-194380ABC8A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0766174A-0D61-4F45-B33C-E01B89847E11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0766174A-0D61-4F45-B33C-E01B89847E11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0766174A-0D61-4F45-B33C-E01B89847E11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0766174A-0D61-4F45-B33C-E01B89847E11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -169,6 +175,7 @@ Global
 		{ADC3BDBF-549D-4043-A544-27DC0A4DD244} = {801BCB31-DB66-4C7C-97A0-CB67BA63CD91}
 		{DA9A0A48-84B2-4048-857A-5A73782630CF} = {801BCB31-DB66-4C7C-97A0-CB67BA63CD91}
 		{3C26AB7B-B3A9-40BC-977C-194380ABC8A2} = {801BCB31-DB66-4C7C-97A0-CB67BA63CD91}
+		{0766174A-0D61-4F45-B33C-E01B89847E11} = {72A44983-7297-4284-BD2C-24CC9D307612}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5607801-446F-4C0E-B08E-5A39EE462311}

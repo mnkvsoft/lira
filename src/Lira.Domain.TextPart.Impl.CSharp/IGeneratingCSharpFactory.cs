@@ -7,6 +7,7 @@ using Lira.Common;
 using Lira.Configuration;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
+using Lira.Domain.TextPart.Types;
 
 // ReSharper disable RedundantExplicitArrayCreation
 
@@ -67,7 +68,7 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
                 classToCompile,
                 AssemblyName: GetAssemblyName("TransformFunction" + className),
                 new UsageAssemblies(
-                    Compiled: new Assembly[] { typeof(IObjectTextPart).Assembly, },
+                    Compiled: new Assembly[] { typeof(IObjectTextPart).Assembly, typeof(Json).Assembly },
                     Runtime: customAssemblies.PeImages))));
 
         var type = ass.GetTypes().Single(t => t.Name == className);
@@ -95,7 +96,7 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
                     Compiled: new Assembly[]
                     {
                         typeof(IObjectTextPart).Assembly, 
-                        // typeof(Variable).Assembly, 
+                        typeof(Json).Assembly, 
                         typeof(RequestData).Assembly,
                         GetType().Assembly
                     },

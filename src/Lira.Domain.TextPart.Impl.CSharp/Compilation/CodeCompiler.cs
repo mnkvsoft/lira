@@ -52,7 +52,7 @@ static class CodeCompiler
         var code = string.Join(new string(Enumerable.Repeat('-', 30).ToArray()), codes);
         foreach (var diagnostic in failures)
         {
-            return new Exception($"Failed to compile. Error: {diagnostic.Id} {diagnostic.GetMessage()} ~ code{Environment.NewLine}'{code}'");
+            return new Exception($"Failed to compile. Error: {diagnostic.Id} {diagnostic.GetMessage()}. Code:{Environment.NewLine}'{code}'");
         }
 
         return new Exception($"Unknown error while compiling code '{code}'");

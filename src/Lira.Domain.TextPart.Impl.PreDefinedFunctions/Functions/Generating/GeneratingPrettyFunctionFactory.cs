@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.Serialization;
 using Lira.Domain.Matching.Request.Matchers;
 using Microsoft.Extensions.DependencyInjection;
 using Lira.Common;
@@ -39,7 +40,8 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
 
         foreach (var functionType in GetMatchFunctionTypes())
         {
-            var function = serviceProvider.GetRequiredFunction(functionType);
+            // to avoid looping in service container
+            var function = (FunctionBase)FormatterServices.GetUninitializedObject(functionType);
             
             if (string.IsNullOrEmpty(function.Name))
                 throw new Exception("Empty function name in type " + functionType.FullName);
