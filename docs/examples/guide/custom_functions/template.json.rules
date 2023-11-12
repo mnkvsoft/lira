@@ -1,0 +1,40 @@
+-------------------- rule
+
+GET /orders
+
+~ headers
+example: guide/custom_functions/template.json
+
+----- declare
+
+$order.template:json = 
+{
+    "id": {{ int }},
+    "status": "paid",
+    "amount": {{ float }},
+    "transaction_id": "{{ guid }}",
+    "created_at": "{{ date }}",
+    "customer": "{{ str }}"
+}
+
+----- response
+
+~ body
+{
+    "orders": [
+        {{ 
+            $order.template
+                .replace("$.status", "ok")
+                .replace("$.customer", "vasily pupkin")
+        }},
+        {{ 
+            $order.template
+                .replace("$.status", "pending")
+                .replace("$.customer", "john silver")
+        }},
+        {{ 
+            $order.template
+                .replace("$.status", "declined")
+        }}
+    ]
+}

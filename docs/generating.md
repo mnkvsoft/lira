@@ -178,41 +178,6 @@ curl --location --request POST 'http://localhost/order' \
 
 Динамеские выражения могут быть разных типов, ниже рассматривается каждый из них
 
-## Форматирование 
-
-Любое значение полученное из динамического выражения 
-
-Все сгенерированные данные данные могут быть отформатированы,
-с помощью функции `format`, если возвращенный тип поддерживает форматирование
-
-#### Пример
-[format.rules](examples/generating/format.rules)
-
-```
--------------------- rule
-
-GET /generating/format
-
------ response
-
-~ body
-{{ date >> format: MM/dd/yyyy }}
-{{ int >> format: #.00# }}
-{{ guid >> format: N }}
-```
-Запрос
-```
-curl --location 'http://localhost/generating/format'
-```
-Ответ
-```
-07/25/2021
-472784009.00
-d953d01ce7f640119f36ad7cae1668ba
-```
-
-
-
 # Предопреденные системные функции
 Системные функции делятся на 2 группы:
 - извлекающие данные запроса
@@ -264,14 +229,11 @@ hello {{ req.path: person }}!
 
 
 ## req.body.jpath
-Используется для извлечения данных из тела в формате `json` с использованием языка `JSON Path`.
-Ознакомится с коротким описанием можно, например, по [ссылке](https://goessner.net/articles/JsonPath/)
-
-Для обеспечения данной функциональности используется библиотека [newtonsoft](https://www.newtonsoft.com/json/help/html/QueryJsonSelectToken.htm)
+Используется для извлечения данных из тела в формате `json` с использованием языка [JSON Path](addition_info.md#json-path).
 
 #### Синтаксис
 ```
-req.body.jpath: <JSON Path выражение>
+req.body.jpath: <JSON_Path_выражение>
 ```
 
 #### Пример
@@ -310,7 +272,7 @@ curl --location 'http://localhost/order' \
 
 #### Синтаксис
 ```
-req.body.xpath: <XPath выражение>
+req.body.xpath: <XPath_выражение>
 ```
 
 #### Пример
@@ -352,7 +314,7 @@ curl --location 'http://localhost/order' \
 
 #### Синтаксис
 ```
-form: <наименование параметра>
+form: <наименование_параметра>
 ```
 
 #### Пример
@@ -675,8 +637,165 @@ curl --location 'http://localhost/orders' \
         }
     ]
 }
-
 ```
+Если в шаблоне требуется изменить какое-либо значение, то для функции нужно явно
+задать тип `json` и при обращении к функции вызвать метод `replace()`, передав
+[JSON Path](addition_info.md#json-path) нужного элемента и новое значение.
+
+Подробнее о типе [json](types.md) 
+
+
+#### Пример. Изменения значения в шаблоне
+[template.json.rules](examples/guide/custom_functions/template.json.rules)
+```
+-------------------- rule
+
+GET /orders
+
+~ headers
+example: guide/custom_functions/template.json
+
+----- declare
+
+$order.template:json = 
+{
+    "id": {{ int }},
+    "status": "paid",
+    "amount": {{ float }},
+    "transaction_id": "{{ guid }}",
+    "created_at": "{{ date }}",
+    "customer": "{{ str }}"
+}
+
+----- response
+
+~ body
+{
+    "orders": [
+        {{ 
+            $order.template
+                .replace("$.status", "ok")
+                .replace("$.customer", "vasily pupkin")
+        }},
+        {{ 
+            $order.template
+                .replace("$.status", "pending")
+                .replace("$.customer", "john silver")
+        }},
+        {{ 
+            $order.template
+                .replace("$.status", "declined")
+        }}
+    ]
+}
+```
+:triangular_flag_on_post: Блок, в котором используется функция `replace()` является
+блоком `C#` - кода, который будет рассмотрен ниже. При вызовах функций в C# - блоках
+символ `$` используемый при объявлении функций не может быть опущен
+
+
+Запрос
+```
+curl --location 'http://localhost/orders' \
+--header 'example: guide/custom_functions/template.json'
+```
+Ответ
+```
+{
+    "orders": [{
+            "id": 1001723617,
+            "status": "ok",
+            "amount": 6502.18,
+            "transaction_id": "d4bec449-5ad6-448e-ad53-66d27cb86896",
+            "created_at": "05/22/2023 18:51:55",
+            "customer": "vasily pupkin"
+        }, {
+            "id": 679910945,
+            "status": "pending",
+            "amount": 5222.76,
+            "transaction_id": "158e54b3-ff01-48ab-947a-71b4c4bd3860",
+            "created_at": "06/05/2023 19:13:12",
+            "customer": "john silver"
+        }, {
+            "id": 679102371,
+            "status": "declined",
+            "amount": 1112.33,
+            "transaction_id": "43ff5b03-3348-4aed-a0f5-60988e597863",
+            "created_at": "11/09/2023 15:10:41",
+            "customer": "j886xeturw9lnss1h3c6"
+        }
+    ]
+}
+```
+
+#### Пример. Определения функции для герерации специфичного значения
+[int.big.rules](examples/guide/custom_functions/int.big.rules)
+```
+-------------------- rule
+
+GET /order
+
+~ headers
+example: guide/custom_functions/int.big
+
+----- declare
+
+$int.big = {{ int: [1000000000 - 9999999999] }}
+
+----- response
+
+~ body
+{
+    "id": {{ int.big }}
+}
+```
+Запрос
+```
+curl --location 'http://localhost/order' \
+--header 'example: guide/custom_functions/int.big'
+```
+Ответ
+```
+{
+    "id": 5941542837
+}
+```
+
+#### Пример. Переопределения системных функций
+Заменим системную функцию [int](#int), сузив диапазон выдаваемых значений 
+
+[int.override.rules](examples/guide/custom_functions/int.override.rules)
+```
+-------------------- rule
+
+GET /order
+
+~ headers
+example: guide/custom_functions/int.override
+
+----- declare
+
+$int = {{ int: [1 - 10] }}
+
+----- response
+
+~ body
+{
+    "items_count": {{ int }}
+}
+```
+Запрос
+```
+curl --location 'http://localhost/order' \
+--header 'example: guide/custom_functions/int.override'
+```
+Ответ
+```
+{
+    "items_count": 2
+}
+```
+
 
 # Переменные
 Если одно и то же сгенерированое значение необходимо использовать при 
@@ -688,7 +807,7 @@ curl --location 'http://localhost/orders' \
 идентификатора выдать в ответе на запрос и передать в запрос
 на обратный вызов.
 
-Переменные регистрируются в секции *declare* с использованием суффикса `$$`
+Переменные регистрируются в секции `declare` с использованием суффикса `$$`
 
 [variables.rules](examples/generating/variables.rules)
 ```
@@ -734,11 +853,427 @@ Request-Id: 4af7cf3b-e6c4-43ef-aa43-000c883cd081
 
 ## Уровни декларирования переменных и пользовательских функций
 
+Переменные и функции могут быть задекларированы на следующих уровнях:
+- на уровне правила, если требуется использование только в одном правиле
+- на уровне файла, если требуется использование в нескольких правилах в одном файле
+- на глобальном уровне, если требуется использование в любом правиле
+
+В зависимости от требуемого уровня декларирование будет различаться.
+
+### Декларирование на уровне правила
+В этом случае блок `declare` располагается внутри секции `response`, 
+на одном уровне с секцией response  
+
+#### Пример
+[rule.rules](examples/guide/declare_layers/rule.rules)
+```
+-------------------- rule
+
+GET /order
+
+~ headers
+example: guide/declare_layers/rule
+
+----- declare
+
+$amount = {{ float: [100 - 10000] }}
+$$id = {{ seq }}
+
+----- response
+
+~ body
+{
+    "transaction_id": {{ $$id }}
+    "items":[
+        {
+            "parent_transaction_id": {{ $$id }},
+            "amount": {{ $amount }}
+        },
+        {
+            "parent_transaction_id": {{ $$id }},
+            "amount": {{ $amount }}
+        }
+    ]
+}
+```
+Запрос
+```
+curl --location 'http://localhost/order' \
+--header 'example: guide/declare_layers/rule'
+```
+Ответ
+```
+{
+    "transaction_id": 17
+    "items":[
+        {
+            "parent_transaction_id": 17,
+            "amount": 8543.10
+        },
+        {
+            "parent_transaction_id": 17,
+            "amount": 2459.21
+        }
+    ]
+}
+```
+
+### Декларирование на уровне файла
+В этом случае секция `declare` располагается на одном уровне с секцией `rule`
+
+#### Пример
+[file.rules](examples/guide/declare_layers/file.rules)
+```
+-------------------- declare
+
+$amount = {{ float: [100 - 10000] }}
+$$id = {{ seq }}
+$template = 
+{
+    "id": {{ $$id }}
+    "items":[
+        {
+            "parent_id": {{ $$id }},
+            "amount": {{ $amount }}
+        },
+        {
+            "parent_id": {{ $$id }},
+            "amount": {{ $amount }}
+        }
+    ]
+}
+
+-------------------- rule
+
+GET /order/1
+
+~ headers
+example: guide/declare_layers/file
+
+----- response
+
+~ body
+{{ $template }}
+
+-------------------- rule
+
+GET /order/2
+
+~ headers
+example: guide/declare_layers/file
+
+----- response
+
+~ body
+{{ $template }}
+```
+Запрос для 1 правила
+```
+curl --location 'http://localhost/order/1' \
+--header 'example: guide/declare_layers/file'
+```
+Ответ
+```
+{
+    "id": 26
+    "items":[
+        {
+            "parent_id": 26,
+            "amount": 9253.64
+        },
+        {
+            "parent_id": 26,
+            "amount": 2794.01
+        }
+    ]
+}
+```
+Запрос для 2 правила
+```
+curl --location 'http://localhost/order/2' \
+--header 'example: guide/declare_layers/file'
+```
+Ответ
+```
+{
+    "id": 27
+    "items":[
+        {
+            "parent_id": 27,
+            "amount": 5022.35
+        },
+        {
+            "parent_id": 27,
+            "amount": 7377.37
+        }
+    ]
+}
+```
+### Декларирование на глобальном уровне
+Декларирование на глобильном уровне производится в файлах `*.declare`.
+Файл может быть определен в любом месте рабочего каталога.
+
+#### Пример
+[declare.shared.global.declare](examples/quick_start/declare.shared.global.declare)
+```
+$age = {{ int: [1 - 122]}}
+```
+[global.rules](examples/quick_start/declare.shared.global.rules)
+
+```
+-------------------- rule
+
+GET /person
+
+~ headers
+example: declare.shared.global
+
+----- response
+
+~ code
+200
+
+~ body
+{
+    "age": {{ age }}
+}
+```
+
+Запрос
+```
+curl --location 'http://localhost/person' \
+--header 'example: declare.shared.global'
+```
+Ответ
+```
+{
+    "age": 64
+}
+```
+
+
+## Порядок определения переменных и функций
+В пользовательский переменных и функциях можно использовать другие пользовательские
+переменные и функции, но они должные быть задекларированы ранее.
+
+:triangular_flag_on_post: Порядок декларирования имеет значение.
+
+### Порядок загрузки переменных и функций
+Сначала считываются все файлы `*.declare` в алфавитном порятки, 
+далее производится считывание из блоков `declare` на уровне файла, 
+далее производится чтение блоков `declare` на уровне правил.
+
+:triangular_flag_on_post: Не допускается использование определения функций 
+с одинаковыми названиями на любых уровнях (т.е. не может быть функции `age` 
+определенной на глобальном уровне и на уровне файла (или правила)), это справедлива
+и для переменных. Если подобное случится, то сервер выдаст соответствующую ошибку
+
+# Блоки кода на языке C#
+
+В некоторых случаях функциональности встроенных функций не хватает для описания
+специфичной логики. В этом случае можно использовать блоки кода на языке C#.
+Блоке на языке c# допустимы в любых динамических блоках, как непосредственно
+при генерации ответа в теле запроса и заголовках, так в переменных и функциях.
+
+Блоки делятся на 2 типа:
+- короткие
+- полные
+
+Ниже рассматриваются оба типа.
+
+
+## Короткие блоки
+Подразумевают инструцию без использования дополнительных переменных и
+возвращающую **не** `void` значение
+
+[short.rules](examples/quick_start/charp.short.rules)
+```
+-------------------- rule
+
+GET /very/old/event
+
+----- response
+
+~ code
+200
+
+~ body
+{
+    "date": {{ DateTime.Now.AddYears(-1000 - Random.Shared.Next(1, 100)) }}
+}
+```
+Запрос
+```
+curl --location 'http://localhost/very/old/event'
+```
+Ответ
+```
+{
+    "date": 0926-11-12T14:14:55.0009386+02:31
+}
+```
+
+## Полные блоки
+Полные блоки кода используются, если необходимо написать какую-то логику, 
+трубующую введения дополнительных переменных.
+
+#### Пример. Блок C# - кода при генерации тела сообщения 
+
+[full.rules](examples/guide/csharp/full.rules)
+```cs
+-------------------- rule
+
+GET /order
+
+~ headers
+example: guide/charp/full
+
+----- response
+
+~ body
+{
+    "customer": "{{ 
+        var firstNames = new []{"Vasily", "Nikolas", "Ivan", "John"};
+        var lastNames = new []{"Pupkin", "Stallone", "Norris", "Ivanov"};
+
+        var firstName = firstNames[Random.Shared.Next(0, firstNames.Length - 1)];
+        var lastName = lastNames[Random.Shared.Next(0, lastNames.Length - 1)];
+
+        var name = firstName + " " + lastName;
+        return name;
+     }}"
+}
+```
+Запрос
+```
+curl --location 'http://localhost/order' \
+--header 'example: guide/charp/full'
+```
+Ответ
+```
+{
+    "customer": "Vasily Stallone"
+}
+```
+
+#### Пример. Блок C# - кода в пользовательской функции
+
+[full.function.rules](examples/guide/csharp/full.function.rules)
+```cs
+-------------------- rule
+
+GET /order
+
+~ headers
+example: guide/charp/full.function
+
+----- declare
+$name = 
+{{
+     var firstNames = new []{"Vasily", "Nikolas", "Ivan", "John"};
+        var lastNames = new []{"Pupkin", "Stallone", "Norris", "Ivanov"};
+
+        var firstName = firstNames[Random.Shared.Next(0, firstNames.Length - 1)];
+        var lastName = lastNames[Random.Shared.Next(0, lastNames.Length - 1)];
+
+        var name = firstName + " " + lastName;
+        return name;
+}}
+----- response
+
+~ body
+{
+    "customer": "{{ $name }}"
+}
+```
+Запрос
+```
+curl --location 'http://localhost/order' \
+--header 'example: guide/charp/full.function'
+```
+Ответ
+```
+{
+    "customer": "Nikolas Norris"
+}
+```
+
+
+
+
+
+
+## Доступ к параметрам запроса
+Доступ к параметрам запроса для коротких и полных блоков можно получить с помощью
+системной переменной `@req`.
+
+Ниже описаны методы этой переменной.
+
+### Query
+Извлекает значение параметра строки запроса
+**Синтаксис**
+```
+@req.Query("<имя_параметра>")
+```
+
+### Header
+Извлекает значение заголовка
+**Синтаксис**
+```
+@req.Header("<имя_заголовка>")
+```
+
+### Path
+Извлекает значение сегмента по его имени. Используется только для сегмента или его части, для которого определено динамическое сопоставление
+**Синтаксис**
+```
+@req.Path("<имя_сегмента_пути>")
+```
+
+### Body.JPath
+Используется для извлечения данных из тела в формате `json` 
+с использованием языка [JSON Path](addition_info.md#json-path).
+
+**Синтаксис**
+```
+@req.Body.JPath("<JSON_Path_выражение>")
+```
+
+
+### Body.XPath
+Используется для извлечения данных из тела в формате `xml` 
+с использованием языка [XPath](https://ru.wikipedia.org/wiki/XPath).
+
+**Синтаксис**
+```
+@req.Body.XPath("<JSON_Path_выражение>")
+```
+
+### Body.Form
+Используется для извлечения данных из тела в формате `x-www-form-urlencoded`.
+
+**Синтаксис**
+```
+@req.Body.Form("<наименование_параметра>")
+```
+
+### Body.All
+Извлекает все тело запроса
+
+**Синтаксис**
+```
+@req.Body.All()
+```
+
+
+
+
+
+
+
 ## Форматирование
 
-Любое значение полученное из динамического выражения
-
-Все сгенерированные данные данные могут быть отформатированы,
+Любое значение полученное из динамического выражения может быть отформатировано
 с помощью функции `format`, если возвращенный тип поддерживает форматирование
 
 #### Пример
@@ -756,6 +1291,12 @@ GET /generating/format
 {{ int >> format: #.00# }}
 {{ guid >> format: N }}
 ```
+Оператор `>>` передает значение полученное динамической функцией на вход функции
+`format`, которая выполняет форматирование. Оператор `>>` подробнее рассматривается в разделе 
+[Модель передачи значения по цепочки функций](#модель-передачи-значения-по-цепочки-функций).
+
+
+
 Запрос
 ```
 curl --location 'http://localhost/generating/format'
@@ -766,11 +1307,22 @@ curl --location 'http://localhost/generating/format'
 472784009.00
 d953d01ce7f640119f36ad7cae1668ba
 ```
+Форматирование разных типов данных основано на общем механизме форматирования
+**.NET**
+
+Подробное описание форматов для разных типов данных можно найти по
+[ссылке](https://learn.microsoft.com/ru-ru/dotnet/standard/base-types/formatting-types).
+
+Описание форматирования для различных типов данных:
+- [Числовые](https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings)
+- [Guid](https://learn.microsoft.com/ru-ru/dotnet/api/system.guid.tostring?view=net-7.0)
+- [DateTime](https://learn.microsoft.com/ru-ru/dotnet/standard/base-types/custom-date-and-time-format-strings)
 
 
-## Блоки кода на языке C#
 
 
+
+## Модель передачи значения по цепочки функций
 
 - переменные
 - пользовательские функции

@@ -1,0 +1,42 @@
+-------------------- declare
+
+$amount = {{ float: [100 - 10000] }}
+$$id = {{ seq }}
+$template = 
+{
+    "id": {{ $$id }}
+    "items":[
+        {
+            "parent_id": {{ $$id }},
+            "amount": {{ $amount }}
+        },
+        {
+            "parent_id": {{ $$id }},
+            "amount": {{ $amount }}
+        }
+    ]
+}
+
+-------------------- rule
+
+GET /order/1
+
+~ headers
+example: guide/declare_layers/file
+
+----- response
+
+~ body
+{{ $template }}
+
+-------------------- rule
+
+GET /order/2
+
+~ headers
+example: guide/declare_layers/file
+
+----- response
+
+~ body
+{{ $template }}

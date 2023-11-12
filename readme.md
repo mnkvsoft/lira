@@ -1225,8 +1225,8 @@ curl --location 'http://localhost/order' \
 #### Изменение значение узлов json в шаблонах ответов
 Часто в шаблонах json ответов (которые представляют собой просто функции, 
 генерирующие некоторые значения) необходимо изменить часть данных, 
-а остальные оставить без изменений. Это делается с помощью вспомогательной 
-функции `json`. Блок, в котором используется вызов функции `json` является 
+а остальные оставить без изменений. Это делается с помощью явного определения типа  
+возвращаемого функцией значения как `json`. Блок, в котором используется функция является 
 блоком `C#` - кода, который будет рассмотрен ниже. 
 
 :triangular_flag_on_post: При вызовах функций в C# - блоках 
@@ -1236,7 +1236,7 @@ curl --location 'http://localhost/order' \
 ```
 -------------------- declare
 
-$template.order = 
+$template.order:json = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -1260,7 +1260,7 @@ example: change_json
 
 ~ body
 {{ 
-    json($template.order)
+    $template.order
         .replace("$.status", "pending")
         .replace("$.customer", "vasily pupkin")
 }}
@@ -1279,7 +1279,7 @@ example: change_json
 
 ~ body
 {{ 
-    json($template.order)
+    $template.order
         .replace("$.status", "refunded")
         .replace("$.customer", "nikolas john")
 }}
@@ -1326,7 +1326,7 @@ curl --location 'http://localhost/order' \
 
 #### Короткие блоки
 Подразумевают инструцию без использования дополнительных переменных и 
-возвращающую не `void` значение
+возвращающую **не** `void` значение
 
 [charp.short.rules](docs/examples/quick_start/charp.short.rules)
 ```
@@ -1351,7 +1351,7 @@ curl --location 'http://localhost/very/old/event'
 Ответ
 ```
 {
-    "date": 09/17/1919 08:40:50
+    "date": 0926-11-12T14:14:55.0009386+02:31
 }
 ```
 

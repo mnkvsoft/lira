@@ -1,0 +1,28 @@
+-------------------- rule
+
+GET /order
+
+~ headers
+example: guide/declare_layers/rule
+
+----- declare
+
+$amount = {{ float: [100 - 10000] }}
+$$id = {{ seq }}
+
+----- response
+
+~ body
+{
+    "transaction_id": {{ $$id }}
+    "items":[
+        {
+            "parent_transaction_id": {{ $$id }},
+            "amount": {{ $amount }}
+        },
+        {
+            "parent_transaction_id": {{ $$id }},
+            "amount": {{ $amount }}
+        }
+    ]
+}

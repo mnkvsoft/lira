@@ -1,6 +1,6 @@
 -------------------- declare
 
-$template.order = 
+$template.order:json = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -24,7 +24,7 @@ example: change_json
 
 ~ body
 {{ 
-    json($template.order)
+    $template.order
         .replace("$.status", "pending")
         .replace("$.customer", "vasily pupkin")
 }}
@@ -43,7 +43,7 @@ example: change_json
 
 ~ body
 {{ 
-    json($template.order)
+    $template.order
         .replace("$.status", "refunded")
         .replace("$.customer", "nikolas john")
 }}

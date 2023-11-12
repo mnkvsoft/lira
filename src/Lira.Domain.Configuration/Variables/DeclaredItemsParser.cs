@@ -1,8 +1,10 @@
 ﻿using System.Text;
+using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.Custom;
+using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
 namespace Lira.Domain.Configuration.Variables;
@@ -27,7 +29,7 @@ class DeclaredItemsParser
                      Consts.ControlChars.FunctionPrefix))
         {
             ObjectTextParts parts = await _textPartsParser.Parse(pattern, newContext);
-
+            
             var (name, type) = nameWithType.SplitToTwoParts(":").Trim();
             if (type != null)
             {

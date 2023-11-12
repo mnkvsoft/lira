@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Lira.Common;
 
 namespace Lira.Middlewares;
 
@@ -23,21 +24,19 @@ public class LoggingMiddleware
         var originalBodyStream = context.Response.Body;
 
         //Create a new memory stream...
-        using (var responseBody = new MemoryStream())
-        {
-            //...and use that for the temporary response body
-            context.Response.Body = responseBody;
+        using var responseBody = new MemoryStream();
+        //...and use that for the temporary response body
+        context.Response.Body = responseBody;
 
-            //Continue down the Middleware pipeline, eventually returning to this class
-            await _next(context);
+        //Continue down the Middleware pipeline, eventually returning to this class
+        await _next(context);
 
-            //Format the response from the server
-            var response = await FormatResponse(context.Response);
-            _logger.LogInformation(response);
+        //Format the response from the server
+        var response = await FormatResponse(context.Response);
+        _logger.LogInformation(response);
 
-            //Copy the contents of the new memory stream (which contains the response) to the original stream, which is then returned to the client.
-            await responseBody.CopyToAsync(originalBodyStream);
-        }
+        //Copy the contents of the new memory stream (which contains the response) to the original stream, which is then returned to the client.
+        await responseBody.CopyToAsync(originalBodyStream);
     }
 
     private async Task<string> FormatRequest(HttpRequest request)

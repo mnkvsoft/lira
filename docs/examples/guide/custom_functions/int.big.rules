@@ -1,0 +1,17 @@
+-------------------- rule
+
+GET /order
+
+~ headers
+example: guide/custom_functions/int.big
+
+----- declare
+
+$int.big = {{ int: [1000000000 - 9999999999] }}
+
+----- response
+
+~ body
+{
+    "id": {{ int.big }}
+}

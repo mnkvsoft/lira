@@ -11,12 +11,12 @@ internal static class Comments
         public const string MultiLineEnd = "###";
     }
     
-    public static string[] Delete(string text)
+    public static string Delete(string text)
     {
         text = Delete(text, CommentChar.MultiLineStart, CommentChar.MultiLineEnd, isMultiline: true);
         text = Delete(text, CommentChar.SingleLine, Environment.NewLine, isMultiline: false);
 
-        return text.Split(Environment.NewLine).ToArray();
+        return text;
     }
 
     private static string Delete(string text, string startComment, string endComment, bool isMultiline)

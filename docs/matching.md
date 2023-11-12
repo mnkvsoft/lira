@@ -450,7 +450,7 @@ curl --location 'http://localhost/user' \
 
 Синтаксис 
 ```
-jpath: <JSON Path выражение>
+jpath: <JSON_Path_выражение>
 ```
 
 #### Пример
@@ -496,7 +496,7 @@ curl --location 'http://localhost/payment/card' \
 
 Синтаксис
 ```
-xpath: <XPath выражение>
+xpath: <XPath_выражение>
 ```
 
 #### Пример
@@ -543,7 +543,7 @@ curl --location 'http://localhost/payment/card' \
 
 #### Синтаксис
 ```
-form: <наименование параметра>
+form: <наименование_параметра>
 ```
 
 #### Пример

@@ -1,4 +1,5 @@
 ﻿using Lira.Domain.TextPart.Impl.Custom;
+using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
@@ -16,12 +17,6 @@ class DeclaredItems : IReadonlyDeclaredItems
     
     public FunctionSet Functions { get; }
     IReadOnlyCollection<Function> IReadonlyDeclaredItems.Functions => Functions;
-    
-    // public DeclaredItems(IReadOnlyCollection<Variable> variables, IReadOnlyCollection<Function> functions)
-    // {
-    //     Variables = variables;
-    //     Functions = functions;
-    // }
     
     public DeclaredItems(IReadonlyDeclaredItems items)
     {

@@ -9,5 +9,5 @@ GET /very/old/event
 
 ~ body
 {
-    "date": {{ DateTime.Now.AddYears(-100 - Random.Shared.Next(1, 100)) }}
+    "date": {{ DateTime.Now.AddYears(-1000 - Random.Shared.Next(1, 100)) }}
 }

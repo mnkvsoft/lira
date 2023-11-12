@@ -1,0 +1,17 @@
+-------------------- rule
+
+GET /order
+
+~ headers
+example: guide/custom_functions/int.override
+
+----- declare
+
+$int = {{ int: [1 - 10] }}
+
+----- response
+
+~ body
+{
+    "items_count": {{ int }}
+}

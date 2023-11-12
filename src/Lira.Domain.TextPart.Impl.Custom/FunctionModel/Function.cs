@@ -1,6 +1,6 @@
 ﻿using Lira.Common;
 
-namespace Lira.Domain.TextPart.Impl.Custom;
+namespace Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 
 public record Function : IObjectTextPart, IUniqueSetItem
 {

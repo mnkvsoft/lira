@@ -1,0 +1,22 @@
+-------------------- rule
+
+GET /order
+
+~ headers
+example: guide/charp/full
+
+----- response
+
+~ body
+{
+    "customer": "{{ 
+        var firstNames = new []{"Vasily", "Nikolas", "Ivan", "John"};
+        var lastNames = new []{"Pupkin", "Stallone", "Norris", "Ivanov"};
+
+        var firstName = firstNames[Random.Shared.Next(0, firstNames.Length - 1)];
+        var lastName = lastNames[Random.Shared.Next(0, lastNames.Length - 1)];
+
+        var name = firstName + " " + lastName;
+        return name;
+     }}"
+}

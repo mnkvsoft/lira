@@ -357,6 +357,52 @@
 					"name": "comments",
 					"request": {
 						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "guide/comments",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/comments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "override",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "override",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "comments",
+					"request": {
+						"method": "GET",
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/comments",
@@ -910,6 +956,282 @@
 			"name": "guide",
 			"item": [
 				{
+					"name": "custum_functions",
+					"item": [
+						{
+							"name": "req.id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "example",
+										"value": "guide/custom_functions/req.id",
+										"type": "text"
+									},
+									{
+										"key": "Request-Id",
+										"value": "12345",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/payment",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"payment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "template",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "example",
+										"value": "guide/custom_functions/template",
+										"type": "text"
+									},
+									{
+										"key": "Request-Id",
+										"value": "12345",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/orders",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "template.json",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "example",
+										"value": "guide/custom_functions/template.json",
+										"type": "text"
+									},
+									{
+										"key": "Request-Id",
+										"value": "12345",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/orders",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "int.big",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "example",
+										"value": "guide/custom_functions/int.big",
+										"type": "text"
+									},
+									{
+										"key": "Request-Id",
+										"value": "12345",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/order",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"order"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "int.override",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "example",
+										"value": "guide/custom_functions/int.override",
+										"type": "text"
+									},
+									{
+										"key": "Request-Id",
+										"value": "12345",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/order",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"order"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "declare_layers",
+					"item": [
+						{
+							"name": "rule",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "example",
+										"value": "guide/declare_layers/rule",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/order",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"order"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "file1",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "example",
+										"value": "guide/declare_layers/file",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/order/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"order",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "file2",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "example",
+										"value": "guide/declare_layers/file",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/order/2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"order",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "charp",
+					"item": [
+						{
+							"name": "full",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "example",
+										"value": "guide/charp/full",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/order",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"order"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "full.function",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "example",
+										"value": "guide/charp/full",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/order",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"order"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "static",
 					"request": {
 						"method": "POST",
@@ -1442,6 +1764,314 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "generating",
+			"item": [
+				{
+					"name": "body",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/story",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"story"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "headers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "headers",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/story",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"story"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http_code_in_block",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "http_code_in_block",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http_code_in_section",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "http_code_in_section",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http_code_default",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "http_code_default",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "body.jpath",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "body.jpath",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"amount\": 124\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "body.xpath",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "body.xpath",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<order>\r\n    <amount>124</amount>\r\n</order>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "body.form",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "body.form",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "amount",
+									"value": "123.56",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "it's very important order",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "body.all",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "body.all",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "some description"
+						},
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "variables",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "generating/variables",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "format",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "body.form",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/generating/format",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"generating",
+								"format"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "test",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/test",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"test"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [
