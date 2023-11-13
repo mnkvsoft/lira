@@ -17,7 +17,7 @@ example: guide/comments
     comment
 ### 
 hello!## comment the rest of the line
-hello ### comment in the middle of the line ### world
+hello ### comment in the middle of the line ### world!
 ###
 it's 
 not closed

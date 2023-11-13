@@ -1213,7 +1213,7 @@
 								"header": [
 									{
 										"key": "example",
-										"value": "guide/charp/full",
+										"value": "guide/charp/full.function",
 										"type": "text"
 									}
 								],
@@ -1758,6 +1758,29 @@
 									"key": "ago",
 									"value": "36"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "comments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "guide/comments",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/comments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comments"
 							]
 						}
 					},

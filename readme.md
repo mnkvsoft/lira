@@ -2,11 +2,20 @@
 simple mock server
 
 ## Миссия
-Сервер LIRA предназначен для подмены внешних api при тестиронии исходной системы. 
-LIRA очень широкий спектр сценариев использования
+Сервер **LIRA** предназначен для подмены внешних api при тестиронии исходной системы. 
+Главной целью сервера **LIRA** является максимально простая настройка и обеспечение широкого 
+спектра возможностей
 
 ## Требования 
 Установленный Docker
+
+## Ссылки
+
+[Полное руководство](docs/guide.md)
+
+[Cопоставление запросов](docs/matching.md)
+
+[Генерация ответов](docs/generating.md)
 
 ## Быстрый старт
 
@@ -53,7 +62,9 @@ hello {{ req.path: person }}!
 
 hello Nikolas!
 ```
+#### Ссылки
 
+[Полное руководство](docs/guide.md)
 
 ### Подсветка синтаксиса
 
@@ -167,11 +178,12 @@ jpath: $.number >> 4444{{ int }}
 Запрос
 ```
 curl --location 'http://localhost/payment/card?fast=true' \
---header 'Request-Id: db73290a-1606-437a-be34-114a952b7ff3' \
+--header 'Request-Id: 60a37f8e-0c7f-4404-8dda-64eaf6d13e6a' \
 --header 'Content-Type: application/json' \
 --data '{
-    "pan": 4444111122223333
+    "number": 4444111122223333
 }'
+
 ```
 
 Ответ
@@ -182,7 +194,7 @@ curl --location 'http://localhost/payment/card?fast=true' \
 }
 ```
 
-Ссылки
+#### Ссылки
 
 [Полное руководство](docs/guide.md)
 
@@ -234,7 +246,7 @@ Request-Time: 12:07:16
 }
 ```
 
-Ссылки
+#### Ссылки
 
 [Полное руководство](docs/guide.md)
 
@@ -292,7 +304,7 @@ Request-Id: 987
 }
 ```
 
-Ссылки
+#### Ссылки
 
 [Полное руководство](docs/guide.md)
 
@@ -348,7 +360,7 @@ Request-Id: 1cfc7bc5ea6146a79dc2820fe7c6c63c
 }
 ```
 
-Ссылки
+#### Ссылки
 
 [Полное руководство](docs/guide.md)
 
@@ -435,7 +447,7 @@ Content-Length: 42
 ```
 
 
-Ссылки
+#### Ссылки
 
 [Полное руководство](docs/guide.md)
 
@@ -871,7 +883,7 @@ curl --location --request POST 'http://localhost/payment/refund/4611686018427387
     "status": "reject"
 }
 ```
-Ссылки
+#### Ссылки
 
 [Диапазоны](docs/ranges.md)
 
@@ -1008,7 +1020,7 @@ curl --location --request POST 'http://localhost/payment' \
 }
 ```
 
-Ссылки
+#### Ссылки
 
 [Полное руководство](docs/guide.md)
 
@@ -1087,7 +1099,7 @@ curl --location 'http://localhost/account' \
 }
 ```
 
-Ссылки
+#### Ссылки
 
 [Полное руководство](docs/guide.md)
 
