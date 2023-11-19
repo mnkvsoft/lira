@@ -1319,7 +1319,7 @@ d953d01ce7f640119f36ad7cae1668ba
 - [DateTime](https://learn.microsoft.com/ru-ru/dotnet/standard/base-types/custom-date-and-time-format-strings)
 
 
-
+# Раздел находится в стадии написания...
 
 
 ## Модель передачи значения по цепочки функций

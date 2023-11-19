@@ -55,7 +55,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{21774504-6CD6-450E-AB05-ED537234E470}"
 	ProjectSection(SolutionItems) = preProject
 		docs\guide.md = docs\guide.md
-		docs\match_functions.md = docs\match_functions.md
 		readme.md = readme.md
 		docs\matching.md = docs\matching.md
 		docs\highlight_setup.md = docs\highlight_setup.md
