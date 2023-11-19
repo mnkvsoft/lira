@@ -1,0 +1,59 @@
+## success
+
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: manual_payment
+
+~ body
+jpath: $.amount >> {{ float: [0.01 - 10.00] }}
+
+----- response
+
+~ body
+{
+    "id": {{ seq }},
+    "status": "success"
+}
+
+## pending
+
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: manual_payment
+
+~ body
+jpath: $.amount >> {{ float: [10.01 - 20.00] }}
+
+----- response
+
+~ body
+{
+    "id": {{ seq }},
+    "status": "pending"
+}
+
+## reject
+
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: manual_payment
+
+~ body
+jpath: $.amount >> {{ float: [20.01 - 30.00] }}
+
+----- response
+
+~ body
+{
+    "id": {{ seq }},
+    "status": "reject"
+}

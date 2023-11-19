@@ -1,0 +1,27 @@
+{
+    "payment.amount": {
+      "type": "float",
+      "interval": "0.01 - 50.00",
+      "capacity": "10",
+      "unit": 0.01,
+      "ranges": [
+        "success",
+        "pending",
+        "reject",
+        "success.reversal.pending",
+        "success.reversal.reject"
+      ]
+    },
+    "payment.id": {
+        "type": "int",
+        "interval": "1 - 3_000_000",
+        "capacity": "1_000_000",
+        "mode": "seq",
+        "ranges": [
+          "default",
+          "reversal.pending",
+          "reversal.reject"
+        ]
+      }
+  }
+  

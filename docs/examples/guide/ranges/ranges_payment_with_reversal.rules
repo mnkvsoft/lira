@@ -1,0 +1,168 @@
+## PAYMENT
+
+## success
+## Правило №1
+
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: ranges_payment_with_reversal
+
+~ body
+jpath: $.amount >> {{ range: payment.amount/success }}
+
+----- response
+
+~ body
+{
+    ## reversal по этому id вернет success
+    "id": {{ range: payment.id/default }}, 
+    "status": "success"
+}
+
+
+## success with pending reversal
+## Правило №2
+
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: ranges_payment_with_reversal
+
+~ body
+jpath: $.amount >> {{ range: payment.amount/success.reversal.pending }}
+
+----- response
+
+~ body
+{
+    ## reversal по этому id вернет pending
+    "id": {{ range: payment.id/reversal.pending }}, 
+    "status": "success"
+}
+
+
+## success with reject reversal
+## Правило №3
+
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: ranges_payment_with_reversal
+
+~ body
+jpath: $.amount >> {{ range: payment.amount/success.reversal.reject }}
+
+----- response
+
+~ body
+{
+    ## reversal по этому id вернет reject
+    "id": {{ range: payment.id/reversal.pending  }}, 
+    "status": "success"
+}
+
+
+## pending
+## Правило №4
+
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: ranges_payment_with_reversal
+
+~ body
+jpath: $.amount >> {{ range: payment.amount/pending }}
+
+----- response
+
+~ body
+{
+    ## reversal по этому id вернет success
+    "id": {{ range: payment.id/default }}, 
+    "status": "pending"
+}
+
+
+## reject
+## Правило №5
+
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: ranges_payment_with_reversal
+
+~ body
+jpath: $.amount >> {{ range: payment.amount/pending }}
+
+----- response
+
+~ body
+{
+    ## reversal по этому id вернет success
+    "id": {{ range: payment.id/default }}, 
+    "status": "reject"
+}
+
+## REVERSAL
+
+## success
+## Правило №6
+
+-------------------- rule
+
+POST /payment/reversal/{{ range: payment.id/default }}
+
+~ headers
+example: ranges_payment_with_reversal
+
+----- response
+
+~ body
+{
+    "status": "success"
+}
+
+## pending
+## Правило №7
+
+-------------------- rule
+
+POST /payment/reversal/{{ range: payment.id/reversal.pending }}
+
+~ headers
+example: ranges_payment_with_reversal
+
+----- response
+
+~ body
+{
+    "status": "pending"
+}
+
+## reject
+## Правило №8
+
+-------------------- rule
+
+POST /payment/reversal/{{ range: payment.id/reversal.reject }}
+
+~ headers
+example: ranges_payment_with_reversal
+
+----- response
+
+~ body
+{
+    "status": "reject"
+}

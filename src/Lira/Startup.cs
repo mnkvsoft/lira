@@ -51,7 +51,7 @@ public class Startup
                     if (data == null)
                     {
                         context.Response.StatusCode = 404;
-                        await context.Response.WriteAsync($"Data '{name}' not found");
+                        await context.Response.WriteAsync($"Range '{name}' not found");
                     }
                     else
                     {
@@ -60,7 +60,7 @@ public class Startup
                         if (range == null)
                         {
                             context.Response.StatusCode = 404;
-                            await context.Response.WriteAsync($"Range '{rangeName}' in data '{name}' not found");
+                            await context.Response.WriteAsync($"Range '{rangeName}' in interval '{name}' not found");
                         }
                         else
                         {
@@ -75,7 +75,7 @@ public class Startup
                 });
 
             endpoints.MapGet(
-              "/" + sys + "/data/info",
+              "/" + sys + "/range/info",
               async context =>
               {
                   var dataProvider = context.RequestServices.GetRequiredService<IDataProvider>();
@@ -84,7 +84,7 @@ public class Startup
               });
 
             endpoints.MapGet(
-            "/" + sys + "/data/info/{name}",
+            "/" + sys + "/range/info/{name}",
             async (HttpContext context, string name) =>
             {
                 var dataProvider = context.RequestServices.GetRequiredService<IDataProvider>();

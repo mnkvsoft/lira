@@ -1,0 +1,21 @@
+{
+    "short.payment.amount": {
+      "type": "float",
+      "ranges": [
+        "success",
+        "pending",
+        "reject",
+        "success.reversal.pending",
+        "success.reversal.reject"
+      ]
+    },
+    "short.payment.id": {
+        "type": "int",
+        "ranges": [
+          "default",
+          "reversal.pending",
+          "reversal.reject"
+        ]
+      }
+  }
+  

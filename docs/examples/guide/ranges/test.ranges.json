@@ -1,0 +1,12 @@
+{
+  "token": {
+    "type": "hex",
+    "capacity": "10_000", 
+    "bytes_count": 64,
+    "ranges": [
+      "first",
+      "second",
+      "third"
+    ]
+  }
+}

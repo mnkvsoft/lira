@@ -20,9 +20,12 @@ static class StringBuilderExtensions
         }
 
         sb.AppendLine("Ranges:");
+
+        var nameLength = intervals.Select(x => x.Key.ToString().Length).Max() + 1;
+        
         foreach (var pair in intervals)
         {
-            sb.AppendLine(pair.Key.ToString().PadRight(10, ' ') + " " + pair.Value);
+            sb.AppendLine(pair.Key.ToString().PadRight(nameLength, ' ') + " " + pair.Value);
         }
 
         return sb;

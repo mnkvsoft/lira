@@ -1,0 +1,168 @@
+## PAYMENT
+
+## success
+## Правило №1
+
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: manual_payment_with_reversal
+
+~ body
+jpath: $.amount >> {{ float: [0.01 - 10.00] }}
+
+----- response
+
+~ body
+{
+    ## reversal по этому id вернет success
+    "id": {{ int: [1 - 1000000] }}, 
+    "status": "success"
+}
+
+
+## success with pending reversal
+## Правило №2
+
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: manual_payment_with_reversal
+
+~ body
+jpath: $.amount >> {{ float: [30.01 - 40.00] }}
+
+----- response
+
+~ body
+{
+    ## reversal по этому id вернет pending
+    "id": {{ int: [1000001 - 2000000] }}, 
+    "status": "success"
+}
+
+
+## success with reject reversal
+## Правило №3
+
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: manual_payment_with_reversal
+
+~ body
+jpath: $.amount >> {{ float: [40.01 - 50.00] }}
+
+----- response
+
+~ body
+{
+    ## reversal по этому id вернет reject
+    "id": {{ int: [2000001 - 3000000] }}, 
+    "status": "success"
+}
+
+
+## pending
+## Правило №4
+
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: manual_payment_with_reversal
+
+~ body
+jpath: $.amount >> {{ float: [10.01 - 20.00] }}
+
+----- response
+
+~ body
+{
+    ## reversal по этому id вернет success
+    "id": {{ int: [1 - 1000000] }}, 
+    "status": "pending"
+}
+
+
+## reject
+## Правило №5
+
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: manual_payment_with_reversal
+
+~ body
+jpath: $.amount >> {{ float: [20.01 - 30.00] }}
+
+----- response
+
+~ body
+{
+    ## reversal по этому id вернет success
+    "id": {{ int: [1 - 1000000] }}, 
+    "status": "reject"
+}
+
+## REVERSAL
+
+## success
+## Правило №6
+
+-------------------- rule
+
+POST /payment/reversal/{{ int: [1 - 1000000] }}
+
+~ headers
+example: manual_payment_with_reversal
+
+----- response
+
+~ body
+{
+    "status": "success"
+}
+
+## pending
+## Правило №7
+
+-------------------- rule
+
+POST /payment/reversal/{{ int: [1000001 - 2000000] }}
+
+~ headers
+example: manual_payment_with_reversal
+
+----- response
+
+~ body
+{
+    "status": "pending"
+}
+
+## reject
+## Правило №8
+
+-------------------- rule
+
+POST /payment/reversal/{{ int: [2000001 - 3000000] }}
+
+~ headers
+example: manual_payment_with_reversal
+
+----- response
+
+~ body
+{
+    "status": "reject"
+}

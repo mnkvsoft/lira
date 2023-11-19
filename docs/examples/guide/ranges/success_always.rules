@@ -1,0 +1,14 @@
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: success_always
+
+----- response
+
+~ body
+{
+    "id": {{ seq }},
+    "status": "success"
+}
