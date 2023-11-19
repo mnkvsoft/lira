@@ -393,7 +393,7 @@ $$id = {{ seq }}
     "status": "pending"
 }
 
------ call.http
+----- action.call.http
 
 POST http://localhost/api/callback
 

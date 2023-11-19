@@ -9,7 +9,7 @@ class Constants
         public const string Templates = "templates";
         public const string Condition = "condition";
         public const string Response = "response";
-        public const string CallPrefix = "call";
+        public const string CallPrefix = "action.call";
     }
 
     public static class BlockName

@@ -25,7 +25,7 @@ Request-Id: 64F67BF9-28C8-41F8-9D8B-75E0A64B8A16
     "status": "inprocess"
 }
 
---- call.http
+--- action.call.http
 
 POST http://fakeserver:9876/api/callback?a=1
 

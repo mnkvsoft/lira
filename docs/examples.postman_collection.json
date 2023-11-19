@@ -1232,6 +1232,230 @@
 					]
 				},
 				{
+					"name": "ranges",
+					"item": [
+						{
+							"name": "success_always",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "example",
+										"value": "success_always",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"source\": \"1\",\r\n    \"destination\": \"2\",\r\n    \"amount\": 10.23\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/payment",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"payment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "manual_payment",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "example",
+										"value": "manual_payment",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"source\": \"1\",\r\n    \"destination\": \"2\",\r\n    \"amount\": 23.89\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/payment",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"payment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "manual_payment_with_reversal",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "example",
+										"value": "manual_payment_with_reversal",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"source\": \"1\",\r\n    \"destination\": \"2\",\r\n    \"amount\": 35.44\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/payment",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"payment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ranges_payment_with_reversal",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "example",
+										"value": "ranges_payment_with_reversal",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"source\": \"1\",\r\n    \"destination\": \"2\",\r\n    \"amount\": 35.44\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/payment",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"payment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "manual_reversal",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "example",
+										"value": "manual_payment_with_reversal",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/payment/reversal/1448743",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"payment",
+										"reversal",
+										"1448743"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ranges_reversal",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "example",
+										"value": "ranges_payment_with_reversal",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/payment/reversal/1000001",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"payment",
+										"reversal",
+										"1000001"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ranges_info",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/sys/range/info",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"sys",
+										"range",
+										"info"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ranges_val",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/sys/range/val/short.payment.amount/success/5",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"sys",
+										"range",
+										"val",
+										"short.payment.amount",
+										"success",
+										"5"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "static",
 					"request": {
 						"method": "POST",

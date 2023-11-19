@@ -20,7 +20,7 @@ $$callback_server = http://fakeserver:9876
     "status": "inprocess"
 }
 
------ call.http
+----- action.call.http
 
 POST {{ $$callback_server }}/api/callback?a={{echo: 1}}
 

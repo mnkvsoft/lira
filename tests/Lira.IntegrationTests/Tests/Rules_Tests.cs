@@ -83,7 +83,7 @@ public class Rules_Tests : TestBase
 
             AssertValidHeaders(res, expectedSection);
 
-            var httpCallSection = expectedSection.ChildSections.FirstOrDefault(x => x.Name == "call.http");
+            var httpCallSection = expectedSection.ChildSections.FirstOrDefault(x => x.Name == "action.call.http");
             AsserCallHttp(httpCallSection, mocks);
         }
     }
