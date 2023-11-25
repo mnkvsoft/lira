@@ -69,7 +69,7 @@ third
 
 -------------------- case
 
-GET /range/types/float/capacity/match/10
+GET /range/types/float/capacity/match/11.64
 
 ----- expected
 
@@ -81,7 +81,7 @@ third
 
 -------------------- case
 
-GET /range/types/float/capacity/match/10.01
+GET /range/types/float/capacity/match/11.65
 
 ----- expected
 

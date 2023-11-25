@@ -21,7 +21,7 @@ first
 
 -------------------- case
 
-GET /range/types/float/unit/match/0.7
+GET /range/types/float/unit/match/0.5
 
 ----- expected
 
@@ -33,7 +33,7 @@ first
 
 -------------------- case
 
-GET /range/types/float/unit/match/0.701
+GET /range/types/float/unit/match/0.501
 
 ----- expected
 
@@ -45,7 +45,7 @@ second
 
 -------------------- case
 
-GET /range/types/float/unit/match/1.4
+GET /range/types/float/unit/match/1
 
 ----- expected
 
@@ -57,7 +57,7 @@ second
 
 -------------------- case
 
-GET /range/types/float/unit/match/1.401
+GET /range/types/float/unit/match/1.001
 
 ----- expected
 

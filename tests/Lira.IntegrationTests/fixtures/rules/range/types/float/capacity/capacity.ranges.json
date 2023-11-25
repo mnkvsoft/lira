@@ -1,8 +1,8 @@
 {
   "float_capacity": {
     "type": "float",
-    "interval": "1 - 10",
-    "capacity": "3.55",
+    "start": "1",
+    "capacity": "355",
     "ranges": [
       "first",
       "second",

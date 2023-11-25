@@ -19,7 +19,7 @@ class GuidParser
     public Data Parse(DataName name, DataOptionsDto dto)
     {
         var interval = new Interval<long>(long.MinValue, long.MaxValue);
-        var intervals = IntParser.GetIntervalsByAutoCapacity(dto.Ranges, interval, out long capacity);
+        var (intervals, capacity) = IntParser.GetIntervalsByAutoCapacity(dto.Ranges, interval);
 
         _logger.LogInformation(new StringBuilder().AddInfoForLog(name, capacity, intervals).ToString());
 

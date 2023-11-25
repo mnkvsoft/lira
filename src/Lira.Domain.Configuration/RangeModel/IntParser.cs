@@ -9,6 +9,20 @@ using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain.Configuration.RangeModel;
 
+static class DtoExtensions
+{
+    public static long GetCapacity(this DataOptionsDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.Capacity))
+            throw new Exception("Field 'capacity' is required if filled 'start' field");
+
+        if (!PrettyNumberParser<long>.TryParse(dto.Capacity, out long capacity))
+            throw new Exception($"Field 'capacity' has not int value '{dto.Capacity}'");
+        
+        return capacity;
+    }
+}
+
 class IntParser
 {
     private readonly ILogger _logger;
@@ -45,42 +59,30 @@ class IntParser
         throw new Exception($"An error occurred while creating '{name}' data. For number access only 'seq' or 'set' values providing type");
     }
 
-    private static (IReadOnlyDictionary<DataName, Interval<long>> Intervals, long Capacity) GetIntervalsWithCapacity(DataOptionsDto dto)
+    internal record IntervalsWithCapacity(IReadOnlyDictionary<DataName, Interval<long>> Intervals, long Capacity);
+    
+    private static IntervalsWithCapacity GetIntervalsWithCapacity(DataOptionsDto dto)
     {
         if (!string.IsNullOrEmpty(dto.Interval) && !string.IsNullOrEmpty(dto.Start))
             throw new Exception("Only one of the values 'interval', 'start' can be filled");
 
-        IReadOnlyDictionary<DataName, Interval<long>> intervals;
-        long capacity;
-
         if (!string.IsNullOrEmpty(dto.Start))
-        {
-            intervals = GetIntervalsByCustomCapacity(dto, out capacity);
-        }
-        else
-        {
-            var interval = string.IsNullOrEmpty(dto.Interval)
-                ? new Interval<long>(1, long.MaxValue)
-                : Interval<long>.Parse(dto.Interval, new PrettyNumberParser<long>());
+            return GetIntervalsByCustomCapacity(dto);
 
-            intervals = GetIntervalsByAutoCapacity(dto.Ranges, interval, out capacity);
-        }
+        var interval = string.IsNullOrEmpty(dto.Interval)
+            ? new Interval<long>(1, long.MaxValue)
+            : Interval<long>.Parse(dto.Interval, new PrettyNumberParser<long>());
 
-        return (intervals, capacity);
+        return GetIntervalsByAutoCapacity(dto.Ranges, interval);
     }
 
-    private static IReadOnlyDictionary<DataName, Interval<long>> GetIntervalsByCustomCapacity(DataOptionsDto dto, out long capacity)
+    private static IntervalsWithCapacity GetIntervalsByCustomCapacity(DataOptionsDto dto)
     {
         if (!PrettyNumberParser<long>.TryParse(dto.Start, out long startInterval))
             throw new Exception($"Field 'start' has not int value '{dto.Start}'");
 
-        if (string.IsNullOrWhiteSpace(dto.Capacity))
-            throw new Exception("Field 'capacity' is required if filled 'start' field");
-
-        if (!PrettyNumberParser<long>.TryParse(dto.Capacity, out capacity))
-            throw new Exception($"Field 'capacity' has not int value '{dto.Capacity}'");
-        
-        return GetIntervalsByCustomCapacity(dto.Ranges, startInterval, capacity);
+        long capacity = dto.GetCapacity();
+        return new IntervalsWithCapacity(GetIntervalsByCustomCapacity(dto.Ranges, startInterval, capacity), capacity);
     }
 
     public static IReadOnlyDictionary<DataName, Interval<long>> GetIntervalsByCustomCapacity(string[] ranges, long startInterval, long capacity)
@@ -96,17 +98,16 @@ class IntParser
         return intervals;
     }
 
-    public static IReadOnlyDictionary<DataName, Interval<long>> GetIntervalsByAutoCapacity(
+    public static IntervalsWithCapacity GetIntervalsByAutoCapacity(
         string[] ranges,
-        Interval<long> interval,
-        out long capacity)
+        Interval<long> interval)
     {
         ulong intervalLength = (ulong)(interval.To - interval.From);
 
         ulong tempCapacity = intervalLength / (ulong)ranges.Length;
-        capacity = tempCapacity > long.MaxValue ? long.MaxValue : (long)tempCapacity;
+        long capacity = tempCapacity > long.MaxValue ? long.MaxValue : (long)tempCapacity;
         
-        var result = new Dictionary<DataName, Interval<long>>();
+        var intervals = new Dictionary<DataName, Interval<long>>();
 
         for (int i = 0; i < ranges.Length; i++)
         {
@@ -115,9 +116,9 @@ class IntParser
             long to = from + capacity - 1;
             var name = new DataName(range);
 
-            result.Add(name, new Interval<long>(from, i == ranges.Length - 1 ? interval.To : to));
+            intervals.Add(name, new Interval<long>(from, i == ranges.Length - 1 ? interval.To : to));
         }
 
-        return result;
+        return new IntervalsWithCapacity(intervals, capacity);
     }
 }
