@@ -26,12 +26,15 @@ class HexParser
         var intervals = IntParser.GetIntervalsByCustomCapacity(dto.Ranges, long.MinValue, capacity);
         int bytesCount = dto.BytesCount ?? 32;
 
-        var additionInfo = "Bytes count: " + bytesCount;
-        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, capacity, intervals, additionInfo).ToString());
+        string info = 
+            "Capacity: " + capacity + Environment.NewLine+
+            "Bytes count: " + bytesCount;
+        
+        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, info, intervals).ToString());
 
         return new HexData(
             name,
             intervals.ToDictionary(p => p.Key, p => new HexDataRange(p.Key, p.Value, bytesCount)),
-            new StringBuilder().AddInfo(capacity, intervals, additionInfo).ToString());
+            new StringBuilder().AddInfo(info, intervals).ToString());
     }
 }

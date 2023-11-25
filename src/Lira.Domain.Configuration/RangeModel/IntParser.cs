@@ -9,20 +9,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain.Configuration.RangeModel;
 
-static class DtoExtensions
-{
-    public static long GetCapacity(this DataOptionsDto dto)
-    {
-        if (string.IsNullOrWhiteSpace(dto.Capacity))
-            throw new Exception("Field 'capacity' is required if filled 'start' field");
-
-        if (!PrettyNumberParser<long>.TryParse(dto.Capacity, out long capacity))
-            throw new Exception($"Field 'capacity' has not int value '{dto.Capacity}'");
-        
-        return capacity;
-    }
-}
-
 class IntParser
 {
     private readonly ILogger _logger;
@@ -34,34 +20,35 @@ class IntParser
     
     public Data Parse(DataName name, DataOptionsDto dto)
     {
-        var (intervals, capacity) = GetIntervalsWithCapacity(dto);
+        var (intervals, info) = GetIntervalsWithInfo(dto);
 
         var mode = dto.Mode ?? "seq";
-        var additionInfo = "Mode: " + mode;
         
-        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, capacity, intervals, additionInfo).ToString());
+        info += Environment.NewLine + "Mode: " + mode; 
+        
+        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, info, intervals).ToString());
 
-        var info = new StringBuilder().AddInfo(capacity, intervals, additionInfo).ToString();
+        var infoForData = new StringBuilder().AddInfo(info, intervals).ToString();
         if (mode == "seq")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,
                 p => (DataRange<long>)new IntSeqDataRange(p.Key, new Int64Sequence(p.Value)));
-            return new IntData(name, seqDatas, info);
+            return new IntData(name, seqDatas, infoForData);
         }
 
         if (mode == "random")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,
                 p => (DataRange<long>)new IntSetIntervalDataRange(p.Key, p.Value));
-            return new IntData(name, seqDatas, info);
+            return new IntData(name, seqDatas, infoForData);
         }
 
         throw new Exception($"An error occurred while creating '{name}' data. For number access only 'seq' or 'set' values providing type");
     }
 
-    internal record IntervalsWithCapacity(IReadOnlyDictionary<DataName, Interval<long>> Intervals, long Capacity);
+    internal record IntervalsWithCapacity(IReadOnlyDictionary<DataName, Interval<long>> Intervals, string RangeInfo);
     
-    private static IntervalsWithCapacity GetIntervalsWithCapacity(DataOptionsDto dto)
+    private static IntervalsWithCapacity GetIntervalsWithInfo(DataOptionsDto dto)
     {
         if (!string.IsNullOrEmpty(dto.Interval) && !string.IsNullOrEmpty(dto.Start))
             throw new Exception("Only one of the values 'interval', 'start' can be filled");
@@ -82,7 +69,7 @@ class IntParser
             throw new Exception($"Field 'start' has not int value '{dto.Start}'");
 
         long capacity = dto.GetCapacity();
-        return new IntervalsWithCapacity(GetIntervalsByCustomCapacity(dto.Ranges, startInterval, capacity), capacity);
+        return new IntervalsWithCapacity(GetIntervalsByCustomCapacity(dto.Ranges, startInterval, capacity), "Capacity: " + capacity);
     }
 
     public static IReadOnlyDictionary<DataName, Interval<long>> GetIntervalsByCustomCapacity(string[] ranges, long startInterval, long capacity)
@@ -119,6 +106,8 @@ class IntParser
             intervals.Add(name, new Interval<long>(from, i == ranges.Length - 1 ? interval.To : to));
         }
 
-        return new IntervalsWithCapacity(intervals, capacity);
+        return new IntervalsWithCapacity(intervals, 
+            "Interval: " + interval + Environment.NewLine +
+            "Capacity(auto): " + capacity);
     }
 }

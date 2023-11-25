@@ -1,6 +1,4 @@
-using Lira.Domain.DataModel.DataImpls.Hex;
-
-namespace Lira.Domain.DataModel.DataImpls.Guid;
+namespace Lira.Domain.DataModel.DataImpls.Hex;
 
 public class HexData : Data<string>
 {

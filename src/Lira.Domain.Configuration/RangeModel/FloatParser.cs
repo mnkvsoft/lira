@@ -22,20 +22,20 @@ class FloatParser
     public Data Parse(DataName name, DataOptionsDto dto)
     {
         decimal unit = dto.Unit ?? 0.01m;
-        var (intervals, capacity) = GetIntervalsWithCapacity(dto, unit);
+        var (intervals, info) = GetIntervalsWithInfo(dto, unit);
         
-        var additionInfo = "Unit: " + unit;
-        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, capacity, intervals, additionInfo).ToString());
+        info += Environment.NewLine + "Unit: " + unit;
+        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, info, intervals).ToString());
         
         return new FloatData(
             name,
             intervals.ToDictionary(p => p.Key, p => (DataRange<decimal>)new FloatSetIntervalDataRange(p.Key, p.Value, GetDecimals(unit))),
-            new StringBuilder().AddInfo(capacity, intervals, additionInfo).ToString());
+            new StringBuilder().AddInfo(info, intervals).ToString());
     }
 
-    record IntervalsWithCapacity(IReadOnlyDictionary<DataName, Interval<decimal>> Intervals, long Capacity);
+    record IntervalsWithCapacity(IReadOnlyDictionary<DataName, Interval<decimal>> Intervals, string RangeInformation);
     
-    private static IntervalsWithCapacity GetIntervalsWithCapacity(
+    private static IntervalsWithCapacity GetIntervalsWithInfo(
         DataOptionsDto dto,
         decimal unit)
     {
@@ -43,7 +43,18 @@ class FloatParser
             throw new Exception("Only one of the values 'interval', 'start' can be filled");
 
         if (!string.IsNullOrEmpty(dto.Start))
-            return GetIntervalsByCustomCapacity(dto, unit);
+        {
+            if (!string.IsNullOrEmpty(dto.Capacity) && !string.IsNullOrEmpty(dto.Length))
+                throw new Exception("Only one of the values 'capacity', 'length' can be filled");
+            
+            if (!PrettyNumberParser<decimal>.TryParse(dto.Start, out decimal startInterval))
+                throw new Exception($"Field `start` has not int value '{dto.Start}'");
+            
+            if(!string.IsNullOrEmpty(dto.Capacity))
+                return GetIntervalsByCustomCapacity(dto, unit, startInterval);
+
+            return GetIntervalsByLength(dto, unit, startInterval);
+        }
 
         return GetIntervalsByAutoCapacity(dto, unit);
     }
@@ -84,16 +95,15 @@ class FloatParser
             result.Add(name, new Interval<decimal>(from, to));
         }
         
-        return new IntervalsWithCapacity(result, capacity);
+        return new IntervalsWithCapacity(result, 
+            "Interval: " + interval + Environment.NewLine +
+            "Capacity(auto): " + capacity);
     }
 
-    private static IntervalsWithCapacity GetIntervalsByCustomCapacity(DataOptionsDto dto, decimal unit)
+    private static IntervalsWithCapacity GetIntervalsByCustomCapacity(DataOptionsDto dto, decimal unit, decimal startInterval)
     {
         var intervals = new Dictionary<DataName, Interval<decimal>>();
         
-        if (!PrettyNumberParser<decimal>.TryParse(dto.Start, out decimal startInterval))
-            throw new Exception($"Field `start` has not int value '{dto.Start}'");
-
         long capacity = dto.GetCapacity();        
         foreach (string rangeName in dto.Ranges)
         {
@@ -102,7 +112,24 @@ class FloatParser
             startInterval = endInterval + unit;
         }
 
-        return new IntervalsWithCapacity(intervals, capacity);
+        return new IntervalsWithCapacity(intervals, "Capacity: " + capacity);
+    }
+    
+    private static IntervalsWithCapacity GetIntervalsByLength(DataOptionsDto dto, decimal unit, decimal startInterval)
+    {
+        var intervals = new Dictionary<DataName, Interval<decimal>>();
+        
+        if (!PrettyNumberParser<decimal>.TryParse(dto.Length, out decimal rangeLength))
+            throw new Exception($"Field `length` has not float value '{dto.Start}'");
+
+        foreach (string rangeName in dto.Ranges)
+        {
+            decimal endInterval = startInterval + rangeLength;
+            intervals.Add(new DataName(rangeName), new Interval<decimal>(startInterval, endInterval));
+            startInterval = endInterval + unit;
+        }
+
+        return new IntervalsWithCapacity(intervals, "Length: " + rangeLength);
     }
 
     private static bool IsDividedWithoutRemainder(decimal value, decimal unit) => value % unit == 0;

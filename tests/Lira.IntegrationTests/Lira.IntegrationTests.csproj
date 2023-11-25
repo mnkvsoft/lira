@@ -947,6 +947,21 @@
     <None Update="fixtures\rules\generating\types\json\variable\replace.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\range\types\float\length\length.ranges.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\range\types\float\length\gen.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\range\types\float\length\gen.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\range\types\float\length\match.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\range\types\float\length\match.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

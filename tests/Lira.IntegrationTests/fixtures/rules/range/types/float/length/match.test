@@ -1,0 +1,89 @@
+-------------------- case
+
+GET /range/types/float/length/match/1
+
+----- expected
+
+~ code
+404
+
+-------------------- case
+
+GET /range/types/float/length/match/1.01
+
+----- expected
+
+~ code
+200
+
+~ body
+first
+
+-------------------- case
+
+GET /range/types/float/length/match/10.01
+
+----- expected
+
+~ code
+200
+
+~ body
+first
+
+-------------------- case
+
+GET /range/types/float/length/match/10.011
+
+----- expected
+
+~ code
+200
+
+~ body
+second
+
+-------------------- case
+
+GET /range/types/float/length/match/19.011
+
+----- expected
+
+~ code
+200
+
+~ body
+second
+
+-------------------- case
+
+GET /range/types/float/length/match/19.012
+
+----- expected
+
+~ code
+200
+
+~ body
+third
+
+-------------------- case
+
+GET /range/types/float/length/match/28.012
+
+----- expected
+
+~ code
+200
+
+~ body
+third
+
+-------------------- case
+
+GET /range/types/float/length/match/28.013
+
+----- expected
+
+~ code
+404

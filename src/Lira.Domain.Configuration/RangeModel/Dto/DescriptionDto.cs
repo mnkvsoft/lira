@@ -18,6 +18,9 @@ record DataOptionsDto(
     [property: JsonPropertyName("capacity")]
     string? Capacity,
     
+    [property: JsonPropertyName("length")]
+    string? Length,
+    
     [property: JsonPropertyName("format")]
     string? Format,
     

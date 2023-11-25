@@ -6,18 +6,12 @@ namespace Lira.Domain.Configuration.RangeModel;
 
 static class StringBuilderExtensions
 {
-    public static StringBuilder AddInfo<T, TCapacity>(this StringBuilder sb,
-        TCapacity capacity,
-        IReadOnlyDictionary<DataName, Interval<T>> intervals,
-        string? additionInfo = null)
+    public static StringBuilder AddInfo<T>(this StringBuilder sb,
+        string into,
+        IReadOnlyDictionary<DataName, Interval<T>> intervals)
         where T : struct, IComparable<T>
     {
-        sb.AppendLine("Capacity: " + capacity);
-
-        if (additionInfo != null)
-        {
-            sb.AppendLine(additionInfo);
-        }
+        sb.AppendLine(into);
 
         sb.AppendLine("Ranges:");
 
@@ -30,15 +24,14 @@ static class StringBuilderExtensions
 
         return sb;
     }
-    public static StringBuilder AddInfoForLog<T, TCapacity>(this StringBuilder sb,
+    public static StringBuilder AddInfoForLog<T>(this StringBuilder sb,
         DataName name,
-        TCapacity capacity,
-        IReadOnlyDictionary<DataName, Interval<T>> intervals,
-        string? additionInfo = null)
+        string info,
+        IReadOnlyDictionary<DataName, Interval<T>> intervals)
         where T : struct, IComparable<T>
     {
         sb.AppendLine("Name: " + name);
-        sb.AddInfo(capacity, intervals, additionInfo);
+        sb.AddInfo(info, intervals);
         
         return sb;
     }
