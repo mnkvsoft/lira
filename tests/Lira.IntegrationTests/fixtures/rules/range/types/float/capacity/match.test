@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /range/types/float/capacity/match/0.99
+GET /range/types/float/capacity/match/1
 
 ----- expected
 
@@ -9,7 +9,7 @@ GET /range/types/float/capacity/match/0.99
 
 -------------------- case
 
-GET /range/types/float/capacity/match/1
+GET /range/types/float/capacity/match/1.01
 
 ----- expected
 
@@ -21,7 +21,7 @@ first
 
 -------------------- case
 
-GET /range/types/float/capacity/match/4.54
+GET /range/types/float/capacity/match/10.01
 
 ----- expected
 
@@ -33,7 +33,7 @@ first
 
 -------------------- case
 
-GET /range/types/float/capacity/match/4.55
+GET /range/types/float/capacity/match/10.011
 
 ----- expected
 
@@ -45,7 +45,7 @@ second
 
 -------------------- case
 
-GET /range/types/float/capacity/match/8.09
+GET /range/types/float/capacity/match/19.011
 
 ----- expected
 
@@ -57,7 +57,7 @@ second
 
 -------------------- case
 
-GET /range/types/float/capacity/match/8.1
+GET /range/types/float/capacity/match/19.012
 
 ----- expected
 
@@ -69,7 +69,7 @@ third
 
 -------------------- case
 
-GET /range/types/float/capacity/match/11.64
+GET /range/types/float/capacity/match/28.012
 
 ----- expected
 
@@ -81,7 +81,7 @@ third
 
 -------------------- case
 
-GET /range/types/float/capacity/match/11.65
+GET /range/types/float/capacity/match/28.013
 
 ----- expected
 

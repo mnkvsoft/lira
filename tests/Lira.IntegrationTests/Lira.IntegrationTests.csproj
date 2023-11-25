@@ -785,21 +785,6 @@
     <None Update="fixtures\rules\range\types\float\interval\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\capacity\capacity.ranges.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\range\types\float\capacity\gen.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\range\types\float\capacity\gen.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\range\types\float\capacity\match.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\range\types\float\capacity\match.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="fixtures\rules\range\types\float\unit\unit.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

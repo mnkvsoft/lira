@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /range/types/float/capacity/gen/first
+GET /range/types/float/length/gen/first
 
 ----- response
 
@@ -13,7 +13,7 @@ GET /range/types/float/capacity/gen/first
 
 -------------------- rule
 
-GET /range/types/float/capacity/gen/second
+GET /range/types/float/length/gen/second
 
 ----- response
 
@@ -21,12 +21,12 @@ GET /range/types/float/capacity/gen/second
 200
 
 ~ body
-{{ range: float_capacity/second }}
+{{ range: float_length/second }}
 
 
 -------------------- rule
 
-GET /range/types/float/capacity/gen/third
+GET /range/types/float/length/gen/third
 
 ----- response
 
@@ -34,4 +34,4 @@ GET /range/types/float/capacity/gen/third
 200
 
 ~ body
-{{ range: float_capacity/third }}
+{{ range: float_length/third }}

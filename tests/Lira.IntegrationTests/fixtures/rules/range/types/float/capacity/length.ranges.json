@@ -1,9 +1,9 @@
 {
-  "float_length": {
+  "float_capacity": {
     "type": "float",
     "start": "1.01",
     "unit": 0.001,
-    "length": "9",
+    "capacity": "10",
     "ranges": [
       "first",
       "second",
