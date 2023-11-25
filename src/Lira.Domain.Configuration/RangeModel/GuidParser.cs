@@ -18,14 +18,19 @@ class GuidParser
     
     public Data Parse(DataName name, DataOptionsDto dto)
     {
+        var fullInfo = new StringBuilder().AppendLine("Type: guid");
+        
         var interval = new Interval<long>(long.MinValue, long.MaxValue);
-        var (intervals, info) = IntParser.GetIntervalsByAutoCapacity(dto.Ranges, interval);
+        var (intervals, info) = IntParser.GetIntervalsByAutoCapacity(dto.Ranges, interval, "hardcoded");
 
-        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, info, intervals).ToString());
+        fullInfo.AppendLine(info);
+        fullInfo.AppendLine($"Format({(dto.Format == null ? "default" : "manual")}): {dto.Format ?? "D"}");
+        
+        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
 
         return new GuidData(
             name,
             intervals.ToDictionary(p => p.Key, p => new GuidDataRange(p.Key, new Int64Sequence(p.Value), dto.Format)),
-            new StringBuilder().AddInfo(info, intervals).ToString());
+            new StringBuilder().AddInfo(fullInfo, intervals).ToString());
     }
 }

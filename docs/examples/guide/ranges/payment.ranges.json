@@ -1,7 +1,7 @@
 {
     "payment.amount": {
       "type": "float",
-      "interval": "0.01 - 50.00",
+      "start": "0.01",
       "capacity": "10",
       "unit": 0.01,
       "ranges": [
@@ -14,7 +14,7 @@
     },
     "payment.id": {
         "type": "int",
-        "interval": "1 - 3_000_000",
+        "start": "1",
         "capacity": "1_000_000",
         "mode": "seq",
         "ranges": [

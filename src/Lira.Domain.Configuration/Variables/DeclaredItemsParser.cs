@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;

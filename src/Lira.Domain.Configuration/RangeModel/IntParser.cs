@@ -20,15 +20,17 @@ class IntParser
     
     public Data Parse(DataName name, DataOptionsDto dto)
     {
+        var fullInfo = new StringBuilder().AppendLine("Type: int");
+        
         var (intervals, info) = GetIntervalsWithInfo(dto);
-
+        fullInfo.AppendLine(info);
+        
         var mode = dto.Mode ?? "seq";
+        fullInfo.AppendLine($"Mode({(dto.Mode == null ? "default" : "manual")}): " + mode);
         
-        info += Environment.NewLine + "Mode: " + mode; 
-        
-        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, info, intervals).ToString());
+        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
 
-        var infoForData = new StringBuilder().AddInfo(info, intervals).ToString();
+        var infoForData = new StringBuilder().AddInfo(fullInfo, intervals).ToString();
         if (mode == "seq")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,
@@ -60,7 +62,7 @@ class IntParser
             ? new Interval<long>(1, long.MaxValue)
             : Interval<long>.Parse(dto.Interval, new PrettyNumberParser<long>());
 
-        return GetIntervalsByAutoCapacity(dto.Ranges, interval);
+        return GetIntervalsByAutoCapacity(dto.Ranges, interval, string.IsNullOrEmpty(dto.Interval) ? "default" : "manual");
     }
 
     private static IntervalsWithCapacity GetIntervalsByCustomCapacity(DataOptionsDto dto)
@@ -87,7 +89,8 @@ class IntParser
 
     public static IntervalsWithCapacity GetIntervalsByAutoCapacity(
         string[] ranges,
-        Interval<long> interval)
+        Interval<long> interval,
+        string intervalInfo)
     {
         ulong intervalLength = (ulong)(interval.To - interval.From);
 
@@ -107,7 +110,7 @@ class IntParser
         }
 
         return new IntervalsWithCapacity(intervals, 
-            "Interval: " + interval + Environment.NewLine +
+            $"Interval({intervalInfo}): " + interval + Environment.NewLine +
             "Capacity(auto): " + capacity);
     }
 }

@@ -1,8 +1,7 @@
 {
-  "token": {
-    "type": "hex",
-    "capacity": "10_000", 
-    "bytes_count": 64,
+  "id": {
+    "type": "guid",
+    "format": "N",
     "ranges": [
       "first",
       "second",

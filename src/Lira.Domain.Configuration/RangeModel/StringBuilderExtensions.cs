@@ -7,11 +7,11 @@ namespace Lira.Domain.Configuration.RangeModel;
 static class StringBuilderExtensions
 {
     public static StringBuilder AddInfo<T>(this StringBuilder sb,
-        string into,
+        StringBuilder into,
         IReadOnlyDictionary<DataName, Interval<T>> intervals)
         where T : struct, IComparable<T>
     {
-        sb.AppendLine(into);
+        sb.AppendLine(into.ToString());
 
         sb.AppendLine("Ranges:");
 
@@ -26,7 +26,7 @@ static class StringBuilderExtensions
     }
     public static StringBuilder AddInfoForLog<T>(this StringBuilder sb,
         DataName name,
-        string info,
+        StringBuilder info,
         IReadOnlyDictionary<DataName, Interval<T>> intervals)
         where T : struct, IComparable<T>
     {

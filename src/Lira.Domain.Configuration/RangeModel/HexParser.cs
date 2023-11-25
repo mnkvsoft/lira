@@ -1,8 +1,6 @@
 using System.Text;
-using Lira.Common;
 using Lira.Domain.Configuration.RangeModel.Dto;
 using Lira.Domain.DataModel;
-using Lira.Domain.DataModel.DataImpls.Guid;
 using Lira.Domain.DataModel.DataImpls.Hex;
 using Microsoft.Extensions.Logging;
 
@@ -19,6 +17,8 @@ class HexParser
     
     public Data Parse(DataName name, DataOptionsDto dto)
     {
+        var fullInfo = new StringBuilder().AppendLine("Type: hex");
+        
         // for this value it is possible to define 1 million ranges, which seems sufficient
         long capacity = 1000_000_000_000; 
         
@@ -27,14 +27,15 @@ class HexParser
         int bytesCount = dto.BytesCount ?? 32;
 
         string info = 
-            "Capacity: " + capacity + Environment.NewLine+
+            "Capacity(hardcoded): " + capacity + Environment.NewLine+
             "Bytes count: " + bytesCount;
+        fullInfo.AppendLine(info);
         
-        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, info, intervals).ToString());
+        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
 
         return new HexData(
             name,
             intervals.ToDictionary(p => p.Key, p => new HexDataRange(p.Key, p.Value, bytesCount)),
-            new StringBuilder().AddInfo(info, intervals).ToString());
+            new StringBuilder().AddInfo(fullInfo, intervals).ToString());
     }
 }

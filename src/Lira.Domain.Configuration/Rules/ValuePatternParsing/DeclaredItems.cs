@@ -1,5 +1,4 @@
-﻿using Lira.Domain.TextPart.Impl.Custom;
-using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
+﻿using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;

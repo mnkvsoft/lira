@@ -22,15 +22,18 @@ class FloatParser
     public Data Parse(DataName name, DataOptionsDto dto)
     {
         decimal unit = dto.Unit ?? 0.01m;
-        var (intervals, info) = GetIntervalsWithInfo(dto, unit);
+        var fullInfo = new StringBuilder().AppendLine("Type: float");
         
-        info += Environment.NewLine + "Unit: " + unit;
-        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, info, intervals).ToString());
+        var (intervals, info) = GetIntervalsWithInfo(dto, unit);
+        fullInfo.AppendLine(info);
+        fullInfo.AppendLine($"Unit:{(dto.Unit == null ? "(default)" : "")} " + unit);
+        
+        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
         
         return new FloatData(
             name,
             intervals.ToDictionary(p => p.Key, p => (DataRange<decimal>)new FloatSetIntervalDataRange(p.Key, p.Value, GetDecimals(unit))),
-            new StringBuilder().AddInfo(info, intervals).ToString());
+            new StringBuilder().AddInfo(fullInfo, intervals).ToString());
     }
 
     record IntervalsWithCapacity(IReadOnlyDictionary<DataName, Interval<decimal>> Intervals, string RangeInformation);
@@ -68,7 +71,7 @@ class FloatParser
         }
 
         decimal intervalLength = interval.To - interval.From;
-        long capacity = (long)(Math.Round(intervalLength / dto.Ranges.Length, GetDecimals(unit)) / unit);
+        decimal capacity = Math.Round(intervalLength / dto.Ranges.Length, GetDecimals(unit));
 
         var result = new Dictionary<DataName, Interval<decimal>>();
 
@@ -76,8 +79,8 @@ class FloatParser
         for (int i = 0; i < ranges.Length; i++)
         {
             string range = ranges[i];
-            decimal from = i * capacity * unit + interval.From;
-            decimal to = i == ranges.Length - 1 ? interval.To : from + capacity * unit - unit;
+            decimal from = i * capacity + interval.From;
+            decimal to = i == ranges.Length - 1 ? interval.To : from + capacity - unit;
             
             var name = new DataName(range);
 
@@ -85,17 +88,17 @@ class FloatParser
         }
         
         return new IntervalsWithCapacity(result, 
-            "Interval: " + interval + Environment.NewLine +
+            $"Interval({(dto.Interval == null ? "default" : "manual")}) : " + interval + Environment.NewLine +
             "Capacity(auto): " + capacity);
     }
     
     private static IntervalsWithCapacity GetIntervalsByCustomCapacity(DataOptionsDto dto, decimal unit)
     {
         if (!PrettyNumberParser<decimal>.TryParse(dto.Start, out decimal startInterval))
-            throw new Exception($"Field `start` has not int value '{dto.Start}'");
+            throw new Exception($"Field 'start' has not int value '{dto.Start}'");
         
-        if (!PrettyNumberParser<decimal>.TryParse(dto.Length, out decimal rangeLength))
-            throw new Exception($"Field `length` has not float value '{dto.Start}'");
+        if (!PrettyNumberParser<decimal>.TryParse(dto.Capacity, out decimal rangeLength))
+            throw new Exception($"Field 'capacity' has not float value '{dto.Start}'");
 
         var intervals = new Dictionary<DataName, Interval<decimal>>();
         foreach (string rangeName in dto.Ranges)
