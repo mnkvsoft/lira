@@ -2,7 +2,7 @@ using System.Text;
 using Lira.Common;
 using Lira.Domain.DataModel;
 
-namespace Lira.Domain.Configuration.DataModel;
+namespace Lira.Domain.Configuration.RangeModel;
 
 static class StringBuilderExtensions
 {

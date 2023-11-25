@@ -45,7 +45,7 @@ second
 
 -------------------- case
 
-GET /range/types/int/default/match/9223372036854775806
+GET /range/types/int/default/match/9223372036854775807
 
 ----- expected
 
@@ -57,7 +57,7 @@ second
 
 -------------------- case
 
-GET /range/types/int/default/match/9223372036854775807
+GET /range/types/int/default/match/9223372036854775808
 
 ----- expected
 

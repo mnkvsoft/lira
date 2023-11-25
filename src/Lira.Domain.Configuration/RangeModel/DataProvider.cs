@@ -1,17 +1,17 @@
 using System.Text.Json;
-using Lira.Domain.Configuration.DataModel.Dto;
+using Lira.Domain.Configuration.RangeModel.Dto;
 using Lira.Domain.DataModel;
 
-namespace Lira.Domain.Configuration.DataModel;
+namespace Lira.Domain.Configuration.RangeModel;
 
-class DataLoader
+class RangesLoader
 {
     private readonly GuidParser _guidParser;
     private readonly IntParser _intParser;
     private readonly FloatParser _floatParser;
     private readonly HexParser _hexParser;
 
-    public DataLoader(GuidParser guidParser, IntParser intParser, FloatParser floatParser, HexParser hexParser)
+    public RangesLoader(GuidParser guidParser, IntParser intParser, FloatParser floatParser, HexParser hexParser)
     {
         _guidParser = guidParser;
         _intParser = intParser;

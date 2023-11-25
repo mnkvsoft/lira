@@ -34,7 +34,7 @@ internal class PrettyNumberParser<TNumber> : Interval<TNumber>.IConverter
 
             if (char.ToUpperInvariant(unit) == char.ToUpperInvariant(name))
             {
-                if (!StringConverter<TNumber>.TryConvert(str[..^1], out var valueInUnit))
+                if (!decimal.TryParse(str[..^1], out var valueInUnit))
                     return false;
 
                 result = (TNumber)((dynamic)valueInUnit * multiplier);

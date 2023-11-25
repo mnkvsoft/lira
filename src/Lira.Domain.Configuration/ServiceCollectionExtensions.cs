@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Lira.Domain.Configuration.DataModel;
+using Lira.Domain.Configuration.RangeModel;
 using Lira.Domain.Configuration.Rules;
 using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
@@ -39,7 +39,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<FloatParser>()
             .AddSingleton<HexParser>()
             
-            .AddSingleton<DataLoader>()
+            .AddSingleton<RangesLoader>()
             .AddSingleton<IDataProvider>(provider => provider.GetRequiredService<ConfigurationLoader>())
 
             .AddTransient<RulesLoader>()

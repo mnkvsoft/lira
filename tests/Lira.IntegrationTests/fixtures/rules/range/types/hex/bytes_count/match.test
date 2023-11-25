@@ -2,7 +2,7 @@
 
 -------------------- case
 
-GET /range/types/hex/bytes_count/match/2cadc8abd4ef34f432b06614c2b89716d12f656db68ed0900f2b6d1f011b4108339255b9f5cac9fd9f3e3d51ca0d72e0448bece3096ce5c356b4800d5c9710ed
+GET /range/types/hex/bytes_count/match/942814257e000080d293b98137d94d481f2fc4accad75468246514f763f8fcdca18d85ae9ec98611dd3130c7c9eafad33f65a66dc266b024b2c4e0ca75d54a21
 
 ----- expected
 
@@ -16,7 +16,7 @@ first
 
 -------------------- case
 
-GET /range/types/hex/bytes_count/match/562ee0227d48dc48ec15e56287af74863a95287a49787bfdbe38fa17c52d93be83cddcd38fde29f9d2a7d07416db5de9233d5e701125f5d6600b21b6865f0a2b
+GET /range/types/hex/bytes_count/match/6adc103aa6010080fe65a2d2402180a02c8fe6a971bbca2957fada5135393e8fee3ea02e1b025a91bb5147f640eee5a3f2c815539f2486a9d1fa35a7fd8d6152
 
 ----- expected
 

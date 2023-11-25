@@ -1,12 +1,12 @@
 using System.Text;
-using Microsoft.Extensions.Logging;
 using Lira.Common;
-using Lira.Domain.Configuration.DataModel.Dto;
+using Lira.Domain.Configuration.RangeModel.Dto;
 using Lira.Domain.DataModel;
 using Lira.Domain.DataModel.DataImpls.Guid;
 using Lira.Domain.DataModel.DataImpls.Hex;
+using Microsoft.Extensions.Logging;
 
-namespace Lira.Domain.Configuration.DataModel;
+namespace Lira.Domain.Configuration.RangeModel;
 
 class HexParser
 {
@@ -19,9 +19,11 @@ class HexParser
     
     public Data Parse(DataName name, DataOptionsDto dto)
     {
-        var interval = new Interval<long>(long.MinValue, long.MaxValue);
-        ulong capacity = IntParser.GetCapacity(dto.Ranges.Length, dto.Capacity, interval);
-        var intervals = IntParser.GetIntervals(dto.Ranges, interval, capacity);
+        // for this value it is possible to define 1 million ranges, which seems sufficient
+        long capacity = 1000_000_000_000; 
+        
+        // we use a custom interval so that when adding new ranges, the old ones remain relevant
+        var intervals = IntParser.GetIntervalsByCustomCapacity(dto.Ranges, long.MinValue, capacity);
         int bytesCount = dto.BytesCount ?? 32;
 
         var additionInfo = "Bytes count: " + bytesCount;
@@ -29,10 +31,7 @@ class HexParser
 
         return new HexData(
             name,
-            intervals.ToDictionary(p => p.Key, p =>
-            {
-                return new HexDataRange(p.Key, p.Value, bytesCount);
-            }),
+            intervals.ToDictionary(p => p.Key, p => new HexDataRange(p.Key, p.Value, bytesCount)),
             new StringBuilder().AddInfo(capacity, intervals, additionInfo).ToString());
     }
 }

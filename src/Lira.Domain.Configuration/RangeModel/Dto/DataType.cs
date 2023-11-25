@@ -1,4 +1,4 @@
-﻿namespace Lira.Domain.Configuration.DataModel.Dto;
+﻿namespace Lira.Domain.Configuration.RangeModel.Dto;
 
 public enum DataType
 {

@@ -4,7 +4,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Lira.Configuration;
-using Lira.Domain.Configuration.DataModel;
+using Lira.Domain.Configuration.RangeModel;
 using Lira.Domain.Configuration.Rules;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Templating;
@@ -27,7 +27,7 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
     private readonly PhysicalFileProvider _fileProvider;
     private IChangeToken? _fileChangeToken;
 
-    private readonly DataLoader _dataLoader;
+    private readonly RangesLoader _rangesLoader;
 
     private Task<LoadResult> _loadTask;
     private ConfigurationState? _providerState;
@@ -37,9 +37,9 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
         IServiceScopeFactory serviceScopeFactory,
         ILoggerFactory loggerFactory,
         IConfiguration configuration,
-        DataLoader dataLoader)
+        RangesLoader rangesLoader)
     {
-        _dataLoader = dataLoader;
+        _rangesLoader = rangesLoader;
         _serviceScopeFactory = serviceScopeFactory;
         _logger = loggerFactory.CreateLogger(GetType());
         _path = configuration.GetRulesPath();
@@ -65,7 +65,7 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
 
     private async Task<LoadResult> Load(string path)
     {
-        var datas = await _dataLoader.Load(path);
+        var datas = await _rangesLoader.Load(path);
 
         var templates = await TemplatesLoader.Load(path);
 

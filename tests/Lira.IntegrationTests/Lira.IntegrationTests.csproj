@@ -59,21 +59,6 @@
     <None Update="fixtures\rules\range\types\hex\bytes_count\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\hex\capacity\capacity.ranges.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\range\types\hex\capacity\gen.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\range\types\hex\capacity\gen.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\range\types\hex\capacity\match.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\range\types\hex\capacity\match.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="fixtures\rules\range\types\hex\default\default.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

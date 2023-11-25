@@ -1,11 +1,11 @@
 using System.Text;
-using Microsoft.Extensions.Logging;
 using Lira.Common;
-using Lira.Domain.Configuration.DataModel.Dto;
+using Lira.Domain.Configuration.RangeModel.Dto;
 using Lira.Domain.DataModel;
 using Lira.Domain.DataModel.DataImpls.Guid;
+using Microsoft.Extensions.Logging;
 
-namespace Lira.Domain.Configuration.DataModel;
+namespace Lira.Domain.Configuration.RangeModel;
 
 class GuidParser
 {
@@ -19,8 +19,7 @@ class GuidParser
     public Data Parse(DataName name, DataOptionsDto dto)
     {
         var interval = new Interval<long>(long.MinValue, long.MaxValue);
-        ulong capacity = IntParser.GetCapacity(dto.Ranges.Length, dto.Capacity, interval);
-        var intervals = IntParser.GetIntervals(dto.Ranges, interval, capacity);
+        var intervals = IntParser.GetIntervalsByAutoCapacity(dto.Ranges, interval, out long capacity);
 
         _logger.LogInformation(new StringBuilder().AddInfoForLog(name, capacity, intervals).ToString());
 

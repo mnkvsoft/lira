@@ -69,7 +69,7 @@ third
 
 -------------------- case
 
-GET /range/types/int/interval/match/9999
+GET /range/types/int/interval/match/10001
 
 ----- expected
 
@@ -81,7 +81,7 @@ third
 
 -------------------- case
 
-GET /range/types/int/interval/match/10000
+GET /range/types/int/interval/match/10002
 
 ----- expected
 
