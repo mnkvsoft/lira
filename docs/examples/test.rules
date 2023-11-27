@@ -1,16 +1,17 @@
 -------------------- rule
 
-GET /test/{{ float: [1 - 10] }}
+GET /test
 
+----- declare
+
+$a:json =
+{
+   "a": "{{ now }}"
+}
 ----- response
 
 ~ code
 200
 
 ~ body
-{{ date }}
-{{ date.past }}
-{{ date.future }}
-{{ date.utc }}
-{{ date.utc.past }}
-{{ date.utc.future }}
+{{ a }}

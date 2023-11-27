@@ -213,8 +213,8 @@ class GeneratingCSharpFactory : IGeneratingCSharpFactory
         else
         {
             methodBody = WrapToTryCatch(
-                $"var _result_ = {code};" +
-                @"return _result_;",
+                $"var _result_ = {code};" + Environment.NewLine +
+                @"; return _result_;",
                 codeForException: code);
         }
 

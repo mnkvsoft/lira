@@ -13,7 +13,7 @@
     "languages": [{
       "id": "rules",
       "aliases": ["rules"],
-      "extensions": [".rules", ".req.var", ".global.var"],
+      "extensions": [".rules", ".declare"],
       "configuration": "./language-configuration.json"
     }],
     "grammars": [{

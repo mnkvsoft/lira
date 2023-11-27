@@ -93,7 +93,7 @@ class RoutingMiddleware : IMiddleware
         throw new Exception("Unknown case");
     }
 
-    private async Task<IReadOnlyCollection<Lira.Domain.Rule>> GetMatchedRules(RequestData request)
+    private async Task<IReadOnlyCollection<Rule>> GetMatchedRules(RequestData request)
     {
         var allRules = await _rulesProvider.GetRules();
 
@@ -101,7 +101,7 @@ class RoutingMiddleware : IMiddleware
 
         if (!_allowMultipleRules)
         {
-            var result = new List<Lira.Domain.Rule>();
+            var result = new List<Rule>();
 
             foreach (var rule in allRules)
             {
@@ -114,12 +114,20 @@ class RoutingMiddleware : IMiddleware
             return result;
         }
 
-        var matchedRules = new List<(Lira.Domain.Rule Rule, IRuleMatchWeight Weight)>();
+        var matchedRules = new List<(Rule Rule, IRuleMatchWeight Weight)>();
 
         foreach (var rule in allRules)
         {
-            var matchResult = await rule.IsMatch(request, requestId);
-
+            RuleMatchResult matchResult;
+            try
+            {
+                matchResult = await rule.IsMatch(request, requestId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"An error occured while rule '{rule.Name}' matching", e);
+            }
+             
             if (matchResult is RuleMatchResult.Matched matched)
                 matchedRules.Add((rule, matched.Weight));
         }
