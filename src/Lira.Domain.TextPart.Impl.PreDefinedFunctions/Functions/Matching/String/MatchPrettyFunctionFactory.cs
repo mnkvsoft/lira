@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Runtime.Serialization;
 using Lira.Domain.Matching.Request;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,17 +7,17 @@ using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String;
 
-public interface IStringMatchFunctionFactory
+public interface IPreDefinedMatchFunctionFactory
 {
-    IStringMatchFunction Create(string value);
+    bool TryCreate(string value, [MaybeNullWhen(false)] out IMatchFunction matchFunction);
 }
 
-internal class StringMatchPrettyFunctionFactory : IStringMatchFunctionFactory
+internal class PreDefinedMatchFunctionFactory : IPreDefinedMatchFunctionFactory
 {
     private readonly Dictionary<string, Type> _functionNameToType;
     private readonly IServiceProvider _serviceProvider;
 
-    public StringMatchPrettyFunctionFactory(IServiceProvider serviceProvider)
+    public PreDefinedMatchFunctionFactory(IServiceProvider serviceProvider)
     {
         _functionNameToType = new Dictionary<string, Type>();
 
@@ -37,21 +38,24 @@ internal class StringMatchPrettyFunctionFactory : IStringMatchFunctionFactory
         _serviceProvider = serviceProvider;
     }
 
-    IStringMatchFunction IStringMatchFunctionFactory.Create(string value)
+    public bool TryCreate(string value, [MaybeNullWhen(false)] out IMatchFunction matchFunction)
     {
+        matchFunction = null;
         var (functionName, argument) = value.SplitToTwoParts(":").Trim();
 
         if (!_functionNameToType.TryGetValue(functionName, out var functionType))
-            throw new UnknownFunctionException(value);
+            return false;
 
-        var function = _serviceProvider.GetRequiredFunction(functionType);
-
-        if (function is not IStringMatchPrettyFunction matchPrettyFunction)
-            throw new Exception($"Function {functionType} not implemented {nameof(IStringMatchPrettyFunction)}");
+        if (!_serviceProvider.TryGetFunction(functionType, out var function))
+            return false;
+        
+        if (function is not IMatchPrettyFunction matchPrettyFunction)
+            throw new Exception($"Function {functionType} not implemented {nameof(IMatchPrettyFunction)}");
         
         function.SetArgumentIfNeed(argument);
 
-        return matchPrettyFunction;
+        matchFunction = matchPrettyFunction;
+        return true;
     }
 
     public static void AddMatchFunctions(IServiceCollection sc)
@@ -65,7 +69,7 @@ internal class StringMatchPrettyFunctionFactory : IStringMatchFunctionFactory
     private static IReadOnlyCollection<Type> GetMatchFunctionTypes()
     {
         var result = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => t.IsAssignableTo(typeof(IStringMatchPrettyFunction)) && !t.IsAbstract).ToArray();
+            .Where(t => t.IsAssignableTo(typeof(IMatchPrettyFunction)) && !t.IsAbstract).ToArray();
         return result;
     }
 }

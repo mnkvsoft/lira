@@ -2,6 +2,6 @@
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String;
 
-internal interface IStringMatchPrettyFunction : IStringMatchFunction
+internal interface IMatchPrettyFunction : IMatchFunction
 {
 }

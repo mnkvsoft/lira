@@ -2,7 +2,7 @@
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String.Impl;
 
-internal class Guid : FunctionBase, IStringMatchPrettyFunction
+internal class Guid : FunctionBase, IMatchPrettyFunction
 {
     
     public override string Name => "guid";

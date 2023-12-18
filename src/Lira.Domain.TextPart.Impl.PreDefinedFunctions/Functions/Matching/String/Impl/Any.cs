@@ -2,7 +2,7 @@
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String.Impl;
 
-internal class Any : FunctionBase, IStringMatchPrettyFunction
+internal class Any : FunctionBase, IMatchPrettyFunction
 {
     public override string Name => "any";
 

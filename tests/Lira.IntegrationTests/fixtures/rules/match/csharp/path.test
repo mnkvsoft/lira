@@ -1,0 +1,19 @@
+## not matched
+-------------------- case
+
+GET /match/sharp/1
+
+----- expected
+
+~ code
+404
+
+## matched
+-------------------- case
+
+GET /match/sharp/317ccfb3195e46d4a7b7fcd16fe5851b
+
+----- expected
+
+~ code
+200

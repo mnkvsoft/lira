@@ -22,6 +22,15 @@ public interface IGeneratingCSharpFactory : IDisposable
     ITransformFunction CreateTransform(string code);
 }
 
+public interface ICSharpMatchFunctionFactory : IDisposable
+{
+    IObjectTextPart Create(
+        IDeclaredPartsProvider declaredPartsProvider,
+        string code);
+
+    ITransformFunction CreateTransform(string code);
+}
+
 class GeneratingCSharpFactory : IGeneratingCSharpFactory
 {
     private static int _revisionCounter;

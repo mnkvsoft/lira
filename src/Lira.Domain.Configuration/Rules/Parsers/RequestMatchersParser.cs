@@ -5,6 +5,7 @@ using Lira.Common.Exceptions;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Templating;
+using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.PreDefinedFunctions;
 using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating;
 using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String;
@@ -15,24 +16,24 @@ namespace Lira.Domain.Configuration.Rules.Parsers;
 class RequestMatchersParser
 {
     private readonly IBodyExtractFunctionFactory _bodyExtractFunctionFactory;
-    private readonly IStringMatchFunctionFactory _stringMatchFunctionFactory;
+    private readonly IPreDefinedMatchFunctionFactory _preDefinedMatchFunctionFactory;
+    private readonly ICSharpMatchFunctionFactory _csharpMatchFunctionFactory;
 
-    public RequestMatchersParser(IStringMatchFunctionFactory stringMatchFunctionFactory,
-        IBodyExtractFunctionFactory bodyExtractFunctionFactory)
+    public RequestMatchersParser(IPreDefinedMatchFunctionFactory preDefinedMatchFunctionFactory,
+        IBodyExtractFunctionFactory bodyExtractFunctionFactory, ICSharpMatchFunctionFactory csharpMatchFunctionFactory)
     {
-        _stringMatchFunctionFactory = stringMatchFunctionFactory;
+        _preDefinedMatchFunctionFactory = preDefinedMatchFunctionFactory;
         _bodyExtractFunctionFactory = bodyExtractFunctionFactory;
+        _csharpMatchFunctionFactory = csharpMatchFunctionFactory;
     }
-
 
     public (RequestMatcherSet Set, IReadOnlyCollection<PathNameMap> PathNameMaps) Parse(FileSection ruleSection, IReadOnlyCollection<Template> templates)
     {
         var builder = new RequestMatchersBuilder();
-        IReadOnlyCollection<PathNameMap> pathNameMaps;
 
         var (matchers, pathMaps) = GetMethodAndPathMatchersFromShortEntry(ruleSection, templates);
         builder.AddRange(matchers);
-        pathNameMaps = pathMaps;
+        IReadOnlyCollection<PathNameMap> pathNameMaps = pathMaps;
         
         ruleSection.AssertContainsOnlyKnownBlocks(BlockNameHelper.GetBlockNames<Constants.BlockName.Rule>());
         
@@ -304,7 +305,14 @@ class RequestMatchersParser
             return CreateValuePattern(template.Value, templates, extractCustomValueFromDynamic);
         }
 
-        return new TextPatternPart.Dynamic(start, end, _stringMatchFunctionFactory.Create(invoke));
+        IMatchFunction function;
+
+        if (!_preDefinedMatchFunctionFactory.TryCreate(invoke, out function))
+        {
+            
+        }
+        
+        return new TextPatternPart.Dynamic(start, end, function);
     }
 
     private class RequestMatchersBuilder

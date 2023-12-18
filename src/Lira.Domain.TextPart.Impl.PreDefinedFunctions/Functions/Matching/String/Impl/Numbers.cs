@@ -15,7 +15,7 @@ internal class Float : Number<decimal>
     protected override bool TryParse(string? value, out decimal result) => decimal.TryParse(value, out result);
 }
 
-internal abstract class Number<T> : WithRangeArgumentFunction<T>, IStringMatchPrettyFunction where T : struct, IComparable<T>
+internal abstract class Number<T> : WithRangeArgumentFunction<T>, IMatchPrettyFunction where T : struct, IComparable<T>
 {
     public override bool ArgumentIsRequired => false;
     public MatchFunctionRestriction Restriction => _range == null ? MatchFunctionRestriction.Type : MatchFunctionRestriction.Range;
