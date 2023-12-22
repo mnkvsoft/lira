@@ -1,7 +1,7 @@
 ﻿using Lira.Common;
 using Lira.Domain.Matching.Request;
 
-namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String.Impl;
+namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.Impl;
 
 internal class Int : Number<long>
 {
@@ -15,7 +15,7 @@ internal class Float : Number<decimal>
     protected override bool TryParse(string? value, out decimal result) => decimal.TryParse(value, out result);
 }
 
-internal abstract class Number<T> : WithRangeArgumentFunction<T>, IMatchPrettyFunction where T : struct, IComparable<T>
+internal abstract class Number<T> : WithRangeArgumentFunction<T>, IMatchFunctionPreDefined where T : struct, IComparable<T>
 {
     public override bool ArgumentIsRequired => false;
     public MatchFunctionRestriction Restriction => _range == null ? MatchFunctionRestriction.Type : MatchFunctionRestriction.Range;
@@ -23,7 +23,7 @@ internal abstract class Number<T> : WithRangeArgumentFunction<T>, IMatchPrettyFu
     private Interval<T>? _range;
 
     protected abstract bool TryParse(string? value, out T result);
-    
+
     public bool IsMatch(string? value)
     {
         if (!TryParse(value, out T number))
@@ -31,7 +31,7 @@ internal abstract class Number<T> : WithRangeArgumentFunction<T>, IMatchPrettyFu
 
         if (_range == null)
             return true;
-        
+
         return _range.InRange(number);
     }
 

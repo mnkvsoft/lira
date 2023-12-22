@@ -23,13 +23,13 @@ class TextPartsParser : ITextPartsParser
         public object Get(RequestData request) => Value;
     }
 
-    private readonly IGeneratingFunctionFactory _generatingFunctionFactory;
+    private readonly IGeneratingFunctionFactoryPreDefined _generatingFunctionFactory;
     private readonly IGeneratingCSharpFactory _generatingCSharpFactory;
     private readonly ITransformFunctionFactory _transformFunctionFactory;
     private readonly ILogger _logger;
     
     public TextPartsParser(
-        IGeneratingFunctionFactory generatingFunctionFactory, 
+        IGeneratingFunctionFactoryPreDefined generatingFunctionFactory, 
         ITransformFunctionFactory transformFunctionFactory, 
         IGeneratingCSharpFactory generatingCSharpFactory,
         ILoggerFactory loggerFactory)

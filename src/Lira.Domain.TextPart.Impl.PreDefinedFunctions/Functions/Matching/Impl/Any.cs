@@ -1,8 +1,8 @@
 ﻿using Lira.Domain.Matching.Request;
 
-namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String.Impl;
+namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.Impl;
 
-internal class Any : FunctionBase, IMatchPrettyFunction
+internal class Any : FunctionBase, IMatchFunctionPreDefined
 {
     public override string Name => "any";
 

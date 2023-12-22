@@ -1,15 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
 using Lira.Common.Extensions;
 using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Transform.Format;
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Transform;
 
-public interface ITransformFunctionFactory
-{
-    bool TryCreate(string value, [MaybeNullWhen(false)] out ITransformFunction result);
-}
-
-class TransformFunctionFactory : ITransformFunctionFactory
+class TransformFunctionFactory
 {
     public bool TryCreate(string value, out ITransformFunction result)
     {

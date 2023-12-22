@@ -1,9 +1,9 @@
 using System.Text.RegularExpressions;
 using Lira.Domain.Matching.Request;
 
-namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String.Impl;
+namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.Impl;
 
-internal class Regex : WithArgumentFunction<string>, IMatchPrettyFunction
+internal class Regex : WithArgumentFunction<string>, IMatchFunctionPreDefined
 {
     public override string Name => "regex";
     public override bool ArgumentIsRequired => true;

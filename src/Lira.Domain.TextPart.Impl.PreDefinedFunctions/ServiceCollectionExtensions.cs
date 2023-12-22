@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating;
-using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String;
 using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Transform;
+using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching;
+using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating;
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions;
 
@@ -9,14 +9,14 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddFunctions(this IServiceCollection sc)
     {
-        PreDefinedMatchFunctionFactory.AddMatchFunctions(sc);
-        GeneratingPrettyFunctionFactory.AddMatchFunctions(sc);
+        MatchFunctionFactory.AddMatchFunctions(sc);
+        GeneratingFunctionFactory.AddMatchFunctions(sc);
 
         return sc
-            .AddSingleton<IGeneratingFunctionFactory, GeneratingPrettyFunctionFactory>()
-            .AddSingleton<IBodyExtractFunctionFactory, GeneratingPrettyFunctionFactory>()
+            .AddSingleton<IGeneratingFunctionFactoryPreDefined, GeneratingFunctionFactory>()
+            .AddSingleton<IBodyExtractFunctionFactoryPreDefined, GeneratingFunctionFactory>()
             .AddSingleton<ITransformFunctionFactory, TransformFunctionFactory>()
-            .AddSingleton<IPreDefinedMatchFunctionFactory, PreDefinedMatchFunctionFactory>();
+            .AddSingleton<IMatchFunctionFactoryPreDefined, MatchFunctionFactory>();
     }
 }
 

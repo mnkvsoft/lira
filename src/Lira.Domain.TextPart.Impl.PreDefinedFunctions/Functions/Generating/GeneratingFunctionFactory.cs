@@ -1,4 +1,3 @@
-﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Serialization;
 using Lira.Domain.Matching.Request.Matchers;
@@ -6,27 +5,18 @@ using Microsoft.Extensions.DependencyInjection;
 using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating.Impl.Extract.Body;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating;
 
-public interface IBodyExtractFunctionFactory
-{
-    IBodyExtractFunction Create(string value);
-}
-
-public interface IGeneratingFunctionFactory
-{
-    bool TryCreate(string value, [MaybeNullWhen(false)] out IObjectTextPart result);
-}
-
-internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBodyExtractFunctionFactory
+internal class GeneratingFunctionFactory
 {
     private readonly Dictionary<string, Type> _functionNameToType;
     private readonly IServiceProvider _serviceProvider;
 
     private readonly Dictionary<string, Func<string, IBodyExtractFunction>> _bodyExtractFunctionsMap;
 
-    public GeneratingPrettyFunctionFactory(IServiceProvider serviceProvider)
+    public GeneratingFunctionFactory(IServiceProvider serviceProvider)
     {
         _functionNameToType = new Dictionary<string, Type>();
 
@@ -42,7 +32,7 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
         {
             // to avoid looping in service container
             var function = (FunctionBase)FormatterServices.GetUninitializedObject(functionType);
-            
+
             if (string.IsNullOrEmpty(function.Name))
                 throw new Exception("Empty function name in type " + functionType.FullName);
 
@@ -55,43 +45,36 @@ internal class GeneratingPrettyFunctionFactory : IGeneratingFunctionFactory, IBo
         _serviceProvider = serviceProvider;
     }
 
-    IBodyExtractFunction IBodyExtractFunctionFactory.Create(string value)
+    public CreateFunctionResult<IBodyExtractFunction> TryCreateBodyExtractFunction(string value)
     {
         if (value == "all")
-            return new AllExtractFunction();
+            return new CreateFunctionResult<IBodyExtractFunction>.Success(new AllExtractFunction());
 
-        foreach (var funcName in _bodyExtractFunctionsMap.Keys)
-        {
-            var funcNameStart = funcName + ":";
-            if (value.StartsWith(funcNameStart))
-            {
-                var arg = value.Replace(funcNameStart, "").Trim();
-                var funcFactory = _bodyExtractFunctionsMap[funcName];
-                return funcFactory(arg);
-            }
-        }
+        var (functionName, arg) = value.SplitToTwoParts(":").Trim();
 
-        throw new UnknownFunctionException(value);
+        if (!_bodyExtractFunctionsMap.TryGetValue(functionName, out var funcFactory))
+            return new CreateFunctionResult<IBodyExtractFunction>.Failed($"Not found function: '{functionName}'");
+
+        return new CreateFunctionResult<IBodyExtractFunction>.Success(funcFactory(arg));
     }
 
-    bool IGeneratingFunctionFactory.TryCreate(string value, out IObjectTextPart result)
+    public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(string value)
     {
         var (functionName, argument) = value.SplitToTwoParts(":").Trim();
 
         if (!_functionNameToType.TryGetValue(functionName, out var functionType))
         {
-            result = null!;
-            return false;
+            return new CreateFunctionResult<IObjectTextPart>.Failed($"Not found function: '{functionName}'");
         }
 
-        var function = _serviceProvider.GetRequiredFunction(functionType);
+        var functionTemp = _serviceProvider.GetRequiredFunction(functionType);
 
-        if (function is not IObjectTextPart objectTextPart)
+        if (functionTemp is not IObjectTextPart objectTextPart)
             throw new Exception($"Function {functionType} not implemented {nameof(IObjectTextPart)}");
 
-        function.SetArgumentIfNeed(argument);
+        functionTemp.SetArgumentIfNeed(argument);
 
-        result = objectTextPart;
+        function = objectTextPart;
         return true;
     }
 

@@ -1,4 +1,4 @@
-﻿using System.Web;
+using System.Web;
 using Lira.Domain.Matching.Request;
 using Lira.Domain.Matching.Request.Matchers;
 using Lira.Common.Exceptions;
@@ -7,23 +7,18 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Templating;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.PreDefinedFunctions;
-using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating;
-using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String;
 using Lira.FileSectionFormat;
 
 namespace Lira.Domain.Configuration.Rules.Parsers;
 
 class RequestMatchersParser
 {
-    private readonly IBodyExtractFunctionFactory _bodyExtractFunctionFactory;
-    private readonly IPreDefinedMatchFunctionFactory _preDefinedMatchFunctionFactory;
+    private readonly IFunctionFactoryPreDefined _functionFactoryPreDefined;
     private readonly ICSharpMatchFunctionFactory _csharpMatchFunctionFactory;
 
-    public RequestMatchersParser(IPreDefinedMatchFunctionFactory preDefinedMatchFunctionFactory,
-        IBodyExtractFunctionFactory bodyExtractFunctionFactory, ICSharpMatchFunctionFactory csharpMatchFunctionFactory)
+    public RequestMatchersParser(IFunctionFactoryPreDefined functionFactoryPreDefined, ICSharpMatchFunctionFactory csharpMatchFunctionFactory)
     {
-        _preDefinedMatchFunctionFactory = preDefinedMatchFunctionFactory;
-        _bodyExtractFunctionFactory = bodyExtractFunctionFactory;
+        _functionFactoryPreDefined = functionFactoryPreDefined;
         _csharpMatchFunctionFactory = csharpMatchFunctionFactory;
     }
 
@@ -246,8 +241,10 @@ class RequestMatchersParser
         {
             if (!line.Contains(Consts.ControlChars.PipelineSplitter))
             {
-                patterns.Add(new KeyValuePair<IBodyExtractFunction, TextPatternPart>(
-                    _bodyExtractFunctionFactory.Create(FunctionName.ExtractBody.All), CreateValuePattern(line.Trim(), templates)));
+                if(!_functionFactoryPreDefined.TryCreateBodyExtractFunction(FunctionName.ExtractBody.All, out var function))
+                    throw new InvalidOperationException($"Cannot create system function extract body function '{FunctionName.ExtractBody.All}'");
+
+                patterns.Add(new KeyValuePair<IBodyExtractFunction, TextPatternPart>(function, CreateValuePattern(line.Trim(), templates)));
                 continue;
             }
 
@@ -262,6 +259,12 @@ class RequestMatchersParser
                 .TrimStart(Consts.ExecutedBlock.Begin)
                 .TrimEnd(Consts.ExecutedBlock.End)
                 .Trim();
+
+            IBodyExtractFunction bodyExtractFunction;
+            if(_functionFactoryPreDefined.TryCreateBodyExtractFunction(extractFunctionInvoke, out var bodyExtractFunction))
+            {
+
+            }
 
             var extractFunction = _bodyExtractFunctionFactory.Create(extractFunctionInvoke);
 

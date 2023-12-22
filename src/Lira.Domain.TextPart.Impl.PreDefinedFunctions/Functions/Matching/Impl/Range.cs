@@ -1,9 +1,9 @@
 using Lira.Domain.Matching.Request;
 using Lira.Domain.DataModel;
 
-namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String.Impl;
+namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.Impl;
 
-internal class Range : DataBase, IMatchPrettyFunction
+internal class Range : DataBase, IMatchFunctionPreDefined
 {
     public Range(IDataProvider dataProvider) : base(dataProvider)
     {

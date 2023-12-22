@@ -1,23 +1,18 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Serialization;
 using Lira.Domain.Matching.Request;
 using Microsoft.Extensions.DependencyInjection;
 using Lira.Common.Extensions;
 
-namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching.String;
+namespace Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Matching;
 
-public interface IPreDefinedMatchFunctionFactory
-{
-    bool TryCreate(string value, [MaybeNullWhen(false)] out IMatchFunction matchFunction);
-}
-
-internal class PreDefinedMatchFunctionFactory : IPreDefinedMatchFunctionFactory
+internal class MatchFunctionFactory
 {
     private readonly Dictionary<string, Type> _functionNameToType;
     private readonly IServiceProvider _serviceProvider;
 
-    public PreDefinedMatchFunctionFactory(IServiceProvider serviceProvider)
+    public MatchFunctionFactory(IServiceProvider serviceProvider)
     {
         _functionNameToType = new Dictionary<string, Type>();
 
@@ -48,10 +43,10 @@ internal class PreDefinedMatchFunctionFactory : IPreDefinedMatchFunctionFactory
 
         if (!_serviceProvider.TryGetFunction(functionType, out var function))
             return false;
-        
-        if (function is not IMatchPrettyFunction matchPrettyFunction)
-            throw new Exception($"Function {functionType} not implemented {nameof(IMatchPrettyFunction)}");
-        
+
+        if (function is not IMatchFunctionPreDefined matchPrettyFunction)
+            throw new Exception($"Function {functionType} not implemented {nameof(IMatchFunctionPreDefined)}");
+
         function.SetArgumentIfNeed(argument);
 
         matchFunction = matchPrettyFunction;
@@ -69,7 +64,7 @@ internal class PreDefinedMatchFunctionFactory : IPreDefinedMatchFunctionFactory
     private static IReadOnlyCollection<Type> GetMatchFunctionTypes()
     {
         var result = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => t.IsAssignableTo(typeof(IMatchPrettyFunction)) && !t.IsAbstract).ToArray();
+            .Where(t => t.IsAssignableTo(typeof(IMatchFunctionPreDefined)) && !t.IsAbstract).ToArray();
         return result;
     }
 }

@@ -1,8 +1,8 @@
-// ReSharper disable RedundantExplicitArrayCreation
+﻿// ReSharper disable RedundantExplicitArrayCreation
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
-public interface IGeneratingCSharpFactory : IDisposable
+public interface ICSharpMatchFunctionFactory : IDisposable
 {
     IObjectTextPart Create(
         IDeclaredPartsProvider declaredPartsProvider,
