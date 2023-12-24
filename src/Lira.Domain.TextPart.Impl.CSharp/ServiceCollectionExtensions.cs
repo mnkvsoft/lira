@@ -5,9 +5,9 @@ namespace Lira.Domain.TextPart.Impl.CSharp;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCSharp(this IServiceCollection sc)
+    public static IServiceCollection AddFunctionsCSharp(this IServiceCollection sc)
     {
-        return sc.AddScoped<IGeneratingCSharpFactory, GeneratingCSharpFactory>()
+        return sc.AddScoped<IFunctionFactoryCSharp, FunctionFactory>()
             .AddScoped<Compiler>()
             .AddScoped<CompilationStatistic>()
             .AddScoped<PeImagesCache>()

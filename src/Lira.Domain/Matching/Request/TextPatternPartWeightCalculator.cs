@@ -8,9 +8,10 @@ static class WeightValue
     public const int StaticPart = 1;
     public static class Function
     {
+        public const int Any = 3;
         public const int TypeRestriction = 4;
         public const int RangeRestriction = 5;
-        public const int Any = 3;
+        public const int CustomRestriction = 6;
     }
 }
 
@@ -46,6 +47,7 @@ static class TextPatternPartWeightCalculator
             case MatchFunctionRestriction.Any: return WeightValue.Function.Any;
             case MatchFunctionRestriction.Type: return WeightValue.Function.TypeRestriction;
             case MatchFunctionRestriction.Range: return WeightValue.Function.RangeRestriction;
+            case MatchFunctionRestriction.Custom: return WeightValue.Function.CustomRestriction;
             default:
                 throw new UnsupportedEnumValue(restriction);
         }

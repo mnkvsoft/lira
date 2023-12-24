@@ -14,7 +14,7 @@ public abstract record TextPatternPart
         public override bool IsMatch(string? current) => string.IsNullOrWhiteSpace(current);
     }
 
-    public record Dynamic(string? Start, string? End, IStringMatchFunction MatchFunction) : TextPatternPart
+    public record Dynamic(string? Start, string? End, IMatchFunction MatchFunction) : TextPatternPart
     {
         public override bool IsMatch(string? current)
         {

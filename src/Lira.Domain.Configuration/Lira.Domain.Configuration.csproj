@@ -24,7 +24,7 @@
     <ProjectReference Include="..\Lira.Domain.DataModel\Lira.Domain.DataModel.csproj" />
     <ProjectReference Include="..\Lira.Domain.TextPart.Impl.CSharp\Lira.Domain.TextPart.Impl.CSharp.csproj" />
     <ProjectReference Include="..\Lira.Domain.TextPart.Impl.Custom\Lira.Domain.TextPart.Impl.Custom.csproj" />
-    <ProjectReference Include="..\Lira.Domain.TextPart.Impl.PreDefinedFunctions\Lira.Domain.TextPart.Impl.PreDefinedFunctions.csproj" />
+    <ProjectReference Include="..\Lira.Domain.TextPart.Impl.System\Lira.Domain.TextPart.Impl.System.csproj" />
     <ProjectReference Include="..\Lira.Domain.TextPart\Lira.Domain.TextPart.csproj" />
     <ProjectReference Include="..\Lira.Domain\Lira.Domain.csproj" />
     <ProjectReference Include="..\Lira.FileSectionFormat\Lira.FileSectionFormat.csproj" />

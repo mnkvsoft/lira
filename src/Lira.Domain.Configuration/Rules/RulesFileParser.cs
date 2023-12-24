@@ -78,7 +78,7 @@ internal class RuleFileParser
         if (childSections.Count == 0)
             throw new Exception("Rule section is empty");
 
-        var (requestMatcherSet, pathNameMaps) = _requestMatchersParser.Parse(ruleSection, parsingContext.Templates);
+        var (requestMatcherSet, pathNameMaps) = _requestMatchersParser.Parse(ruleSection, parsingContext);
 
         var templates = GetTemplates(childSections, parsingContext);
         var ctx = parsingContext with { Templates = templates };
