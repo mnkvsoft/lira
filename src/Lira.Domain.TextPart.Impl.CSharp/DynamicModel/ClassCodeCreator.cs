@@ -112,7 +112,7 @@ public class [className] : DynamicObjectBase, ITransformFunction
 
     public dynamic? Transform(dynamic? [input])
     {
-        return [code];
+        [code];
     }
 }
 ";
@@ -134,7 +134,7 @@ public class [className] : DynamicObjectBase, IMatchFunction
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
     public bool IsMatch(string? [input])
     {
-        return [code];
+        [code];
     }
 }
 ";

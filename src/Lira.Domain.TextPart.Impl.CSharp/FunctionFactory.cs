@@ -45,13 +45,14 @@ class FunctionFactory : IFunctionFactoryCSharp
     {
         var sw = Stopwatch.StartNew();
 
+        string prefix = "GeneratingFunction";
         var customAssemblies = GetCustomAssemblies();
-        var className = GetClassName(code);
+        var className = GetClassName(prefix, code);
         
         var classToCompile = CreateGeneratingFunctionClassCode(className, customAssemblies.Loaded, declaredPartsProvider, code);
         
         var result = CreateFunctionResult<IObjectTextPart>(
-            assemblyPrefixName: "GeneratingFunction", 
+            assemblyPrefixName: prefix, 
             declaredPartsProvider, 
             classToCompile, 
             className, 
@@ -66,18 +67,19 @@ class FunctionFactory : IFunctionFactoryCSharp
     {
         var sw = Stopwatch.StartNew();
 
-        string className = GetClassName(code);
+        string prefix = "TransformFunction";
+        string className = GetClassName(prefix, code);
         var customAssemblies = GetCustomAssemblies();
 
         string classToCompile = ClassCodeCreator.CreateTransformFunction(
             className,
-            code,
-            "@value",
+            WrapToTryCatch($"return {code};", code),
+            ReservedVariable.Value,
             GetNamespaces(customAssemblies.Loaded),
             GetUsingStatic(customAssemblies.Loaded));
 
         var result = CreateFunctionResult<ITransformFunction>(
-            assemblyPrefixName: "TransformFunction", 
+            assemblyPrefixName: prefix, 
             declaredPartsProvider, 
             classToCompile, 
             className,
@@ -92,18 +94,19 @@ class FunctionFactory : IFunctionFactoryCSharp
     {
         var sw = Stopwatch.StartNew();
 
-        string className = GetClassName(code);
+        string prefix = "MatchFunction";
+        string className = GetClassName(prefix, code);
         var customAssemblies = GetCustomAssemblies();
 
         string classToCompile = ClassCodeCreator.CreateMatchFunction(
             className,
-            code,
-            "@value",
+            WrapToTryCatch($"return {code};", code),
+            ReservedVariable.Value,
             GetNamespaces(customAssemblies.Loaded),
             GetUsingStatic(customAssemblies.Loaded));
 
         var result = CreateFunctionResult<IMatchFunction>(
-            assemblyPrefixName: "MatchFunction", 
+            assemblyPrefixName: prefix, 
             declaredPartsProvider, 
             classToCompile, 
             className,
@@ -183,7 +186,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         foreach (var code in codes)
         {
-            var peImage = _compiler.Compile(new CompileUnit(code, GetAssemblyName("CustomType_" + GetClassName(code)), UsageAssemblies: null));
+            var peImage = _compiler.Compile(new CompileUnit(code, GetAssemblyName(GetClassName("CustomType", code)), UsageAssemblies: null));
             var assembly = Load(peImage);
             result.Add(new CustomAssembly(assembly, peImage));
         }
@@ -208,7 +211,6 @@ class FunctionFactory : IFunctionFactoryCSharp
     private static string CreateGeneratingFunctionClassCode(string className, IReadOnlyCollection<Assembly> customAssemblies,
         IDeclaredPartsProvider declaredPartsProvider, string code)
     {
-        const string externalRequestVariableName = "@req";
         const string requestParameterName = "_request_";
 
         code = ReplaceVariableNames(code, declaredPartsProvider, requestParameterName);
@@ -217,7 +219,7 @@ class FunctionFactory : IFunctionFactoryCSharp
                 className,
                 GetMethodBody(code),
                 requestParameterName,
-                externalRequestVariableName,
+                ReservedVariable.Req,
                 GetNamespaces(customAssemblies),
                 GetUsingStatic(customAssemblies));
 
@@ -291,9 +293,9 @@ class FunctionFactory : IFunctionFactoryCSharp
         return code;
     }
     
-    private static string GetClassName(string code)
+    private static string GetClassName(string prefix, string code)
     {
-        return "_" + Sha1.Create(code);
+        return prefix + "_" + Sha1.Create(code);
     }
 
     public void Dispose()
