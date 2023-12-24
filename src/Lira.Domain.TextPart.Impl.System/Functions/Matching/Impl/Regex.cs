@@ -1,0 +1,24 @@
+using System.Text.RegularExpressions;
+using Lira.Domain.Matching.Request;
+
+namespace Lira.Domain.TextPart.Impl.System.Functions.Matching.Impl;
+
+internal class Regex : WithArgumentFunction<string>, IMatchFunctionSystem
+{
+    public override string Name => "regex";
+    public override bool ArgumentIsRequired => true;
+    public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
+
+    private global::System.Text.RegularExpressions.Regex _regex = null!;
+
+
+    public bool IsMatch(string? value)
+    {
+        return _regex.IsMatch(value ?? "");
+    }
+
+    public override void SetArgument(string argument)
+    {
+        _regex = new global::System.Text.RegularExpressions.Regex(argument, RegexOptions.Compiled);
+    }
+}
