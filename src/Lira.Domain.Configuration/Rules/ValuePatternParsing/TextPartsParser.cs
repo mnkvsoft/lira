@@ -5,8 +5,7 @@ using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel;
-using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Generating;
-using Lira.Domain.TextPart.Impl.PreDefinedFunctions.Functions.Transform;
+using Lira.Domain.TextPart.Impl.PreDefinedFunctions;
 using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
@@ -23,20 +22,17 @@ class TextPartsParser : ITextPartsParser
         public object Get(RequestData request) => Value;
     }
 
-    private readonly IGeneratingFunctionFactoryPreDefined _generatingFunctionFactory;
-    private readonly IGeneratingCSharpFactory _generatingCSharpFactory;
-    private readonly ITransformFunctionFactory _transformFunctionFactory;
+    private readonly IFunctionFactoryPreDefined _functionFactoryPreDefined;
+    private readonly IFunctionFactoryCSharp _functionFactoryCSharp;
     private readonly ILogger _logger;
     
     public TextPartsParser(
-        IGeneratingFunctionFactoryPreDefined generatingFunctionFactory, 
-        ITransformFunctionFactory transformFunctionFactory, 
-        IGeneratingCSharpFactory generatingCSharpFactory,
+        IFunctionFactoryPreDefined functionFactoryPreDefined, 
+        IFunctionFactoryCSharp functionFactoryCSharp,
         ILoggerFactory loggerFactory)
     {
-        _generatingFunctionFactory = generatingFunctionFactory;
-        _transformFunctionFactory = transformFunctionFactory;
-        _generatingCSharpFactory = generatingCSharpFactory;
+        _functionFactoryPreDefined = functionFactoryPreDefined;
+        _functionFactoryCSharp = functionFactoryCSharp;
         _logger = loggerFactory.CreateLogger(GetType());
     }
 
@@ -76,47 +72,55 @@ class TextPartsParser : ITextPartsParser
         TransformPipeline pipeline;
         if (value.Contains("return"))
         {
-            var csharpFunction = _generatingCSharpFactory.Create(
+            var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
                 new DeclaredPartsProvider(context.DeclaredItems), 
                 value);
+
+            if (createFunctionResult is CreateFunctionResult<IObjectTextPart>.Failed failed)
+                throw failed.Exception;
             
-            pipeline = new TransformPipeline(csharpFunction);
+            pipeline = new TransformPipeline(((CreateFunctionResult<IObjectTextPart>.Success)createFunctionResult).Function);
         }
         else
         {
             var pipelineItemsRaw = value.Split(Consts.ControlChars.PipelineSplitter);
 
-            pipeline = new TransformPipeline(CreateStartFunction(pipelineItemsRaw[0].Trim(), context));
+            pipeline = new TransformPipeline(CreateStartFunction(pipelineItemsRaw[0].Trim(), context.DeclaredItems));
 
             for (int i = 1; i < pipelineItemsRaw.Length; i++)
             {
                 var invoke = pipelineItemsRaw[i].Trim();
-                if (_transformFunctionFactory.TryCreate(invoke, out var transformFunction))
-                {
-                    pipeline.Add(transformFunction);
-                }
-                else
-                {
-                    pipeline.Add(_generatingCSharpFactory.CreateTransform(invoke));
-                }
+                pipeline.Add(CreateTransformFunction(invoke, context.DeclaredItems));
             }    
         }
 
         return new[] { pipeline };
     }
-    
-    private IObjectTextPart CreateStartFunction(string rawText, ParsingContext context)
+
+    private ITransformFunction CreateTransformFunction(string invoke, IReadonlyDeclaredItems declaredItems)
+    {
+        if (_functionFactoryPreDefined.TryCreateTransformFunction(invoke, out var transformFunction))
+            return transformFunction;
+
+        var createFunctionResult = _functionFactoryCSharp.TryCreateTransformFunction(
+            new DeclaredPartsProvider(declaredItems),
+            invoke);
+
+        return createFunctionResult.GetFunctionOrThrow(invoke);
+    }
+
+    private IObjectTextPart CreateStartFunction(string rawText, IReadonlyDeclaredItems declaredItems)
     {
         if (ContainsOnlyVariable(rawText))
         {
             var varName = rawText.TrimStart(Consts.ControlChars.VariablePrefix);
-            var variable = context.DeclaredItems.Variables.GetOrThrow(varName);
+            var variable = declaredItems.Variables.GetOrThrow(varName);
             return variable;
         }
+        
+        var declaredFunction = declaredItems.Functions.FirstOrDefault(x => x.Name == rawText.TrimStart(Consts.ControlChars.FunctionPrefix));
 
-        var declaredFunction = context.DeclaredItems.Functions.FirstOrDefault(x => x.Name == rawText.TrimStart(Consts.ControlChars.FunctionPrefix));
-
-        if (_generatingFunctionFactory.TryCreate(rawText, out var prettyFunction))
+        if (_functionFactoryPreDefined.TryCreateGeneratingFunction(rawText, out var function))
         {
             if (declaredFunction != null)
             {
@@ -124,15 +128,17 @@ class TextPartsParser : ITextPartsParser
                 return declaredFunction;
             }
             
-            return prettyFunction;
+            return function;
         }
 
         if (declaredFunction != null)
             return declaredFunction;
 
-        return _generatingCSharpFactory.Create(
-            new DeclaredPartsProvider(context.DeclaredItems), 
+        var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
+            new DeclaredPartsProvider(declaredItems), 
             rawText);
+
+        return createFunctionResult.GetFunctionOrThrow(rawText);
         
         bool ContainsOnlyVariable(string s)
         {
@@ -193,4 +199,19 @@ class TextPartsParser : ITextPartsParser
         var parts = await Parse(pattern, context);
         return (true, parts);
     }
+    
+    // private static TFunction CreateCSharpFunctionOrThrow<TFunction>(string invoke, CreateFunctionResult<TFunction> createFunctionResult)
+    // {
+    //     if (createFunctionResult is CreateFunctionResult<TFunction>.Success success)
+    //         return success.Function;
+    //
+    //     var failed = (CreateFunctionResult<TFunction>.Failed)createFunctionResult;
+    //
+    //     var nl = Environment.NewLine;
+    //
+    //     throw new Exception(
+    //         $"Failed create transform function from '{invoke}'." + nl +
+    //         "System function not found and attempt compile C# code failed: " + nl +
+    //         failed.Exception);
+    // }
 }

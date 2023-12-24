@@ -7,7 +7,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCSharp(this IServiceCollection sc)
     {
-        return sc.AddScoped<IGeneratingCSharpFactory, CSharpBlockFactory>()
+        return sc.AddScoped<IFunctionFactoryCSharp, FunctionFactory>()
             .AddScoped<Compiler>()
             .AddScoped<CompilationStatistic>()
             .AddScoped<PeImagesCache>()

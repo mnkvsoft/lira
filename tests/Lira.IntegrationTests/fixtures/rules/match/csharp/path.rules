@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /match/sharp/{{ Guid.TryParse(@value) }}
+GET /match/sharp/{{ Guid.TryParse(@value, out var a) }}
 
 ----- response
 

@@ -1,12 +1,12 @@
 // ReSharper disable RedundantExplicitArrayCreation
 
+using Lira.Domain.Matching.Request;
+
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
-public interface IGeneratingCSharpFactory : IDisposable
+public interface IFunctionFactoryCSharp : IDisposable
 {
-    IObjectTextPart Create(
-        IDeclaredPartsProvider declaredPartsProvider,
-        string code);
-
-    ITransformFunction CreateTransform(string code);
+    CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(IDeclaredPartsProvider declaredPartsProvider, string code);
+    CreateFunctionResult<ITransformFunction> TryCreateTransformFunction(IDeclaredPartsProvider declaredPartsProvider, string code);
+    CreateFunctionResult<IMatchFunction> TryCreateMatchFunction(IDeclaredPartsProvider declaredPartsProvider, string code);
 }

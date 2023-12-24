@@ -13,10 +13,10 @@ public static class ServiceCollectionExtensions
         GeneratingFunctionFactory.AddMatchFunctions(sc);
 
         return sc
-            .AddSingleton<IGeneratingFunctionFactoryPreDefined, GeneratingFunctionFactory>()
-            .AddSingleton<IBodyExtractFunctionFactoryPreDefined, GeneratingFunctionFactory>()
-            .AddSingleton<ITransformFunctionFactory, TransformFunctionFactory>()
-            .AddSingleton<IMatchFunctionFactoryPreDefined, MatchFunctionFactory>();
+            .AddSingleton<IFunctionFactoryPreDefined, FunctionFactoryPreDefined>()
+            .AddSingleton<GeneratingFunctionFactory>()
+            .AddSingleton<TransformFunctionFactory>()
+            .AddSingleton<MatchFunctionFactory>();
     }
 }
 

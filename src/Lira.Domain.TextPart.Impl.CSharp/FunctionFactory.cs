@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Lira.Common;
 using Lira.Configuration;
+using Lira.Domain.Matching.Request;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.TextPart.Types;
@@ -13,7 +14,7 @@ using Lira.Domain.TextPart.Types;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
-class CSharpBlockFactory : IGeneratingCSharpFactory, ICSharpMatchFunctionFactory
+class FunctionFactory : IFunctionFactoryCSharp
 {
     private static int _revisionCounter;
 
@@ -30,7 +31,7 @@ class CSharpBlockFactory : IGeneratingCSharpFactory, ICSharpMatchFunctionFactory
     private readonly DynamicAssembliesUnloader _unLoader;
     private readonly Compiler _compiler;
 
-    public CSharpBlockFactory(IConfiguration configuration, ILoggerFactory loggerFactory, DynamicAssembliesUnloader unLoader, Compiler compiler, CompilationStatistic compilationStatistic)
+    public FunctionFactory(IConfiguration configuration, ILoggerFactory loggerFactory, DynamicAssembliesUnloader unLoader, Compiler compiler, CompilationStatistic compilationStatistic)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _path = configuration.GetRulesPath();
@@ -40,65 +41,115 @@ class CSharpBlockFactory : IGeneratingCSharpFactory, ICSharpMatchFunctionFactory
         _compilationStatistic = compilationStatistic;
     }
 
-    public ITransformFunction CreateTransform(string code)
+    public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(IDeclaredPartsProvider declaredPartsProvider, string code)
+    {
+        var sw = Stopwatch.StartNew();
+
+        var customAssemblies = GetCustomAssemblies();
+        var className = GetClassName(code);
+        
+        var classToCompile = CreateGeneratingFunctionClassCode(className, customAssemblies.Loaded, declaredPartsProvider, code);
+        
+        var result = CreateFunctionResult<IObjectTextPart>(
+            assemblyPrefixName: "GeneratingFunction", 
+            declaredPartsProvider, 
+            classToCompile, 
+            className, 
+            customAssemblies.PeImages);
+        
+        _compilationStatistic.AddTotalTime(sw.Elapsed);
+        
+        return result;
+    }
+
+    public CreateFunctionResult<ITransformFunction> TryCreateTransformFunction(IDeclaredPartsProvider declaredPartsProvider, string code)
     {
         var sw = Stopwatch.StartNew();
 
         string className = GetClassName(code);
         var customAssemblies = GetCustomAssemblies();
 
-        string classToCompile = ClassCodeCreator.CreateITransformFunction(
+        string classToCompile = ClassCodeCreator.CreateTransformFunction(
             className,
             code,
             "@value",
             GetNamespaces(customAssemblies.Loaded),
             GetUsingStatic(customAssemblies.Loaded));
 
-        var ass = Load(_compiler.Compile(
-            new CompileUnit(
-                classToCompile,
-                AssemblyName: GetAssemblyName("TransformFunction" + className),
-                new UsageAssemblies(
-                    Compiled: new Assembly[] { typeof(IObjectTextPart).Assembly, typeof(Json).Assembly },
-                    Runtime: customAssemblies.PeImages))));
-
-        var type = ass.GetTypes().Single(t => t.Name == className);
-
-        var result = (ITransformFunction)Activator.CreateInstance(type)!;
+        var result = CreateFunctionResult<ITransformFunction>(
+            assemblyPrefixName: "TransformFunction", 
+            declaredPartsProvider, 
+            classToCompile, 
+            className,
+            customAssemblies.PeImages);
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
         return result;
     }
 
-    public IObjectTextPart Create(IDeclaredPartsProvider declaredPartsProvider, string code)
+    public CreateFunctionResult<IMatchFunction> TryCreateMatchFunction(IDeclaredPartsProvider declaredPartsProvider, string code)
     {
         var sw = Stopwatch.StartNew();
 
+        string className = GetClassName(code);
         var customAssemblies = GetCustomAssemblies();
 
-        var (className, classToCompile) = CreateClassCode(customAssemblies.Loaded, declaredPartsProvider, code);
+        string classToCompile = ClassCodeCreator.CreateMatchFunction(
+            className,
+            code,
+            "@value",
+            GetNamespaces(customAssemblies.Loaded),
+            GetUsingStatic(customAssemblies.Loaded));
 
-        var classAssembly = Load(_compiler.Compile(
-            new CompileUnit(
-                classToCompile,
-                AssemblyName: GetAssemblyName("ObjectTextPart" + className),
-                new UsageAssemblies(
-                    Compiled: new Assembly[]
-                    {
-                        typeof(IObjectTextPart).Assembly, 
-                        typeof(Json).Assembly, 
-                        typeof(RequestData).Assembly,
-                        GetType().Assembly
-                    },
-                    Runtime: customAssemblies.PeImages))));
-
-        var type = classAssembly.GetTypes().Single(t => t.Name == className);
-        var result = (IObjectTextPart)Activator.CreateInstance(type, declaredPartsProvider)!;
+        var result = CreateFunctionResult<IMatchFunction>(
+            assemblyPrefixName: "MatchFunction", 
+            declaredPartsProvider, 
+            classToCompile, 
+            className,
+            customAssemblies.PeImages);
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
         return result;
+    }
+
+    private CreateFunctionResult<TFunction> CreateFunctionResult<TFunction>(
+        string assemblyPrefixName,
+        IDeclaredPartsProvider declaredPartsProvider, 
+        string classToCompile, 
+        string className,
+        IReadOnlyCollection<PeImage> peImages)
+    {
+        PeImage peImage;
+
+        try
+        {
+            peImage = _compiler.Compile(
+                new CompileUnit(
+                    classToCompile,
+                    AssemblyName: GetAssemblyName(assemblyPrefixName + className),
+                    new UsageAssemblies(
+                        Compiled: new Assembly[]
+                        {
+                            typeof(IObjectTextPart).Assembly,
+                            typeof(Json).Assembly,
+                            typeof(RequestData).Assembly,
+                            GetType().Assembly
+                        },
+                        Runtime: peImages)));
+        }
+        catch (Exception e)
+        {
+            return new CreateFunctionResult<TFunction>.Failed(e);
+        }
+
+        var classAssembly = Load(peImage);
+
+        var type = classAssembly.GetTypes().Single(t => t.Name == className);
+        var function = (TFunction)Activator.CreateInstance(type, declaredPartsProvider)!;
+
+        return new CreateFunctionResult<TFunction>.Success(function);
     }
 
     private bool _customAssembliesWasInit;
@@ -154,15 +205,13 @@ class CSharpBlockFactory : IGeneratingCSharpFactory, ICSharpMatchFunctionFactory
         return result;
     }
 
-    private static (string className, string classToCompile) CreateClassCode(IReadOnlyCollection<Assembly> customAssemblies,
+    private static string CreateGeneratingFunctionClassCode(string className, IReadOnlyCollection<Assembly> customAssemblies,
         IDeclaredPartsProvider declaredPartsProvider, string code)
     {
         const string externalRequestVariableName = "@req";
         const string requestParameterName = "_request_";
 
         code = ReplaceVariableNames(code, declaredPartsProvider, requestParameterName);
-
-        var className = GetClassName(code);
 
         string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
                 className,
@@ -172,7 +221,7 @@ class CSharpBlockFactory : IGeneratingCSharpFactory, ICSharpMatchFunctionFactory
                 GetNamespaces(customAssemblies),
                 GetUsingStatic(customAssemblies));
 
-        return (className, classToCompile);
+        return classToCompile;
     }
 
     private static string[] GetNamespaces(IReadOnlyCollection<Assembly> customAssemblies)

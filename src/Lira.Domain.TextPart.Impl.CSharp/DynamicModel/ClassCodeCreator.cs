@@ -10,11 +10,15 @@ static class ClassCodeCreator
         IReadOnlyCollection<string> namespaces,
         IReadOnlyCollection<string> usingStaticTypes)
     {
-        return CreateClassCode(CodeTemplate.IObjectTextPart, className, code, requestParameterName, namespaces, usingStaticTypes)
-                    .Replace("[externalRequestVariableName]", externalRequestVariableName);
+        return CodeTemplate.IObjectTextPart
+            .Replace("[className]", className)
+            .Replace("[code]", code)
+            .Replace("[request]", requestParameterName)
+            .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
+            .Replace("[namespaces]", GetNamespaces(namespaces)).Replace("[externalRequestVariableName]", externalRequestVariableName);
     }
 
-    public static string CreateITransformFunction(
+    public static string CreateTransformFunction(
         string className,
         string code,
         string inputArgumentName,
@@ -28,21 +32,20 @@ static class ClassCodeCreator
             .Replace("[input]", inputArgumentName)
             .Replace("[code]", code);
     }
-
-    private static string CreateClassCode(
-        string template, 
-        string className, 
-        string code, 
-        string requestParameterName, 
+    
+    public static string CreateMatchFunction(
+        string className,
+        string code,
+        string inputArgumentName,
         IReadOnlyCollection<string> namespaces,
         IReadOnlyCollection<string> usingStaticTypes)
     {
-        return template
-                    .Replace("[className]", className)
-                    .Replace("[code]", code)
-                    .Replace("[request]", requestParameterName)
-                    .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
-                    .Replace("[namespaces]", GetNamespaces(namespaces));
+        return CodeTemplate.IMatchFunction
+            .Replace("[namespaces]", GetNamespaces(namespaces))
+            .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
+            .Replace("[className]", className)
+            .Replace("[input]", inputArgumentName)
+            .Replace("[code]", code);
     }
 
     private static string GetNamespaces(IReadOnlyCollection<string> namespaces)
@@ -81,7 +84,7 @@ static class ClassCodeCreator
             "[usingstatic]" + Nl + Nl +
             Namespace + Nl + Nl +
             @"
-public class [className] : DynamicObjectTextPartBase, IObjectTextPart
+public class [className] : DynamicObjectBase, IObjectTextPart
 {
     public [className](IDeclaredPartsProvider declaredPartsProvider) : base(declaredPartsProvider)
     {
@@ -97,12 +100,39 @@ public class [className] : DynamicObjectTextPartBase, IObjectTextPart
 
         public readonly static string ITransformFunction =
             "[namespaces]" + Nl + Nl +
+            ImportNamespaces + Nl + Nl +
             "[usingstatic]" + Nl + Nl +
-@"namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
-
-public class [className] : ITransformFunction
+            Namespace + Nl + Nl +
+            @"
+public class [className] : DynamicObjectBase, ITransformFunction
 {
+    public [className](IDeclaredPartsProvider declaredPartsProvider) : base(declaredPartsProvider)
+    {
+    }
+
     public dynamic? Transform(dynamic? [input])
+    {
+        return [code];
+    }
+}
+";
+        
+        public readonly static string IMatchFunction =
+            "[namespaces]" + Nl + Nl +
+            ImportNamespaces + Nl + Nl +
+            "[usingstatic]" + Nl + Nl +
+            Namespace + Nl + Nl +
+            "using Lira.Domain.Matching.Request;" + Nl +
+            @"
+
+public class [className] : DynamicObjectBase, IMatchFunction
+{
+    public [className](IDeclaredPartsProvider declaredPartsProvider) : base(declaredPartsProvider)
+    {
+    }
+
+    public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
+    public bool IsMatch(string? [input])
     {
         return [code];
     }

@@ -45,27 +45,33 @@ internal class GeneratingFunctionFactory
         _serviceProvider = serviceProvider;
     }
 
-    public CreateFunctionResult<IBodyExtractFunction> TryCreateBodyExtractFunction(string value)
+    public bool TryCreateBodyExtractFunction(string value, [MaybeNullWhen(false)] out IBodyExtractFunction function)
     {
+        function = null;
         if (value == "all")
-            return new CreateFunctionResult<IBodyExtractFunction>.Success(new AllExtractFunction());
+        {
+            function = new AllExtractFunction();
+            return true;
+        }
 
-        var (functionName, arg) = value.SplitToTwoParts(":").Trim();
+        var (functionName, arg) = value.SplitToTwoPartsRequired(":").Trim();
 
-        if (!_bodyExtractFunctionsMap.TryGetValue(functionName, out var funcFactory))
-            return new CreateFunctionResult<IBodyExtractFunction>.Failed($"Not found function: '{functionName}'");
+        if (_bodyExtractFunctionsMap.TryGetValue(functionName, out var funcFactory))
+        {
+            function = funcFactory(arg);
+            return true;
+        }
 
-        return new CreateFunctionResult<IBodyExtractFunction>.Success(funcFactory(arg));
+        return false;
     }
 
-    public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(string value)
+    public bool TryCreateGeneratingFunction(string value, [MaybeNullWhen(false)] out IObjectTextPart function)
     {
+        function = null;
         var (functionName, argument) = value.SplitToTwoParts(":").Trim();
 
         if (!_functionNameToType.TryGetValue(functionName, out var functionType))
-        {
-            return new CreateFunctionResult<IObjectTextPart>.Failed($"Not found function: '{functionName}'");
-        }
+            return false;
 
         var functionTemp = _serviceProvider.GetRequiredFunction(functionType);
 
