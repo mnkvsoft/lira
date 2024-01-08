@@ -28,7 +28,7 @@ public class Json
 
     public override string ToString()
     {
-        return Value.ToString();
+        return Value.ToString().Replace("\r\n", "\n");
     }
     
     private static JObject ReplacePath(JObject root, string path, object newValue)

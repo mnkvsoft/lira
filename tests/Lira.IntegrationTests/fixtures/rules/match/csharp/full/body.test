@@ -1,0 +1,26 @@
+## not matched
+-------------------- case
+
+POST /match/sharp/full/body
+
+~ body
+abc_1_de
+
+----- expected
+
+~ code
+404
+
+
+## matched
+-------------------- case
+
+POST /match/sharp/full/body
+
+~ body
+abc_2_de
+
+----- expected
+
+~ code
+200

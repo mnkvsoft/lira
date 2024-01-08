@@ -37,6 +37,6 @@ public class GeneratingHttpDataParser
 
     public Task<ObjectTextParts> ParseBody(FileBlock block, IParsingContext parsingContext)
     {
-        return _partsParser.Parse(block.GetStringValue(), parsingContext);
+        return _partsParser.Parse(block.GetSingleStringValue(), parsingContext);
     }
 }

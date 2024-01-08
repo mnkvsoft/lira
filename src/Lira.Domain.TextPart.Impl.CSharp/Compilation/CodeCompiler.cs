@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Lira.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -52,7 +53,7 @@ static class CodeCompiler
         var code = string.Join(new string(Enumerable.Repeat('-', 30).ToArray()), codes);
         foreach (var diagnostic in failures)
         {
-            return new Exception($"Failed to compile. Error: {diagnostic.Id} {diagnostic.GetMessage()}. Code:{Environment.NewLine}'{code}'");
+            return new Exception($"Failed to compile. Error: {diagnostic.Id} {diagnostic.GetMessage()}. Code:{Constants.NewLine}'{code}'");
         }
 
         return new Exception($"Unknown error while compiling code '{code}'");
@@ -70,9 +71,9 @@ static class CodeCompiler
         {
             MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(global::System.Runtime.CompilerServices.DynamicAttribute).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(System.Runtime.CompilerServices.DynamicAttribute).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(global::System.Text.Json.JsonDocument).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(System.Text.Json.JsonDocument).Assembly.Location),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "mscorlib.dll")),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.dll")),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Core.dll")),

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
@@ -99,7 +100,7 @@ class DeclaredItemsParser
             }
             else
             {
-                variablePattern.Append((variablePattern.Length > 0 ? Environment.NewLine : "") + line);
+                variablePattern.Append((variablePattern.Length > 0 ? Constants.NewLine : "") + line);
             }
 
             isFirstLine = false;

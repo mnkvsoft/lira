@@ -1,0 +1,19 @@
+## not matched
+-------------------- case
+
+GET /match/sharp/full/path/abc_1_de/some
+
+----- expected
+
+~ code
+404
+
+## matched
+-------------------- case
+
+GET /match/sharp/full/path/abc_2_de/some
+
+----- expected
+
+~ code
+200

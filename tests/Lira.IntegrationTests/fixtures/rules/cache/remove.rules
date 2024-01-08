@@ -1,0 +1,39 @@
+--------------------------------------- rule
+
+POST /cache/set/{{ name=key any }}
+
+
+----- response
+
+~ body
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+----- action
+
+@cache.set(@req.Path("key"), @req.Body.All())
+
+--------------------------------------- rule
+
+GET /cache/value/{{ name=key @cache.contains(@value) }}
+
+----- response
+
+~ body
+{{ @cache.get(@req.Path("key")) }}
+
+--------------------------------------- rule
+
+GET /cache/value/{{ !@cache.contains(@value) }}
+
+----- response
+
+~ code
+404
+
+--------------------------------------- rule
+
+POST /cache/remove/{{ name=key any }}
+
+----- action
+
+@cache.remove(@req.Path("key"))

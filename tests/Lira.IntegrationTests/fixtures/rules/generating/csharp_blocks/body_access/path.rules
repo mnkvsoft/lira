@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/csharp/body_access/path/{{ int  name: id }}
+GET /generating/csharp/body_access/path/{{ name=id  int  }}
 
 ----- response
 

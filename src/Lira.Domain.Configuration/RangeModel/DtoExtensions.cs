@@ -1,4 +1,4 @@
-﻿using Lira.Domain.Configuration.PrettyParsers;
+﻿using Lira.Common.PrettyParsers;
 using Lira.Domain.Configuration.RangeModel.Dto;
 
 namespace Lira.Domain.Configuration.RangeModel;

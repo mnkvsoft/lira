@@ -1,19 +1,20 @@
 ﻿using System.Text;
 using Lira.Domain;
+using Lira.Domain.Actions;
 using Lira.Domain.Generating;
 
 namespace Lira.ExternalCalling.Http.Caller;
 
-public class HttpExternalCaller : IExternalCaller
+public class HttpAction : IAction
 {
-    public const string HttpClientName = nameof(HttpExternalCaller);
+    public const string HttpClientName = nameof(HttpAction);
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly HttpMethod _httpMethod;
     private readonly TextParts _requestUriParts;
     private readonly TextParts? _bodyParts;
     private readonly IReadOnlyCollection<GeneratingHeader>? _headers;
 
-    public HttpExternalCaller(
+    public HttpAction(
         IHttpClientFactory httpClientFactory,
         HttpMethod httpMethod,
         TextParts requestUriParts,
@@ -27,7 +28,7 @@ public class HttpExternalCaller : IExternalCaller
         _headers = headers;
     }
 
-    public async Task Call(RequestData request)
+    public async Task Execute(RequestData request)
     {
         var client = _httpClientFactory.CreateClient(HttpClientName);
 

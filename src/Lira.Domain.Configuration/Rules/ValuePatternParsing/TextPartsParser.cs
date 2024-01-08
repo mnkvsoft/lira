@@ -196,7 +196,7 @@ class TextPartsParser : ITextPartsParser
         var encoding = encodingName == null ? Encoding.UTF8 : Encoding.GetEncoding(encodingName);
 
         string pattern = await File.ReadAllTextAsync(filePath, encoding);
-        var parts = await Parse(pattern, context);
+        var parts = await Parse(pattern.Replace("\r\n", "\n"), context);
         return (true, parts);
     }
 }

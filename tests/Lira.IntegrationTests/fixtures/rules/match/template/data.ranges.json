@@ -1,9 +1,0 @@
-{
-  "match_template": {
-    "type": "int",
-    "ranges": [
-      "first",
-      "second"
-    ]
-  }
-}

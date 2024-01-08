@@ -1,0 +1,42 @@
+--------------------------------------- rule
+
+GET /cache/condition/{{ name=id int }}
+
+-------------------- condition
+
+@attempt = 1
+
+----- declare
+
+$$response:json = 
+{
+    "id": {{ seq }},
+    "status": "pending"
+}
+
+----- response
+
+~ code
+200
+
+~ body
+{{ $$response }}
+
+----- action
+@cache.set("condition_" + @req.Path("id"), $$response)
+
+
+-------------------- condition
+
+@attempt = 2
+
+----- response
+
+~ code
+200
+
+~ body
+{{ 
+    @cache.get("condition_" + @req.Path("id"))
+        .replace("status", "ok")
+}}

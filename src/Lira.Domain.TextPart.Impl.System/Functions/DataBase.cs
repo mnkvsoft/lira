@@ -3,12 +3,12 @@ using Lira.Domain.DataModel;
 
 namespace Lira.Domain.TextPart.Impl.System.Functions;
 
-abstract class DataBase : WithArgumentFunction<string>
+abstract class RangeBase : WithArgumentFunction<string>
 {
     private readonly IDataProvider _dataProvider;
     public override bool ArgumentIsRequired => true;
     
-    protected DataBase(IDataProvider dataProvider)
+    protected RangeBase(IDataProvider dataProvider)
     {
         _dataProvider = dataProvider;
     }

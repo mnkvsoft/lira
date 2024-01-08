@@ -14,7 +14,8 @@ internal static class Comments
     public static string Delete(string text)
     {
         text = Delete(text, CommentChar.MultiLineStart, CommentChar.MultiLineEnd, isMultiline: true);
-        text = Delete(text, CommentChar.SingleLine, Environment.NewLine, isMultiline: false);
+        text = Delete(text, CommentChar.SingleLine, "\n", isMultiline: false);
+        text = Delete(text, CommentChar.SingleLine, "\r\n", isMultiline: false);
 
         return text;
     }

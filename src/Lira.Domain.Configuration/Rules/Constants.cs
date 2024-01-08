@@ -9,7 +9,7 @@ class Constants
         public const string Templates = "templates";
         public const string Condition = "condition";
         public const string Response = "response";
-        public const string CallPrefix = "action.call";
+        public const string ActionPrefix = "action";
     }
 
     public static class BlockName
@@ -33,7 +33,13 @@ class Constants
             public const string Code = "code";
             public const string Headers = "headers";
             public const string Body = "body";
+            public const string Abort = "abort";
             public const string Delay = Common.Delay;
+        }
+        
+        public class Action
+        {
+            public const string Code = "code";
         }
     }
 

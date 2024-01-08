@@ -215,7 +215,7 @@ req.path: <имя_сегмента_пути>
 ```
 -------------------- rule
 
-GET /hello/{{ any name: person }}
+GET /hello/{{ name=person any }}
 
 ----- response
 

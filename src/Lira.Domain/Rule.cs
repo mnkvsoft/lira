@@ -1,36 +1,32 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Lira.Domain.Actions;
 
 namespace Lira.Domain;
-
-public record PathNameMap(int Index, string? Name);
 
 public class Rule
 {
     public string Name { get; }
-    public IReadOnlyCollection<PathNameMap> PathNameMaps { get; }
-    
-    private readonly ILogger _logger;
+
     private readonly RequestMatcherSet _requestMatcherSet;
     private readonly ConditionMatcherSet? _conditionMatcherSet;
-    private readonly Delayed<ResponseWriter> _responseWriter;
-    private readonly IReadOnlyCollection<Delayed<IExternalCaller>> _callers;
+    private readonly ActionsExecutor _actionsExecutor;
+    private readonly ResponseStrategy _responseStrategy;
+    public IReadOnlyCollection<PathNameMap> PathNameMaps { get; }
 
     public Rule(
         string name,
-        ILoggerFactory loggerFactory,
-         Delayed<ResponseWriter> responseWriter,
         RequestMatcherSet matchers,
-        IReadOnlyCollection<PathNameMap> pathNameMaps,
-        ConditionMatcherSet? conditionMatcherSet, 
-        IReadOnlyCollection<Delayed<IExternalCaller>> callers)
+        ConditionMatcherSet? conditionMatcherSet,
+        ActionsExecutor actionsExecutor,
+        IReadOnlyCollection<PathNameMap> pathNameMaps, 
+        ResponseStrategy responseStrategy)
     {
-        _responseWriter = responseWriter;
         _requestMatcherSet = matchers;
-        _logger = loggerFactory.CreateLogger(GetType());
+
         Name = name;
         _conditionMatcherSet = conditionMatcherSet;
-        _callers = callers;
+        _actionsExecutor = actionsExecutor;
         PathNameMaps = pathNameMaps;
+        _responseStrategy = responseStrategy;
     }
 
     public async Task<RuleMatchResult> IsMatch(RequestData request, Guid requestId)
@@ -54,32 +50,9 @@ public class Rule
 
     public async Task Execute(HttpContextData httpContextData)
     {
-        if (_responseWriter.Delay != null)
-            await Task.Delay(_responseWriter.Delay.Value);
-
-        await _responseWriter.Value.Write(httpContextData);
-
         await httpContextData.Request.SaveBody();
-        _ = CallExternalSystems(httpContextData.Request);
-    }
 
-    private async Task CallExternalSystems(RequestData request)
-    {
-        await Task.WhenAll(_callers.Select(caller => TryCall(caller, request)));
-    }
-
-    private async Task TryCall(Delayed<IExternalCaller> caller, RequestData request)
-    {
-        if (caller.Delay != null)
-            await Task.Delay(caller.Delay.Value);
-
-        try
-        {
-            await caller.Value.Call(request);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"An error occurred while calling '{caller.GetType().Name}'");
-        }
+        await _actionsExecutor.Execute(httpContextData.Request);
+        await _responseStrategy.Execute(httpContextData);
     }
 }

@@ -1,0 +1,30 @@
+-------------------- case
+
+POST /cache/flag/1
+
+~ headers
+Request-Id: reject_scenario
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "status": "pending"
+}
+
+-------------------- case
+
+GET /cache/flag/1
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "status": "reject"
+}

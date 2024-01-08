@@ -55,14 +55,24 @@ public class Rules_Tests : TestBase
             var sw = Stopwatch.StartNew();
 
             var req = CreateRequest(caseSection);
-            var res = await httpClient.SendAsync(req);
+
+            var expectedSection = caseSection.GetSingleChildSection("expected");
+            HttpResponseMessage res;
+            try
+            {
+                res = await httpClient.SendAsync(req);
+            }
+            catch (Exception e) 
+            {
+                if(e.Message.Contains("The application aborted the request") && expectedSection.ExistBlock("aborted"))
+                    continue;
+                throw;
+            }
 
             var wait = caseSection.GetBlockValueOrDefault<TimeSpan>("wait");
 
             if (wait != default)
                 await Task.Delay(wait);
-
-            var expectedSection = caseSection.GetSingleChildSection("expected");
 
             var elapsed = expectedSection.GetBlockValueOrDefault<TimeSpan>("elapsed");
             if (elapsed != default)
@@ -116,7 +126,7 @@ public class Rules_Tests : TestBase
                 var bodyBlock = httpCallSection.GetBlockOrNull("body");
                 if (bodyBlock != null)
                 {
-                    string expectedBody = bodyBlock.GetStringValue();
+                    string expectedBody = bodyBlock.GetSingleStringValue();
                     Assert.That(expectedBody, Is.EqualTo(await message.Content!.ReadAsStringAsync()));
                 }
 

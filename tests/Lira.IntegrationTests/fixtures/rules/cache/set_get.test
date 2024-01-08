@@ -1,0 +1,49 @@
+## not cached
+-------------------- case
+
+GET /cache/set_get/1?comment=first_invoke
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "comment": "first_invoke"
+}
+
+
+## cached
+-------------------- case
+
+GET /cache/set_get/1?comment=second_invoke
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "comment": "first_invoke"
+}
+
+## cache expired
+-------------------- case
+
+GET /cache/set_get/1?comment=third_invoke
+
+~ delay 
+00:00:02
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "comment": "third_invoke"
+}
+

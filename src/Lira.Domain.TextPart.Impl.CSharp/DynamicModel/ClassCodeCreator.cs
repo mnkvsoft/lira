@@ -1,4 +1,6 @@
-﻿namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
+﻿using Lira.Common;
+
+namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
 static class ClassCodeCreator
 {
@@ -7,6 +9,7 @@ static class ClassCodeCreator
         string code,
         string requestParameterName,
         string externalRequestVariableName,
+        string repeatFunctionName,
         IReadOnlyCollection<string> namespaces,
         IReadOnlyCollection<string> usingStaticTypes)
     {
@@ -14,6 +17,7 @@ static class ClassCodeCreator
             .Replace("[className]", className)
             .Replace("[code]", code)
             .Replace("[request]", requestParameterName)
+            .Replace("[repeat]", repeatFunctionName)
             .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
             .Replace("[namespaces]", GetNamespaces(namespaces)).Replace("[externalRequestVariableName]", externalRequestVariableName);
     }
@@ -47,20 +51,37 @@ static class ClassCodeCreator
             .Replace("[input]", inputArgumentName)
             .Replace("[code]", code);
     }
+    
+    public static string CreateAction(
+        string className,
+        string code,
+        string requestParameterName,
+        string externalRequestVariableName,
+        IReadOnlyCollection<string> namespaces,
+        IReadOnlyCollection<string> usingStaticTypes)
+    {
+        return CodeTemplate.IAction
+            .Replace("[namespaces]", GetNamespaces(namespaces))
+            .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
+            .Replace("[request]", requestParameterName)
+            .Replace("[className]", className)
+            .Replace("[externalRequestVariableName]", externalRequestVariableName)
+            .Replace("[code]", code);
+    }
 
     private static string GetNamespaces(IReadOnlyCollection<string> namespaces)
     {
-        return namespaces.Count == 0 ? "" : string.Join(Environment.NewLine, namespaces.Select(n => $"using {n};"));
+        return namespaces.Count == 0 ? "" : string.Join(Constants.NewLine, namespaces.Select(n => $"using {n};"));
     }
 
     private static string GetUsingStatic(IReadOnlyCollection<string> usingStaticTypes)
     {
-        return usingStaticTypes.Count == 0 ? "" : string.Join(Environment.NewLine, usingStaticTypes.Select(n => $"using static {n};"));
+        return usingStaticTypes.Count == 0 ? "" : string.Join(Constants.NewLine, usingStaticTypes.Select(n => $"using static {n};"));
     }
 
     static class CodeTemplate
     {
-        private static readonly string Nl = Environment.NewLine;
+        private static readonly string Nl = Constants.NewLine;
 
         private readonly static string ImportNamespaces =
             "using System;" + Nl +
@@ -68,6 +89,7 @@ static class ClassCodeCreator
             "using System.Linq;" + Nl +
             "using System.Collections;" + Nl +
             "using System.Collections.Generic;" + Nl + Nl +
+            "using System.Threading.Tasks;" + Nl + Nl +
 
             "using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;" + Nl +
             "using Lira.Domain;" + Nl +
@@ -86,7 +108,7 @@ static class ClassCodeCreator
             @"
 public class [className] : DynamicObjectBase, IObjectTextPart
 {
-    public [className](IDeclaredPartsProvider declaredPartsProvider) : base(declaredPartsProvider)
+    public [className](Dependencies dependencies) : base(dependencies)
     {
     }
 
@@ -95,6 +117,18 @@ public class [className] : DynamicObjectBase, IObjectTextPart
         var [externalRequestVariableName] = new RequestModel([request]);
         
         [code]
+
+        string [repeat](IObjectTextPart part, string separator = "","", int? count = null, int? from = null, int? to = null)
+        {
+            int cnt;
+            if(count != null)
+                cnt = count.Value;
+            else if(from != null)
+                cnt = Random.Shared.Next(from.Value, to.Value + 1);
+            else
+                cnt = Random.Shared.Next(3, 9);
+            return Repeat([request], part, separator, cnt);
+        }
     }
 }";
 
@@ -106,13 +140,13 @@ public class [className] : DynamicObjectBase, IObjectTextPart
             @"
 public class [className] : DynamicObjectBase, ITransformFunction
 {
-    public [className](IDeclaredPartsProvider declaredPartsProvider) : base(declaredPartsProvider)
+    public [className](Dependencies dependencies) : base(dependencies)
     {
     }
 
     public dynamic? Transform(dynamic? [input])
     {
-        [code];
+        [code]
     }
 }
 ";
@@ -127,17 +161,41 @@ public class [className] : DynamicObjectBase, ITransformFunction
 
 public class [className] : DynamicObjectBase, IMatchFunction
 {
-    public [className](IDeclaredPartsProvider declaredPartsProvider) : base(declaredPartsProvider)
+    public [className](Dependencies dependencies) : base(dependencies)
     {
     }
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
     public bool IsMatch(string? [input])
     {
-        [code];
+        [code]
     }
 }
 ";
+        
+        public readonly static string IAction =
+            "[namespaces]" + Nl + Nl +
+            ImportNamespaces + Nl + Nl +
+            "[usingstatic]" + Nl + Nl +
+            Namespace + Nl + Nl +
+            "using Lira.Domain.Actions;" + Nl +
+            @"
+
+public class [className] : DynamicObjectBase, IAction
+{
+    public [className](Dependencies dependencies) : base(dependencies)
+    {
+    }
+
+    public async Task Execute(RequestData [request])
+    {
+        var [externalRequestVariableName] = new RequestModel([request]);
+        [code]
+    }
+
+}
+";
+        
     }
 }
 

@@ -1,24 +1,25 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿namespace Lira.Domain.Generating.Writers;
 
-namespace Lira.Domain.Generating.Writers;
-
-public class BodyWriter
+public class BodyGenerator
 {
     private readonly TextParts _parts;
 
-    public BodyWriter(TextParts parts)
+    public BodyGenerator(TextParts parts)
     {
         _parts = parts;
     }
 
-    public async Task Write(HttpContextData httpContextData)
+    internal IReadOnlyCollection<string> Create(RequestData request)
     {
+        var result = new List<string>(_parts.Count);
         foreach (var part in _parts)
         {
-            string? text = part.Get(httpContextData.Request);
+            string? text = part.Get(request);
             
             if (text != null)
-                await httpContextData.Response.WriteAsync(text);
+                result.Add(text);
         }
+
+        return result;
     }
 }

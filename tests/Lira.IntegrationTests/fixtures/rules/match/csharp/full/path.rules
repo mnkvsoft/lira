@@ -1,0 +1,14 @@
+-------------------- rule
+
+GET /match/sharp/full/path/abc_{{  
+    if(!int.TryParse(@value, out var intVal))
+        return false;
+    
+    var result = intVal % 2 == 0;
+    return result;
+}}_de/some
+
+----- response
+
+~ code
+200

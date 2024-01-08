@@ -49,7 +49,7 @@ simple mock server
 ```
 -------------------- rule
 
-GET /hello/{{ any name: person }}
+GET /hello/{{ name=person  any  }}
 
 ----- response
 
@@ -269,7 +269,7 @@ Request-Time: 12:07:16
 ```
 -------------------- rule
 
-POST /payment/{{ any name: tool }}?fast={{ any }}
+POST /payment/{{ name=tool  any  }}?fast={{ any }}
 
 ~ headers
 Id: {{ any }}

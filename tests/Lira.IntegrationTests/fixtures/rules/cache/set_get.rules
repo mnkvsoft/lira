@@ -1,0 +1,27 @@
+-------------------- rule
+
+GET /cache/set_get/{{ name=id int }}?comment={{ any }}
+
+----- declare
+
+$$response.body = 
+{
+    "comment": "{{ req.query: comment }}"
+}
+
+----- response
+
+~ body
+{{ $$response.body }}
+
+----- action
+@cache.set("cache_" + @req.Path("id"), $$response.body, "2 second")
+
+-------------------- rule
+
+GET /cache/set_get/{{ name=id @cache.contains("cache_" + @value) }}?comment={{ any }}
+
+----- response
+
+~ body
+{{ @cache.get("cache_" + @req.Path("id")) }}

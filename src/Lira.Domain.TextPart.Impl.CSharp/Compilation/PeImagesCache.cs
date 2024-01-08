@@ -69,7 +69,7 @@ class PeImagesCache : IDisposable
         }
         
         _wasInit = true;
-        var nl = Environment.NewLine;
+        var nl = Constants.NewLine;
         _logger.LogInformation("PE image cache." + nl +
             $"Directory: {TempPath}" + nl +
             $"Count: {files.Length}" + nl +

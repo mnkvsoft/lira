@@ -17,7 +17,7 @@ public record Variable : IObjectTextPart, IUniqueSetItem
         _name = name;
     }
 
-    public object? Get(RequestData request)
+    public dynamic? Get(RequestData request)
     {
         var key = "variable_" + _name;
         if (request.Items.TryGetValue(key, out var value))

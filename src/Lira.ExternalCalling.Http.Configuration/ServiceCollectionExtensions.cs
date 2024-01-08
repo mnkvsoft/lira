@@ -12,7 +12,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<LoggingHandler>();
 
-        var builder = services.AddHttpClient(HttpExternalCaller.HttpClientName);
+        var builder = services.AddHttpClient(HttpAction.HttpClientName);
 
         if (configuration.IsLoggingEnabled())
             builder.AddHttpMessageHandler<LoggingHandler>();
@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
                 return handler;
             });
 
-        services.AddScoped<IExternalCallerRegistrator, HttpExternalCallerRegistrator>();
+        services.AddScoped<ISystemActionRegistrator, HttpSystemActionRegistrator>();
         services.AddSingleton<IHttpMessageHandlerFactory, HttpMessageHandlerFactory>();
 
         return services;

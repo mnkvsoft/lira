@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 using Lira.Common;
-using Lira.Domain.Configuration.PrettyParsers;
+using Lira.Common.PrettyParsers;
 using Lira.Domain.Configuration.RangeModel.Dto;
 using Lira.Domain.DataModel;
 using Lira.Domain.DataModel.DataImpls.Float;
@@ -88,7 +88,7 @@ class FloatParser
         }
         
         return new IntervalsWithCapacity(result, 
-            $"Interval({(dto.Interval == null ? "default" : "manual")}) : " + interval + Environment.NewLine +
+            $"Interval({(dto.Interval == null ? "default" : "manual")}) : " + interval + Constants.NewLine +
             "Capacity(auto): " + capacity);
     }
     

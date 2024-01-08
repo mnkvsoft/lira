@@ -36,8 +36,8 @@ static class FunctionBaseExtensions
         if (withArgumentInterface != null)
         {
             var argumentType = withArgumentInterface.GetGenericArguments().Single();
-            if (!StringConverter.TryConvert(argumentType, argument, out object? result))
-                throw new Exception($"Function '{functionName}' expected argument with type: '{argumentType}'. Current: '{argument}'");
+
+            object result = GetArgument(argument, functionName, argumentType);
 
             var withArgumentFunction = (IWithArgumentFunction)function;
             withArgumentFunction.SetArgument(result);
@@ -68,6 +68,29 @@ static class FunctionBaseExtensions
         }
 
         throw new Exception($"Function '{functionName}' contains unknown argument");
+    }
+
+    private static object GetArgument(string argument, string functionName, Type argumentType)
+    {
+        if (argumentType.BaseType == typeof(Array))
+        {
+            string[] arrayStr = argument.Split(",");
+            var elementType = argumentType.GetElementType()!;
+            var array = Array.CreateInstance(elementType, arrayStr.Length);
+            for (int i = 0; i < arrayStr.Length; i++)
+            {
+                string str = arrayStr[i].Trim();
+                if (!StringConverter.TryConvert(elementType, str, out object? obj))
+                    throw new Exception($"Function '{functionName}' expected argument with type: '{elementType}'. Current: '{str}'");
+                array.SetValue(obj, i);
+            }
+
+            return array;
+        }
+
+        if (!StringConverter.TryConvert(argumentType, argument, out object? result))
+            throw new Exception($"Function '{functionName}' expected argument with type: '{argumentType}'. Current: '{argument}'");
+        return result;
     }
 
     private static Type? TryGetWithArgumentInterfaceType(this IWithArgument function)

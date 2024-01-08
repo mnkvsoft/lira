@@ -10,4 +10,4 @@
 - repeat function
 - cache response
 - add interval to Date function 
-- add interval to Float function 
+- add interval to Float function

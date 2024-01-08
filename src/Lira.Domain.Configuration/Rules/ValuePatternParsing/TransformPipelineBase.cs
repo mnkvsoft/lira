@@ -6,12 +6,12 @@ record TransformPipeline(IObjectTextPart ObjectTextPart) : IObjectTextPart
 {
     private readonly List<ITransformFunction> _transformFunctions = new();
         
-    private object? ExecutePipeline(object? startValue)
+    private dynamic? ExecutePipeline(dynamic? startValue)
     {
         if (_transformFunctions.Count == 0)
             return startValue;
             
-        object? result = startValue;
+        dynamic? result = startValue;
         foreach (var function in _transformFunctions)
         {
             result = function.Transform(result);
@@ -25,5 +25,5 @@ record TransformPipeline(IObjectTextPart ObjectTextPart) : IObjectTextPart
         _transformFunctions.Add(transform);
     }
 
-    public object? Get(RequestData request) => ExecutePipeline(ObjectTextPart.Get(request));
+    public dynamic? Get(RequestData request) => ExecutePipeline(ObjectTextPart.Get(request));
 }

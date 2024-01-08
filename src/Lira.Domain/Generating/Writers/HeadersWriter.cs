@@ -2,28 +2,25 @@
 
 namespace Lira.Domain.Generating.Writers;
 
-public class HeadersWriter
+public class HeadersGenerator
 {
     private readonly IReadOnlyCollection<GeneratingHeader> _headers;
 
-    public HeadersWriter(IReadOnlyCollection<GeneratingHeader> headers)
+    public HeadersGenerator(IReadOnlyCollection<GeneratingHeader> headers)
     {
         Arg.NotEmpty(headers, nameof(headers));
         _headers = headers;
     }
 
-    public void Write(HttpContextData httpContextData)
+    internal IReadOnlyCollection<Header> Create(RequestData request)
     {
-        var response = httpContextData.Response;
-
+        var result = new List<Header>();
         foreach (var header in _headers)
         {
-            var value = header.TextParts.Generate(httpContextData.Request);
-
-            if (header.Name == "Content-Type")
-                response.ContentType = value;
-            else
-                response.Headers.Add(header.Name, value);
+            var value = header.TextParts.Generate(request);
+            result.Add(new Header(header.Name, value));
         }
+
+        return result;
     }
 }

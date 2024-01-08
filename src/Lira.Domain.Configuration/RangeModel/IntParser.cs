@@ -1,6 +1,6 @@
 using System.Text;
 using Lira.Common;
-using Lira.Domain.Configuration.PrettyParsers;
+using Lira.Common.PrettyParsers;
 using Lira.Domain.Configuration.RangeModel.Dto;
 using Lira.Domain.DataModel;
 using Lira.Domain.DataModel.DataImpls.Int;
@@ -110,7 +110,7 @@ class IntParser
         }
 
         return new IntervalsWithCapacity(intervals, 
-            $"Interval({intervalInfo}): " + interval + Environment.NewLine +
+            $"Interval({intervalInfo}): " + interval + Constants.NewLine +
             "Capacity(auto): " + capacity);
     }
 }

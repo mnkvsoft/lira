@@ -1,0 +1,8 @@
+-------------------- rule
+
+GET /match/sharp/query?a=abc_{{ Guid.TryParse(@value, out _) }}_de
+
+----- response
+
+~ code
+200

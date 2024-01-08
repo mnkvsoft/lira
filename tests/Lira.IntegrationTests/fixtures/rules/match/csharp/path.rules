@@ -1,8 +1,0 @@
--------------------- rule
-
-GET /match/sharp/{{ Guid.TryParse(@value, out _) }}
-
------ response
-
-~ code
-200

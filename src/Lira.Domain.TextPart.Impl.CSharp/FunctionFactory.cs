@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Lira.Common;
 using Lira.Configuration;
+using Lira.Domain.Actions;
 using Lira.Domain.Matching.Request;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
@@ -30,8 +31,10 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly CompilationStatistic _compilationStatistic;
     private readonly DynamicAssembliesUnloader _unLoader;
     private readonly Compiler _compiler;
+    private readonly Cache _cache;
 
-    public FunctionFactory(IConfiguration configuration, ILoggerFactory loggerFactory, DynamicAssembliesUnloader unLoader, Compiler compiler, CompilationStatistic compilationStatistic)
+    public FunctionFactory(IConfiguration configuration, ILoggerFactory loggerFactory, DynamicAssembliesUnloader unLoader,
+        Compiler compiler, CompilationStatistic compilationStatistic, Cache cache)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _path = configuration.GetRulesPath();
@@ -39,6 +42,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         _unLoader = unLoader;
         _compiler = compiler;
         _compilationStatistic = compilationStatistic;
+        _cache = cache;
     }
 
     public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(IDeclaredPartsProvider declaredPartsProvider, string code)
@@ -48,18 +52,18 @@ class FunctionFactory : IFunctionFactoryCSharp
         string prefix = "GeneratingFunction";
         var customAssemblies = GetCustomAssemblies();
         var className = GetClassName(prefix, code);
-        
+
         var classToCompile = CreateGeneratingFunctionClassCode(className, customAssemblies.Loaded, declaredPartsProvider, code);
-        
+
         var result = CreateFunctionResult<IObjectTextPart>(
-            assemblyPrefixName: prefix, 
-            declaredPartsProvider, 
-            classToCompile, 
-            className, 
+            assemblyPrefixName: prefix,
+            declaredPartsProvider,
+            classToCompile,
+            className,
             customAssemblies.PeImages);
-        
+
         _compilationStatistic.AddTotalTime(sw.Elapsed);
-        
+
         return result;
     }
 
@@ -73,15 +77,15 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         string classToCompile = ClassCodeCreator.CreateTransformFunction(
             className,
-            WrapToTryCatch($"return {code};", code),
+            WrapToTryCatch(new Code(ForCompile: $"return {code};", Source: code)),
             ReservedVariable.Value,
             GetNamespaces(customAssemblies.Loaded),
             GetUsingStatic(customAssemblies.Loaded));
 
         var result = CreateFunctionResult<ITransformFunction>(
-            assemblyPrefixName: prefix, 
-            declaredPartsProvider, 
-            classToCompile, 
+            assemblyPrefixName: prefix,
+            declaredPartsProvider,
+            classToCompile,
             className,
             customAssemblies.PeImages);
 
@@ -100,15 +104,37 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         string classToCompile = ClassCodeCreator.CreateMatchFunction(
             className,
-            WrapToTryCatch($"return {code};", code),
+            GetMethodBody(new Code(ForCompile: code, Source: code)),
             ReservedVariable.Value,
             GetNamespaces(customAssemblies.Loaded),
             GetUsingStatic(customAssemblies.Loaded));
 
         var result = CreateFunctionResult<IMatchFunction>(
-            assemblyPrefixName: prefix, 
-            declaredPartsProvider, 
-            classToCompile, 
+            assemblyPrefixName: prefix,
+            declaredPartsProvider,
+            classToCompile,
+            className,
+            customAssemblies.PeImages);
+
+        _compilationStatistic.AddTotalTime(sw.Elapsed);
+
+        return result;
+    }
+
+    public CreateFunctionResult<IAction> TryCreateAction(IDeclaredPartsProvider declaredPartsProvider, string code)
+    {
+        var sw = Stopwatch.StartNew();
+
+        string prefix = "Action";
+        string className = GetClassName(prefix, code);
+        var customAssemblies = GetCustomAssemblies();
+
+        string classToCompile = CreateActionClassCode(className, customAssemblies.Loaded, declaredPartsProvider, code);
+
+        var result = CreateFunctionResult<IAction>(
+            assemblyPrefixName: prefix,
+            declaredPartsProvider,
+            classToCompile,
             className,
             customAssemblies.PeImages);
 
@@ -119,8 +145,8 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private CreateFunctionResult<TFunction> CreateFunctionResult<TFunction>(
         string assemblyPrefixName,
-        IDeclaredPartsProvider declaredPartsProvider, 
-        string classToCompile, 
+        IDeclaredPartsProvider declaredPartsProvider,
+        string classToCompile,
         string className,
         IReadOnlyCollection<PeImage> peImages)
     {
@@ -150,7 +176,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         var classAssembly = Load(peImage);
 
         var type = classAssembly.GetTypes().Single(t => t.Name == className);
-        var function = (TFunction)Activator.CreateInstance(type, declaredPartsProvider)!;
+        var function = (TFunction)Activator.CreateInstance(type, new DynamicObjectBase.Dependencies(declaredPartsProvider, _cache))!;
 
         return new CreateFunctionResult<TFunction>.Success(function);
     }
@@ -158,7 +184,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     private bool _customAssembliesWasInit;
     private IReadOnlyCollection<Assembly> _customLoadedAssemblies = null!;
     private IReadOnlyCollection<PeImage> _customPeImageAssemblies = null!;
-    
+
     private (IReadOnlyCollection<Assembly> Loaded, IReadOnlyCollection<PeImage> PeImages) GetCustomAssemblies()
     {
         if (_customAssembliesWasInit)
@@ -169,7 +195,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         _customLoadedAssemblies = customAssemblies.Select(x => x.LoadedAssembly).ToArray();
         _customPeImageAssemblies = customAssemblies.Select(x => x.PeImage).ToArray();
-        
+
         return (_customLoadedAssemblies, _customPeImageAssemblies);
     }
 
@@ -186,7 +212,8 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         foreach (var code in codes)
         {
-            var peImage = _compiler.Compile(new CompileUnit(code, GetAssemblyName(GetClassName("CustomType", code)), UsageAssemblies: null));
+            var peImage = _compiler.Compile(new CompileUnit(code, GetAssemblyName(GetClassName("CustomType", code)),
+                UsageAssemblies: null));
             var assembly = Load(peImage);
             result.Add(new CustomAssembly(assembly, peImage));
         }
@@ -212,16 +239,42 @@ class FunctionFactory : IFunctionFactoryCSharp
         IDeclaredPartsProvider declaredPartsProvider, string code)
     {
         const string requestParameterName = "_request_";
-
-        code = ReplaceVariableNames(code, declaredPartsProvider, requestParameterName);
+        const string repeatFunctionName = "repeat";
 
         string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
-                className,
-                GetMethodBody(code),
-                requestParameterName,
-                ReservedVariable.Req,
-                GetNamespaces(customAssemblies),
-                GetUsingStatic(customAssemblies));
+            className,
+            GetMethodBody(new Code(
+                ForCompile: 
+                code.StartsWith(repeatFunctionName) 
+                ? ReplaceVariableNamesForRepeat(code, declaredPartsProvider)
+                : ReplaceVariableNames(code, declaredPartsProvider, requestParameterName), 
+                Source: code)),
+            requestParameterName,
+            ReservedVariable.Req,
+            repeatFunctionName,
+            GetNamespaces(customAssemblies),
+            GetUsingStatic(customAssemblies));
+
+        return classToCompile;
+    }
+
+    private static string CreateActionClassCode(
+        string className,
+        IReadOnlyCollection<Assembly> customAssemblies,
+        IDeclaredPartsProvider declaredPartsProvider,
+        string code)
+    {
+        const string requestParameterName = "_request_";
+
+        string classToCompile = ClassCodeCreator.CreateAction(
+            className,
+            WrapToTryCatch(new Code(
+                ForCompile: ReplaceVariableNames(code, declaredPartsProvider, requestParameterName) + ";", 
+                Source: code)),
+            requestParameterName,
+            ReservedVariable.Req,
+            GetNamespaces(customAssemblies),
+            GetUsingStatic(customAssemblies));
 
         return classToCompile;
     }
@@ -244,36 +297,40 @@ class FunctionFactory : IFunctionFactoryCSharp
             .ToArray();
     }
 
-    private static string GetMethodBody(string code)
+    record Code(string ForCompile, string Source);
+
+    private static string GetMethodBody(Code code)
     {
         string methodBody;
 
-        if (code.Contains("return"))
+        if (code.ForCompile.Contains("return"))
         {
-            methodBody = WrapToTryCatch(code, codeForException: code);
+            methodBody = WrapToTryCatch(code);
         }
         else
         {
             methodBody = WrapToTryCatch(
-                $"var _result_ = {code};" + Environment.NewLine +
-                @"; return _result_;",
-                codeForException: code);
+                code with
+                {
+                    ForCompile = $"var _result_ = {code.ForCompile};" + Constants.NewLine +
+                                 @"; return _result_;"
+                });
         }
 
         return methodBody;
     }
 
-    private static string WrapToTryCatch(string code, string codeForException)
+    private static string WrapToTryCatch(Code code)
     {
         return @"try
             {
-                " + code + @"
+                " + code.ForCompile + @"
             }
             catch (Exception e)
             {
-                var nl = Environment.NewLine;
-                throw new Exception(" + "\"An error has occurred while execute code block: \" + nl + \"" + 
-               codeForException
+                var nl = NewLine;
+                throw new Exception(" + "\"An error has occurred while execute code block: \" + nl + \"" +
+               code.Source
                    .Replace("\"", "\\\"")
                    .Replace("\r\n", "\" + nl + \"")
                    .Replace("\n", "\" + nl + \"") +
@@ -293,6 +350,16 @@ class FunctionFactory : IFunctionFactoryCSharp
         return code;
     }
     
+    private static string ReplaceVariableNamesForRepeat(string code, IDeclaredPartsProvider declaredPartsProvider)
+    {
+        foreach (var name in declaredPartsProvider.GetAllNamesDeclared())
+        {
+            code = code.Replace(name, $"GetDeclaredPart(\"{name}\")");
+        }
+
+        return code;
+    }
+
     private static string GetClassName(string prefix, string code)
     {
         return prefix + "_" + Sha1.Create(code);
@@ -301,7 +368,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     public void Dispose()
     {
         var stat = _compilationStatistic;
-        var nl = Environment.NewLine;
+        var nl = Constants.NewLine;
         _logger.LogInformation($"Dynamic csharp compilation statistic: " + nl +
                                $"Revision: {_revision}" + nl +
                                $"Total time: {(int)stat.TotalTime.TotalMilliseconds} ms. " + nl +

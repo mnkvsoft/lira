@@ -1,0 +1,18 @@
+-------------------- rule
+
+GET /match/sharp/full/header
+
+~ headers
+Some-Header-1: abc_{{
+    if(!int.TryParse(@value, out var intVal))
+            return false;
+        
+        var result = intVal % 2 == 0;
+        return result;
+}}_de
+Some-Header-2: 2
+
+----- response
+
+~ code
+200

@@ -17,7 +17,6 @@ class RoutingMiddleware : IMiddleware
     private readonly ILogger _logger;
     private readonly bool _allowMultipleRules;
 
-
     public RoutingMiddleware(ILoggerFactory loggerFactory, IRulesProvider rulesProvider, IConfigurationLoader configurationLoader,
         IConfiguration configuration)
     {

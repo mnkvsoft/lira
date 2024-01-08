@@ -1,0 +1,14 @@
+-------------------- rule
+
+GET /match/sharp/full/query_encoded?a=%D0%A1%20%D0%BD%D0%BE%D0%B2%D1%8B%D0%BC%20%D0%B3%D0%BE%D0%B4%D0%BE%D0%BC%21_{{  
+    if(!int.TryParse(@value, out var intVal))
+        return false;
+    
+    var result = intVal % 2 == 0;
+    return result;
+}}_%D0%A1%20%D0%BD%D0%BE%D0%B2%D1%8B%D0%BC%20%D0%B3%D0%BE%D0%B4%D0%BE%D0%BC%21
+
+----- response
+
+~ code
+200

@@ -11,7 +11,7 @@ internal static class CreateFunctionResultExtensions
 
         var failed = (CreateFunctionResult<T>.Failed)createFunctionResult;
 
-        var nl = Environment.NewLine;
+        var nl = Common.Constants.NewLine;
 
         throw new Exception(
             $"Failed create function from '{invoke}'." + nl +

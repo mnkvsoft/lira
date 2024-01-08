@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Lira.Common;
 using Lira.Domain;
 using Lira.Common.Exceptions;
 using Lira.ExternalCalling.Http.Configuration;
@@ -68,7 +69,7 @@ public class Startup
                             count ??= 20;
                             for (int i = 0; i < count; i++)
                             {
-                                await context.Response.WriteAsync((range.NextValue().ToString() ?? "") + ((i == count - 1) ? "" : Environment.NewLine));
+                                await context.Response.WriteAsync((range.NextValue().ToString() ?? "") + ((i == count - 1) ? "" : Constants.NewLine));
                             }
                         }
                     }
@@ -120,7 +121,7 @@ public class Startup
                     context.Response.StatusCode = 500;
                     await context.Response.WriteAsync($"Error. Load time: {error.LoadTime} " +
                                                       $"({(int)(DateTime.Now - error.LoadTime).TotalSeconds} second ago)" +
-                                                      Environment.NewLine + Environment.NewLine +
+                                                      Constants.NewLine + Constants.NewLine +
                                                       error.Exception);
                 }
                 else
@@ -135,7 +136,7 @@ public class Startup
 
     private static async Task WriteRanges(HttpContext context, IReadOnlyCollection<Data> datas)
     {
-        var nl = Environment.NewLine;
+        var nl = Constants.NewLine;
 
         foreach (var data in datas)
         {

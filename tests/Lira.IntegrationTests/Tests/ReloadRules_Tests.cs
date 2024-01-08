@@ -1,10 +1,12 @@
-﻿namespace Lira.IntegrationTests.Tests;
+﻿using Lira.Common;
+
+namespace Lira.IntegrationTests.Tests;
 
 public class ReloadRules_Tests : TestBase
 {
-    private static string Nl = Environment.NewLine;
+    private static string Nl = Constants.NewLine;
     private static readonly TimeSpan PhysicalFileProviderPoolingInterval = TimeSpan.FromSeconds(10);
-    
+
     [Test]
     public async Task AddNewRule()
     {

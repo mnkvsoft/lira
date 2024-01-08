@@ -1,0 +1,7 @@
+-------------------- case
+
+GET /abort
+
+----- expected
+
+~ aborted

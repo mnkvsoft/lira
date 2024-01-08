@@ -1,0 +1,46 @@
+-------------------- declare
+
+$response:json = 
+{
+  "status": ""
+}
+
+-------------------- rule
+
+POST /cache/flag/{{ name=id int }}
+
+## the first request has a header
+~ headers
+Request-Id: reject_scenario
+
+----- response
+
+~ code
+200
+
+~ body
+{{ 
+    $response
+        .replace("status", "pending")
+}}
+
+----- action
+@cache.setFlag("reject_scenario_" + @req.Path("id"))
+
+
+-------------------- rule
+
+GET /cache/flag/{{ @cache.contains("reject_scenario_" + @value) }}
+
+## there is no header in the second request
+
+----- response
+
+~ code
+200
+
+~ body
+{{ 
+    $response
+        .replace("status", "reject")
+}}

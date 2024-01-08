@@ -1,0 +1,28 @@
+## not matched
+-------------------- case
+
+GET /match/sharp/full/header
+
+~ headers
+Some-Header-1: abc_1_de
+Some-Header-2: 2
+
+----- expected
+
+~ code
+404
+
+
+## matched
+-------------------- case
+
+GET /match/sharp/full/header
+
+~ headers
+Some-Header-1: abc_2_de
+Some-Header-2: 2
+
+----- expected
+
+~ code
+200

@@ -1,0 +1,29 @@
+-------------------- case
+
+GET /cache/condition/1
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "id": 1,
+  "status": "pending"
+}
+
+-------------------- case
+
+GET /cache/condition/1
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "id": 1,
+  "status": "ok"
+}

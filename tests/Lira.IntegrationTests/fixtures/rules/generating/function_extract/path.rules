@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/function/extract/path/{{ any name: some }}
+GET /generating/function/extract/path/{{ name=some  any  }}
 
 ----- response
 

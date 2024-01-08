@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Lira.Common;
 
 namespace Lira.Middlewares;
 
@@ -32,7 +31,11 @@ public class LoggingMiddleware
         await _next(context);
 
         //Format the response from the server
-        var response = await FormatResponse(context.Response);
+
+        string response = context.RequestAborted.IsCancellationRequested 
+            ? "Request was aborted" 
+            : await FormatResponse(context.Response);
+        
         _logger.LogInformation(response);
 
         //Copy the contents of the new memory stream (which contains the response) to the original stream, which is then returned to the client.

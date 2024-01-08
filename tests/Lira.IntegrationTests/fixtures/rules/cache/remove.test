@@ -1,0 +1,41 @@
+-------------------- case
+
+POST /cache/set/some_key
+
+~ body
+value for save in cache
+
+----- expected
+
+~ code
+200
+
+-------------------- case
+
+GET /cache/value/some_key
+
+----- expected
+
+~ code
+200
+
+~ body
+value for save in cache
+
+-------------------- case
+
+POST /cache/remove/some_key
+
+----- expected
+
+~ code
+200
+
+-------------------- case
+
+GET /cache/value/some_key
+
+----- expected
+
+~ code
+404

@@ -4,7 +4,7 @@ namespace Lira.Domain.TextPart;
 
 public static class ObjectTextPartsExtensions
 {
-    public static object? Generate(this IReadOnlyCollection<IObjectTextPart> parts, RequestData request)
+    public static dynamic? Generate(this IReadOnlyCollection<IObjectTextPart> parts, RequestData request)
     {
         return parts.Count == 1 ? parts.First().Get(request) : string.Concat(parts.Select(p => GetStringValue(p.Get(request))));
     }

@@ -1,4 +1,5 @@
 using System.Text;
+using Lira.Common;
 using Lira.Domain.Configuration.RangeModel.Dto;
 using Lira.Domain.DataModel;
 using Lira.Domain.DataModel.DataImpls.Hex;
@@ -27,7 +28,7 @@ class HexParser
         int bytesCount = dto.BytesCount ?? 32;
 
         string info = 
-            "Capacity(hardcoded): " + capacity + Environment.NewLine+
+            "Capacity(hardcoded): " + capacity + Constants.NewLine +
             "Bytes count: " + bytesCount;
         fullInfo.AppendLine(info);
         

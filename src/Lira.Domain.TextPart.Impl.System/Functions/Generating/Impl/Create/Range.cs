@@ -1,7 +1,7 @@
 using Lira.Domain.DataModel;
 
 namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
-internal class Range : DataBase, IObjectTextPart
+internal class Range : RangeBase, IObjectTextPart
 {
     public Range(IDataProvider dataProvider) : base(dataProvider)
     {

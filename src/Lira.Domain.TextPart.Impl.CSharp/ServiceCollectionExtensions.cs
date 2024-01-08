@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
+using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
@@ -11,6 +12,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<Compiler>()
             .AddScoped<CompilationStatistic>()
             .AddScoped<PeImagesCache>()
-            .AddSingleton<DynamicAssembliesUnloader>();
+            .AddSingleton<DynamicAssembliesUnloader>()
+            .AddSingleton<Cache>();
     }
 }

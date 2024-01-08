@@ -4,7 +4,7 @@ using Lira.Domain.Matching.Conditions.Matchers.Attempt;
 using Lira.Domain.Matching.Conditions.Matchers.Elapsed;
 using Lira.Common;
 using Lira.Common.Extensions;
-using Lira.Domain.Configuration.PrettyParsers;
+using Lira.Common.PrettyParsers;
 using Lira.FileSectionFormat;
 
 namespace Lira.Domain.Configuration.Rules.Parsers;

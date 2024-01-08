@@ -3,7 +3,7 @@
 POST /match/function/body/extract/form
 
 ~ body
-name=Johnny Dapp
+name=Johnny%20Dapp
 
 ----- expected
 

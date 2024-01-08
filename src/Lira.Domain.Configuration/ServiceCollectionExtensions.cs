@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDomainConfiguration(this IServiceCollection services)
     {
-        services.TryAddSingleton<IMemoryCache, MemoryCache>();
+        services.TryAddTransient<IMemoryCache, MemoryCache>();
 
         return services
             .AddFunctionsSystem()
@@ -24,8 +24,8 @@ public static class ServiceCollectionExtensions
             .AddTransient<ConditionMatcherParser>()
             .AddTransient<RequestMatchersParser>()
             .AddTransient<FileSectionDeclaredItemsParser>()
-            .AddScoped<ResponseWriterParser>()
-            .AddScoped<ExternalCallerParser>()
+            .AddScoped<ResponseStrategyParser>()
+            .AddScoped<ActionsParser>()
             .AddScoped<GeneratingHttpDataParser>()
             .AddScoped<DeclaredItemsLoader>()
             .AddScoped<DeclaredItemsParser>()

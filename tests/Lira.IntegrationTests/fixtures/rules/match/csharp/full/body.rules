@@ -1,0 +1,17 @@
+-------------------- rule
+
+POST /match/sharp/full/body
+
+~ body
+abc_{{
+    if(!int.TryParse(@value, out var intVal))
+            return false;
+        
+        var result = intVal % 2 == 0;
+        return result;
+}}_de
+
+----- response
+
+~ code
+200

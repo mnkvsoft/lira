@@ -46,4 +46,11 @@ public static class StringConverter
 
         return true;
     }
+    
+    public static object Convert(Type type, string str)
+    {
+        if (!TryConvert(type, str, out object? result))
+            throw new Exception($"String '{str}' cannot be convert to type: '{type}'. String: '{str}'");
+        return result;
+    }
 }

@@ -8,15 +8,32 @@ public static class FileSectionExtensions
         if (unknownBlocks.Any())
             throw new Exception($"Section '{section.Name}' has unknown blocks: {string.Join(", ", unknownBlocks)}");
     }
+
+    public static IReadOnlyCollection<FileBlock> GetBlocks(this FileSection section, params string[] names)
+    {
+        return section.Blocks.Where(x => names.Contains(x.Name)).ToArray();
+    }
     
     public static FileSection GetSingleChildSection(this FileSection section, string name)
     {
         var sections = section.ChildSections.Where(x => x.Name == name).ToArray();
         if (sections.Length == 0)
-            throw new InvalidOperationException($"Section '{section.Name}' not contais child section '{name}'");
+            throw new InvalidOperationException($"Section '{section.Name}' not contains child section '{name}'");
 
         if (sections.Length > 1)
-            throw new InvalidOperationException($"Section '{section.Name}' contais more than one child sections '{name}'");
+            throw new InvalidOperationException($"Section '{section.Name}' contains more than one child sections '{name}'");
+
+        return sections[0];
+    }
+    
+    public static FileSection? GetSingleChildSectionOrNull(this FileSection section, string name)
+    {
+        var sections = section.ChildSections.Where(x => x.Name == name).ToArray();
+        if (sections.Length == 0)
+            return null;
+
+        if (sections.Length > 1)
+            throw new InvalidOperationException($"Section '{section.Name}' contains more than one child sections '{name}'");
 
         return sections[0];
     }
@@ -25,10 +42,10 @@ public static class FileSectionExtensions
     {
         var lines = section.LinesWithoutBlock;
         if (lines.Count == 0)
-            throw new InvalidOperationException($"Section '{section.Name}' not contais lines");
+            throw new InvalidOperationException($"Section '{section.Name}' not contains lines");
 
         if (lines.Count > 1)
-            throw new InvalidOperationException($"Section '{section.Name}' contais more than one lines. Lines: " + string.Join(", ", lines.Select(l => $"'{l}'")));
+            throw new InvalidOperationException($"Section '{section.Name}' contains more than one lines. Lines: " + string.Join(", ", lines.Select(l => $"'{l}'")));
 
         return lines[0];
     }
@@ -76,7 +93,7 @@ public static class FileSectionExtensions
     public static string GetStringValueFromRequiredBlock(this FileSection section, string blockName)
     {
         var block = section.GetBlockRequired(blockName);
-        return block.GetStringValue();
+        return block.GetSingleStringValue();
     }
 
     public static string GetStringValueFromBlockOrEmpty(this FileSection section, string blockName)
@@ -84,7 +101,7 @@ public static class FileSectionExtensions
         var block = section.GetBlockOrNull(blockName);
         if (block == null)
             return string.Empty;
-        return block.GetStringValue();
+        return block.GetSingleStringValue();
     }
 
     public static IReadOnlyCollection<string> GetLinesFromBlockOrEmpty(this FileSection section, string blockName)
@@ -96,4 +113,6 @@ public static class FileSectionExtensions
     {
         return section.Blocks.FirstOrDefault(x => x.Name == name);
     }
+
+    public static bool ExistBlock(this FileSection section, string name) => GetBlockOrNull(section, name) != null;
 }

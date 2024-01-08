@@ -1,5 +1,6 @@
 ﻿using Lira.Domain;
 using Lira.Common.Extensions;
+using Lira.Domain.Actions;
 using Lira.Domain.Configuration;
 using Lira.Domain.Configuration.Rules;
 using Lira.Domain.Configuration.Rules.Parsers;
@@ -16,15 +17,15 @@ class BlockName
     public const string Body = "body";
 }
 
-public class HttpExternalCallerRegistrator : IExternalCallerRegistrator
+public class HttpSystemActionRegistrator : ISystemActionRegistrator
 {
-    public string Name => "http";
+    public string Name => "call.http";
     public GeneratingHttpDataParser _generatingHttpDataParser;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ITextPartsParser _partsParser;
 
 
-    public HttpExternalCallerRegistrator(
+    public HttpSystemActionRegistrator(
         GeneratingHttpDataParser generatingHttpDataParser,
         IHttpClientFactory httpClientFactory,
         ITextPartsParser partsParser)
@@ -34,7 +35,7 @@ public class HttpExternalCallerRegistrator : IExternalCallerRegistrator
         _partsParser = partsParser;
     }
 
-    public async Task<IExternalCaller> Create(FileSection section, IParsingContext parsingContext)
+    public async Task<IAction> Create(FileSection section, IParsingContext parsingContext)
     {
         var methodAndUrl = section.GetSingleLine();
         var (methodStr, urlStr) = methodAndUrl.SplitToTwoPartsRequired(" ");
@@ -48,10 +49,10 @@ public class HttpExternalCallerRegistrator : IExternalCallerRegistrator
         var headerBlock = section.GetBlockOrNull(BlockName.Headers);
         var headers = headerBlock == null ? null : await _generatingHttpDataParser.ParseHeaders(headerBlock, parsingContext);
 
-        if(headers?.FirstOrDefault(x => x.Name == Header.ContentType) == null)
+        if(headers?.FirstOrDefault(x => x.Name == "Content-Type") == null)
             throw new Exception("Header Content-Type is required");
         
-        var caller = new HttpExternalCaller(
+        var caller = new HttpAction(
             _httpClientFactory, 
             method, 
             urlParts.WrapToTextParts(), 
