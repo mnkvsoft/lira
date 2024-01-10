@@ -7,7 +7,7 @@ $response:json =
 
 -------------------- rule
 
-POST /cache/flag/{{ name=id int }}
+POST /cache/flag/{{:id int }}
 
 ## the first request has a header
 ~ headers
@@ -25,7 +25,7 @@ Request-Id: reject_scenario
 }}
 
 ----- action
-@cache.setFlag("reject_scenario_" + @req.Path("id"))
+@cache.setFlag("reject_scenario_" + req.path("id"))
 
 
 -------------------- rule

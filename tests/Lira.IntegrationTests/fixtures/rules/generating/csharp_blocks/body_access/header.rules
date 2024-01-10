@@ -11,4 +11,4 @@ Request-Id: {{ any }}
 200
 
 ~ body
-{{ @req.Header("Request-Id") }}
+{{ req.header("Request-Id") }}

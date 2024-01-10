@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /cache/set_get/{{ name=id int }}?comment={{ any }}
+GET /cache/set_get/{{:id int }}?comment={{ any }}
 
 ----- declare
 
@@ -15,13 +15,13 @@ $$response.body =
 {{ $$response.body }}
 
 ----- action
-@cache.set("cache_" + @req.Path("id"), $$response.body, "2 second")
+@cache.set("cache_" + req.path("id"), $$response.body, "2 second")
 
 -------------------- rule
 
-GET /cache/set_get/{{ name=id @cache.contains("cache_" + @value) }}?comment={{ any }}
+GET /cache/set_get/{{:id @cache.contains("cache_" + @value) }}?comment={{ any }}
 
 ----- response
 
 ~ body
-{{ @cache.get("cache_" + @req.Path("id")) }}
+{{ @cache.get("cache_" + req.path("id")) }}

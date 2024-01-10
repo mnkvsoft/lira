@@ -49,7 +49,7 @@ simple mock server
 ```
 -------------------- rule
 
-GET /hello/{{ name=person  any  }}
+GET /hello/{{:person  any  }}
 
 ----- response
 
@@ -269,7 +269,7 @@ Request-Time: 12:07:16
 ```
 -------------------- rule
 
-POST /payment/{{ name=tool  any  }}?fast={{ any }}
+POST /payment/{{:tool  any  }}?fast={{ any }}
 
 ~ headers
 Id: {{ any }}
@@ -1399,7 +1399,7 @@ jpath: $.number >> {{ any }}
 ~ body
 {
     "mnemonic": {{ 
-        string cardNumber = @req.Body.JPath("$.number");
+        string cardNumber = req.body.jpath("$.number");
 
         string paymentSystem;
         switch(cardNumber[0])
@@ -1501,7 +1501,7 @@ jpath: $.number >> {{ any }}
 
 ~ body
 mnemonic was generated from 'number' field: {{ 
-    CardNumber.GetMnemonic(@req.Body.JPath("$.number")) 
+    CardNumber.GetMnemonic(req.body.jpath("$.number")) 
 }}
 
 
@@ -1522,7 +1522,7 @@ jpath: $.pan >> {{ any }}
 
 ~ body
 mnemonic was generated from 'pan' field: {{ 
-    CardNumber.GetMnemonic(@req.Body.JPath("$.pan")) 
+    CardNumber.GetMnemonic(req.body.jpath("$.pan")) 
 }}
 ```
 Запрос

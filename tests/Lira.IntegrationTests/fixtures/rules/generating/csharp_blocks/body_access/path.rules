@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/csharp/body_access/path/{{ name=id  int  }}
+GET /generating/csharp/body_access/path/{{:id  int  }}
 
 ----- response
 
@@ -8,4 +8,4 @@ GET /generating/csharp/body_access/path/{{ name=id  int  }}
 200
 
 ~ body
-{{ @req.Path("id") }}
+{{ req.path("id") }}

@@ -151,9 +151,9 @@ class RequestMatchersParser
 
                 string invoke;
                 string value = dynamic.Value;
-                if (value.StartsWith("name") && value.TrimStart("name").TrimStart().StartsWith("="))
+                if (value.StartsWith(":"))
                 {
-                    (segmentName, invoke) = value.TrimStart("name").TrimStart().TrimStart("=").SplitToTwoPartsRequired(" ").Trim();
+                    (segmentName, invoke) = value.TrimStart(":").TrimStart().SplitToTwoPartsRequired(" ").Trim();
                 }
                 else
                 {

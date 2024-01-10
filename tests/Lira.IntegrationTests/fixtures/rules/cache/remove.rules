@@ -1,25 +1,19 @@
 --------------------------------------- rule
 
-POST /cache/set/{{ name=key any }}
-
-
------ response
-
-~ body
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+POST /cache/set/{{:key any }}
 
 ----- action
 
-@cache.set(@req.Path("key"), @req.Body.All())
+@cache.set(req.path("key"), req.body.all())
 
 --------------------------------------- rule
 
-GET /cache/value/{{ name=key @cache.contains(@value) }}
+GET /cache/value/{{:key @cache.contains(@value) }}
 
 ----- response
 
 ~ body
-{{ @cache.get(@req.Path("key")) }}
+{{ @cache.get(req.path("key")) }}
 
 --------------------------------------- rule
 
@@ -32,8 +26,8 @@ GET /cache/value/{{ !@cache.contains(@value) }}
 
 --------------------------------------- rule
 
-POST /cache/remove/{{ name=key any }}
+POST /cache/remove/{{:key any }}
 
 ----- action
 
-@cache.remove(@req.Path("key"))
+@cache.remove(req.path("key"))
