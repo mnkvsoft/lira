@@ -4,7 +4,7 @@ GET /cache/condition/{{:id int }}
 
 -------------------- condition
 
-@attempt = 1
+attempt = 1
 
 ----- declare
 
@@ -28,7 +28,7 @@ $$response:json =
 
 -------------------- condition
 
-@attempt = 2
+attempt = 2
 
 ----- response
 

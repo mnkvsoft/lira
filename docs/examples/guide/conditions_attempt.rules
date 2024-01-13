@@ -7,7 +7,7 @@ example: conditions_attempt
 
 --------------- condition
 
-@attempt < 2
+attempt < 2
 
 ----- response
 
@@ -21,7 +21,7 @@ example: conditions_attempt
 
 --------------- condition
 
-@attempt in [2 - 4]
+attempt in [2 - 4]
 
 ----- response
 
@@ -36,7 +36,7 @@ example: conditions_attempt
 
 --------------- condition
 
-@attempt > 4
+attempt > 4
 
 ----- response
 

@@ -19,8 +19,8 @@ class ConditionMatcherParser
 
     static class ConditionMatcherName
     {
-        public static readonly string Attempt = Consts.ControlChars.SystemVariablePrefix + "attempt";
-        public static readonly string Elapsed = Consts.ControlChars.SystemVariablePrefix + "elapsed";
+        public static readonly string Attempt = "attempt";
+        public static readonly string Elapsed = "elapsed";
     }
 
     public ConditionMatcherSet Parse(FileSection conditionSection)

@@ -595,14 +595,14 @@ curl --location 'http://localhost/payment/card' \
 
 #### Пример
 ```
-@attempt in [1 - 3]
+attempt in [1 - 3]
 ```
 
 Оператор `in` может представлен с помощью опереторов `>=` и `<=`
 
 ```
-@attempt >= 1
-@attempt <= 3
+attempt >= 1
+attempt <= 3
 ```
 
 
@@ -617,13 +617,13 @@ curl --location 'http://localhost/payment/card' \
 
 ### Сопоставление по номеру попытки
 
-Для сопоставления по номеру попытки используется системная переменная `@attempt`
+Для сопоставления по номеру попытки используется системная переменная `attempt`
 
 #### Синтаксис секции
 ```
-[@attempt <оператор сравнения 1> <номер попытки>]
+[attempt <оператор сравнения 1> <номер попытки>]
 ...
-[@attempt <оператор сравнения N> <номер попытки>]
+[attempt <оператор сравнения N> <номер попытки>]
 ```
 
 ***оператор сравнения*** - описание [здесь](#операторы-сравнения)
@@ -640,7 +640,7 @@ example: conditions_attempt
 
 --------------- condition
 
-@attempt < 2
+attempt < 2
 
 ----- response
 
@@ -654,7 +654,7 @@ example: conditions_attempt
 
 --------------- condition
 
-@attempt in [2 - 4]
+attempt in [2 - 4]
 
 ----- response
 
@@ -669,7 +669,7 @@ example: conditions_attempt
 
 --------------- condition
 
-@attempt > 4
+attempt > 4
 
 ----- response
 
@@ -720,12 +720,12 @@ curl --location 'http://localhost/payment/status' \
 
 ### Сопоставление по времени, прошедшему с момента первого запроса
 
-Для сопоставления по времени используется системная переменная `@elapsed`
+Для сопоставления по времени используется системная переменная `elapsed`
 #### Синтаксис секции
 ```
-[@elapsed <оператор сравнения 1> <временной интервал>]
+[elapsed <оператор сравнения 1> <временной интервал>]
 ...
-[@elapsed <оператор сравнения N> <временной интервал>]
+[elapsed <оператор сравнения N> <временной интервал>]
 ```
 
 ***оператор сравнения*** - описание [здесь](#операторы-сравнения)
@@ -744,7 +744,7 @@ example: conditions_elapsed
 
 --------------- condition
 
-@elapsed < 2 seconds
+elapsed < 2 seconds
 
 ----- response
 
@@ -758,7 +758,7 @@ example: conditions_elapsed
 
 --------------- condition
 
-@elapsed in [2 second - 4 second]
+elapsed in [2 second - 4 second]
 
 ----- response
 
@@ -773,7 +773,7 @@ example: conditions_elapsed
 
 --------------- condition
 
-@elapsed > 4 second
+elapsed > 4 second
 
 ----- response
 

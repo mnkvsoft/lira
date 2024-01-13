@@ -4,7 +4,7 @@ GET /match/conditions/elapsed/interval
 
 -------------------- condition
 
-@elapsed < 100 ms
+elapsed < 100 ms
 
 ----- response
 
@@ -16,7 +16,7 @@ elapsed < 100 ms
 
 -------------------- condition
 
-@elapsed in [100 ms - 200 ms]
+elapsed in [100 ms - 200 ms]
 
 ----- response
 

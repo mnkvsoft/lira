@@ -4,7 +4,7 @@ GET /match/conditions/attempt/less
 
 -------------------- condition
 
-@attempt < 2
+attempt < 2
 
 ----- response
 
@@ -16,7 +16,7 @@ attempt less than 2
 
 -------------------- condition
 
-@attempt = 2
+attempt = 2
 
 ----- response
 

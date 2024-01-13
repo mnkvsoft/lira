@@ -7,7 +7,7 @@ example: conditions_elapsed
 
 --------------- condition
 
-@elapsed < 2 seconds
+elapsed < 2 seconds
 
 ----- response
 
@@ -21,7 +21,7 @@ example: conditions_elapsed
 
 --------------- condition
 
-@elapsed in [2 second - 4 second]
+elapsed in [2 second - 4 second]
 
 ----- response
 
@@ -36,7 +36,7 @@ example: conditions_elapsed
 
 --------------- condition
 
-@elapsed > 4 second
+elapsed > 4 second
 
 ----- response
 

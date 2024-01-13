@@ -917,7 +917,7 @@ GET /payment/status
 
 --------------- condition
 
-@elapsed < 2 second
+elapsed < 2 second
 
 ----- response
 
@@ -931,7 +931,7 @@ GET /payment/status
 
 --------------- condition
 
-@elapsed in [2 second - 4 second]
+elapsed in [2 second - 4 second]
 
 ----- response
 
@@ -946,7 +946,7 @@ GET /payment/status
 
 --------------- condition
 
-@elapsed > 4 second
+elapsed > 4 second
 
 ----- response
 

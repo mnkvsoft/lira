@@ -4,7 +4,7 @@ GET /match/conditions/attempt/more_or_equals
 
 -------------------- condition
 
-@attempt = 1
+attempt = 1
 
 ----- response
 
@@ -16,7 +16,7 @@ attempt 1
 
 -------------------- condition
 
-@attempt >= 2
+attempt >= 2
 
 ----- response
 
