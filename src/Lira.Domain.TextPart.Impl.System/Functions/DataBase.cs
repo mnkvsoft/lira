@@ -5,10 +5,10 @@ namespace Lira.Domain.TextPart.Impl.System.Functions;
 
 abstract class RangeBase : WithArgumentFunction<string>
 {
-    private readonly IDataProvider _dataProvider;
+    private readonly IRangesProvider _dataProvider;
     public override bool ArgumentIsRequired => true;
     
-    protected RangeBase(IDataProvider dataProvider)
+    protected RangeBase(IRangesProvider dataProvider)
     {
         _dataProvider = dataProvider;
     }
@@ -24,5 +24,5 @@ abstract class RangeBase : WithArgumentFunction<string>
         _rangeName = new DataName(nameRange);
     }
 
-    protected DataRange GetRange() => _dataProvider.GetData(_name).Get(_rangeName);
+    protected DataRange GetRange() => _dataProvider.Get(_name).Get(_rangeName);
 }

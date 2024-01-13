@@ -1,0 +1,8 @@
+-------------------- case
+
+GET /generating/sharp/functions/range
+
+----- expected
+
+~ code
+200

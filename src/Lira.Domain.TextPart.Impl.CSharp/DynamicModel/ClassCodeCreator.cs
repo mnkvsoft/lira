@@ -1,4 +1,4 @@
-﻿using Lira.Common;
+using Lira.Common;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
@@ -106,7 +106,7 @@ static class ClassCodeCreator
             "[usingstatic]" + Nl + Nl +
             Namespace + Nl + Nl +
             @"
-public class [className] : DynamicObjectBase, IObjectTextPart
+public class [className] : DynamicObjectBaseGenerate, IObjectTextPart
 {
     public [className](Dependencies dependencies) : base(dependencies)
     {
@@ -159,7 +159,7 @@ public class [className] : DynamicObjectBase, ITransformFunction
             "using Lira.Domain.Matching.Request;" + Nl +
             @"
 
-public class [className] : DynamicObjectBase, IMatchFunction
+public class [className] : DynamicObjectBaseMatch, IMatchFunction
 {
     public [className](Dependencies dependencies) : base(dependencies)
     {

@@ -5,7 +5,7 @@ namespace Lira.Domain.TextPart.Impl.System.Functions.Matching.Impl;
 
 internal class Range : RangeBase, IMatchFunctionSystem
 {
-    public Range(IDataProvider dataProvider) : base(dataProvider)
+    public Range(IRangesProvider dataProvider) : base(dataProvider)
     {
     }
 

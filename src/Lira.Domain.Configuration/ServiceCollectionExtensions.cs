@@ -40,7 +40,8 @@ public static class ServiceCollectionExtensions
             .AddSingleton<HexParser>()
             
             .AddSingleton<RangesLoader>()
-            .AddSingleton<IDataProvider>(provider => provider.GetRequiredService<ConfigurationLoader>())
+            .AddSingleton<RangesProvider>()
+            .AddSingleton<IRangesProvider>(provider => provider.GetRequiredService<RangesProvider>())
 
             .AddTransient<RulesLoader>()
             .AddSingleton<IRulesProvider>(provider => provider.GetRequiredService<ConfigurationLoader>());

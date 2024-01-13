@@ -10,6 +10,7 @@ using Lira.Domain.Matching.Request;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.TextPart.Types;
+using Lira.Domain.DataModel;
 
 // ReSharper disable RedundantExplicitArrayCreation
 
@@ -32,9 +33,10 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly DynamicAssembliesUnloader _unLoader;
     private readonly Compiler _compiler;
     private readonly Cache _cache;
+    private readonly IRangesProvider _rangesProvider;
 
     public FunctionFactory(IConfiguration configuration, ILoggerFactory loggerFactory, DynamicAssembliesUnloader unLoader,
-        Compiler compiler, CompilationStatistic compilationStatistic, Cache cache)
+        Compiler compiler, CompilationStatistic compilationStatistic, Cache cache, IRangesProvider rangesProvider)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _path = configuration.GetRulesPath();
@@ -43,6 +45,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         _compiler = compiler;
         _compilationStatistic = compilationStatistic;
         _cache = cache;
+        _rangesProvider = rangesProvider;
     }
 
     public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(IDeclaredPartsProvider declaredPartsProvider, string code)
@@ -162,6 +165,7 @@ class FunctionFactory : IFunctionFactoryCSharp
                         Compiled: new Assembly[]
                         {
                             typeof(IObjectTextPart).Assembly,
+                            typeof(IRangesProvider).Assembly,
                             typeof(Json).Assembly,
                             typeof(RequestData).Assembly,
                             GetType().Assembly
@@ -176,7 +180,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         var classAssembly = Load(peImage);
 
         var type = classAssembly.GetTypes().Single(t => t.Name == className);
-        var function = (TFunction)Activator.CreateInstance(type, new DynamicObjectBase.Dependencies(declaredPartsProvider, _cache))!;
+        var function = (TFunction)Activator.CreateInstance(type, new DynamicObjectBase.Dependencies(declaredPartsProvider, _cache, _rangesProvider))!;
 
         return new CreateFunctionResult<TFunction>.Success(function);
     }

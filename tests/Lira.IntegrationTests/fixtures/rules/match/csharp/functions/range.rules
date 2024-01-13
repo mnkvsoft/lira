@@ -1,0 +1,17 @@
+-------------------- rule
+
+POST /match/sharp/functions/range
+
+~ body
+{{ jpath: $.amount }} >> {{
+    if(!decimal.TryParse(value, out decimal decValue))
+        return false;
+
+    decimal changedValue = decValue / 100;
+    return range("amount/ok", changedValue);
+}}
+
+----- response
+
+~ code
+200

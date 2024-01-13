@@ -3,7 +3,7 @@ using Lira.Domain.DataModel;
 namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
 internal class Range : RangeBase, IObjectTextPart
 {
-    public Range(IDataProvider dataProvider) : base(dataProvider)
+    public Range(IRangesProvider dataProvider) : base(dataProvider)
     {
     }
 

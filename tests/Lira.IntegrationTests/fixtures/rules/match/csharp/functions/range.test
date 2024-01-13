@@ -1,0 +1,13 @@
+-------------------- case
+
+POST /match/sharp/functions/range
+
+~ body
+{
+    "amount": 500
+}
+
+----- expected
+
+~ code
+200

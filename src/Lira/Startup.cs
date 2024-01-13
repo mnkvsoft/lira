@@ -45,7 +45,7 @@ public class Startup
                 "/" + sys + "/range/val/{name}/{rangeName}/{count:int?}",
                 async (HttpContext context, string name, string rangeName, int? count) =>
                 {
-                    var dataProvider = context.RequestServices.GetRequiredService<IDataProvider>();
+                    var dataProvider = context.RequestServices.GetRequiredService<IRangesProvider>();
 
                     var data = dataProvider.Find(new DataName(name));
 
@@ -69,7 +69,8 @@ public class Startup
                             count ??= 20;
                             for (int i = 0; i < count; i++)
                             {
-                                await context.Response.WriteAsync((range.NextValue().ToString() ?? "") + ((i == count - 1) ? "" : Constants.NewLine));
+                                object nextValue = range.NextValue();
+                                await context.Response.WriteAsync((nextValue.ToString() ?? "") + ((i == count - 1) ? "" : Constants.NewLine));
                             }
                         }
                     }
@@ -79,7 +80,7 @@ public class Startup
               "/" + sys + "/range/info",
               async context =>
               {
-                  var dataProvider = context.RequestServices.GetRequiredService<IDataProvider>();
+                  var dataProvider = context.RequestServices.GetRequiredService<IRangesProvider>();
                   var datas = dataProvider.GetAll();
                   await WriteRanges(context, datas);
               });
@@ -88,7 +89,7 @@ public class Startup
             "/" + sys + "/range/info/{name}",
             async (HttpContext context, string name) =>
             {
-                var dataProvider = context.RequestServices.GetRequiredService<IDataProvider>();
+                var dataProvider = context.RequestServices.GetRequiredService<IRangesProvider>();
 
                 var data = dataProvider.Find(new DataName(name));
                 if(data == null)

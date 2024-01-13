@@ -19,7 +19,45 @@ public interface IConfigurationLoader
     void ProvokeLoad();
 }
 
-class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigurationLoader
+class RangesProvider : IRangesProvider
+{
+    internal Dictionary<DataName, Data> Ranges
+    {
+        get
+        {
+            if (_ranges == null)
+                throw new InvalidOperationException("Ranges not loaded yet");
+            return _ranges;
+        }
+        set
+        {
+            _ranges = value;
+        }
+    }
+
+    private Dictionary<DataName, Data>? _ranges = null;
+
+    Data IRangesProvider.Get(DataName name)
+    {
+        if (!Ranges.TryGetValue(name, out var result))
+            throw new Exception($"Interval '{name}' not found");
+
+        return result;
+    }
+
+    public Data? Find(DataName name)
+    {
+        Ranges.TryGetValue(name, out var data);
+        return data;
+    }
+
+    public IReadOnlyCollection<Data> GetAll()
+    {
+        return Ranges.Values;
+    }
+}
+
+class ConfigurationLoader : IDisposable, IRulesProvider, IConfigurationLoader
 {
     private readonly string _path;
     private readonly ILogger _logger;
@@ -29,16 +67,19 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
 
     private readonly RangesLoader _rangesLoader;
 
-    private Task<LoadResult> _loadTask;
+    private Task<IReadOnlyCollection<Rule>> _loadTask;
     private ConfigurationState? _providerState;
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly RangesProvider _rangesProvider;
 
     public ConfigurationLoader(
         IServiceScopeFactory serviceScopeFactory,
         ILoggerFactory loggerFactory,
         IConfiguration configuration,
-        RangesLoader rangesLoader)
+        RangesLoader rangesLoader,
+        RangesProvider rangesProvider)
     {
+        _rangesProvider = rangesProvider;
         _rangesLoader = rangesLoader;
         _serviceScopeFactory = serviceScopeFactory;
         _logger = loggerFactory.CreateLogger(GetType());
@@ -55,7 +96,7 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
         WatchForFileChanges();
     }
 
-    record LoadResult(IReadOnlyCollection<Rule> Rules, Dictionary<DataName, Data> Datas);
+
 
     public void ProvokeLoad()
     {
@@ -63,12 +104,12 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
         // invoke only for create instanse
     }
 
-    private async Task<LoadResult> Load(string path)
+    private async Task<IReadOnlyCollection<Rule>> Load(string path)
     {
-        var datas = await _rangesLoader.Load(path);
+        var ranges = await _rangesLoader.Load(path);
+        _rangesProvider.Ranges = ranges;
 
         var templates = await TemplatesLoader.Load(path);
-
 
         var context = new ParsingContext(
             new DeclaredItems(),
@@ -86,34 +127,17 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IDataProvider, IConfigu
         var rulesLoader = provider.GetRequiredService<RulesLoader>();
         var rules = await rulesLoader.LoadRules(path, context with { DeclaredItems = variables });
 
-        return new LoadResult(rules, datas);
+        return rules;
     }
 
 
     async Task<IReadOnlyCollection<Rule>> IRulesProvider.GetRules()
     {
-        var (rules, _) = await _loadTask;
+        var rules = await _loadTask;
         return rules;
     }
 
-    Data IDataProvider.GetData(DataName name)
-    {
-        var (_, datas) = _loadTask.Result;
-        return datas[name];
-    }
-
-    public Data? Find(DataName name)
-    {
-        var (_, datas) = _loadTask.Result;
-        datas.TryGetValue(name, out var data);
-        return data;
-    }
-
-    public IReadOnlyCollection<Data> GetAll()
-    {
-        var (_, datas) = _loadTask.Result;
-        return datas.Values;
-    }
+    record LoadResult(IReadOnlyCollection<Rule> Rules);
 
     private void WatchForFileChanges()
     {

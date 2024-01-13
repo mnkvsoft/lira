@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="fixtures\rules\generating\csharp_blocks\**" />
+    <EmbeddedResource Remove="fixtures\rules\generating\csharp_blocks\**" />
+    <None Remove="fixtures\rules\generating\csharp_blocks\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.13" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="Moq" Version="4.18.4" />
@@ -42,6 +48,21 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\comments\single_line\end.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\amout.ranges.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp\functions\range.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp\functions\range.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\csharp\functions\range.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\csharp\functions\range.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\range\types\hex\bytes_count\default.ranges.json">
@@ -80,13 +101,10 @@
     <None Update="fixtures\rules\delay\response.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\chain_second_block_is_csharp.test">
+    <None Update="fixtures\rules\generating\csharp\chain_second_block_is_csharp.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\chain_second_block_is_csharp.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\chain_second_block_is_csharp.cs">
+    <None Update="fixtures\rules\generating\csharp\chain_second_block_is_csharp.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\function\body\format.rules">
@@ -473,10 +491,10 @@
     <None Update="fixtures\rules\match\multiple\complex.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\chain.rules">
+    <None Update="fixtures\rules\generating\csharp\chain.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\chain.test">
+    <None Update="fixtures\rules\generating\csharp\chain.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\match\function\body\extract\form.rules">
@@ -485,94 +503,93 @@
     <None Update="fixtures\rules\match\function\body\extract\form.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\access_to_variable.rules">
+    <None Update="fixtures\rules\generating\csharp\access_to_variable.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\access_to_variable.test">
+    <None Update="fixtures\rules\generating\csharp\access_to_variable.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\global_variable.rules">
+    <None Update="fixtures\rules\generating\csharp\global_variable.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\global_variable.test">
+    <None Update="fixtures\rules\generating\csharp\global_variable.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\csharp.declare">
+    <None Update="fixtures\rules\generating\csharp\csharp.declare">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\body_access\query.rules">
+    <None Update="fixtures\rules\generating\csharp\body_access\query.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\body_access\query.test">
+    <None Update="fixtures\rules\generating\csharp\body_access\query.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\body_access\header.rules">
+    <None Update="fixtures\rules\generating\csharp\body_access\header.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\body_access\header.test">
+    <None Update="fixtures\rules\generating\csharp\body_access\header.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\body_access\body\all.rules">
+    <None Update="fixtures\rules\generating\csharp\body_access\body\all.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\body_access\body\all.test">
+    <None Update="fixtures\rules\generating\csharp\body_access\body\all.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\body_access\body\jpath.rules">
+    <None Update="fixtures\rules\generating\csharp\body_access\body\jpath.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\body_access\body\jpath.test">
+    <None Update="fixtures\rules\generating\csharp\body_access\body\jpath.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\body_access\body\xpath.rules">
+    <None Update="fixtures\rules\generating\csharp\body_access\body\xpath.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\body_access\body\xpath.test">
+    <None Update="fixtures\rules\generating\csharp\body_access\body\xpath.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\large_block.rules">
+    <None Update="fixtures\rules\generating\csharp\large_block.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\large_block.test">
+    <None Update="fixtures\rules\generating\csharp\large_block.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\body_access\path.rules">
+    <None Update="fixtures\rules\generating\csharp\body_access\path.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\body_access\path.test">
+    <None Update="fixtures\rules\generating\csharp\body_access\path.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="fixtures\rules\generating\csharp_blocks\custom_class_without_namespace.cs">
+    <None Include="fixtures\rules\generating\csharp\custom_class_without_namespace.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="fixtures\rules\generating\csharp_blocks\custom_class_with_namespace.cs" />
-    <None Update="fixtures\rules\generating\csharp_blocks\custom_class_with_namespace.test">
+    <None Include="fixtures\rules\generating\csharp\custom_class_with_namespace.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Compile Remove="fixtures\rules\generating\csharp_blocks\chain_second_block_is_csharp.cs" />
-    <None Include="fixtures\rules\generating\csharp_blocks\chain_second_block_is_csharp.cs">
+    <None Update="fixtures\rules\generating\csharp\custom_class_with_namespace.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Compile Remove="fixtures\rules\generating\csharp_blocks\custom_class_with_namespace.cs" />
-    <None Include="fixtures\rules\generating\csharp_blocks\custom_class_with_namespace.cs">
+    <Compile Remove="fixtures\rules\generating\csharp\chain_second_block_is_csharp.cs" />
+    <None Include="fixtures\rules\generating\csharp\chain_second_block_is_csharp.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\custom_class_with_namespace.rules">
+    <Compile Remove="fixtures\rules\generating\csharp\custom_class_with_namespace.cs" />
+    <None Update="fixtures\rules\generating\csharp\custom_class_with_namespace.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\custom_class_without_namespace.rules">
+    <None Update="fixtures\rules\generating\csharp\custom_class_without_namespace.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\custom_class_without_namespace.test">
+    <None Update="fixtures\rules\generating\csharp\custom_class_without_namespace.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="fixtures\rules\generating\csharp_blocks\global_method.cs">
+    <None Include="fixtures\rules\generating\csharp\global_method.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\global_method.rules">
+    <None Update="fixtures\rules\generating\csharp\global_method.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\global_method.test">
+    <None Update="fixtures\rules\generating\csharp\global_method.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\_draft\float.data.json">
@@ -794,16 +811,16 @@
     <None Update="fixtures\rules\generating\variable\multiline.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\functions\json.replace.rules">
+    <None Update="fixtures\rules\generating\csharp\functions\json.replace.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\functions\json.replace.test">
+    <None Update="fixtures\rules\generating\csharp\functions\json.replace.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\functions\json.add.to.root.rules">
+    <None Update="fixtures\rules\generating\csharp\functions\json.add.to.root.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\functions\json.add.to.root.test">
+    <None Update="fixtures\rules\generating\csharp\functions\json.add.to.root.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\function_extract\path.rules">
@@ -818,10 +835,10 @@
     <None Update="fixtures\rules\generating\function_extract\query.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\access_to_variable_with_dot.rules">
+    <None Update="fixtures\rules\generating\csharp\access_to_variable_with_dot.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\access_to_variable_with_dot.test">
+    <None Update="fixtures\rules\generating\csharp\access_to_variable_with_dot.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\variable\with_dot.rules">
@@ -860,10 +877,10 @@
     <None Update="fixtures\rules\generating\declare\function\fullname.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\access_to_declared_function.rules">
+    <None Update="fixtures\rules\generating\csharp\access_to_declared_function.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp_blocks\access_to_declared_function.test">
+    <None Update="fixtures\rules\generating\csharp\access_to_declared_function.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\rule_file_format\short_block.rules">

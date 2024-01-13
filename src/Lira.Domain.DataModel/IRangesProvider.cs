@@ -1,8 +1,8 @@
 namespace Lira.Domain.DataModel;
 
-public interface IDataProvider
+public interface IRangesProvider
 {
-    Data GetData(DataName name);
+    Data Get(DataName name);
     IReadOnlyCollection<Data> GetAll();
     Data? Find(DataName name);
 }

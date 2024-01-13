@@ -3,7 +3,7 @@ namespace Lira.Domain.DataModel;
 public abstract class DataRange
 {
     public DataName Name { get; }
-    public abstract object NextValue();
+    public abstract dynamic NextValue();
 
     public abstract bool ValueIsBelong(string value);
 

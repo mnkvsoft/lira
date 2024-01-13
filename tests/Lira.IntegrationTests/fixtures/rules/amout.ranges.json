@@ -1,0 +1,12 @@
+{
+  "amount": {
+    "type": "float",
+    "start": "1.01",
+    "unit": 0.01,
+    "capacity": "10",
+    "ranges": [
+      "ok",
+      "reject"
+    ]
+  }
+}

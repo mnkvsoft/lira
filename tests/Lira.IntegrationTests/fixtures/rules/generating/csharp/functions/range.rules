@@ -1,0 +1,10 @@
+-------------------- rule
+
+GET /generating/sharp/functions/range
+
+----- response
+
+~ body
+{
+    "amount": {{ range("amount/reject") * 100 }}
+}
