@@ -8,4 +8,4 @@ GET /generating/csharp/custom_class_without_namespace
 200
 
 ~ body
-{{ req.body.all >> Echo.Ho(@value) }}
+{{ req.body.all >> Echo.Ho(value) }}

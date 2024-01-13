@@ -30,7 +30,7 @@ cache.setFlag("reject_scenario_" + req.path("id"))
 
 -------------------- rule
 
-GET /cache/flag/{{ cache.contains("reject_scenario_" + @value) }}
+GET /cache/flag/{{ cache.contains("reject_scenario_" + value) }}
 
 ## there is no header in the second request
 

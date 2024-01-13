@@ -19,7 +19,7 @@ cache.set("cache_" + req.path("id"), $$response.body, "2 second")
 
 -------------------- rule
 
-GET /cache/set_get/{{:id cache.contains("cache_" + @value) }}?comment={{ any }}
+GET /cache/set_get/{{:id cache.contains("cache_" + value) }}?comment={{ any }}
 
 ----- response
 

@@ -4,7 +4,7 @@ GET /match/sharp/full/header
 
 ~ headers
 Some-Header-1: abc_{{
-    if(!int.TryParse(@value, out var intVal))
+    if(!int.TryParse(value, out var intVal))
             return false;
         
         var result = intVal % 2 == 0;

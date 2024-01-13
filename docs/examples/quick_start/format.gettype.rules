@@ -8,7 +8,7 @@ GET /get_type
 200
 
 ~ body
-{{ guid >> @value.GetType() }}
-{{ float >> @value.GetType() }}
-{{ date >> @value.GetType() }}
-{{ int >> @value.GetType() }}
+{{ guid >> value.GetType() }}
+{{ float >> value.GetType() }}
+{{ date >> value.GetType() }}
+{{ int >> value.GetType() }}

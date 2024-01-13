@@ -8,7 +8,7 @@ cache.set(req.path("key"), req.body.all())
 
 --------------------------------------- rule
 
-GET /cache/value/{{:key cache.contains(@value) }}
+GET /cache/value/{{:key cache.contains(value) }}
 
 ----- response
 
@@ -17,7 +17,7 @@ GET /cache/value/{{:key cache.contains(@value) }}
 
 --------------------------------------- rule
 
-GET /cache/value/{{ !cache.contains(@value) }}
+GET /cache/value/{{ !cache.contains(value) }}
 
 ----- response
 

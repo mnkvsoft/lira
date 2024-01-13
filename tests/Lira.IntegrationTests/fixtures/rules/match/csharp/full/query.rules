@@ -1,7 +1,7 @@
 -------------------- rule
 
 GET /match/sharp/full/query?a=abc_{{  
-    if(!int.TryParse(@value, out var intVal))
+    if(!int.TryParse(value, out var intVal))
         return false;
     
     var result = intVal % 2 == 0;

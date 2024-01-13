@@ -8,4 +8,4 @@ GET /generating/csharp/chain_second_block_is_csharp
 200
 
 ~ body
-{{ req.body.all >> chain_second_block_is_csharp.Cleaner.Clean(@value) }}
+{{ req.body.all >> chain_second_block_is_csharp.Cleaner.Clean(value) }}

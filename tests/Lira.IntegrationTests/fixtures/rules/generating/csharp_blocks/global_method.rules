@@ -8,4 +8,4 @@ GET /generating/csharp/global_method
 200
 
 ~ body
-{{ req.body.all >> echo(@value) }}
+{{ req.body.all >> echo(value) }}
