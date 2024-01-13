@@ -61,7 +61,7 @@
 			},
 			{
 				"name": "entity.name.variable.rules",
-				"match": "elapsed|attempt|req|value"
+				"match": "elapsed|attempt|value"
 			}
 			]
 		},
@@ -73,6 +73,14 @@
 			{
 				"name": "entity.name.function.rules",
 				"match": "\\$[^\\.]([a-zA-Z_]|\\.)+"
+			},
+			{
+				"name": "entity.name.function.rules",
+				"match": "cache\\.set|cache\\.contains|cache\\.remove|cache\\.get"
+			},
+			{
+				"name": "entity.name.function.rules",
+				"match": "req.path|req.query|req.header|req.body.all|req.body.form|req.body.jpath|req.body.xpath"
 			}
 			]
 		},

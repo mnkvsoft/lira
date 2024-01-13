@@ -82,7 +82,7 @@ hello Nikolas!
 
 ![screenshot](docs/highlight_syntax.png)
 
-[Инструкцию по установке расширения](docs\highlight_setup.md)
+[Инструкцию по установке расширения](docs/highlight_setup.md)
 
 ### Примеры правил
 
