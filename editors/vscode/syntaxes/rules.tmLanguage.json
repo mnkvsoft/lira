@@ -61,7 +61,7 @@
 			},
 			{
 				"name": "entity.name.variable.rules",
-				"match": "@(elapsed|attempt|req|value)"
+				"match": "elapsed|attempt|req|value"
 			}
 			]
 		},
