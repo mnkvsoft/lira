@@ -8,7 +8,7 @@ POST /payment
 example: range.medium
 
 ~ body
-jpath: $.amount >> {{ range: amount/ok }}
+{{ jpath: $.amount }} >> {{ range: amount/ok }}
 
 ----- response
 
@@ -48,7 +48,7 @@ POST /payment
 example: range.medium
 
 ~ body
-jpath: $.amount >> {{ range: amount/refund_reject }}
+{{ jpath: $.amount }} >> {{ range: amount/refund_reject }}
 
 ----- response
 

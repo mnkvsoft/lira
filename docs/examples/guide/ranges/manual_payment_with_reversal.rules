@@ -11,7 +11,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ float: [0.01 - 10.00] }}
+{{ jpath: $.amount }} >> {{ float: [0.01 - 10.00] }}
 
 ----- response
 
@@ -34,7 +34,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ float: [30.01 - 40.00] }}
+{{ jpath: $.amount }} >> {{ float: [30.01 - 40.00] }}
 
 ----- response
 
@@ -57,7 +57,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ float: [40.01 - 50.00] }}
+{{ jpath: $.amount }} >> {{ float: [40.01 - 50.00] }}
 
 ----- response
 
@@ -80,7 +80,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ float: [10.01 - 20.00] }}
+{{ jpath: $.amount }} >> {{ float: [10.01 - 20.00] }}
 
 ----- response
 
@@ -103,7 +103,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ float: [20.01 - 30.00] }}
+{{ jpath: $.amount }} >> {{ float: [20.01 - 30.00] }}
 
 ----- response
 

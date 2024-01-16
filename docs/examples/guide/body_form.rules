@@ -6,8 +6,8 @@ POST /payment/card
 example: body_form
 
 ~ body
-form: number >> {{ int }}
-form: owner  >> Rodrygo
+{{ form: number }} >> {{ int }}
+{{ form: owner }} >> Rodrygo
 
 ----- response
 

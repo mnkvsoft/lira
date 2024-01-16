@@ -6,7 +6,7 @@ POST /payment/card
 example: csharp.full 
 
 ~ body
-jpath: $.number >> {{ any }}
+{{ jpath: $.number }} >> {{ any }}
 
 ----- response
 

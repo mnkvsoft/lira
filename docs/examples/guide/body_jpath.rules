@@ -6,8 +6,8 @@ POST /payment/card
 example: body_jpath
 
 ~ body
-jpath: $.number >> {{ int }}
-jpath: $.owner >> Rodrygo
+{{ jpath: $.number }} >> {{ int }}
+{{ jpath: $.owner }} >> Rodrygo
 
 ----- response
 

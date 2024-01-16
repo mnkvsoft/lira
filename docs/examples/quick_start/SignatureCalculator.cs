@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace _;
+namespace _my;
 
 public static class SignatureCalculator
 {

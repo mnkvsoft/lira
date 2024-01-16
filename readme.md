@@ -181,7 +181,7 @@ long query
 
 
 
-### Динамическое сопоставление параметров запроса
+### Динамическое сопоставление параметров запроса системными функциями
 [match_dynamic.rules](docs/examples/quick_start/match_dynamic.rules)
 
 ```
@@ -230,6 +230,73 @@ curl --location 'http://localhost/payment/card?fast=true' \
 [Полное руководство](docs/guide.md)
 
 [Функции сопоставления](docs/match_functions.md)
+
+
+
+
+
+### Динамическое сопоставление параметров запроса коротким C# - блоком
+[match_dynamic.rules](docs/examples/quick_start/match_dynamic.rules)
+
+```
+-------------------- rule
+
+POST /payment/{{ value == "card" || value == "account" }}
+
+~ headers
+example: match_dynamic_csharp_short
+Request-Id: {{ Guid.TryParse(value, out var ) }}
+
+
+----- response
+
+~ code
+200
+
+~ body
+{
+    "id": 12345,
+    "status": "ok"
+}
+```
+Запрос
+```
+curl --location --request POST 'http://localhost/payment/account' \
+--header 'Request-Id: 8e8bd1c3-2ab1-4145-8098-ca78d9ee9aae' \
+--header 'example: match_dynamic_csharp_short'
+```
+
+Ответ
+```
+{
+    "id": 12345,
+    "status": "ok"
+}
+```
+
+Запрос
+```
+curl --location --request POST 'http://localhost/payment/card' \
+--header 'Request-Id: a4442d86-0523-4209-911c-28a16a3f22c8' \
+--header 'example: match_dynamic_csharp_short'
+```
+
+Ответ
+```
+{
+    "id": 12345,
+    "status": "ok"
+}
+```
+
+#### Ссылки
+
+[Полное руководство](docs/guide.md)
+
+[Функции сопоставления](docs/match_functions.md)
+
+
+
 
 
 

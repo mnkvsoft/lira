@@ -1,0 +1,19 @@
+-------------------- rule
+
+POST /payment/{{ value == "card" || value == "account" }}
+
+~ headers
+example: match_dynamic_csharp_short
+Request-Id: {{ Guid.TryParse(value, out var ) }}
+
+
+----- response
+
+~ code
+200
+
+~ body
+{
+    "id": 12345,
+    "status": "ok"
+}

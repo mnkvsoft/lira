@@ -6,7 +6,7 @@ POST /payment/card
 example: charp.class.mnenonic
 
 ~ body
-jpath: $.number >> {{ any }}
+{{ jpath: $.number }} >> {{ any }}
 
 ----- response
 
@@ -27,7 +27,7 @@ POST /payment/card
 example: charp.class.mnenonic
 
 ~ body
-jpath: $.pan >> {{ any }}
+{{ jpath: $.pan }} >> {{ any }}
 
 ----- response
 

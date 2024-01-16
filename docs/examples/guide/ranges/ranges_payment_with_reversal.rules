@@ -11,7 +11,7 @@ POST /payment
 example: ranges_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ range: payment.amount/success }}
+{{ jpath: $.amount }} >> {{ range: payment.amount/success }}
 
 ----- response
 
@@ -34,7 +34,7 @@ POST /payment
 example: ranges_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ range: payment.amount/success.reversal.pending }}
+{{ jpath: $.amount }} >> {{ range: payment.amount/success.reversal.pending }}
 
 ----- response
 
@@ -57,7 +57,7 @@ POST /payment
 example: ranges_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ range: payment.amount/success.reversal.reject }}
+{{ jpath: $.amount }} >> {{ range: payment.amount/success.reversal.reject }}
 
 ----- response
 
@@ -80,7 +80,7 @@ POST /payment
 example: ranges_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ range: payment.amount/pending }}
+{{ jpath: $.amount }} >> {{ range: payment.amount/pending }}
 
 ----- response
 
@@ -103,7 +103,7 @@ POST /payment
 example: ranges_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ range: payment.amount/pending }}
+{{ jpath: $.amount }} >> {{ range: payment.amount/pending }}
 
 ----- response
 

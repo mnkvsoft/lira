@@ -6,8 +6,8 @@ POST /payment/card
 example: body_xpath
 
 ~ body
-xpath: /root/number/text() >> {{ int }}
-xpath: /root/owner/text() >> Rodrygo
+{{ xpath: /root/number/text() }} >> {{ int }}
+{{ xpath: /root/owner/text() }} >> Rodrygo
 
 ----- response
 

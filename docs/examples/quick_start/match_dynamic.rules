@@ -6,7 +6,7 @@ POST /payment/{{ any }}?fast={{ any }}
 Request-Id: {{ guid }}
 
 ~ body
-jpath: $.number >> 4444{{ int }}
+{{ jpath: $.number }} >> 4444{{ int }}
 
 ----- response
 
