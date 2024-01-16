@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /hello/{{ any name: person }}
+GET /hello/{{:person any }}
 
 ----- response
 
@@ -8,4 +8,4 @@ GET /hello/{{ any name: person }}
 200
 
 ~ body
-hello {{ req.path: person }}!
+hello {{ req.path: person }}!     
