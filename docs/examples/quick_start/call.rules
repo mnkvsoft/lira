@@ -24,9 +24,6 @@ $$id = {{ seq }}
 
 POST http://localhost/api/callback
 
-~ delay 
-100 ms
-
 ~ headers
 Content-Type: application/json
 

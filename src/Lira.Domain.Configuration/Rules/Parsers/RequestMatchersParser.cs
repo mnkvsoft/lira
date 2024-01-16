@@ -198,9 +198,6 @@ class RequestMatchersParser
         
         foreach (var line in patterns.GetLines())
         {
-            // if (string.IsNullOrEmpty(line))
-            //     break;
-
             var (headerName, headerPattern) = line.SplitToTwoPartsRequired(Consts.ControlChars.HeaderSplitter).Trim();
 
             headers.Add(headerName.SingleStaticValueToString(), CreateValuePattern(headerPattern, context));

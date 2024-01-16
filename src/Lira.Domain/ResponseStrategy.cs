@@ -1,4 +1,4 @@
-﻿using Lira.Domain.Generating.Writers;
+using Lira.Domain.Generating.Writers;
 using Microsoft.AspNetCore.Http;
 
 namespace Lira.Domain;
@@ -21,7 +21,9 @@ public abstract record ResponseStrategy(TimeSpan? Delay)
         {
             var request = httpContextData.Request;
             var response = httpContextData.Response;
-            
+
+            response.StatusCode = Code;
+
             if (HeadersGenerator != null)
             {
                 foreach (var header in HeadersGenerator.Create(request))
@@ -37,8 +39,6 @@ public abstract record ResponseStrategy(TimeSpan? Delay)
                     await response.WriteAsync(bodyPart);
                 }
             }
-
-            response.StatusCode = Code;
         }
     }
 

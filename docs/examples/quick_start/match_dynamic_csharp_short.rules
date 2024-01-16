@@ -4,7 +4,7 @@ POST /payment/{{ value == "card" || value == "account" }}
 
 ~ headers
 example: match_dynamic_csharp_short
-Request-Id: {{ Guid.TryParse(value, out var ) }}
+Request-Id: {{ Guid.TryParse(value, out _) }}
 
 
 ----- response

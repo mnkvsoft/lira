@@ -3,7 +3,7 @@
 POST /payment/card
 
 ~ headers
-example: csharp.full 
+example: csharp.full
 
 ~ body
 {{ jpath: $.number }} >> {{ any }}

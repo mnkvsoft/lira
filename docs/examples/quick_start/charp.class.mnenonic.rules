@@ -18,7 +18,6 @@ mnemonic was generated from 'number' field: {{
     CardNumber.GetMnemonic(req.body.jpath("$.number")) 
 }}
 
-
 -------------------- rule
 
 POST /payment/card

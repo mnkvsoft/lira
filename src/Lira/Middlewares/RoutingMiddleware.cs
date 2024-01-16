@@ -7,6 +7,7 @@ using Lira.Domain.Configuration.Rules;
 using HttpContextData = Lira.Domain.HttpContextData;
 using IRuleMatchWeight = Lira.Domain.IRuleMatchWeight;
 using RequestData = Lira.Domain.RequestData;
+using Lira.Configuration;
 
 namespace Lira.Middlewares;
 
@@ -16,6 +17,7 @@ class RoutingMiddleware : IMiddleware
     private readonly IConfigurationLoader _configurationLoader;
     private readonly ILogger _logger;
     private readonly bool _allowMultipleRules;
+    private readonly bool _isLoggingEnabled;
 
     public RoutingMiddleware(ILoggerFactory loggerFactory, IRulesProvider rulesProvider, IConfigurationLoader configurationLoader,
         IConfiguration configuration)
@@ -24,6 +26,7 @@ class RoutingMiddleware : IMiddleware
         _configurationLoader = configurationLoader;
         _logger = loggerFactory.CreateLogger(GetType());
         _allowMultipleRules = configuration.GetValue<bool>("AllowMultipleRules");
+        _isLoggingEnabled = configuration.IsLoggingEnabled();
     }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -71,7 +74,9 @@ class RoutingMiddleware : IMiddleware
             var rule = matchesRules.First();
             request.PathNameMaps = rule.PathNameMaps;
             await rule.Execute(new HttpContextData(request, context.Response));
-            _logger.LogInformation($"Was usage rule (s: {searchMs} ms, e: {sw.GetElapsedDoubleMilliseconds()} ms): " + rule.Name);
+
+            if(_isLoggingEnabled)
+                _logger.LogInformation($"Was usage rule (s: {searchMs} ms, e: {sw.GetElapsedDoubleMilliseconds()} ms): " + rule.Name);
             return;
         }
 

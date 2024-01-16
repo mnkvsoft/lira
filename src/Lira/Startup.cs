@@ -138,6 +138,7 @@ public class Startup
     private static async Task WriteRanges(HttpContext context, IReadOnlyCollection<Data> datas)
     {
         var nl = Constants.NewLine;
+        context.Response.StatusCode = 200;
 
         foreach (var data in datas)
         {
@@ -146,6 +147,5 @@ public class Startup
                 data.Info
                 + nl + nl + nl + nl);
         }
-        context.Response.StatusCode = 200;
     }
 }

@@ -1,4 +1,4 @@
-﻿using ArgValidation;
+using ArgValidation;
 
 namespace Lira.Domain.Matching.Request.Matchers;
 
@@ -30,6 +30,10 @@ public class BodyRequestMatcher : IRequestMatcher
             var matcher = pair.Value;
 
             var value = extractor.Extract(body);
+
+            if(value == null)
+                return RequestMatchResult.NotMatched;
+
             if (!matcher.IsMatch(value))
                 return RequestMatchResult.NotMatched;
             
