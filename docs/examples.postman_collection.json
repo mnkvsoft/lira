@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "2ead6d07-e572-44a5-a89a-4fc0c669f1b6",
+		"_postman_id": "56d1cb99-6f73-4cdf-ae3d-93f90d443830",
 		"name": "examples",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "13641331"
+		"_exporter_id": "29626915"
 	},
 	"item": [
 		{
@@ -945,6 +945,35 @@
 									"key": "fast",
 									"value": "true"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "match_dynamic_csharp_short",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Request-Id",
+								"value": "{{$guid}}",
+								"type": "text"
+							},
+							{
+								"key": "example",
+								"value": "match_dynamic_csharp_short",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payment/card",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"card"
 							]
 						}
 					},
