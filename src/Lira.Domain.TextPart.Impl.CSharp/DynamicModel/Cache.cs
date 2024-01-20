@@ -1,15 +1,15 @@
-﻿using Lira.Common.PrettyParsers;
+using Lira.Common.PrettyParsers;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
-public class Cache
+public class Cache : IReadonlyCache, ICache
 {
     private readonly IMemoryCache _memoryCache;
     private readonly TimeSpan _defaultLifeTimeInCache;
     private readonly static object FlagValue = new();
-    
+
     public Cache(IMemoryCache memoryCache, IConfiguration configuration)
     {
         _memoryCache = memoryCache;
@@ -25,9 +25,9 @@ public class Cache
     {
         _memoryCache.Set(key, value, time != null ? PrettyTimespanParser.Parse(time) : _defaultLifeTimeInCache);
     }
-    
+
     public bool contains(string key) => _memoryCache.TryGetValue(key, out _);
-    
+
     public dynamic get(string key)
     {
         if (_memoryCache.TryGetValue(key, out var obj))
@@ -35,6 +35,6 @@ public class Cache
 
         throw new Exception($"Object with key '{key}' not found in cache");
     }
-    
+
     public void remove(string key) => _memoryCache.Remove(key);
 }

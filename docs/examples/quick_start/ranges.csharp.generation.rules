@@ -1,0 +1,17 @@
+-------------------- rule
+
+GET /payment
+
+~ headers
+example: ranges.csharp.generation
+
+----- response
+
+~ code
+200
+
+~ body
+{
+    "status": "ok"
+    "fee": {{ range("amount/ok") * 100 >> format: #. ### without decimals ### }}
+}

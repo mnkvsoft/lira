@@ -1,4 +1,4 @@
-﻿namespace Lira.Domain.Matching.Conditions.Matchers.Elapsed;
+namespace Lira.Domain.Matching.Conditions.Matchers.Elapsed;
 
 internal class ElapsedConditionMatcher : IConditionMatcher
 {
@@ -11,7 +11,7 @@ internal class ElapsedConditionMatcher : IConditionMatcher
 
     public bool IsMatch(RequestStatistic statistic)
     {
-        var firstInvokeTime = statistic.Entries.First().InvokeTime;
+        var firstInvokeTime = statistic.Entries.Min(x => x.InvokeTime);
         var elapsed = DateTime.Now - firstInvokeTime;
 
         return _functions.All(f => f.IsMatch(elapsed));

@@ -31,9 +31,6 @@ public class BodyRequestMatcher : IRequestMatcher
 
             var value = extractor.Extract(body);
 
-            if(value == null)
-                return RequestMatchResult.NotMatched;
-
             if (!matcher.IsMatch(value))
                 return RequestMatchResult.NotMatched;
             

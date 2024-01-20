@@ -28,7 +28,7 @@ class FloatParser
         fullInfo.AppendLine(info);
         fullInfo.AppendLine($"Unit:{(dto.Unit == null ? "(default)" : "")} " + unit);
         
-        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
+        _logger.LogDebug(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
         
         return new FloatData(
             name,

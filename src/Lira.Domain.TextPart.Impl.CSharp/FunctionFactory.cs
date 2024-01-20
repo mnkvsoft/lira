@@ -373,7 +373,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     {
         var stat = _compilationStatistic;
         var nl = Constants.NewLine;
-        _logger.LogInformation($"Dynamic csharp compilation statistic: " + nl +
+        _logger.LogDebug($"Dynamic csharp compilation statistic: " + nl +
                                $"Revision: {_revision}" + nl +
                                $"Total time: {(int)stat.TotalTime.TotalMilliseconds} ms. " + nl +
                                $"Assembly load time: {(int)stat.TotalLoadAssemblyTime.TotalMilliseconds} ms. " + nl +
@@ -382,7 +382,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         _unLoader.UnloadUnused(new DynamicAssembliesContext(_revision, _context));
 
-        _logger.LogInformation("Count dynamic assemblies in current domain: " +
+        _logger.LogDebug("Count dynamic assemblies in current domain: " +
                                AppDomain.CurrentDomain
                                    .GetAssemblies()
                                    .Count(x => x.GetName().Name?.StartsWith(AssemblyPrefix) == true));

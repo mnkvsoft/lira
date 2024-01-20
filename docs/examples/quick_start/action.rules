@@ -1,0 +1,52 @@
+-------------------- rule
+
+POST /order
+
+~ headers
+example: action
+
+----- declare
+
+$$id = {{ seq }}
+
+$body = 
+{
+    "id": {{ $$id }},
+    "created_at": "{{ now.utc }}",
+    "status": "accepted"
+}
+
+----- response
+
+~ body
+{{ $body }}
+
+----- action
+
+## C# code block
+
+## create file path
+string filePath = "/tmp/" + $$id + ".dat";
+
+## write file
+File.WriteAllText(filePath, $body);
+
+
+-------------------- rule
+
+GET /order/{{:id File.Exists($"/tmp/{value}.dat") ### if file exists ### }}
+
+~ headers
+example: action
+
+----- declare
+
+## write json body from file
+$body:json = {{ File.ReadAllText($"/tmp/{req.path("id")}.dat") }}
+
+----- response
+
+~ body
+{{ 
+    $body.replace("$.status", "processing")
+}}

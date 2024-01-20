@@ -9,7 +9,7 @@ using Lira.Domain.Configuration.Rules;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Templating;
 using Lira.Domain.Configuration.Variables;
-using Lira.Domain.DataModel;
+using System.Diagnostics;
 
 namespace Lira.Domain.Configuration;
 
@@ -17,44 +17,6 @@ public interface IConfigurationLoader
 {
     Task<ConfigurationState> GetState();
     void ProvokeLoad();
-}
-
-class RangesProvider : IRangesProvider
-{
-    internal Dictionary<DataName, Data> Ranges
-    {
-        get
-        {
-            if (_ranges == null)
-                throw new InvalidOperationException("Ranges not loaded yet");
-            return _ranges;
-        }
-        set
-        {
-            _ranges = value;
-        }
-    }
-
-    private Dictionary<DataName, Data>? _ranges = null;
-
-    Data IRangesProvider.Get(DataName name)
-    {
-        if (!Ranges.TryGetValue(name, out var result))
-            throw new Exception($"Interval '{name}' not found");
-
-        return result;
-    }
-
-    public Data? Find(DataName name)
-    {
-        Ranges.TryGetValue(name, out var data);
-        return data;
-    }
-
-    public IReadOnlyCollection<Data> GetAll()
-    {
-        return Ranges.Values;
-    }
 }
 
 class ConfigurationLoader : IDisposable, IRulesProvider, IConfigurationLoader
@@ -97,7 +59,6 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IConfigurationLoader
     }
 
 
-
     public void ProvokeLoad()
     {
         // loading was init in constructor
@@ -106,28 +67,41 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IConfigurationLoader
 
     private async Task<IReadOnlyCollection<Rule>> Load(string path)
     {
-        var ranges = await _rangesLoader.Load(path);
-        _rangesProvider.Ranges = ranges;
+        _logger.LogInformation("Loading rules...");
+        var sw = Stopwatch.StartNew();
+        try
+        {
 
-        var templates = await TemplatesLoader.Load(path);
+            var ranges = await _rangesLoader.Load(path);
+            _rangesProvider.Ranges = ranges;
 
-        var context = new ParsingContext(
-            new DeclaredItems(),
-            templates,
-            RootPath: path,
-            CurrentPath: path);
+            var templates = await TemplatesLoader.Load(path);
 
-        using var scope = _serviceScopeFactory.CreateScope();
-        var provider = scope.ServiceProvider;
+            var context = new ParsingContext(
+                new DeclaredItems(),
+                templates,
+                RootPath: path,
+                CurrentPath: path);
 
-        var globalVariablesParser = provider.GetRequiredService<DeclaredItemsLoader>();
+            using var scope = _serviceScopeFactory.CreateScope();
+            var provider = scope.ServiceProvider;
 
-        var variables = await globalVariablesParser.Load(context, path);
+            var globalVariablesParser = provider.GetRequiredService<DeclaredItemsLoader>();
 
-        var rulesLoader = provider.GetRequiredService<RulesLoader>();
-        var rules = await rulesLoader.LoadRules(path, context with { DeclaredItems = variables });
+            var variables = await globalVariablesParser.Load(context, path);
 
-        return rules;
+            var rulesLoader = provider.GetRequiredService<RulesLoader>();
+            var rules = await rulesLoader.LoadRules(path, context with { DeclaredItems = variables });
+
+            _logger.LogInformation($"{rules.Count} rules were successfully loaded ({(int)sw.ElapsedMilliseconds} ms)");
+
+            return rules;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occured while load rules");
+            throw;
+        }
     }
 
 

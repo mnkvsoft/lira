@@ -26,7 +26,7 @@ class GuidParser
         fullInfo.AppendLine(info);
         fullInfo.AppendLine($"Format({(dto.Format == null ? "default" : "manual")}): {dto.Format ?? "D"}");
         
-        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
+        _logger.LogDebug(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
 
         return new GuidData(
             name,

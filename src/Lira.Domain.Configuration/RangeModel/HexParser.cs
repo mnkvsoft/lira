@@ -32,7 +32,7 @@ class HexParser
             "Bytes count: " + bytesCount;
         fullInfo.AppendLine(info);
         
-        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
+        _logger.LogDebug(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
 
         return new HexData(
             name,

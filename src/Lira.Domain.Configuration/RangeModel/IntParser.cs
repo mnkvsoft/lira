@@ -28,7 +28,7 @@ class IntParser
         var mode = dto.Mode ?? "seq";
         fullInfo.AppendLine($"Mode({(dto.Mode == null ? "default" : "manual")}): " + mode);
         
-        _logger.LogInformation(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
+        _logger.LogDebug(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
 
         var infoForData = new StringBuilder().AddInfo(fullInfo, intervals).ToString();
         if (mode == "seq")

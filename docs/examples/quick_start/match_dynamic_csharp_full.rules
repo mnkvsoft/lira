@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /payment/{{ 
+    if(!int.TryParse(value, out var intValue))
+        return false;
+    return intValue < 10;
+}}
+
+~ headers
+example: match_dynamic_csharp_full
+
+----- response
+
+~ body
+{
+    "id": 12345,
+    "status": "ok"
+}
+
+-------------------- rule
+
+GET /payment/{{ 
+    if(!int.TryParse(value, out var intValue))
+        return false;
+    return intValue >= 10;
+}}
+
+~ headers
+example: match_dynamic_csharp_full
+
+----- response
+
+~ body
+{
+    "id": 12345,
+    "status": "pending"
+}

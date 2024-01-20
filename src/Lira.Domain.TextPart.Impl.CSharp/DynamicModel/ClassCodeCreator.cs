@@ -85,6 +85,7 @@ static class ClassCodeCreator
 
         private readonly static string ImportNamespaces =
             "using System;" + Nl +
+            "using System.IO;" + Nl +
             "using System.Text;" + Nl +
             "using System.Linq;" + Nl +
             "using System.Collections;" + Nl +
@@ -181,7 +182,7 @@ public class [className] : DynamicObjectBaseMatch, IMatchFunction
             "using Lira.Domain.Actions;" + Nl +
             @"
 
-public class [className] : DynamicObjectBase, IAction
+public class [className] : DynamicObjectBaseAction, IAction
 {
     public [className](Dependencies dependencies) : base(dependencies)
     {

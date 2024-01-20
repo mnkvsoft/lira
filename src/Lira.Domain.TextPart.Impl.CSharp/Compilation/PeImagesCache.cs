@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Lira.Common;
@@ -70,7 +70,7 @@ class PeImagesCache : IDisposable
         
         _wasInit = true;
         var nl = Constants.NewLine;
-        _logger.LogInformation("PE image cache." + nl +
+        _logger.LogDebug("PE image cache." + nl +
             $"Directory: {TempPath}" + nl +
             $"Count: {files.Length}" + nl +
             $"Duration: {(int)sw.ElapsedMilliseconds} ms");

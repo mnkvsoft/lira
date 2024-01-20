@@ -22,6 +22,9 @@ example: range.easy
 
 POST /payment
 
+~ headers
+example: range.easy
+
 ~ body
 {{ jpath: $.amount }} >> {{ range: amount/reject }}
 

@@ -29,7 +29,7 @@ class RangesLoader
             try
             {
                 var json = await File.ReadAllTextAsync(dataFile);
-                dataWithRefs.AddRange(CreateDatas(json));
+                dataWithRefs.AddRange(CreateRanges(json));
             }
             catch (Exception exc)
             {
@@ -40,7 +40,7 @@ class RangesLoader
         return dataWithRefs.ToDictionary(x => x.Name, x => x);
     }
 
-    private IReadOnlyCollection<Data> CreateDatas(string json)
+    private IReadOnlyCollection<Data> CreateRanges(string json)
     {
         Dictionary<string, DataOptionsDto> root;
         try

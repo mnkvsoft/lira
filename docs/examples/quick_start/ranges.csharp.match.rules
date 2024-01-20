@@ -1,0 +1,24 @@
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: ranges.csharp.match
+
+~ body
+{{ jpath: $.amount }} >> {{ 
+
+if(!decimal.TryParse(value, out decimal amountInCents))
+    return false;
+
+decimal amount = amountInCents / 100;
+return range("amount/ok", amount);
+
+}}
+
+----- response
+
+~ body
+{
+    "status": "ok"
+}

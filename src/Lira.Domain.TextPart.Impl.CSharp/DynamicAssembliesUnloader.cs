@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
 // ReSharper disable RedundantExplicitArrayCreation
 
@@ -24,12 +24,12 @@ internal class DynamicAssembliesUnloader
             try
             {
                 contextToUnload.Unload();
-                _logger.LogInformation($"Dynamic assemblies with revision {revision} was unloaded");
+                _logger.LogDebug($"Dynamic assemblies with revision {revision} were unloaded");
                 _toUnload.Dequeue();
             }
             catch (Exception e)
             {
-                _logger.LogInformation(e, $"An error occured while upload dynamic assemblies with revision: {revision}");
+                _logger.LogError(e, $"An error occured while upload dynamic assemblies with revision: {revision}");
                 break;
             }
         }

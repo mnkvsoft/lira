@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Moq;
 using Moq.Contrib.HttpClient;
 using Lira.Common.Extensions;

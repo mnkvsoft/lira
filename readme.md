@@ -236,7 +236,7 @@ curl --location 'http://localhost/payment/card?fast=true' \
 
 
 ### Динамическое сопоставление параметров запроса коротким C# - блоком
-[match_dynamic.rules](docs/examples/quick_start/match_dynamic.rules)
+[match_dynamic_csharp_short.rules](docs/examples/quick_start/match_dynamic_csharp_short.rules)
 
 ```
 -------------------- rule
@@ -301,6 +301,94 @@ curl --location --request POST 'http://localhost/payment/card' \
 
 
 
+
+### Динамическое сопоставление параметров запроса полным C# - блоком
+[match_dynamic_csharp_full.rules](docs/examples/quick_start/match_dynamic_csharp_full.rules)
+
+```
+-------------------- rule
+
+GET /payment/{{ 
+    if(!int.TryParse(value, out var intValue))
+        return false;
+    return intValue < 10;
+}}
+
+~ headers
+example: match_dynamic_csharp_full
+
+----- response
+
+~ body
+{
+    "id": 12345,
+    "status": "ok"
+}
+
+-------------------- rule
+
+GET /payment/{{ 
+    if(!int.TryParse(value, out var intValue))
+        return false;
+    return intValue >= 10;
+}}
+
+~ headers
+example: match_dynamic_csharp_full
+
+----- response
+
+~ body
+{
+    "id": 12345,
+    "status": "pending"
+}
+```
+
+Запрос
+```
+curl --location 'http://localhost/payment/1' \
+--header 'example: match_dynamic_csharp_full'
+```
+
+Ответ
+```
+{
+    "id": 12345,
+    "status": "ok"
+}
+```
+
+Запрос
+```
+curl --location 'http://localhost/payment/10' \
+--header 'example: match_dynamic_csharp_full'
+```
+
+Ответ
+```
+{
+    "id": 12345,
+    "status": "pending"
+}
+```
+
+#### Ссылки
+
+[Полное руководство](docs/guide.md)
+
+[Функции сопоставления](docs/match_functions.md)
+
+
+
+
+
+
+
+
+
+
+
 ### Динамическая генерация ответов
 [generation_dynamic.rules](docs/examples/quick_start/generation_dynamic.rules)
 
@@ -320,6 +408,7 @@ Request-Time: {{ now >> format: H:mm:ss }}
 ~ body
 {
     "id": {{ int }},
+    "status": "{{ random: paid, pending, cancelled }}",
     "amount": {{ float }},
     "transaction_id": "{{ guid }}",
     "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
@@ -336,11 +425,12 @@ curl --location 'http://localhost/order'
 Request-Time: 12:07:16
 
 {
-    "id": 696462653,
-    "amount": 2855.18,
-    "transaction_id": "f61790a8-4404-475c-914c-dfecd613f92c",
-    "created_at": "2014-04-26 01:05:45",
-    "customer": "38g771rh99py7rgrucij"
+    "id": 566607986,
+    "status": "pending",
+    "amount": 5413.93,
+    "transaction_id": "60c50923-8230-44db-96cc-b4f75ba4e5bc",
+    "created_at": "2023-06-29 13:58:38",
+    "customer": "eyshxbdiwf1d6991nhjd"
 }
 ```
 
@@ -1332,6 +1422,77 @@ curl --location 'http://localhost/order' \
 
 
 
+
+
+
+### Повторение блоков
+
+[repeat_block.rules](docs/examples/quick_start/repeat_block.rules)
+```
+-------------------- rule
+
+GET /orders/{{ int ### customer id ### }}
+
+~ headers
+example: repeat_block
+
+----- declare
+
+$order = 
+{
+    "id": {{ int }},
+    "status": "{{ random: paid, pending, cancelled }}",
+    "amount": {{ float }},
+    "transaction_id": "{{ guid }}",
+    "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}"
+}
+
+
+----- response
+
+~ body
+{
+    "orders": [
+        {{ repeat($order, separator: ",", count: 3) }}    
+    ]
+}
+```
+Запрос
+```
+curl --location 'http://localhost/orders/123' \
+--header 'example: repeat_block'
+```
+Ответ
+```
+{
+  "orders": [
+    {
+      "id": 1569319761,
+      "status": "paid",
+      "amount": 2188.83,
+      "transaction_id": "1eca0a54-a7a8-46dd-aaec-5e06876b1903",
+      "created_at": "2023-05-24 03:54:36"
+    },
+    {
+      "id": 14734951,
+      "status": "paid",
+      "amount": 3588.62,
+      "transaction_id": "21a593d5-0a88-4ea0-8194-e97e5fc2a418",
+      "created_at": "2023-05-15 19:39:23"
+    },
+    {
+      "id": 1399041927,
+      "status": "pending",
+      "amount": 7807.53,
+      "transaction_id": "66a8494b-f625-468d-87ae-b1fc05619583",
+      "created_at": "2023-08-10 03:24:24"
+    }
+  ]
+}
+```
+
+
+
 #### Изменение значение узлов json в шаблонах ответов
 Часто в шаблонах json ответов (которые представляют собой просто функции, 
 генерирующие некоторые значения) необходимо изменить часть данных, 
@@ -1647,7 +1808,7 @@ mnemonic was generated from 'pan' field: MIR *5678
 using System.Security.Cryptography;
 using System.Text;
 
-namespace _;
+namespace _my;
 
 public static class SignatureCalculator
 {
@@ -1713,8 +1874,190 @@ curl --location --request POST 'http://localhost/payment' \
 }
 ```
 
+### Использование функциональности интервалов в C# - блоках
+
+#### Для сопоставления
+
+Иногда в функцию определения принадлежности к диапазону (`range`) требуется
+передать предварительно измененное значение. Это бывает необходимо, например, 
+в случаях, если одно из API принимает значение не в основных единицах валюты (рубли, доллары, евро и т.д.), а минимальных (копейки, центы и т.д.) и приложение перед передачей значения домножает исходное значение. В этом случае нам необходимо предварительно изменить значение, разделив его на нужную величину.
+
+[global.ranges.json](docs/examples/quick_start/global.ranges.json)
+
+[ranges.csharp.match.rules](docs/examples/quick_start/ranges.csharp.match.rules)
+```
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: ranges.csharp.match
+
+~ body
+{{ jpath: $.amount }} >> {{ 
+
+if(!decimal.TryParse(value, out decimal amountInCents))
+    return false;
+
+decimal amount = amountInCents / 100;
+return range("amount/ok", amount);
+
+}}
+
+----- response
+
+~ body
+{
+    "status": "ok"
+}
+```
+Запрос
+```
+curl --location 'http://localhost/payment' \
+--header 'example: range.csharp' \
+--header 'Content-Type: application/json' \
+--data '{
+    "amount": 20153492
+}'
+```
+Ответ
+```
+{
+    "status": "ok"
+}
+```
+
+#### Для генерации
+```
+-------------------- rule
+
+GET /payment
+
+~ headers
+example: ranges.csharp.generation
+
+----- response
+
+~ code
+200
+
+~ body
+{
+    "status": "ok"
+    "fee": {{ range("amount/ok") * 100 >> format: #. ### without decimals ### }}
+}
+```
+Запрос
+```
+curl --location --request GET 'http://localhost/payment' \
+--header 'example: ranges.csharp.generation' \
+--header 'Content-Type: application/json' \
+--data '{
+    "amount": 20153492
+}'
+```
+Ответ
+```
+{
+    "status": "ok"
+    "fee": 13920288
+}
+```
+
+### Выполнение произвольного кода при обработке правила
+В некоторых случаях в процессе обработки правила требуется выполнить произвольную логику. Это можно сделать в секции `action`.
+
+В примере ниже, в первом правиле выполняется сохранение файла, а во втором 
+выполняется проверка на существование файла и, если файл существует, то тело ответа считывается из него и выполняется изменение одного из полей.
+
+[action.rules](docs/examples/quick_start/action.rules)
+```
+-------------------- rule
+
+POST /order
+
+~ headers
+example: action
+
+----- declare
+
+$$id = {{ seq }}
+
+$body = 
+{
+    "id": {{ $$id }},
+    "created_at": "{{ now.utc }}",
+    "status": "accepted"
+}
+
+----- response
+
+~ body
+{{ $body }}
+
+----- action
+
+## C# code block
+
+## create file path
+string filePath = "/tmp/" + $$id + ".dat";
+
+## write file
+File.WriteAllText(filePath, $body);
 
 
+-------------------- rule
+
+GET /order/{{:id File.Exists($"/tmp/{value}.dat") ### if file exists ### }}
+
+~ headers
+example: action
+
+----- declare
+
+## write json body from file
+$body:json = {{ File.ReadAllText($"/tmp/{req.path("id")}.dat") }}
+
+----- response
+
+~ body
+{{ 
+    $body.replace("$.status", "processing")
+}}
+```
+
+Запрос
+```
+curl --location --request POST 'http://localhost/order' \
+--header 'example: action'
+```
+
+Ответ
+```
+{
+    "id": 62,
+    "created_at": "2024-01-19T15:18:17.6819778Z",
+    "status": "accepted"
+}
+```
+
+Запрос
+```
+curl --location 'http://localhost/order/62' \
+--header 'example: action'
+```
+Ответ
+```
+{
+  "id": 62,
+  "created_at": "2024-01-19T15:18:17.6818277Z",
+  "status": "processing"
+}
+```
+
+
+### Сохранение состояния
+Иногда в сложных сценариях требуется сохранение состояния между запросами
 
 ### Переопределение системных функций
 Системные функции могут быть переопределены пользовательскими.

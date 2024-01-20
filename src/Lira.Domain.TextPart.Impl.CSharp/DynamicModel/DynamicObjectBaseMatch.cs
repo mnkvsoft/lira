@@ -6,6 +6,9 @@ public class DynamicObjectBaseMatch : DynamicObjectBase
     {
     }
 
+    // when matching data, you cannot change the data
+    protected IReadonlyCache cache => _cache;
+
     protected bool range(string rangeName, object value)
     {
         if (value == null)
