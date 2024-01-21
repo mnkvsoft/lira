@@ -76,7 +76,7 @@ class RoutingMiddleware : IMiddleware
             await rule.Execute(new HttpContextData(request, context.Response));
 
             if(_isLoggingEnabled)
-                _logger.LogInformation($"Was usage rule (s: {searchMs} ms, e: {sw.GetElapsedDoubleMilliseconds()} ms): " + rule.Name);
+                _logger.LogInformation($"Was usage rule (times. search: {searchMs} ms, exe: {sw.GetElapsedDoubleMilliseconds()} ms. protocol: {context.Request.Protocol}): " + rule.Name);
             return;
         }
 

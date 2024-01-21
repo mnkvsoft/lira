@@ -1,0 +1,109 @@
+###
+on the first request, 
+we save the response body 
+and the attempt counter
+###
+-------------------- rule
+
+POST /order
+
+~ headers
+example: cache.medium
+
+----- declare
+
+$$id = {{ seq }}
+
+$$order:json = 
+{
+    "id": {{ $$id }},
+    "status": "accepted",
+    "created_at": "{{ date }}"
+}
+
+----- response
+
+~ body
+{{ $$order }}
+
+----- action
+
+dynamic state = new System.Dynamic.ExpandoObject();
+
+state.Order = $$order;
+state.Counter = 1;
+
+cache.set(
+    key: "cache_example_" + $$id, 
+    obj: state, 
+    time: "5 minute"
+)
+
+###
+if the attempt counter takes the value 1-3, 
+then in the 'status' field we set the value 'pending' 
+and increment the counter
+###
+-------------------- rule
+
+GET /order/{{:id 
+
+    string key = "cache_example_" + value;
+
+    if(!cache.contains(key))
+        return false;
+
+    var state = cache.get(key);
+    return state.Counter >= 1 && state.Counter <= 3;
+
+}}
+
+~ headers
+example: cache.medium
+
+----- response
+
+~ body
+{{ 
+    cache.get("cache_example_" + req.path("id"))
+            .Order
+            .replace("$.status", "pending")
+}}
+
+----- action
+
+var state = cache.get("cache_example_" + req.path("id"));
+state.Counter++;
+
+
+###
+if the attempt counter takes a value greater than 3, 
+then in the 'status' field we set the value 'paid' 
+and do not increment the counter 
+(this no longer makes sense)
+###
+-------------------- rule
+
+GET /order/{{:id 
+
+string key = "cache_example_" + value;
+
+if(!cache.contains(key))
+    return false;
+
+var state = cache.get(key);
+return state.Counter > 3;
+
+}}
+
+~ headers
+example: cache.medium
+
+----- response
+
+~ body
+{{ 
+    cache.get("cache_example_" + req.path("id"))
+            .Order
+            .replace("$.status", "paid")
+}}

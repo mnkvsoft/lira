@@ -1015,10 +1015,10 @@
     <None Update="fixtures\rules\cache\remove.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\abort\abort.test">
+    <None Update="fixtures\rules\fault\fault.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\abort\abort.rules">
+    <None Update="fixtures\rules\fault\fault.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\repeat\count.rules">

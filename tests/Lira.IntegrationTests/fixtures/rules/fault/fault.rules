@@ -1,7 +1,7 @@
 --------------------------------------- rule
 
-GET /abort
+GET /fault
 
 ----- response
 
-~ abort
+~ fault

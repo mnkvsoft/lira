@@ -178,6 +178,22 @@ curl --location 'http://localhost/delay'
 long query
 ```
 
+### Имитация сбоя сервера
+[fault.fault](docs/examples/quick_start/fault.rules)
+```
+-------------------- rule
+
+GET /fault
+
+----- response
+
+~ fault
+```
+Запрос
+```
+curl --location 'http://localhost/fault'
+```
+При обработке запроса сервер не выдаст результат (`ERR_EMPTY_RESPONSE`)
 
 
 
@@ -1882,6 +1898,8 @@ curl --location --request POST 'http://localhost/payment' \
 передать предварительно измененное значение. Это бывает необходимо, например, 
 в случаях, если одно из API принимает значение не в основных единицах валюты (рубли, доллары, евро и т.д.), а минимальных (копейки, центы и т.д.) и приложение перед передачей значения домножает исходное значение. В этом случае нам необходимо предварительно изменить значение, разделив его на нужную величину.
 
+Для доступа к текущему значению используется системная переменная `value`.
+
 [global.ranges.json](docs/examples/quick_start/global.ranges.json)
 
 [ranges.csharp.match.rules](docs/examples/quick_start/ranges.csharp.match.rules)
@@ -2057,7 +2075,304 @@ curl --location 'http://localhost/order/62' \
 
 
 ### Сохранение состояния
-Иногда в сложных сценариях требуется сохранение состояния между запросами
+Иногда в сложных сценариях требуется сохранение состояния между запросами.
+В этом случае используются методы класса `cache`.
+
+[cache.rules](docs/examples/quick_start/cache.rules)
+```
+###
+When sending an order, 
+we will save the response body in cache for 5 minutes, 
+using its ID in the caching key
+###
+-------------------- rule
+
+POST /order
+
+~ headers
+example: cache
+
+----- declare
+
+$$id = {{ seq }}
+
+$$order:json = 
+{
+    "id": {{ $$id }},
+    "status": "accepted",
+    "created_at": "{{ date }}"
+}
+
+----- response
+
+~ body
+{{ $$order }}
+
+----- action
+
+cache.set(
+    key: "cache_example_" + $$id, 
+    obj: $$order, 
+    time: "5 minute"
+)
+
+
+###
+if there is data in the cache, 
+then we send it in the body of the response, 
+changing the value of the 'status' field to 'paid'
+###
+-------------------- rule
+
+GET /order/{{:id cache.contains("cache_example_" + value) }}
+
+~ headers
+example: cache
+
+----- response
+
+~ body
+{{ 
+    cache.get("cache_example_" + req.path("id"))
+            .replace("$.status", "paid")
+}}
+
+###
+if a request to cancel an order is received, 
+we delete the data from the cache
+###
+-------------------- rule
+
+POST /order/cancel/{{:id cache.contains("cache_example_" + value) }}
+
+~ headers
+example: cache
+
+----- response
+
+~ code: 200
+
+----- action
+
+cache.remove("cache_example_" + req.path("id"))
+
+
+###
+if when requesting an order, 
+the data is not found in the cache, 
+then we issue an appropriate response
+###
+-------------------- rule
+
+GET /order/{{:id !cache.contains("cache_example_" + value) }}
+
+~ headers
+example: cache
+
+----- response
+
+~ code: 404
+
+~ body
+Order not found
+```
+Запрос
+```
+curl --location --request POST 'http://localhost/order' \
+--header 'example: cache'
+```
+Ответ
+```
+{
+  "id": 13,
+  "status": "accepted",
+  "created_at": "2024-01-03T13:56:50.9407108"
+}
+```
+Запрос
+```
+curl --location 'http://localhost/order/13' \
+--header 'example: cache'
+```
+Ответ
+```
+{
+  "id": 13,
+  "status": "paid",
+  "created_at": "2024-01-03T13:56:50.9407108"
+}
+```
+Запрос
+```
+curl --location --request POST 'http://localhost/order/cancel/13' \
+--header 'example: cache'
+```
+Ответ
+```
+200
+```
+Запрос
+```
+curl --location 'http://localhost/order/13' \
+--header 'example: cache'
+```
+Ответ
+```
+404
+
+Order not found
+```
+
+### Сохранение состояния. Хранение набора данных под одним ключом
+
+Для реализации более сложной логики при сохранении состояния можно использовать объект с несколькими полями. Рассмотрим пример с сохранением первого тела ответа и счетчиком попыток, который инкрементируется до определенного значения.
+
+[cache.medium.rules](docs/examples/quick_start/cache.medium.rules)
+```
+###
+on the first request, 
+we save the response body 
+and the attempt counter
+###
+-------------------- rule
+
+POST /order
+
+~ headers
+example: cache.medium
+
+----- declare
+
+$$id = {{ seq }}
+
+$$order:json = 
+{
+    "id": {{ $$id }},
+    "status": "accepted",
+    "created_at": "{{ date }}"
+}
+
+----- response
+
+~ body
+{{ $$order }}
+
+----- action
+
+dynamic state = new System.Dynamic.ExpandoObject();
+
+state.Order = $$order;
+state.Counter = 1;
+
+cache.set(
+    key: "cache_example_" + $$id, 
+    obj: state, 
+    time: "5 minute"
+)
+
+###
+if the attempt counter takes the value 1-3, 
+then in the 'status' field we set the value 'pending' 
+and increment the counter
+###
+-------------------- rule
+
+GET /order/{{:id 
+
+    string key = "cache_example_" + value;
+
+    if(!cache.contains(key))
+        return false;
+
+    var state = cache.get(key);
+    return state.Counter >= 1 && state.Counter <= 3;
+
+}}
+
+~ headers
+example: cache.medium
+
+----- response
+
+~ body
+{{ 
+    cache.get("cache_example_" + req.path("id"))
+            .Order
+            .replace("$.status", "pending")
+}}
+
+----- action
+
+var state = cache.get("cache_example_" + req.path("id"));
+state.Counter++;
+
+
+###
+if the attempt counter takes a value greater than 3, 
+then in the 'status' field we set the value 'paid' 
+and do not increment the counter 
+(this no longer makes sense)
+###
+-------------------- rule
+
+GET /order/{{:id 
+
+string key = "cache_example_" + value;
+
+if(!cache.contains(key))
+    return false;
+
+var state = cache.get(key);
+return state.Counter > 3;
+
+}}
+
+~ headers
+example: cache.medium
+
+----- response
+
+~ body
+{{ 
+    cache.get("cache_example_" + req.path("id"))
+            .Order
+            .replace("$.status", "paid")
+}}
+```
+Запрос
+```
+curl --location --request POST 'http://localhost/order' \
+--header 'example: cache.medium'
+```
+Ответ
+```
+{
+  "id": 15,
+  "status": "accepted",
+  "created_at": "2023-05-30T08:59:37.9894136"
+}
+```
+3 раза повторяем запрос
+```
+curl --location 'http://localhost/order/15' \
+--header 'example: cache.medium'
+```
+Ответ
+```
+{
+  "id": 15,
+  "status": "pending",
+  "created_at": "2023-12-22T21:24:52.0163788"
+}
+```
+при дальнейшем повторе запроса получаем ответ
+```
+{
+  "id": 15,
+  "status": "paid",
+  "created_at": "2023-05-30T08:59:37.9894136"
+}
+```
 
 ### Переопределение системных функций
 Системные функции могут быть переопределены пользовательскими.

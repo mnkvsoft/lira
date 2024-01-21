@@ -1,0 +1,7 @@
+-------------------- rule
+
+GET /fault
+
+----- response
+
+~ fault

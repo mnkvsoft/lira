@@ -608,6 +608,125 @@
 					"response": []
 				},
 				{
+					"name": "cache.set",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "cache",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cache.medium.set",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "cache.medium",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cache.remove",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "cache",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order/cancel/13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order",
+								"cancel",
+								"13"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cache.get",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "cache",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order/13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order",
+								"13"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cache.medium.get",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "cache.medium",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order/15",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order",
+								"15"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "ranges.easy.ok",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
@@ -624,6 +743,77 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"amount\": 201534.92\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ranges.csharp.match.ok",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "ranges.csharp.match",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"amount\": 20153492\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ranges.csharp.generation.ok",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "ranges.csharp.generation",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"amount\": 20153492\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -782,6 +972,38 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"amount\": 401386.54\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ranges.csharp.match.reject",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "ranges.csharp.match",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"amount\": 40138654\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -974,6 +1196,125 @@
 							"path": [
 								"payment",
 								"card"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "match_dynamic_csharp_full",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "match_dynamic_csharp_full",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payment/10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "repeat_block",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "repeat_block",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/orders/123",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"123"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "action",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "example",
+								"value": "action",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fault",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "fault",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/fault",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"fault"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "action",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "action",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order/62",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order",
+								"62"
 							]
 						}
 					},

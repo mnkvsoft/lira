@@ -1,4 +1,4 @@
-﻿namespace Lira.Domain.Configuration.Rules;
+namespace Lira.Domain.Configuration.Rules;
 
 class Constants
 {
@@ -33,7 +33,7 @@ class Constants
             public const string Code = "code";
             public const string Headers = "headers";
             public const string Body = "body";
-            public const string Abort = "abort";
+            public const string Abort = "fault";
             public const string Delay = Common.Delay;
         }
         

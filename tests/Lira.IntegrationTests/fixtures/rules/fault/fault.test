@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /abort
+GET /fault
 
 ----- expected
 
