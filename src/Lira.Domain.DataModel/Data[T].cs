@@ -20,7 +20,7 @@ public abstract class Data<T> : Data where T : notnull
     public override DataRange Get(DataName rangeName)
     {
         if (!_ranges.TryGetValue(rangeName, out var range))
-            throw new Exception($"For data '{_name}' not found range '{rangeName}'");
+            throw new Exception($"For interval '{_name}' not found range '{rangeName}'");
         return range;
     }
 

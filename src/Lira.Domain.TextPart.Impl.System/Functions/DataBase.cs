@@ -22,6 +22,9 @@ abstract class RangeBase : WithArgumentFunction<string>
 
         _name = new DataName(name);
         _rangeName = new DataName(nameRange);
+
+        // check that the range exists
+        _dataProvider.Get(_name).Get(_rangeName);
     }
 
     protected DataRange GetRange() => _dataProvider.Get(_name).Get(_rangeName);
