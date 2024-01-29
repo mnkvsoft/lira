@@ -1,7 +1,7 @@
 {
-  "name": "rules",
-  "displayName": "rules",
-  "description": "Rules syntax for SimpleMockServer",
+  "name": "lira",
+  "displayName": "LIRA",
+  "description": "Syntax for LIRA mock server",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.54.0"
