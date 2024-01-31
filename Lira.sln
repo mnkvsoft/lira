@@ -54,14 +54,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TextParts", "TextParts", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{21774504-6CD6-450E-AB05-ED537234E470}"
 	ProjectSection(SolutionItems) = preProject
-		docs\guide.md = docs\guide.md
-		readme.md = readme.md
-		docs\matching.md = docs\matching.md
-		docs\highlight_setup.md = docs\highlight_setup.md
-		docs\ranges.md = docs\ranges.md
-		docs\generating.md = docs\generating.md
-		docs\callback.md = docs\callback.md
 		docs\addition_info.md = docs\addition_info.md
+		docs\callback.md = docs\callback.md
+		docs\generating.md = docs\generating.md
+		docs\guide.md = docs\guide.md
+		docs\highlight_setup.md = docs\highlight_setup.md
+		docs\matching.md = docs\matching.md
+		docs\ranges.md = docs\ranges.md
+		readme.md = readme.md
 		docs\types.md = docs\types.md
 	EndProjectSection
 EndProject
@@ -73,9 +73,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lira.Domain.TextPart.Impl.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lira.Domain.TextPart.Impl.Custom", "src\Lira.Domain.TextPart.Impl.Custom\Lira.Domain.TextPart.Impl.Custom.csproj", "{3C26AB7B-B3A9-40BC-977C-194380ABC8A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lira.Domain.TextPart.Types", "src\Lira.Domain.TextPart.Types\Lira.Domain.TextPart.Types.csproj", "{0766174A-0D61-4F45-B33C-E01B89847E11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lira.Domain.TextPart.Types", "src\Lira.Domain.TextPart.Types\Lira.Domain.TextPart.Types.csproj", "{0766174A-0D61-4F45-B33C-E01B89847E11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lira.Domain.TextPart.Impl.System", "src\Lira.Domain.TextPart.Impl.System\Lira.Domain.TextPart.Impl.System.csproj", "{96F062B3-F9BC-4EB7-982E-79B8B76A5FC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lira.Domain.TextPart.Impl.System", "src\Lira.Domain.TextPart.Impl.System\Lira.Domain.TextPart.Impl.System.csproj", "{96F062B3-F9BC-4EB7-982E-79B8B76A5FC2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests_load", "tests_load", "{14AD4222-7576-41EC-8734-52014B8C03CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadApp", "tests_load\LoadApp\LoadApp.csproj", "{581C4BA1-A9AC-4BB5-95A5-0FAFD4AD9635}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -151,6 +155,10 @@ Global
 		{96F062B3-F9BC-4EB7-982E-79B8B76A5FC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96F062B3-F9BC-4EB7-982E-79B8B76A5FC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96F062B3-F9BC-4EB7-982E-79B8B76A5FC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{581C4BA1-A9AC-4BB5-95A5-0FAFD4AD9635}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{581C4BA1-A9AC-4BB5-95A5-0FAFD4AD9635}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{581C4BA1-A9AC-4BB5-95A5-0FAFD4AD9635}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{581C4BA1-A9AC-4BB5-95A5-0FAFD4AD9635}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -177,6 +185,7 @@ Global
 		{3C26AB7B-B3A9-40BC-977C-194380ABC8A2} = {801BCB31-DB66-4C7C-97A0-CB67BA63CD91}
 		{0766174A-0D61-4F45-B33C-E01B89847E11} = {72A44983-7297-4284-BD2C-24CC9D307612}
 		{96F062B3-F9BC-4EB7-982E-79B8B76A5FC2} = {801BCB31-DB66-4C7C-97A0-CB67BA63CD91}
+		{581C4BA1-A9AC-4BB5-95A5-0FAFD4AD9635} = {14AD4222-7576-41EC-8734-52014B8C03CE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5607801-446F-4C0E-B08E-5A39EE462311}

@@ -1,0 +1,11 @@
+-------------------- rule
+
+POST /match/sharp/functions/range/divide
+
+~ body
+{{ jpath: $.amount }} >> {{ range("amount/ok", value, divide: 100) }}
+
+----- response
+
+~ code
+200

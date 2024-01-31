@@ -1,4 +1,4 @@
-﻿using Lira.Domain.TextPart.Impl.CSharp;
+using Lira.Domain.TextPart.Impl.CSharp;
 
 namespace Lira.Domain.Configuration.Rules;
 
@@ -14,7 +14,10 @@ internal static class CreateFunctionResultExtensions
         var nl = Common.Constants.NewLine;
 
         throw new Exception(
-            $"Failed create function from '{invoke}'." + nl +
+            $"Failed create function from:"  + nl +
+            "========== begin ==========" + nl + nl +
+            invoke + nl + nl +
+            "=========== end ===========" + nl +
             "System function not found and attempt compile C# code failed: " + nl +
             failed.Exception);
     }

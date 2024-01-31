@@ -59,10 +59,16 @@
     <None Update="fixtures\rules\generating\csharp\functions\range.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\match\csharp\functions\range.rules">
+    <None Update="fixtures\rules\match\csharp\functions\range.multiply.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\match\csharp\functions\range.test">
+    <None Update="fixtures\rules\match\csharp\functions\range.multiply.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\csharp\functions\range.divide.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\csharp\functions\range.divide.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\range\types\hex\bytes_count\default.ranges.json">

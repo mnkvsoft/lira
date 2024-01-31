@@ -1,10 +1,10 @@
 -------------------- case
 
-POST /match/sharp/functions/range
+POST /match/sharp/functions/range/multiply
 
 ~ body
 {
-    "amount": 500
+    "amount": 0.05
 }
 
 ----- expected
