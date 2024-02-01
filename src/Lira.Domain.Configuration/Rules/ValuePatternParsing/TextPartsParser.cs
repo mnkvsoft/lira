@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Lira.Common.Exceptions;
 using Lira.Common.Extensions;
 using Lira.Domain.TextPart;
@@ -106,7 +106,7 @@ class TextPartsParser : ITextPartsParser
             new DeclaredPartsProvider(declaredItems),
             invoke);
 
-        return createFunctionResult.GetFunctionOrThrow(invoke);
+        return createFunctionResult.GetFunctionOrThrow(invoke, declaredItems);
     }
 
     private IObjectTextPart CreateStartFunction(string rawText, IReadonlyDeclaredItems declaredItems)
@@ -138,7 +138,7 @@ class TextPartsParser : ITextPartsParser
             new DeclaredPartsProvider(declaredItems), 
             rawText);
 
-        return createFunctionResult.GetFunctionOrThrow(rawText);
+        return createFunctionResult.GetFunctionOrThrow(rawText, declaredItems);
         
         bool ContainsOnlyVariable(string s)
         {

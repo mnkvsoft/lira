@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/declare/order
+
+----- expected
+
+~ code
+200
+
+~ body
+1234

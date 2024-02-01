@@ -1,4 +1,4 @@
-﻿using Lira.Common;
+using Lira.Common;
 using Lira.Common.PrettyParsers;
 using Lira.Domain.Actions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
@@ -64,7 +64,7 @@ class ActionsParser
         {
             var code = GetActionCode(section);
             var res = _functionFactoryCSharp.TryCreateAction(new DeclaredPartsProvider(parsingContext.DeclaredItems), code);
-            action = res.GetFunctionOrThrow(code);
+            action = res.GetFunctionOrThrow(code, parsingContext.DeclaredItems);
         }
 
         return action;

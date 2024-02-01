@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/declare/order
+
+----- response
+
+~ code
+200
+
+~ body
+{{ b.b }}
