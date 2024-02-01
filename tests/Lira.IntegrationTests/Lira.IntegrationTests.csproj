@@ -59,6 +59,12 @@
     <None Update="fixtures\rules\generating\csharp\functions\range.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\match\csharp\functions\range.lambda.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\csharp\functions\range.lambda.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="fixtures\rules\match\csharp\functions\range.multiply.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

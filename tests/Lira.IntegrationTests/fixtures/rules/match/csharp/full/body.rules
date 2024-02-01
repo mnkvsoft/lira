@@ -6,7 +6,7 @@ POST /match/sharp/full/body
 abc_{{
     if(!int.TryParse(value, out var intVal))
             return false;
-        1
+        
         var result = intVal % 2 == 0;
         return result;
 }}_de

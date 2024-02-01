@@ -1,0 +1,11 @@
+-------------------- rule
+
+POST /match/sharp/functions/range/lambda
+
+~ body
+{{ jpath: $.amount }} >> {{ range("amount/ok", value, x => x / 100) }}
+
+----- response
+
+~ code
+200

@@ -9,7 +9,7 @@ public class DynamicObjectBaseMatch : DynamicObjectBase
     // when matching data, you cannot change the data
     protected IReadonlyCache cache => _cache;
 
-    protected bool range(string rangeName, object value, double? multiply = null, double? divide = null)
+    protected bool range(string rangeName, object value, Func<double, double>? change = null, double? multiply = null, double? divide = null)
     {
         if (value == null)
             return false;
@@ -21,7 +21,11 @@ public class DynamicObjectBaseMatch : DynamicObjectBase
 
             if (decimal.TryParse(str, out decimal decValue))
             {
-                if (multiply != null)
+                if (change != null)
+                {
+                    return GetRange(rangeName).ValueIsBelong(change((double)decValue).ToString());
+                }
+                else if (multiply != null)
                 {
                     return GetRange(rangeName).ValueIsBelong((decValue * (decimal)multiply.Value).ToString());
                 }

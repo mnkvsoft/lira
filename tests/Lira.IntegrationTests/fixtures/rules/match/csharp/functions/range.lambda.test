@@ -1,0 +1,28 @@
+-------------------- case
+
+POST /match/sharp/functions/range/lambda
+
+~ body
+{
+    "amount": 500
+}
+
+----- expected
+
+~ code
+200
+
+
+-------------------- case
+
+POST /match/sharp/functions/range/lambda
+
+~ body
+{
+    "amount": 550
+}
+
+----- expected
+
+~ code
+200
