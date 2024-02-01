@@ -22,9 +22,17 @@ return range("amount/ok", amount);
 ~ body
 {{ jpath: $.amount }} >> {{ range("amount/ok", value, divide: 100) }}
 
+## short version for division 2
+~ body
+{{ jpath: $.amount }} >> {{ range("amount/ok", value, x => x / 100) }}
+
 ## short version for multiplication
 ~ body
 {{ jpath: $.amount }} >> {{ range("amount/ok", value, multiply: 100) }}
+
+## short version for multiplication 2
+~ body
+{{ jpath: $.amount }} >> {{ range("amount/ok", value, x => x * 100) }}
 
 ###
 
