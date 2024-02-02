@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/format
+GET /generating/transform/format
 
 ----- response
 

@@ -1277,12 +1277,12 @@ req.body.all()
 с помощью функции `format`, если возвращенный тип поддерживает форматирование
 
 #### Пример
-[format.rules](examples/generating/format.rules)
+[format.rules](examples/generating/transform/format.rules)
 
 ```
 -------------------- rule
 
-GET /generating/format
+GET /generating/transform/format
 
 ----- response
 
@@ -1299,7 +1299,7 @@ GET /generating/format
 
 Запрос
 ```
-curl --location 'http://localhost/generating/format'
+curl --location 'http://localhost/generating/transform/format'
 ```
 Ответ
 ```

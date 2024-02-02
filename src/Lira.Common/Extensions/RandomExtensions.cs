@@ -1,4 +1,4 @@
-﻿namespace Lira.Common;
+namespace Lira.Common;
 
 public static class RandomExtensions
 {

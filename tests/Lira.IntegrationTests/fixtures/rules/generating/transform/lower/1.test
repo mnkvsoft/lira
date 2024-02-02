@@ -1,0 +1,14 @@
+-------------------- case
+
+POST /generating/transform/lower
+
+~ body
+SOME TEXT
+
+----- expected
+
+~ code
+200
+
+~ body
+some text

@@ -1,0 +1,11 @@
+-------------------- rule
+
+POST /generating/transform/upper
+
+----- response
+
+~ code
+200
+
+~ body
+{{ req.body.all >> upper }}

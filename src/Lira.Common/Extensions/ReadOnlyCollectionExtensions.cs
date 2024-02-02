@@ -1,4 +1,4 @@
-﻿namespace Lira.Common.Extensions;
+namespace Lira.Common.Extensions;
 
 public static class ReadOnlyCollectionExtensions
 {
@@ -13,5 +13,10 @@ public static class ReadOnlyCollectionExtensions
         newCollection.AddRange(items);
         newCollection.AddRange(newItems);
         return newCollection;
+    }
+
+    public static T Random<T>(this IReadOnlyList<T> list)
+    {
+        return list[System.Random.Shared.Next(0, list.Count)];
     }
 }

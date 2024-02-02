@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
 
@@ -22,7 +22,7 @@ internal class Str : WithArgumentFunction<int>, IObjectTextPart
 
         for (int i = 0; i < length; i++)
         {
-            char randomChar = RandomSymbols[Random.Shared.Next(0, RandomSymbols.Length - 1)];
+            char randomChar = RandomSymbols[Random.Shared.Next(0, RandomSymbols.Length)];
             sb.Append(randomChar);
         }
 

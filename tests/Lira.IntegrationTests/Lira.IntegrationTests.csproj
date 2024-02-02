@@ -77,6 +77,18 @@
     <None Update="fixtures\rules\generating\declare\order\order.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\generating\transform\lower\1.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\transform\lower\1.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\transform\upper\1.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\transform\upper\1.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="fixtures\rules\match\csharp\functions\range.lambda.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -464,10 +476,10 @@
     <None Update="fixtures\rules\generating\variable\variables_with_comments.declare">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\format\lazy.rules">
+    <None Update="fixtures\rules\generating\transform\format\lazy.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\format\lazy.test">
+    <None Update="fixtures\rules\generating\transform\format\lazy.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\match\template\path.rules">

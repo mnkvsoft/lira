@@ -1,4 +1,4 @@
-﻿namespace Lira.Domain.TextPart.Impl.System.Functions.Transform.Format;
+namespace Lira.Domain.TextPart.Impl.System.Functions.Transform.Impl.Format;
 
 record FormatFunction(string Format) : ITransformFunction
 {

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Lira.Domain.TextPart.Impl.System.Functions.Transform.Format;
+namespace Lira.Domain.TextPart.Impl.System.Functions.Transform.Impl.Format;
 
 internal static class FormattableHelper
 {
@@ -21,7 +21,7 @@ internal static class FormattableHelper
             formattable = GetFormattable(valueStr);
         else
             throw new Exception($"Cannot format {value.GetType()} with value '{value}'");
-        
+
         return formattable;
     }
 
@@ -29,7 +29,7 @@ internal static class FormattableHelper
     {
         if (long.TryParse(value, CultureInfo.InvariantCulture, out var longValue))
             return longValue;
-        
+
         if (decimal.TryParse(value, CultureInfo.InvariantCulture, out var decimalValue))
             return decimalValue;
 
