@@ -59,6 +59,15 @@
     <None Update="fixtures\rules\generating\csharp\functions\range.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\generating\custom_set\color.set">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\custom_set\1.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\custom_set\1.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="fixtures\rules\generating\declare\order\a\b.declare">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/declare/custom_set
+
+----- response
+
+~ code
+200
+
+~ body
+{{ color }}

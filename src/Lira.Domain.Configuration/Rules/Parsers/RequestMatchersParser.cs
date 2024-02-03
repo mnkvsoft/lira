@@ -311,7 +311,7 @@ class RequestMatchersParser
             return function;
 
         var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), invoke);
-        return createFunctionResult.GetFunctionOrThrow(invoke, context.DeclaredItems);
+        return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 
     private class RequestMatchersBuilder

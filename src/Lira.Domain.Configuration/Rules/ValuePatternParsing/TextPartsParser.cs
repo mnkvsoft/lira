@@ -43,13 +43,13 @@ class TextPartsParser : ITextPartsParser
         var parts = new List<IObjectTextPart>();
         foreach (var patternPart in patternParts)
         {
-            parts.AddRange(await CreateValuePart(patternPart, parsingContext));
+            parts.AddRange(await CreateValuePart(patternPart, parsingContext.ToImpl()));
         }
 
         return new ObjectTextParts(parts);
     }
 
-    private async Task<IReadOnlyCollection<IObjectTextPart>> CreateValuePart(PatternPart patternPart, IParsingContext parsingContext)
+    private async Task<IReadOnlyCollection<IObjectTextPart>> CreateValuePart(PatternPart patternPart, ParsingContext parsingContext)
     {
         return patternPart switch
         {
@@ -59,11 +59,9 @@ class TextPartsParser : ITextPartsParser
         };
     }
     
-    private async Task<IReadOnlyCollection<IObjectTextPart>> GetDynamicParts(PatternPart.Dynamic dynamicPart, IParsingContext parsingContext)
+    private async Task<IReadOnlyCollection<IObjectTextPart>> GetDynamicParts(PatternPart.Dynamic dynamicPart, ParsingContext context)
     {
         string value = dynamicPart.Value;
-
-        var context = parsingContext.ToImpl();
 
         var (wasRead, parts) = await TryReadParts(context, value);
         if (wasRead)
@@ -85,32 +83,34 @@ class TextPartsParser : ITextPartsParser
         {
             var pipelineItemsRaw = value.Split(Consts.ControlChars.PipelineSplitter);
 
-            pipeline = new TransformPipeline(CreateStartFunction(pipelineItemsRaw[0].Trim(), context.DeclaredItems));
+            pipeline = new TransformPipeline(CreateStartFunction(pipelineItemsRaw[0].Trim(), context));
 
             for (int i = 1; i < pipelineItemsRaw.Length; i++)
             {
                 var invoke = pipelineItemsRaw[i].Trim();
-                pipeline.Add(CreateTransformFunction(invoke, context.DeclaredItems));
+                pipeline.Add(CreateTransformFunction(invoke, context));
             }    
         }
 
         return new[] { pipeline };
     }
 
-    private ITransformFunction CreateTransformFunction(string invoke, IReadonlyDeclaredItems declaredItems)
+    private ITransformFunction CreateTransformFunction(string invoke, ParsingContext context)
     {
         if (_functionFactorySystem.TryCreateTransformFunction(invoke, out var transformFunction))
             return transformFunction;
 
         var createFunctionResult = _functionFactoryCSharp.TryCreateTransformFunction(
-            new DeclaredPartsProvider(declaredItems),
+            new DeclaredPartsProvider(context.DeclaredItems),
             invoke);
 
-        return createFunctionResult.GetFunctionOrThrow(invoke, declaredItems);
+        return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 
-    private IObjectTextPart CreateStartFunction(string rawText, IReadonlyDeclaredItems declaredItems)
+    private IObjectTextPart CreateStartFunction(string rawText, ParsingContext context)
     {
+        var declaredItems = context.DeclaredItems;
+
         if (ContainsOnlyVariable(rawText))
         {
             var varName = rawText.TrimStart(Consts.ControlChars.VariablePrefix);
@@ -119,6 +119,7 @@ class TextPartsParser : ITextPartsParser
         }
         
         var declaredFunction = declaredItems.Functions.FirstOrDefault(x => x.Name == rawText.TrimStart(Consts.ControlChars.FunctionPrefix));
+        var customSetFunction = context.CustomSets.TryGetCustomSetFunction(rawText);
 
         if (_functionFactorySystem.TryCreateGeneratingFunction(rawText, out var function))
         {
@@ -127,18 +128,27 @@ class TextPartsParser : ITextPartsParser
                 _logger.LogInformation($"System function '{rawText}' was replaced by custom declared");
                 return declaredFunction;
             }
-            
+
+            if (customSetFunction != null)
+            {
+                _logger.LogInformation($"System function '{rawText}' was replaced by custom set");
+                return customSetFunction;
+            }
+
             return function;
         }
 
         if (declaredFunction != null)
             return declaredFunction;
 
+        if (customSetFunction != null)
+            return customSetFunction;
+
         var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
             new DeclaredPartsProvider(declaredItems), 
             rawText);
 
-        return createFunctionResult.GetFunctionOrThrow(rawText, declaredItems);
+        return createFunctionResult.GetFunctionOrThrow(rawText, context);
         
         bool ContainsOnlyVariable(string s)
         {

@@ -5,7 +5,7 @@ namespace Lira.Domain.Configuration.Rules;
 
 internal static class CreateFunctionResultExtensions
 {
-    public static T GetFunctionOrThrow<T>(this CreateFunctionResult<T> createFunctionResult, string invoke, IReadonlyDeclaredItems declaredItems)
+    public static T GetFunctionOrThrow<T>(this CreateFunctionResult<T> createFunctionResult, string invoke, ParsingContext context)
     {
         if (createFunctionResult is CreateFunctionResult<T>.Success success)
             return success.Function;
@@ -20,8 +20,9 @@ internal static class CreateFunctionResultExtensions
             invoke + nl + nl +
             "=========== end ===========" + nl +
             "System function, declared function or variable not found." + nl +
-            $"Declared functions: {string.Join(", ", declaredItems.Functions.Select(x => Consts.ControlChars.FunctionPrefix + x.Name))}" + nl +
-            $"Declared variables: {string.Join(", ", declaredItems.Variables.Select(x => Consts.ControlChars.VariablePrefix + x.Name))}" + nl +
+            $"Declared functions: {string.Join(", ", context.DeclaredItems.Functions.Select(x => Consts.ControlChars.FunctionPrefix + x.Name))}" + nl +
+            $"Declared variables: {string.Join(", ", context.DeclaredItems.Variables.Select(x => Consts.ControlChars.VariablePrefix + x.Name))}" + nl +
+            $"Custom sets: {string.Join(", ", context.CustomSets.GetRegisteredNames())}" + nl +
             "Attempt compile C# code failed: " + nl +
             failed.Exception);
     }

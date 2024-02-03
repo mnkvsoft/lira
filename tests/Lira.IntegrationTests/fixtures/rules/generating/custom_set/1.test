@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/declare/custom_set
+
+----- expected
+
+~ code
+200
+
+~ body
+red

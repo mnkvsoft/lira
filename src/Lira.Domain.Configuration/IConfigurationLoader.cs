@@ -76,10 +76,12 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IConfigurationLoader
             _rangesProvider.Ranges = ranges;
 
             var templates = await TemplatesLoader.Load(path);
+            var customSets = await CustomSetsLoader.Load(path);
 
             var context = new ParsingContext(
                 new DeclaredItems(),
                 templates,
+                customSets,
                 RootPath: path,
                 CurrentPath: path);
 

@@ -64,7 +64,7 @@ class ActionsParser
         {
             var code = GetActionCode(section);
             var res = _functionFactoryCSharp.TryCreateAction(new DeclaredPartsProvider(parsingContext.DeclaredItems), code);
-            action = res.GetFunctionOrThrow(code, parsingContext.DeclaredItems);
+            action = res.GetFunctionOrThrow(code, parsingContext);
         }
 
         return action;
