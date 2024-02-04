@@ -1,11 +1,8 @@
 -------------------- rule
 
-GET /generating/custom_set
+GET /match/custom_set/{{ phone.vip }}
 
 ----- response
 
 ~ code
 200
-
-~ body
-{{ color }}

@@ -1,11 +1,8 @@
 -------------------- case
 
-GET /generating/custom_set
+GET /match/custom_set/7775555555
 
 ----- expected
 
 ~ code
 200
-
-~ body
-red

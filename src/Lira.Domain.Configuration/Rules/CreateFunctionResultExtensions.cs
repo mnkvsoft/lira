@@ -15,7 +15,7 @@ internal static class CreateFunctionResultExtensions
         var nl = Common.Constants.NewLine;
 
         throw new Exception(
-            $"Failed dynamic block from:"  + nl +
+            $"Failed create dynamic block from:"  + nl +
             "========== begin ==========" + nl + nl +
             invoke + nl + nl +
             "=========== end ===========" + nl +

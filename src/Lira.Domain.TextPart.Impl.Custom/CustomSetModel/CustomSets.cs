@@ -1,4 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using Lira.Common.Extensions;
+using Lira.Domain.Matching.Request;
 
 namespace Lira.Domain.TextPart.Impl.Custom.CustomSetModel;
 public class CustomSets
@@ -18,25 +20,35 @@ public class CustomSets
         return _map.Keys;
     }
 
-    public IObjectTextPart? TryGetCustomSetFunction(string name)
+    public bool TryGetCustomSetFunction(string name, [MaybeNullWhen(false)] out CustomSetFunction function)
     {
-        if(_map.TryGetValue(name, out var function))
-            return function;
-        return null;
+        return _map.TryGetValue(name, out function);
+    }
+}
+
+public class CustomSetFunction : IObjectTextPart, IMatchFunction
+{
+    private readonly IReadOnlyList<string> _list;
+    private readonly HashSet<string> _hashSet;
+
+    public CustomSetFunction(IReadOnlyList<string> list)
+    {
+        _list = list;
+        _hashSet = new HashSet<string>(list);
     }
 
-    class CustomSetFunction : IObjectTextPart
+    public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
+
+    public dynamic Get(RequestData request)
     {
-        private readonly IReadOnlyList<string> _list;
+        return _list.Random();
+    }
 
-        public CustomSetFunction(IReadOnlyList<string> list)
-        {
-            _list = list;
-        }
+    public bool IsMatch(string? value)
+    {
+        if (value == null)
+            return false;
 
-        public dynamic Get(RequestData request)
-        {
-            return _list.Random();
-        }
+        return _hashSet.Contains(value);
     }
 }

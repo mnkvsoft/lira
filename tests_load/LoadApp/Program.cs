@@ -1,6 +1,3 @@
-using System;
-using System.Net;
-using System.Threading.Tasks;
 using NBomber.CSharp;
 
 namespace MyLoadTest

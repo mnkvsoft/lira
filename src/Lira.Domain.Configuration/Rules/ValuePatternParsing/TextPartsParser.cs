@@ -4,6 +4,7 @@ using Lira.Common.Extensions;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.Custom;
+using Lira.Domain.TextPart.Impl.Custom.CustomSetModel;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 using Lira.Domain.TextPart.Impl.System;
 using Microsoft.Extensions.Logging;
@@ -119,7 +120,7 @@ class TextPartsParser : ITextPartsParser
         }
         
         var declaredFunction = declaredItems.Functions.FirstOrDefault(x => x.Name == rawText.TrimStart(Consts.ControlChars.FunctionPrefix));
-        var customSetFunction = context.CustomSets.TryGetCustomSetFunction(rawText);
+        context.CustomSets.TryGetCustomSetFunction(rawText, out var customSetFunction);
 
         if (_functionFactorySystem.TryCreateGeneratingFunction(rawText, out var function))
         {
