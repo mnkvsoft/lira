@@ -1,0 +1,14 @@
+-------------------- rule
+
+GET /product/{{ car }}
+
+~ headers
+example: set.match
+
+----- response
+
+~ body
+{
+    "release_date": "{{ date }}"
+    "engine_capacity": {{ float: [0.5 - 10] }}
+}

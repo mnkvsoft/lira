@@ -1437,8 +1437,94 @@ curl --location 'http://localhost/order' \
 ```
 
 
+### Пользовательские справочники
+Системные функции не могут удовлетворить все возможные потребности для геренации случайных данных.
 
+Для можно использовать пользовательские справочники.
 
+Для его определения нужно добавить в рабочий каталог сервера текстовый файл с 
+расширением `.set`, имя файла без расширения `.set` является именем справочника.
+
+Каждая строка является значением справочника.
+
+#### Генерация данных
+[name.first.set](docs/examples/quick_start/name.first.set)
+```
+Nikolay
+John
+Leon
+```
+[name.last.set](docs/examples/quick_start/name.last.set)
+```
+Ivanov
+Müller
+Fischer
+Jones
+```
+[set.generation.rules](docs/examples/quick_start/set.generation.rules)
+```
+-------------------- rule
+
+GET /person
+
+~ headers
+example: set.generation
+
+----- response
+
+~ body
+{
+    "name": "{{ name.first }} {{ name.last }}"
+}
+```
+Запрос
+```
+curl --location 'http://localhost/person' \
+--header 'example: set.generation'
+```
+Ответ
+```
+{
+    "name": "John Fischer"
+}
+```
+#### Сопоставление
+[car.set](docs/examples/quick_start/car.set)
+```
+ACURA
+ALFA ROMEO
+ASTON MARTIN
+...
+```
+[set.match.rules](docs/examples/quick_start/set.match.rules)
+```
+-------------------- rule
+
+GET /product/{{ car }}
+
+~ headers
+example: set.match
+
+----- response
+
+~ body
+{
+    "release_date": "{{ date }}"
+    "engine_capacity": {{ float: [0.5 - 10] }}
+}
+```
+Запрос
+```
+curl --location 'http://localhost/product/BUGATTI' \
+--header 'example: set.match'
+```
+Ответ
+```
+{
+    "release_date": "2023-08-27T13:53:01.8264609"
+    "engine_capacity": 3.72
+}
+```
 
 
 ### Повторение блоков
@@ -2437,6 +2523,78 @@ curl --location 'http://localhost/order' \
 }
 ```
 
+### Преобразование данных
+После генерации значения его пожно преобразовать либо с помощью встроенных функций, 
+либо с помощью кода на языке C#
+
+#### Использование строенных функций
+[transform.rules](docs/examples/quick_start/transform.rules)
+```
+-------------------- rule
+
+GET /order
+
+~ headers
+example: transform
+
+----- response
+
+~ body
+{
+    "id": {{ int }},
+    "transaction_id": "{{ guid >> upper }}",
+    "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
+    "customer": "{{ name >> lower  }}"
+}
+```
+Запрос
+```
+curl --location 'http://localhost/order' \
+--header 'example: transform'
+```
+Ответ
+```
+{
+    "id": 1418089089,
+    "transaction_id": "66CCDC28-96B5-4C79-8996-F6E89839388C",
+    "created_at": "2023-08-21 21:03:47",
+    "customer": "hermione longbottom"
+}
+```
+#### Использование фзыка C#
+[transform.csharp.rules](docs/examples/quick_start/transform.csharp.rules)
+```
+-------------------- rule
+
+GET /order
+
+~ headers
+example: transform.csharp
+
+----- response
+
+~ body
+{
+    "id": {{ int >> value * 2 }},
+    "transaction_id": "{{ guid >> value.ToString("N") }}",
+    "created_at": "{{ date >> value.ToString("yyyy-MM-dd HH:mm:ss") }}",
+    "customer": "{{ name >> value.ToLower()  }}"
+}
+```
+Запрос
+```
+curl --location 'http://localhost/order' \
+--header 'example: transform.csharp'
+```
+Ответ
+```
+{
+    "id": 2356628928,
+    "transaction_id": "675ec284a541404e9a5e4e8ee2fcc04e",
+    "created_at": "2023-09-15 14:39:14",
+    "customer": "ron hagrid"
+}
+```
 
 ### Форматирование различных типов данных
 Форматирование разных типов данных основано на общем механизме форматирования

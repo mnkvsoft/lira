@@ -1,0 +1,13 @@
+-------------------- rule
+
+GET /person
+
+~ headers
+example: set.generation
+
+----- response
+
+~ body
+{
+    "name": "{{ name.first }} {{ name.last }}"
+}

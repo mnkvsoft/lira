@@ -1,0 +1,16 @@
+-------------------- rule
+
+GET /order
+
+~ headers
+example: transform.csharp
+
+----- response
+
+~ body
+{
+    "id": {{ int >> value * 2 }},
+    "transaction_id": "{{ guid >> value.ToString("N") }}",
+    "created_at": "{{ date >> value.ToString("yyyy-MM-dd HH:mm:ss") }}",
+    "customer": "{{ name >> value.ToLower()  }}"
+}

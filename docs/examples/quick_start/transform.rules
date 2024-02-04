@@ -1,0 +1,16 @@
+-------------------- rule
+
+GET /order
+
+~ headers
+example: transform
+
+----- response
+
+~ body
+{
+    "id": {{ int }},
+    "transaction_id": "{{ guid >> upper }}",
+    "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
+    "customer": "{{ name >> lower  }}"
+}
