@@ -125,6 +125,12 @@
     <None Update="fixtures\rules\match\custom_set\phone.vip.set">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\match\priority\static_range_static_vs_code.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\priority\static_range_static_vs_code.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="fixtures\rules\range\types\hex\bytes_count\default.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -11,7 +11,11 @@ static class WeightValue
         public const int Any = 3;
         public const int TypeRestriction = 4;
         public const int RangeRestriction = 5;
-        public const int CustomRestriction = 6;
+
+        // must be more than StaticPart(1) + RangeRestriction(5) + StaticPart(1)
+        // 1{{ range: some }}2 (7)
+        // {{ some custom c# code or regex }} (8)
+        public const int CustomRestriction = 8;
     }
 }
 

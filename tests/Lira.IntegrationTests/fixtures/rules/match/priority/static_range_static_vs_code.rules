@@ -1,0 +1,18 @@
+-------------------- rule
+
+GET /match/priority/static_range_static_vs_code/1{{ range: amount/ok }}3
+
+----- response
+
+~ body
+with range
+
+-------------------- rule
+
+## code block has higher priority
+GET /match/priority/static_range_static_vs_code/{{ return true; }}
+
+----- response
+
+~ body
+code block

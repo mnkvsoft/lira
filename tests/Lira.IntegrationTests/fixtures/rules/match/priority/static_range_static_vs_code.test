@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /match/priority/static_range_static_vs_code/123
+
+----- expected
+
+~ code
+200
+
+~ body
+code block
