@@ -1,13 +1,7 @@
-- int data default random?
-- int, hex, float, data default capacity?
-- usage templates and read.file in dynamic blocks
-- implement store data between requests
 - verify request
-- abort request
 - describe file section format
 - RequestStatisticStorage ttl to config
 - rules inheritance
 - repeat function
 - cache response
-- add interval to Date function 
-- add interval to Float function
+- id for matching value

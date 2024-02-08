@@ -109,17 +109,93 @@
 					"response": []
 				},
 				{
-					"name": "format",
+					"name": "transform",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "example",
+								"value": "transform",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "{{base_url}}/format",
+							"raw": "{{base_url}}/order",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"format"
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "set.generation",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "set.generation",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/person",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"person"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "transform.csharp",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "transform.csharp",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "set.match",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "set.match",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/product/BUGATTI",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"product",
+								"BUGATTI"
 							]
 						}
 					},
