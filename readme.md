@@ -31,7 +31,7 @@
 
 - возможность добавления пользовательских справочников для геренерации и сопоставления данных
 
-
+- возможность получения значений динамически сопоставленных данных
 
 
 
@@ -516,6 +516,40 @@ Request-Id: 987
 
 [Функции генерации](docs/generation_functions.md)
 
+
+### Извлечение динамически сопоставленных данных
+
+[extract.value.system.rules](docs/examples/quick_start/extract.value.system.rules)
+
+```
+-------------------- rule
+
+GET /balance/7{{:phone int }}
+
+~ headers
+example: extract.value.system
+
+----- response
+
+~ body
+{
+    "phone": {{ value: phone }},
+    "balance": {{ float }}
+}
+```
+Запрос
+```
+curl --location 'http://localhost/balance/79161112233' \
+--header 'example: extract.value.system'
+```
+
+Ответ
+```
+{
+    "phone": 9161112233,
+    "balance": 287.49
+}
+```
 
 
 ### Использование переменных
@@ -1795,7 +1829,42 @@ curl --location 'http://localhost/payment/card' \
 }
 ```
 
+#### Извлечение динамически сопоставленных данных в блоках на C#
 
+[extract.value.charp.rules](docs/examples/quick_start/extract.value.charp.rules)
+
+```
+-------------------- rule
+
+GET /balance/7{{:phone int }}
+
+~ headers
+example: extract.value.charp
+
+----- response
+
+~ body
+{
+    "phone": {{ 
+        var phone = value("phone");
+        return phone;
+    }}
+    "balance": {{ float }}
+}
+```
+Запрос
+```
+curl --location 'http://localhost/balance/79161112233' \
+--header 'example: extract.value.csharp'
+```
+
+Ответ
+```
+{
+    "phone": 9161112233,
+    "balance": 3049.48
+}
+```
 
 #### Определение классов
 Для совместного использования логики используются файлы `*.cs` с определенными 

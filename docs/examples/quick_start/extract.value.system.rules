@@ -1,0 +1,14 @@
+-------------------- rule
+
+GET /balance/7{{:phone int }}
+
+~ headers
+example: extract.value.system
+
+----- response
+
+~ body
+{
+    "phone": {{ value: phone }},
+    "balance": {{ float }}
+}

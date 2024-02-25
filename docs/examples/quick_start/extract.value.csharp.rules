@@ -1,0 +1,17 @@
+-------------------- rule
+
+GET /balance/7{{:phone int }}
+
+~ headers
+example: extract.value.csharp
+
+----- response
+
+~ body
+{
+    "phone": {{ 
+        var phone = value("phone");
+        return phone;
+    }},
+    "balance": {{ float }}
+}

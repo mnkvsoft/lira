@@ -92,6 +92,54 @@
 					"response": []
 				},
 				{
+					"name": "extract.value.system",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "extract.value.system",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/balance/79161112233",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"balance",
+								"79161112233"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "extract.value.csharp",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "example",
+								"value": "extract.value.csharp",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/balance/79161112233",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"balance",
+								"79161112233"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "format.gettype",
 					"request": {
 						"method": "GET",
