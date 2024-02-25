@@ -1,6 +1,6 @@
 -------------------- rule
 
-POST /payment/{{:tool any }}?fast={{ any }}
+POST /payment/{{ any }}?fast={{ any }}
 
 ~ headers
 Id: {{ any }}
@@ -18,7 +18,7 @@ Request-Id: {{ req.header: Id}}
 
 ~ body
 {
-    "tool": "{{ req.path: tool }}",
+    "tool": "{{ req.path: 1 }}",
     "is_fast": "{{ req.query: fast }}",
     "account": "{{ req.body.jpath: $.account }}"
 }

@@ -42,7 +42,7 @@ example: action
 ----- declare
 
 ## write json body from file
-$body:json = {{ File.ReadAllText($"/tmp/{req.path("id")}.dat") }}
+$body:json = {{ File.ReadAllText($"/tmp/{value("id")}.dat") }}
 
 ----- response
 

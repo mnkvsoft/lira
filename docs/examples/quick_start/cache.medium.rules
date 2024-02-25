@@ -65,14 +65,14 @@ example: cache.medium
 
 ~ body
 {{ 
-    cache.get("cache_example_" + req.path("id"))
+    cache.get("cache_example_" + value("id"))
             .Order
             .replace("$.status", "pending")
 }}
 
 ----- action
 
-var state = cache.get("cache_example_" + req.path("id"));
+var state = cache.get("cache_example_" + value("id"));
 state.Counter++;
 
 
@@ -103,7 +103,7 @@ example: cache.medium
 
 ~ body
 {{ 
-    cache.get("cache_example_" + req.path("id"))
+    cache.get("cache_example_" + value("id"))
             .Order
             .replace("$.status", "paid")
 }}

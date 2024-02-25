@@ -8,4 +8,4 @@ GET /hello/{{:person any }}
 200
 
 ~ body
-hello {{ req.path: person }}!
+hello {{ value: person }}!

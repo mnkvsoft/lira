@@ -81,7 +81,7 @@ GET /hello/{{:person  any  }}
 200
 
 ~ body
-hello {{ req.path: person }}!
+hello {{ value: person }}!
 ```
 
 Тестируем первое правило в браузере, выполнив запрос к ресурсу 
@@ -466,7 +466,7 @@ Request-Time: 12:07:16
 ```
 -------------------- rule
 
-POST /payment/{{:tool  any  }}?fast={{ any }}
+POST /payment/{{ any }}?fast={{ any }}
 
 ~ headers
 Id: {{ any }}
@@ -484,7 +484,7 @@ Request-Id: {{ req.header: Id}}
 
 ~ body
 {
-    "tool": "{{ req.path: tool }}",
+    "tool": "{{ req.path: 1 }}",
     "is_fast": "{{ req.query: fast }}",
     "account": "{{ req.body.jpath: $.account }}"
 }
@@ -2142,7 +2142,7 @@ example: action
 ----- declare
 
 ## write json body from file
-$body:json = {{ File.ReadAllText($"/tmp/{req.path("id")}.dat") }}
+$body:json = {{ File.ReadAllText($"/tmp/{value("id")}.dat") }}
 
 ----- response
 
@@ -2241,7 +2241,7 @@ example: cache
 
 ~ body
 {{ 
-    cache.get("cache_example_" + req.path("id"))
+    cache.get("cache_example_" + value("id"))
             .replace("$.status", "paid")
 }}
 
@@ -2262,7 +2262,7 @@ example: cache
 
 ----- action
 
-cache.remove("cache_example_" + req.path("id"))
+cache.remove("cache_example_" + value("id"))
 
 
 ###
@@ -2404,14 +2404,14 @@ example: cache.medium
 
 ~ body
 {{ 
-    cache.get("cache_example_" + req.path("id"))
+    cache.get("cache_example_" + value("id"))
             .Order
             .replace("$.status", "pending")
 }}
 
 ----- action
 
-var state = cache.get("cache_example_" + req.path("id"));
+var state = cache.get("cache_example_" + value("id"));
 state.Counter++;
 
 
@@ -2442,7 +2442,7 @@ example: cache.medium
 
 ~ body
 {{ 
-    cache.get("cache_example_" + req.path("id"))
+    cache.get("cache_example_" + value("id"))
             .Order
             .replace("$.status", "paid")
 }}
