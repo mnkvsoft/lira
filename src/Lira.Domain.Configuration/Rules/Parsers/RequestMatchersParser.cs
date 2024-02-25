@@ -20,13 +20,12 @@ class RequestMatchersParser
         _functionFactoryCSharp = functionFactoryCSharp;
     }
 
-    public (RequestMatcherSet Set, IReadOnlyCollection<PathNameMap> PathNameMaps) Parse(FileSection ruleSection, ParsingContext context)
+    public RequestMatcherSet Parse(FileSection ruleSection, ParsingContext context)
     {
         var builder = new RequestMatchersBuilder();
 
-        var (matchers, pathMaps) = GetMethodAndPathMatchersFromShortEntry(ruleSection, context);
+        var matchers = GetMethodAndPathMatchersFromShortEntry(ruleSection, context);
         builder.AddRange(matchers);
-        IReadOnlyCollection<PathNameMap> pathNameMaps = pathMaps;
 
         ruleSection.AssertContainsOnlyKnownBlocks(BlockNameHelper.GetBlockNames<Constants.BlockName.Rule>());
 
@@ -35,12 +34,7 @@ class RequestMatchersParser
             if (block.Name == Constants.BlockName.Rule.Path)
             {
                 var path = block.GetSingleLine();
-                var (requestMatcher, nameMaps) = CreatePathRequestMatcher(PatternParser.Parse(path), context);
-
-                if (pathNameMaps.Count != 0 && nameMaps.Count != 0)
-                    throw new Exception("Path segment with name map already exist");
-
-                pathNameMaps = nameMaps;
+                var requestMatcher = CreatePathRequestMatcher(PatternParser.Parse(path), context);
 
                 builder.Add(requestMatcher);
                 continue;
@@ -54,33 +48,17 @@ class RequestMatchersParser
             builder.GetOrNull<PathRequestMatcher>(),
             builder.GetOrNull<QueryStringRequestMatcher>(),
             builder.GetOrNull<HeadersRequestMatcher>(),
-            builder.GetOrNull<BodyRequestMatcher>()), 
-            pathNameMaps);
+            builder.GetOrNull<BodyRequestMatcher>()));
     }
 
-    // (PatternParts Method, PatternParts Path, PatternParts? Query) GetMethodAndPathAndQuery(IReadOnlyCollection<string> lines)
-    // {
-    //     if (lines.Count == 0)
-    //         throw new Exception("Lines is empty");
-    //
-    //     var allPatterns = PatternParser.Parse(lines);
-    //     
-    //     var (method, startPath) = allPatterns.SplitToTwoPartsRequired(' ');
-    //     
-    //     var (path, query) = startPath.SplitToTwoParts('?');
-    //
-    //     return (method, path, query);
-    // }
-
-    private (IReadOnlyCollection<IRequestMatcher> Matchers, IReadOnlyCollection<PathNameMap> PathNameMaps)
-        GetMethodAndPathMatchersFromShortEntry(
+    private IReadOnlyCollection<IRequestMatcher> GetMethodAndPathMatchersFromShortEntry(
             FileSection ruleSection,
             ParsingContext context)
     {
         var lines = ruleSection.LinesWithoutBlock;
 
         if (lines.Count == 0)
-            return (Array.Empty<IRequestMatcher>(), Array.Empty<PathNameMap>());
+            return Array.Empty<IRequestMatcher>();
 
         var result = new List<IRequestMatcher>();
 
@@ -92,13 +70,13 @@ class RequestMatchersParser
 
         result.Add(CreateMethodRequestMather(method.SingleStaticValueToString()));
 
-        var (pathMatcher, pathNameMaps) = CreatePathRequestMatcher(path, context);
+        var pathMatcher = CreatePathRequestMatcher(path, context);
         result.Add(pathMatcher);
 
         if (query != null)
             result.Add(CreateQueryStringMatcher(query, context));
 
-        return (result, pathNameMaps);
+        return result;
     }
 
     private IRequestMatcher CreateRequestMatcher(FileBlock block, ParsingContext context)
@@ -126,8 +104,7 @@ class RequestMatchersParser
         return new MethodRequestMatcher(method.ToHttpMethod());
     }
 
-    private (PathRequestMatcher Matcher, IReadOnlyCollection<PathNameMap> PathNameMaps) CreatePathRequestMatcher(PatternParts pathParts,
-        ParsingContext context)
+    private PathRequestMatcher CreatePathRequestMatcher(PatternParts pathParts, ParsingContext context)
     {
         if (pathParts.Count == 0)
             throw new Exception("An error occurred while creating PathRequestMatcher. Path is empty");
@@ -139,37 +116,12 @@ class RequestMatchersParser
 
         var patterns = new List<TextPatternPart>(segments.Count);
 
-        var maps = new List<PathNameMap>();
         for (var i = 0; i < segments.Count; i++)
         {
-            var segment = segments[i];
-            string? segmentName = null;
-
-            if (segment.ContainsDynamic())
-            {
-                var dynamic = segment.GetSingleDynamic();
-
-                string invoke;
-                string value = dynamic.Value;
-                if (value.StartsWith(":"))
-                {
-                    (segmentName, invoke) = value.TrimStart(":").TrimStart().SplitToTwoPartsRequired(" ").Trim();
-                }
-                else
-                {
-                    invoke = value;
-                }
-                
-                segment = segment.Replace(dynamic, new PatternPart.Dynamic(invoke));
-            }
-            
-            patterns.Add(CreateValuePattern(segment, context));
-
-            if (!string.IsNullOrWhiteSpace(segmentName))
-                maps.Add(new PathNameMap(Index: i, segmentName));
+            patterns.Add(CreateValuePattern(segments[i], context));
         }
 
-        return (new PathRequestMatcher(patterns), maps);
+        return new PathRequestMatcher(patterns);
     }
 
     private QueryStringRequestMatcher CreateQueryStringMatcher(PatternParts queryParts, ParsingContext context)
@@ -254,9 +206,12 @@ class RequestMatchersParser
         {
             if (parts[0] is PatternPart.Static stat)
                 return new TextPatternPart.Static(stat.Value);
-            
+
             if (parts[0] is PatternPart.Dynamic dyn)
-                return new TextPatternPart.Dynamic(Start: null, End: null, CreateMatchFunction(dyn.Value, context));
+            {
+                var (id, invoke) = GetIdAndRawInvoke(dyn.Value);
+                return new TextPatternPart.Dynamic(Start: null, End: null, CreateMatchFunction(invoke, context), id);
+            }
         }
 
         if (parts.Count == 2)
@@ -269,14 +224,17 @@ class RequestMatchersParser
 
             if (parts[0] is PatternPart.Static @static)
             {
+                PatternPart.Dynamic dyn = ((PatternPart.Dynamic)parts[1]);
+                var (id, invoke) = GetIdAndRawInvoke(dyn.Value);
                 return new TextPatternPart.Dynamic(Start: @static.Value, End: null,
-                    CreateMatchFunction(((PatternPart.Dynamic)parts[1]).Value, context));
+                    CreateMatchFunction(invoke, context), id);
             }
 
             if (parts[0] is PatternPart.Static dynamic)
             {
+                var (id, invoke) = GetIdAndRawInvoke(dynamic.Value);
                 return new TextPatternPart.Dynamic(Start: null, End: ((PatternPart.Static)parts[1]).Value,
-                    CreateMatchFunction(dynamic.Value, context));
+                    CreateMatchFunction(invoke, context), id);
             }
         }
 
@@ -291,7 +249,8 @@ class RequestMatchersParser
             if (parts[2] is not PatternPart.Static end)
                 throw new Exception($"Third part must be static. Current value: {parts}");
 
-            return new TextPatternPart.Dynamic(start.Value, end.Value, CreateMatchFunction(@dynamic.Value, context));
+            var (id, invoke) = GetIdAndRawInvoke(@dynamic.Value);
+            return new TextPatternPart.Dynamic(start.Value, end.Value, CreateMatchFunction(invoke, context), id);
         }
 
         throw new Exception($"'{parts}' contains more than 3 block static or dynamic");
@@ -315,6 +274,17 @@ class RequestMatchersParser
 
         var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), invoke);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
+    }
+
+    private static (string? id, string invoke) GetIdAndRawInvoke(string value)
+    {
+        if (value.StartsWith(":"))
+        {
+            var (id, invoke) = value.TrimStart(":").TrimStart().SplitToTwoPartsRequired(" ").Trim();
+            return (id, invoke);
+        }
+
+        return (null, value);
     }
 
     private class RequestMatchersBuilder

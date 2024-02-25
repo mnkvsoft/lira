@@ -65,89 +65,84 @@ class RoutingMiddleware : IMiddleware
         var request = new RequestData(req.Method, req.Path, req.QueryString, req.Headers, req.Query, req.Body);
 
         Stopwatch sw = Stopwatch.StartNew();
-        var matchesRules = await GetMatchedRules(request);
+        var executors = await GetRuleExecutors(request);
         var searchMs = sw.GetElapsedDoubleMilliseconds();
         sw.Restart();
-        
-        if (matchesRules.Count == 1)
-        {
-            var rule = matchesRules.First();
-            request.PathNameMaps = rule.PathNameMaps;
-            await rule.Execute(new HttpContextData(request, context.Response));
 
-            if(_isLoggingEnabled)
-                _logger.LogInformation($"Was usage rule (times. search: {searchMs} ms, exe: {sw.GetElapsedDoubleMilliseconds()} ms. protocol: {context.Request.Protocol}): " + rule.Name);
+        if (executors.Count == 1)
+        {
+            var executor = executors.First();
+
+            try
+            {
+                await executor.Execute(context.Response);
+            }
+            catch (Exception exc)
+            {
+                throw new Exception("An unexpected exception occurred while rule processing. Rule name: " + executor.Rule.Name, exc);
+            }
+
+            if (_isLoggingEnabled)
+                _logger.LogInformation($"Was usage rule (times. search: {searchMs} ms, exe: {sw.GetElapsedDoubleMilliseconds()} ms. protocol: {context.Request.Protocol}): " + executor.Rule.Name);
             return;
         }
 
-        if (matchesRules.Count == 0)
+        if (executors.Count == 0)
         {
             context.Response.StatusCode = 404;
             await context.Response.WriteAsync("Rule not found");
             return;
         }
 
-        if (matchesRules.Count > 1)
+        if (executors.Count > 1)
         {
             context.Response.StatusCode = 404;
-            await context.Response.WriteAsync(GetErrorMessageForManyRules(matchesRules));
+            await context.Response.WriteAsync(GetErrorMessageForManyRules(executors.Select(x => x.Rule)));
             return;
         }
 
         throw new Exception("Unknown case");
     }
 
-    private async Task<IReadOnlyCollection<Rule>> GetMatchedRules(RequestData request)
+    private async Task<IReadOnlyCollection<IRuleExecutor>> GetRuleExecutors(RequestData request)
     {
         var allRules = await _rulesProvider.GetRules();
 
         var requestId = Guid.NewGuid();
 
-        if (!_allowMultipleRules)
-        {
-            var result = new List<Rule>();
-
-            foreach (var rule in allRules)
-            {
-                var matchResult = await rule.IsMatch(request, requestId);
-
-                if (matchResult is RuleMatchResult.Matched)
-                    result.Add(rule);
-            }
-
-            return result;
-        }
-
-        var matchedRules = new List<(Rule Rule, IRuleMatchWeight Weight)>();
+        var executors = new List<IRuleExecutor>();
 
         foreach (var rule in allRules)
         {
-            RuleMatchResult matchResult;
+            IRuleExecutor? executor;
             try
             {
-                matchResult = await rule.IsMatch(request, requestId);
+                executor = await rule.GetExecutor(request, requestId);
             }
             catch (Exception e)
             {
                 throw new Exception($"An error occured while rule '{rule.Name}' matching", e);
             }
-             
-            if (matchResult is RuleMatchResult.Matched matched)
-                matchedRules.Add((rule, matched.Weight));
+
+            if (executor != null)
+                executors.Add(executor);
         }
 
-        if (matchedRules.Count == 0)
-            return Array.Empty<Rule>();
+        if (executors.Count == 0)
+            return executors;
 
-        var maxPriorityRule = matchedRules.MaxBy(x => x.Weight);
+        if (!_allowMultipleRules)
+            return executors;
 
-        return matchedRules
-            .Where(x => maxPriorityRule.Weight.CompareTo(x.Weight) == 0)
-            .Select(x => x.Rule)
+        var maxPriorityRule = executors.MaxBy(x => x.Weight);
+
+        return executors
+            .Where(x => x.Weight.CompareTo(maxPriorityRule!.Weight) == 0)
+            .Select(x => x)
             .ToArray();
     }
 
-    private static string GetErrorMessageForManyRules(IReadOnlyCollection<Rule> matchedRules)
+    private static string GetErrorMessageForManyRules(IEnumerable<Rule> matchedRules)
     {
         var sb = new StringBuilder("Find more than one rule:");
         sb.AppendLine();

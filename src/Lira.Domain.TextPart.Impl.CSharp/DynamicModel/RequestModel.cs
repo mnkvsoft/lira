@@ -17,8 +17,8 @@ public class RequestModel
     public string? header(string name) => _data.GetHeader(name);
 
     public string? query(string name) => _data.GetQueryParam(name);
-    
-    public string path(string name) => _data.GetPathSegmentValue(name);
+
+    public string? path(int index) => _data.GetPath(index);
     
     public record BodyModel(string Value)
     {

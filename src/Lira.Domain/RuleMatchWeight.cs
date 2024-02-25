@@ -4,7 +4,6 @@ namespace Lira.Domain;
 
 public interface IRuleMatchWeight : IComparable<IRuleMatchWeight>
 {
-    
 }
 
 class RuleMatchWeight : IRuleMatchWeight
@@ -32,11 +31,11 @@ class RuleMatchWeight : IRuleMatchWeight
         if (other is not RuleMatchWeight otherWeight)
             throw new UnsupportedInstanceType(other);
 
-        int compareResult = this._method.CompareTo(otherWeight._method);
+        int compareResult = _method.CompareTo(otherWeight._method);
         if (compareResult != 0)
             return compareResult;
         
-        compareResult = this._path.CompareTo(otherWeight._path);
+        compareResult = _path.CompareTo(otherWeight._path);
         if (compareResult != 0)
             return compareResult;
 

@@ -1,4 +1,4 @@
-﻿using ArgValidation;
+using ArgValidation;
 
 namespace Lira.Domain.Generating.Writers;
 
@@ -12,12 +12,12 @@ public class HeadersGenerator
         _headers = headers;
     }
 
-    internal IReadOnlyCollection<Header> Create(RequestData request)
+    internal IReadOnlyCollection<Header> Create(RuleExecutingContext context)
     {
         var result = new List<Header>();
         foreach (var header in _headers)
         {
-            var value = header.TextParts.Generate(request);
+            var value = header.TextParts.Generate(context);
             result.Add(new Header(header.Name, value));
         }
 

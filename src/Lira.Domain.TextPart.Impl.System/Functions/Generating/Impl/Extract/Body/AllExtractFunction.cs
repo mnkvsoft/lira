@@ -1,4 +1,4 @@
-﻿using Lira.Domain.Extensions;
+using Lira.Domain.Extensions;
 using Lira.Domain.Matching.Request.Matchers;
 
 namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Extract.Body;
@@ -12,8 +12,8 @@ class AllExtractFunction : FunctionBase, IBodyExtractFunction, IObjectTextPart
         return value;
     }
 
-    public object Get(RequestData request)
+    public dynamic? Get(RuleExecutingContext context)
     {
-        return request.ReadBody();
+        return context.Request.ReadBody();
     }
 }

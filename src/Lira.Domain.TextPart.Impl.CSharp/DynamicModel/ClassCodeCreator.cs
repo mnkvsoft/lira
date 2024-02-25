@@ -7,7 +7,7 @@ static class ClassCodeCreator
     public static string CreateIObjectTextPart(
         string className,
         string code,
-        string requestParameterName,
+        string contextParameterName,
         string externalRequestVariableName,
         string repeatFunctionName,
         IReadOnlyCollection<string> namespaces,
@@ -16,7 +16,7 @@ static class ClassCodeCreator
         return CodeTemplate.IObjectTextPart
             .Replace("[className]", className)
             .Replace("[code]", code)
-            .Replace("[request]", requestParameterName)
+            .Replace("[context]", contextParameterName)
             .Replace("[repeat]", repeatFunctionName)
             .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
             .Replace("[namespaces]", GetNamespaces(namespaces)).Replace("[externalRequestVariableName]", externalRequestVariableName);
@@ -55,7 +55,7 @@ static class ClassCodeCreator
     public static string CreateAction(
         string className,
         string code,
-        string requestParameterName,
+        string contextParameterName,
         string externalRequestVariableName,
         IReadOnlyCollection<string> namespaces,
         IReadOnlyCollection<string> usingStaticTypes)
@@ -63,7 +63,7 @@ static class ClassCodeCreator
         return CodeTemplate.IAction
             .Replace("[namespaces]", GetNamespaces(namespaces))
             .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
-            .Replace("[request]", requestParameterName)
+            .Replace("[context]", contextParameterName)
             .Replace("[className]", className)
             .Replace("[externalRequestVariableName]", externalRequestVariableName)
             .Replace("[code]", code);
@@ -113,9 +113,9 @@ public class [className] : DynamicObjectBaseGenerate, IObjectTextPart
     {
     }
 
-    public dynamic? Get(RequestData [request])
+    public dynamic? Get(RuleExecutingContext [context])
     {
-        var [externalRequestVariableName] = new RequestModel([request]);
+        var [externalRequestVariableName] = new RequestModel([context].Request);
         
         [code]
 
@@ -128,7 +128,12 @@ public class [className] : DynamicObjectBaseGenerate, IObjectTextPart
                 cnt = Random.Shared.Next(from.Value, to.Value + 1);
             else
                 cnt = Random.Shared.Next(3, 9);
-            return Repeat([request], part, separator, cnt);
+            return Repeat([context], part, separator, cnt);
+        }
+
+        string? value(string name)
+        {
+            return [context].GetValue(name);
         }
     }
 }";
@@ -188,12 +193,16 @@ public class [className] : DynamicObjectBaseAction, IAction
     {
     }
 
-    public async Task Execute(RequestData [request])
+    public async Task Execute(RuleExecutingContext [context])
     {
-        var [externalRequestVariableName] = new RequestModel([request]);
+        var [externalRequestVariableName] = new RequestModel([context].Request);
         [code]
-    }
 
+        string? value(string name)
+        {
+            return [context].GetValue(name);
+        }
+    }
 }
 ";
         

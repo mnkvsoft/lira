@@ -1,4 +1,4 @@
-﻿using Lira.Domain.TextPart.Types;
+using Lira.Domain.TextPart.Types;
 
 namespace Lira.Domain.TextPart.Impl.Custom;
 
@@ -13,9 +13,9 @@ public class JsonWrapper : IObjectTextPart
         _declaredName = declaredName;
     }
 
-    public dynamic? Get(RequestData request)
+    public dynamic? Get(RuleExecutingContext context)
     {
-        dynamic? value = _parts.Generate(request);
+        dynamic? value = _parts.Generate(context);
         
         if (value is not string json)
             throw new Exception(GetMessage(value));

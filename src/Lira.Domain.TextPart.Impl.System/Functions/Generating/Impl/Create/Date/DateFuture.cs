@@ -4,7 +4,7 @@ internal class DateFuture : FunctionBase, IObjectTextPart
 {
     public override string Name => "date.future";
     
-    public object Get(RequestData request)
+    public dynamic? Get(RuleExecutingContext context)
     {
         var now = DateTime.Now;
         var from = now.AddYears(1);

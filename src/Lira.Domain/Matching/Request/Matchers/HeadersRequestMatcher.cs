@@ -4,7 +4,7 @@ namespace Lira.Domain.Matching.Request.Matchers;
 
 public class HeadersRequestMatcher : IRequestMatcher
 {
-    IReadOnlyDictionary<string, TextPatternPart> _headers;
+    private readonly IReadOnlyDictionary<string, TextPatternPart> _headers;
 
     public HeadersRequestMatcher(IReadOnlyDictionary<string, TextPatternPart> headers)
     {
@@ -12,9 +12,11 @@ public class HeadersRequestMatcher : IRequestMatcher
         _headers = headers;
     }
 
-    public Task<RequestMatchResult> IsMatch(RequestData request)
+    internal Task<RequestMatchResult> IsMatch(RequestData request)
     {
+        var matchedValuesSet = new Dictionary<string, string?>();
         int weight = 0;
+
         foreach (var header in _headers)
         {
             var pattern = header.Value;
@@ -23,8 +25,9 @@ public class HeadersRequestMatcher : IRequestMatcher
             var isMatch = false;
             foreach (var value in values)
             {
-                if (pattern.IsMatch(value))
+                if (pattern.Match(value) is TextPatternPart.MatchResult.Matched matched)
                 {
+                    matchedValuesSet.AddIfValueIdNotNull(matched);
                     isMatch = true;
                     break;
                 }
@@ -36,6 +39,6 @@ public class HeadersRequestMatcher : IRequestMatcher
             weight += TextPatternPartWeightCalculator.Calculate(pattern);
             
         }
-        return Task.FromResult(RequestMatchResult.Matched(weight));
+        return Task.FromResult(RequestMatchResult.Matched(weight, matchedValuesSet));
     }
 }

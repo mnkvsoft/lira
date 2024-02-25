@@ -1,4 +1,5 @@
-﻿using Lira.Domain.Actions;
+using Lira.Domain.Actions;
+using Microsoft.AspNetCore.Http;
 
 namespace Lira.Domain;
 
@@ -10,14 +11,12 @@ public class Rule
     private readonly ConditionMatcherSet? _conditionMatcherSet;
     private readonly ActionsExecutor _actionsExecutor;
     private readonly ResponseStrategy _responseStrategy;
-    public IReadOnlyCollection<PathNameMap> PathNameMaps { get; }
 
     public Rule(
         string name,
         RequestMatcherSet matchers,
         ConditionMatcherSet? conditionMatcherSet,
         ActionsExecutor actionsExecutor,
-        IReadOnlyCollection<PathNameMap> pathNameMaps, 
         ResponseStrategy responseStrategy)
     {
         _requestMatcherSet = matchers;
@@ -25,34 +24,41 @@ public class Rule
         Name = name;
         _conditionMatcherSet = conditionMatcherSet;
         _actionsExecutor = actionsExecutor;
-        PathNameMaps = pathNameMaps;
         _responseStrategy = responseStrategy;
     }
 
-    public async Task<RuleMatchResult> IsMatch(RequestData request, Guid requestId)
+    public async Task<IRuleExecutor?> GetExecutor(RequestData request, Guid requestId)
     {
         var matchResult = await _requestMatcherSet.IsMatch(request);
 
-        if (matchResult is RuleMatchResult.NotMatched notMatched)
-            return notMatched;
+        if (matchResult is RuleMatchResult.NotMatched)
+            return null;
 
         var matched = (RuleMatchResult.Matched)matchResult;
         if (_conditionMatcherSet == null)
-            return matched;
+            return new RuleExecutor(request, this, matched.MatchedValues, matched.Weight);
 
         bool conditionsIsMatch = await _conditionMatcherSet.IsMatch(request, requestId);
 
         if (conditionsIsMatch)
-            return matched;
+            return new RuleExecutor(request, this, matched.MatchedValues, matched.Weight); ;
 
-        return RuleMatchResult.NotMatchedInstance;
+        return null;
     }
 
-    public async Task Execute(HttpContextData httpContextData)
+    internal async Task Execute(HttpContextData httpContextData)
     {
-        await httpContextData.Request.SaveBody();
+        await httpContextData.RuleExecutingContext.Request.SaveBody();
 
-        await _actionsExecutor.Execute(httpContextData.Request);
+        await _actionsExecutor.Execute(httpContextData.RuleExecutingContext);
         await _responseStrategy.Execute(httpContextData);
+    }
+
+    record RuleExecutor(RequestData Request, Rule Rule, IReadOnlyDictionary<string, string?> MatchedValues, IRuleMatchWeight Weight) : IRuleExecutor
+    {
+        public Task Execute(HttpResponse response)
+        {
+            return Rule.Execute(new HttpContextData(new RuleExecutingContext(Request, MatchedValues), response));
+        }
     }
 }

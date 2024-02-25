@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
 namespace Lira.Domain;
@@ -8,26 +8,14 @@ public record RequestData
     public string Method { get; }
     public PathString Path { get; }
 
-    private IReadOnlyCollection<PathNameMap>? _pathNameMaps;
-
-    public IReadOnlyCollection<PathNameMap>? PathNameMaps
+    public string? GetPath(int index)
     {
-        get => _pathNameMaps;
-        set
-        {
-            if (_pathNameMaps != null)
-                throw new Exception(nameof(PathNameMaps) + " already set");
-            _pathNameMaps = value;
-        }
-    }
-    
-    public string GetPathSegmentValue(string name)
-    {
-        var map = PathNameMaps?.FirstOrDefault(x => x.Name == name);
-        if (map == null)
-            throw new Exception($"Path segment with name '{name}' not defined");
+        int realIndex = index + 1;
 
-        return Path.Value.Split('/')[map.Index];
+        if (Path.Value.Length < realIndex)
+            return null;
+
+        return Path.Value.Split('/')[realIndex];
     }
     
     public string? GetHeader(string name)
@@ -54,8 +42,6 @@ public record RequestData
 
     private MemoryStream? _savedBodyStream = null;
 
-    public IDictionary<string, object> Items { get; }
-
     public MemoryStream Body
     {
         get
@@ -76,7 +62,6 @@ public record RequestData
         Headers = headers;
         _originBodyStream = body;
         Query = query;
-        Items = new Dictionary<string, object>();
     }
 
     public async Task SaveBody()

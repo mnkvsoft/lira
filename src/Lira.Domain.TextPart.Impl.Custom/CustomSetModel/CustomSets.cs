@@ -39,7 +39,7 @@ public class CustomSetFunction : IObjectTextPart, IMatchFunction
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
 
-    public dynamic Get(RequestData request)
+    public dynamic Get(RuleExecutingContext context)
     {
         return _list.Random();
     }

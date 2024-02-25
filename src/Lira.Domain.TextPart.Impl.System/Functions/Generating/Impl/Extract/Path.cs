@@ -1,16 +1,16 @@
-﻿namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Extract;
+namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Extract;
 
-internal class Path : WithArgumentFunction<string>, IObjectTextPart
+internal class Path : WithArgumentFunction<int>, IObjectTextPart
 {
     public override string Name => "req.path";
     public override bool ArgumentIsRequired => true;
-    private string _segmentName = "";
+    private int _index = 0;
 
-    public object Get(RequestData request) => request.GetPathSegmentValue(_segmentName);
+    public dynamic? Get(RuleExecutingContext context) => context.Request.GetPath(_index);
 
 
-    public override void SetArgument(string argument)
+    public override void SetArgument(int argument)
     {
-        _segmentName = argument;
+        _index = argument;
     }
 }

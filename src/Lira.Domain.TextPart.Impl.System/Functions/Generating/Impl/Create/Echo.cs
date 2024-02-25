@@ -1,4 +1,4 @@
-﻿namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
+namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
 
 internal class Echo : WithArgumentFunction<string>, IObjectTextPart
 {
@@ -7,7 +7,7 @@ internal class Echo : WithArgumentFunction<string>, IObjectTextPart
     
     private object? _value;
 
-    public object? Get(RequestData request) => _value;
+    public dynamic? Get(RuleExecutingContext context) => _value;
 
 
     public override void SetArgument(string? argument)

@@ -26,5 +26,5 @@ public class TextParts : IReadOnlyCollection<ITextPart>
 
 public static class TextPartsExtensions
 {
-    public static string Generate(this IReadOnlyCollection<ITextPart> parts, RequestData request) => string.Concat(parts.Select(p => p.Get(request)));
+    public static string Generate(this IReadOnlyCollection<ITextPart> parts, RuleExecutingContext context) => string.Concat(parts.Select(p => p.Get(context)));
 }

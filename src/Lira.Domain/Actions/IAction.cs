@@ -1,6 +1,6 @@
-﻿namespace Lira.Domain.Actions;
+namespace Lira.Domain.Actions;
 
 public interface IAction
 {
-    Task Execute(RequestData request);
+    Task Execute(RuleExecutingContext context);
 }

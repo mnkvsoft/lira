@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 
 namespace Lira.Domain;
 
-public record HttpContextData(RequestData Request, HttpResponse Response);
+public record HttpContextData(RuleExecutingContext RuleExecutingContext, HttpResponse Response);

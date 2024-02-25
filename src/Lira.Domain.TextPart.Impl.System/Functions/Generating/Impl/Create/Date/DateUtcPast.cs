@@ -4,7 +4,7 @@ internal class DateUtcPast : FunctionBase, IObjectTextPart
 {
     public override string Name => "date.utc.past";
     
-    public object Get(RequestData request)
+    public dynamic? Get(RuleExecutingContext context)
     {
         var now = DateTime.UtcNow;
         var to = now.AddYears(-1);

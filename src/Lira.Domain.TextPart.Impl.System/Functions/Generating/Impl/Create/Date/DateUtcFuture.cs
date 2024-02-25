@@ -4,7 +4,7 @@ internal class DateUtcFuture : FunctionBase, IObjectTextPart
 {
     public override string Name => "date.utc.future";
     
-    public object Get(RequestData request)
+    public dynamic? Get(RuleExecutingContext context)
     {
         var now = DateTime.UtcNow;
         var from = now.AddYears(1);

@@ -239,10 +239,10 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
+    const string contextParameterName = "__ctxt";
     private static string CreateGeneratingFunctionClassCode(string className, IReadOnlyCollection<Assembly> customAssemblies,
         IDeclaredPartsProvider declaredPartsProvider, string code)
     {
-        const string requestParameterName = "_request_";
         const string repeatFunctionName = "repeat";
 
         string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
@@ -251,9 +251,9 @@ class FunctionFactory : IFunctionFactoryCSharp
                 ForCompile: 
                 code.StartsWith(repeatFunctionName) 
                 ? ReplaceVariableNamesForRepeat(code, declaredPartsProvider)
-                : ReplaceVariableNames(code, declaredPartsProvider, requestParameterName), 
+                : ReplaceVariableNames(code, declaredPartsProvider, contextParameterName), 
                 Source: code)),
-            requestParameterName,
+            contextParameterName,
             ReservedVariable.Req,
             repeatFunctionName,
             GetNamespaces(customAssemblies),
@@ -268,14 +268,12 @@ class FunctionFactory : IFunctionFactoryCSharp
         IDeclaredPartsProvider declaredPartsProvider,
         string code)
     {
-        const string requestParameterName = "_request_";
-
         string classToCompile = ClassCodeCreator.CreateAction(
             className,
             WrapToTryCatch(new Code(
-                ForCompile: ReplaceVariableNames(code, declaredPartsProvider, requestParameterName) + ";", 
+                ForCompile: ReplaceVariableNames(code, declaredPartsProvider, contextParameterName) + ";", 
                 Source: code)),
-            requestParameterName,
+            contextParameterName,
             ReservedVariable.Req,
             GetNamespaces(customAssemblies),
             GetUsingStatic(customAssemblies));
@@ -316,8 +314,8 @@ class FunctionFactory : IFunctionFactoryCSharp
             methodBody = WrapToTryCatch(
                 code with
                 {
-                    ForCompile = $"var _result_ = {code.ForCompile};" + Constants.NewLine +
-                                 @"; return _result_;"
+                    ForCompile = $"var __result = {code.ForCompile};" + Constants.NewLine +
+                                 @"; return __result;"
                 });
         }
 

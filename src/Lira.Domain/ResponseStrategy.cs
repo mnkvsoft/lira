@@ -19,14 +19,14 @@ public abstract record ResponseStrategy(TimeSpan? Delay)
     {
         protected override async Task ExecuteInternal(HttpContextData httpContextData)
         {
-            var request = httpContextData.Request;
+            var context = httpContextData.RuleExecutingContext;
             var response = httpContextData.Response;
 
             response.StatusCode = Code;
 
             if (HeadersGenerator != null)
             {
-                foreach (var header in HeadersGenerator.Create(request))
+                foreach (var header in HeadersGenerator.Create(context))
                 {
                     response.Headers.Add(header.Name, header.Value);
                 }
@@ -34,7 +34,7 @@ public abstract record ResponseStrategy(TimeSpan? Delay)
 
             if (BodyGenerator != null)
             {
-                foreach (string bodyPart in BodyGenerator.Create(request))
+                foreach (string bodyPart in BodyGenerator.Create(context))
                 {
                     await response.WriteAsync(bodyPart);
                 }

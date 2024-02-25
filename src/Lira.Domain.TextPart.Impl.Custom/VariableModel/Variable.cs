@@ -1,4 +1,4 @@
-﻿using Lira.Common;
+using Lira.Common;
 
 namespace Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
@@ -17,10 +17,10 @@ public record Variable : IObjectTextPart, IUniqueSetItem
         _name = name;
     }
 
-    public dynamic? Get(RequestData request)
+    public dynamic? Get(RuleExecutingContext context)
     {
         var key = "variable_" + _name;
-        if (request.Items.TryGetValue(key, out var value))
+        if (context.Items.TryGetValue(key, out var value))
         {
             if (value == NullValue)
                 return null;
@@ -28,8 +28,8 @@ public record Variable : IObjectTextPart, IUniqueSetItem
             return value;
         }
 
-        object? newValue = _parts.Generate(request);
-        request.Items.Add(key, newValue ?? NullValue);
+        object? newValue = _parts.Generate(context);
+        context.Items.Add(key, newValue ?? NullValue);
         return newValue;
     }
 }

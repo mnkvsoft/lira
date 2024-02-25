@@ -8,7 +8,7 @@ internal class Float : WithRangeArgumentFunction<decimal>, IObjectTextPart
     public override bool ArgumentIsRequired => false;
     private Interval<decimal> _interval = new(0.01m, 10_000);
 
-    public object Get(RequestData request) => Math.Round(Random.Shared.NextDecimal(_interval), 2);
+    public dynamic? Get(RuleExecutingContext context) => Math.Round(Random.Shared.NextDecimal(_interval), 2);
 
 
     public override void SetArgument(Interval<decimal> argument)

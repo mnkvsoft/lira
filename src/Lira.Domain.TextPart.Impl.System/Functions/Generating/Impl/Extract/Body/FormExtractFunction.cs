@@ -1,4 +1,4 @@
-﻿using Lira.Domain.Extensions;
+using Lira.Domain.Extensions;
 using Lira.Domain.Matching.Request.Matchers;
 using Lira.Domain.TextPart.Utils;
 
@@ -13,7 +13,7 @@ class FormExtractFunction : WithArgumentFunction<string>, IBodyExtractFunction, 
 
     public string? Extract(string? value) => BodyUtils.GetByForm(value, _formParamName);
 
-    public object? Get(RequestData request) => Extract(request.ReadBody());
+    public dynamic? Get(RuleExecutingContext context) => Extract(context.Request.ReadBody());
 
     public override void SetArgument(string argument) => _formParamName = argument;
 }

@@ -25,7 +25,7 @@ Request-Id: reject_scenario
 }}
 
 ----- action
-cache.setFlag("reject_scenario_" + req.path("id"))
+cache.setFlag("reject_scenario_" + value("id"))
 
 
 -------------------- rule

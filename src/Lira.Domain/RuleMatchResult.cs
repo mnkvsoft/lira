@@ -1,8 +1,10 @@
 namespace Lira.Domain;
 
-public abstract record RuleMatchResult
+internal abstract record RuleMatchResult
 {
-    public static readonly RuleMatchResult NotMatchedInstance = new NotMatched();
-    public record Matched(IRuleMatchWeight Weight) : RuleMatchResult;
-    public record NotMatched : RuleMatchResult;
+    public record Matched(IRuleMatchWeight Weight, IReadOnlyDictionary<string, string?> MatchedValues) : RuleMatchResult;
+    public record NotMatched : RuleMatchResult
+    {
+        public static readonly RuleMatchResult Instance = new NotMatched();
+    }
 }

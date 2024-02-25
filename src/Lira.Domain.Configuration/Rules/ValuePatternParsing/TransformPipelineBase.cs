@@ -25,5 +25,5 @@ record TransformPipeline(IObjectTextPart ObjectTextPart) : IObjectTextPart
         _transformFunctions.Add(transform);
     }
 
-    public dynamic? Get(RequestData request) => ExecutePipeline(ObjectTextPart.Get(request));
+    public dynamic? Get(RuleExecutingContext context) => ExecutePipeline(ObjectTextPart.Get(context));
 }

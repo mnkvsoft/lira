@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain.Actions;
 
@@ -14,7 +14,7 @@ public class ActionsExecutor
         _logger = loggerFactory.CreateLogger(GetType());
     }
 
-    private async Task TryCall(Delayed<IAction> action, RequestData request)
+    private async Task TryCall(Delayed<IAction> action, RuleExecutingContext context)
     {
         if (action.Delay != null)
         {
@@ -23,7 +23,7 @@ public class ActionsExecutor
                 await Task.Delay(action.Delay.Value);
                 try
                 {
-                    await action.Value.Execute(request);
+                    await action.Value.Execute(context);
                 }
                 catch (Exception ex)
                 {
@@ -33,12 +33,12 @@ public class ActionsExecutor
         }
         else
         {
-            await action.Value.Execute(request);    
+            await action.Value.Execute(context);    
         }
     }
 
-    public async Task Execute(RequestData request)
+    public async Task Execute(RuleExecutingContext context)
     {
-        await Task.WhenAll(_actions.Select(caller => TryCall(caller, request)));
+        await Task.WhenAll(_actions.Select(caller => TryCall(caller, context)));
     }
 }

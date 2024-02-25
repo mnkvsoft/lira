@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.Actions;
@@ -78,7 +78,7 @@ internal class RuleFileParser
         if (childSections.Count == 0)
             throw new Exception("Rule section is empty");
 
-        var (requestMatcherSet, pathNameMaps) = _requestMatchersParser.Parse(ruleSection, parsingContext);
+        var requestMatcherSet = _requestMatchersParser.Parse(ruleSection, parsingContext);
 
         var templates = GetTemplates(childSections, parsingContext);
         var ctx = parsingContext with { Templates = templates };
@@ -121,7 +121,6 @@ internal class RuleFileParser
                     requestMatcherSet,
                     conditionMatcherSet,
                     new ActionsExecutor(externalCallers, _loggerFactory),
-                    pathNameMaps,
                     responseStrategy));
             }
 
@@ -140,7 +139,6 @@ internal class RuleFileParser
             requestMatcherSet, 
             conditionMatcherSet: null, 
             new ActionsExecutor(externalCallers, _loggerFactory), 
-            pathNameMaps,
             responseStrategy)};
     }
 

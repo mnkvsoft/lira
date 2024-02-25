@@ -9,5 +9,5 @@ internal class Range : RangeBase, IObjectTextPart
 
     public override string Name => "range";
     public override bool ArgumentIsRequired => true;
-    public object Get(RequestData request) => GetRange().NextValue().ToString()!;
+    public dynamic? Get(RuleExecutingContext context) => GetRange().NextValue().ToString()!;
 }

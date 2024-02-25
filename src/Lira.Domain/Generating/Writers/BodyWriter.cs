@@ -1,4 +1,4 @@
-﻿namespace Lira.Domain.Generating.Writers;
+namespace Lira.Domain.Generating.Writers;
 
 public class BodyGenerator
 {
@@ -9,12 +9,12 @@ public class BodyGenerator
         _parts = parts;
     }
 
-    internal IReadOnlyCollection<string> Create(RequestData request)
+    internal IReadOnlyCollection<string> Create(RuleExecutingContext context)
     {
         var result = new List<string>(_parts.Count);
         foreach (var part in _parts)
         {
-            string? text = part.Get(request);
+            string? text = part.Get(context);
             
             if (text != null)
                 result.Add(text);

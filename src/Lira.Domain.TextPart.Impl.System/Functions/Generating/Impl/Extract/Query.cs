@@ -1,4 +1,4 @@
-﻿namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Extract;
+namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Extract;
 
 internal class Query : WithArgumentFunction<string>, IObjectTextPart
 {
@@ -7,11 +7,26 @@ internal class Query : WithArgumentFunction<string>, IObjectTextPart
     
     private string _queryParamName = "";
 
-    public object? Get(RequestData request) => request.GetQueryParam(_queryParamName);
+    public object? Get(RuleExecutingContext context) => context.Request.GetQueryParam(_queryParamName);
 
 
     public override void SetArgument(string argument)
     {
         _queryParamName = argument;
+    }
+}
+
+internal class Value : WithArgumentFunction<string>, IObjectTextPart
+{
+    public override string Name => "value";
+    public override bool ArgumentIsRequired => true;
+
+    private string _nameId = "";
+
+    public object? Get(RuleExecutingContext context) => context.GetValue(_nameId);
+
+    public override void SetArgument(string argument)
+    {
+        _nameId = argument;
     }
 }

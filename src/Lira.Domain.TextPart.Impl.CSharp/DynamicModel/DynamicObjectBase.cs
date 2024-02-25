@@ -19,9 +19,9 @@ public class DynamicObjectBase
         _rangesProvider = dependencies.RangesProvider;
     }
 
-    public dynamic? GetDeclaredPart(string name, RequestData request)
+    public dynamic? GetDeclaredPart(string name, RuleExecutingContext context)
     {
-        dynamic? part = _declaredPartsProvider.Get(name).Get(request);
+        dynamic? part = _declaredPartsProvider.Get(name).Get(context);
         return part;
     }
     
@@ -30,11 +30,11 @@ public class DynamicObjectBase
         return _declaredPartsProvider.Get(name);
     }
     
-    protected string Repeat(RequestData request, IObjectTextPart part, string separator, int count)
+    protected string Repeat(RuleExecutingContext context, IObjectTextPart part, string separator, int count)
     {
         return string.Join(separator, 
             Enumerable.Repeat("", count)
-                .Select(_ => part.Get(request)?.ToString() ?? ""));
+                .Select(_ => part.Get(context)?.ToString() ?? ""));
     }
 
     protected DataRange GetRange(string rangeName)

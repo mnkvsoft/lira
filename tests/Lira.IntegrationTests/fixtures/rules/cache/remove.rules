@@ -4,7 +4,7 @@ POST /cache/set/{{:key any }}
 
 ----- action
 
-cache.set(req.path("key"), req.body.all())
+cache.set(value("key"), req.body.all())
 
 --------------------------------------- rule
 
@@ -13,7 +13,7 @@ GET /cache/value/{{:key cache.contains(value) }}
 ----- response
 
 ~ body
-{{ cache.get(req.path("key")) }}
+{{ cache.get(value("key")) }}
 
 --------------------------------------- rule
 
@@ -30,4 +30,4 @@ POST /cache/remove/{{:key any }}
 
 ----- action
 
-cache.remove(req.path("key"))
+cache.remove(value("key"))

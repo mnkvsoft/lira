@@ -1,4 +1,4 @@
-﻿namespace Lira.Domain.Matching.Request.Matchers;
+namespace Lira.Domain.Matching.Request.Matchers;
 
 public class QueryStringRequestMatcher : IRequestMatcher
 {
@@ -9,8 +9,9 @@ public class QueryStringRequestMatcher : IRequestMatcher
         _queryParamToPatternMap = queryParamToPatternMap;
     }
 
-    public Task<RequestMatchResult> IsMatch(RequestData request)
+    internal Task<RequestMatchResult> IsMatch(RequestData request)
     {
+        var matchedValuesSet = new Dictionary<string, string?>();
         int weight = 0;
         
         foreach (var pair in _queryParamToPatternMap)
@@ -20,11 +21,13 @@ public class QueryStringRequestMatcher : IRequestMatcher
                 return Task.FromResult(RequestMatchResult.NotMatched);
 
             var pattern = pair.Value;
-            if (!pattern.IsMatch(value))
+            if (pattern.Match(value) is not TextPatternPart.MatchResult.Matched matched)
                 return Task.FromResult(RequestMatchResult.NotMatched);
+
+            matchedValuesSet.AddIfValueIdNotNull(matched);
 
             weight += TextPatternPartWeightCalculator.Calculate(pattern);
         }
-        return Task.FromResult(RequestMatchResult.Matched(weight));
+        return Task.FromResult(RequestMatchResult.Matched(weight, matchedValuesSet));
     }
 }

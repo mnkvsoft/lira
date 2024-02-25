@@ -23,7 +23,7 @@ $$response:json =
 {{ $$response }}
 
 ----- action
-cache.set("condition_" + req.path("id"), $$response)
+cache.set("condition_" + value("id"), $$response)
 
 
 -------------------- condition
@@ -37,6 +37,6 @@ attempt = 2
 
 ~ body
 {{ 
-    cache.get("condition_" + req.path("id"))
+    cache.get("condition_" + value("id"))
         .replace("status", "ok")
 }}

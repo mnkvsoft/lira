@@ -1,6 +1,6 @@
-﻿namespace Lira.Domain.Generating;
+namespace Lira.Domain.Generating;
 
 public interface ITextPart
 {
-    string? Get(RequestData request);
+    string? Get(RuleExecutingContext context);
 }

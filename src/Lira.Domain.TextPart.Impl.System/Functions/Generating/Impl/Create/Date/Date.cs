@@ -1,10 +1,10 @@
-﻿namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create.Date;
+namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create.Date;
 
 internal class Date : FunctionBase, IObjectTextPart
 {
     public override string Name => "date";
     
-    public object Get(RequestData request)
+    public dynamic? Get(RuleExecutingContext context)
     {
         var now = DateTime.Now;
         var from = now.AddYears(-1);

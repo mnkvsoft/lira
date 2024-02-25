@@ -1,4 +1,4 @@
-﻿namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
+namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
 
 internal class Seq : FunctionBase, IObjectTextPart
 {
@@ -6,5 +6,5 @@ internal class Seq : FunctionBase, IObjectTextPart
 
     public override string Name => "seq";
 
-    public object Get(RequestData request) => Interlocked.Increment(ref _counter);
+    public dynamic? Get(RuleExecutingContext context) => Interlocked.Increment(ref _counter);
 }

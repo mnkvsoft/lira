@@ -4,7 +4,7 @@ internal class DatePast : FunctionBase, IObjectTextPart
 {
     public override string Name => "date.past";
     
-    public object Get(RequestData request)
+    public dynamic? Get(RuleExecutingContext context)
     {
         var now = DateTime.Now;
         var to = now.AddYears(-1);

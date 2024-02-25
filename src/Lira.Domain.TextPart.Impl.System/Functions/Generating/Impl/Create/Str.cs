@@ -9,7 +9,7 @@ internal class Str : WithArgumentFunction<int>, IObjectTextPart
     
     private int _length = 20;
     
-    public object Get(RequestData request) => GetRandomString(_length);
+    public dynamic? Get(RuleExecutingContext context) => GetRandomString(_length);
 
     public override void SetArgument(int argument)
     {

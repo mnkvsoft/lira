@@ -1,4 +1,4 @@
-﻿using Lira.Common;
+using Lira.Common;
 
 namespace Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 
@@ -17,5 +17,5 @@ public record Function : IObjectTextPart, IUniqueSetItem
         _name = name;
     }
 
-    public object? Get(RequestData request) => _parts.Generate(request);
+    public object? Get(RuleExecutingContext context) => _parts.Generate(context);
 }

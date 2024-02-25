@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/function/extract/path/{{:some  any  }}
+GET /generating/function/extract/path/{{ any  }}
 
 ----- response
 
@@ -8,4 +8,4 @@ GET /generating/function/extract/path/{{:some  any  }}
 200
 
 ~ body
-{{ req.path: some }}
+{{ req.path: 4 }}

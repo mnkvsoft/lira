@@ -4,7 +4,7 @@ internal class Name_ : FunctionBase, IObjectTextPart
 {
     public override string Name => "name";
 
-    public object Get(RequestData request)
+    public dynamic? Get(RuleExecutingContext context)
     {
         return NameFirst.Next() + " " + NameLast.Next();
     }

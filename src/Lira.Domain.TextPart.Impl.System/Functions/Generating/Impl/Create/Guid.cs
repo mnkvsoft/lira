@@ -1,8 +1,8 @@
-﻿namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
+namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
 
 internal class Guid : FunctionBase, IObjectTextPart
 {
     public override string Name => "guid";
 
-    public object Get(RequestData _) => global::System.Guid.NewGuid();
+    public dynamic? Get(RuleExecutingContext context) => global::System.Guid.NewGuid();
 }

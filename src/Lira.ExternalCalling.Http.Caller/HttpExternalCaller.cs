@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Lira.Domain;
 using Lira.Domain.Actions;
 using Lira.Domain.Generating;
@@ -28,21 +28,21 @@ public class HttpAction : IAction
         _headers = headers;
     }
 
-    public async Task Execute(RequestData request)
+    public async Task Execute(RuleExecutingContext context)
     {
         var client = _httpClientFactory.CreateClient(HttpClientName);
 
-        var req = CreateRequest(request);
+        var req = CreateRequest(context);
 
         await client.SendAsync(req);
     }
 
-    private HttpRequestMessage CreateRequest(RequestData request)
+    private HttpRequestMessage CreateRequest(RuleExecutingContext context)
     {
         var req = new HttpRequestMessage();
         req.Method = _httpMethod;
 
-        var url = _requestUriParts.Generate(request);
+        var url = _requestUriParts.Generate(context);
 
         if (string.IsNullOrWhiteSpace(url))
             throw new InvalidOperationException("Url can't be empty");
@@ -54,7 +54,7 @@ public class HttpAction : IAction
         {
             foreach (var header in _headers)
             {
-                string value = header.TextParts.Generate(request);
+                string value = header.TextParts.Generate(context);
                 
                 if (header.Name == Header.ContentType)
                 {
@@ -69,7 +69,7 @@ public class HttpAction : IAction
         if (string.IsNullOrWhiteSpace(contentType))
             throw new Exception("Header Content-Type is required");
         
-        req.Content = new StringContent(_bodyParts?.Generate(request) ?? "", Encoding.UTF8, contentType);
+        req.Content = new StringContent(_bodyParts?.Generate(context) ?? "", Encoding.UTF8, contentType);
         return req;
     }
 }

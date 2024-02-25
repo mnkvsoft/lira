@@ -10,7 +10,7 @@ internal class Long : WithRangeArgumentFunction<long>, IObjectTextPart
     
     private Interval<long> _range = new(1, int.MaxValue);
 
-    public object Get(RequestData request) => Random.Shared.NextInt64(_range);
+    public dynamic? Get(RuleExecutingContext context) => Random.Shared.NextInt64(_range);
 
 
     public override void SetArgument(Interval<long> argument)
