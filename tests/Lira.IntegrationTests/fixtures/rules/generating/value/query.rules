@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/value/query?phone=7{{:only_phone int }}
+
+----- response
+
+~ code
+200
+
+~ body
+{{ value: only_phone }}

@@ -1,0 +1,14 @@
+-------------------- case
+
+GET /generating/value/header
+
+~ headers
+Request-Id: 123_aaa
+
+----- expected
+
+~ code
+200
+
+~ body
+aaa

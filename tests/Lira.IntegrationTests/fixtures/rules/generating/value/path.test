@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/value/path/123_nikolass
+
+----- expected
+
+~ code
+200
+
+~ body
+nikolass

@@ -1,0 +1,14 @@
+-------------------- rule
+
+GET /generating/value/body
+
+~ body
+{{ jpath: $.phone }} >> 7{{:clean_pnone any }}
+
+----- response
+
+~ code
+200
+
+~ body
+{{ value: clean_pnone }}

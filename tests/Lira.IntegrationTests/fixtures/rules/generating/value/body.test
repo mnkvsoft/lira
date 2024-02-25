@@ -1,0 +1,16 @@
+-------------------- case
+
+GET /generating/value/body
+
+~ body
+{
+    "phone": 7888
+}
+
+----- expected
+
+~ code
+200
+
+~ body
+888

@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/value/path/123_{{:person any }}
+
+----- response
+
+~ code
+200
+
+~ body
+{{ value: person }}
