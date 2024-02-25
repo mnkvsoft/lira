@@ -1,75 +1,72 @@
 # LIRA
-A simple and very functional mock server
+Простой и очень функциональный mock-сервер
 
-## Key features
+## Возможности
 
-- simple addition of new rules by placing new files in the server’s working directory (does not require rebooting)
+- простое добавление новых правил путём размещения новых файлов в рабочем каталоге сервера (не требует его перезагрузки)
 
-- a simple format for describing the rules, making it easier to write and read the rules
+- простой формат описания правил, облегчающий написание и чтение правил
 
-- escaping quotes is not required when describing the response body in `json` format
+- не требуется экранирование кавычек при описании тела ответа в формате `json`
 
-- syntax highlighting of rules in `VS Code`
+- подсветка синтаксиса правил в `VS Code`
 
-- use of data ranges of different types (`int`, `float`, `guid`, `hex string`) to provide variable behavior
+- использование диапазонов данных разных типов (`int`, `float`, `guid`, `hex string`) для обеспечения вариативного поведения
 
-- the ability to describe different behavior of a method depending on the call number or time elapsed since the first call
+- возможность описания разного поведения метода в зависимости от номера вызова или времени, прошедшего с момента первого вызова
 
-- simple description of http callbacks
+- простое описание обратных http вызовов
 
-- easy ability to write arbitrary code in `C#` to match a request, generate a response and perform arbitrary actions when a rule is triggered
+- простая возможность написания произвольного кода на языке `C#` для сопоставления запроса, генерации ответа и выполнения произвольных действий при срабатывании правила
 
-- a simple ability to put complex logic into separate `C# code` files (`.cs`) and use the methods described in them in any rules
+- простая возможность вынесения сложной логики в отдельные файлы `C#-кода` (`.cs`) и использования методов, описанных в них, в любых правилах
 
-- ability to add your own functions for data generation
+- возможность добавления собственных функций для генерации данных
 
-- ability to define response templates and use them in different rules
+- возможность определения шаблонов ответов и использование их в разных правилах
 
-- the ability to describe variables and use the values of these variables at different stages of rule processing (response, callbacks, additional actions performed when processing the rule)
+- возможность описания переменных и использования значений этих переменных на разных этапах обработки правила (ответ, обратные вызовы, дополнительные действия, выполняемые при обработке правила)
 
-- the ability to save arbitrary data in the cache and use it to match requests and generate a response
+- возможность сохранения произвольных данных в кэш и использование их для сопоставления запросов и генерации ответа
 
-- ability to add custom directories for data generation and comparison
+- возможность добавления пользовательских справочников для геренерации и сопоставления данных
 
-- ability to obtain values of dynamically matched data
-
-
-
-## Requirements
-Docker installed
+- возможность получения значений динамически сопоставленных данных
 
 
-<!---
 
-## References
 
-[Guide](docs/guide.md)
 
-[Query matching](docs/matching.md)
+## Требования 
+Установленный Docker
 
-[Generating responses](docs/generating.md)
+## Ссылки
 
-[Ranges](docs/ranges.md)
+[Полное руководство](docs/guide.md)
 
---->
+[Cопоставление запросов](docs/matching.md)
 
-## Getting Started
+[Генерация ответов](docs/generating.md)
 
-### Launch
+[Диапазоны](docs/ranges.md)
 
-- create a directory `c:/rules` in which the rules for **LIRA** will be located (you can specify any other directory)
-- run the command:
+## Быстрый старт
 
-`docker run -p 80:80 -e TZ=Europe/Moscow -v c:/rules:/app/rules mnkvsoft/lira`
+### Запуск
 
-You can make sure that the server is running by going to the following address in your browser:
+- создать каталог `c:/rules` в котором будут находится правила для **LIRA** (можно задать любой другой каталог)
+- выполнить команду:
+
+`docker run -p 80:80 -e TZ=Europe/Moscow -v c:/rules:/app/rules  mnkvsoft/lira`
+
+Убедиться, что сервер запущен можно перейдя в браузере по адресу:
 
 `http://localhost`
 
-if the server is running, the browser will display the text: *Rule not found*
+если сервер работает, то браузер выведет текст: *Rule not found*
 
-### Adding the first rule
-You need to create a text file `hello.rules` with the following content in the `c:/rules` directory:
+### Добавление первого правила
+Необходимо создать в каталоге `c:/rules` текстовый файл `hello.rules` следующего содержания:
 
 [hello.rules](docs/examples/quick_start/hello.rules)
 
@@ -87,42 +84,43 @@ GET /hello/{{:person  any  }}
 hello {{ value: person }}!
 ```
 
-Testing the first rule in the browser by making a request to the resource
+Тестируем первое правило в браузере, выполнив запрос к ресурсу 
 
 `http://localhost/hello/Nikolas`
 
-the server will give us a response with the http code `200` and the response body `hello Nikolas!`
+сервер нам выдаст ответ с http-кодом `200` и телом ответа `hello Nikolas!`
 
 ```
 200
 
-Hello Nikolas!
+hello Nikolas!
 ```
+#### Ссылки
 
-[Complete Guide](docs/guide.md)
+[Полное руководство](docs/guide.md)
 
-### Syntax highlighting
+### Подсветка синтаксиса
 
-To work with rules, it is recommended to use Visual Studio Code,
-with the syntax highlighting extension installed
+Для работы с правилами рекомендуется использовать Visual Studio Code, 
+с установленным расширением для подсветки синтаксиса
 
 ![screenshot](docs/highlight_syntax.png)
 
-[Instructions for installing the extension](docs/highlight_setup.md)
+[Инструкцию по установке расширения](docs/highlight_setup.md)
 
-### Example rules
+### Примеры правил
 
-To create rules, add files with the extension `.rules` to the `c:/rules` directory
+Для создания правил добавляем файлы с расширением `.rules` в каталог `c:/rules`
 
-All examples are available in the `docs/examples` directory
+Все примеры доступны в каталоге `docs/examples`
 
-:triangular_flag_on_post: For some examples, the header `example:[example name]` is used,
-so that there is no overlap with the rules from other examples.
-There is no need to focus on it in the examples.
+:triangular_flag_on_post: Для некоторых примеров используется заголовок `example:[название примера]`,
+чтобы не было пересечения с правилами из других примеров. 
+На него в примерах не нужно фокусировать внимание
 
-:triangular_flag_on_post: To make it easier to read, if the http code is not specified in the example response, then the code `200` is assumed
+:triangular_flag_on_post: Для облегчения чтения, если в примере ответа http-код не указан, то подразумевается код `200`
 
-### Static rule
+### Статичное правило
 [static.rules](docs/examples/quick_start/static.rules)
 
 ```
@@ -139,12 +137,12 @@ GET /hi
 hello!
 ```
 
-Request
+Запрос
 ```
 curl --location 'http://localhost/hi'
 ```
 
-Response
+Ответ
 ```
 hello!
 ```
@@ -152,7 +150,7 @@ hello!
 
 
 
-### Response delay
+### Задержка ответа
 [delay.rules](docs/examples/quick_start/delay.rules)
 
 ```
@@ -172,17 +170,17 @@ GET /delay
 long query
 ```
 
-Request
+Запрос
 ```
 curl --location 'http://localhost/delay'
 ```
 
-Response with a delay of 2000 milliseconds
+Ответ с задержкой в 2000 миллисекунд
 ```
 long query
 ```
 
-### Simulate server failure
+### Имитация сбоя сервера
 [fault.fault](docs/examples/quick_start/fault.rules)
 ```
 -------------------- rule
@@ -193,15 +191,15 @@ GET /fault
 
 ~ fault
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/fault'
 ```
-When processing a request, the server will not produce a result (`ERR_EMPTY_RESPONSE`)
+При обработке запроса сервер не выдаст результат (`ERR_EMPTY_RESPONSE`)
 
 
 
-### Dynamic mapping of query parameters by system functions
+### Динамическое сопоставление параметров запроса системными функциями
 [match_dynamic.rules](docs/examples/quick_start/match_dynamic.rules)
 
 ```
@@ -226,7 +224,7 @@ jpath: $.number >> 4444{{ int }}
     "status": "ok"
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/payment/card?fast=true' \
 --header 'Request-Id: 60a37f8e-0c7f-4404-8dda-64eaf6d13e6a' \
@@ -237,7 +235,7 @@ curl --location 'http://localhost/payment/card?fast=true' \
 
 ```
 
-Response
+Ответ
 ```
 {
     "id": 12345,
@@ -245,19 +243,17 @@ Response
 }
 ```
 
-<!---
+#### Ссылки
 
-#### References
+[Полное руководство](docs/guide.md)
 
-[Guide](docs/guide.md)
-
-[Matching functions](docs/match_functions.md)
---->
+[Функции сопоставления](docs/match_functions.md)
 
 
 
 
-### Dynamic mapping of request parameters with a short C# block
+
+### Динамическое сопоставление параметров запроса коротким C# - блоком
 [match_dynamic_csharp_short.rules](docs/examples/quick_start/match_dynamic_csharp_short.rules)
 
 ```
@@ -281,14 +277,14 @@ Request-Id: {{ Guid.TryParse(value, out var ) }}
     "status": "ok"
 }
 ```
-Request
+Запрос
 ```
 curl --location --request POST 'http://localhost/payment/account' \
 --header 'Request-Id: 8e8bd1c3-2ab1-4145-8098-ca78d9ee9aae' \
 --header 'example: match_dynamic_csharp_short'
 ```
 
-Response
+Ответ
 ```
 {
     "id": 12345,
@@ -296,14 +292,14 @@ Response
 }
 ```
 
-Request
+Запрос
 ```
 curl --location --request POST 'http://localhost/payment/card' \
 --header 'Request-Id: a4442d86-0523-4209-911c-28a16a3f22c8' \
 --header 'example: match_dynamic_csharp_short'
 ```
 
-Response
+Ответ
 ```
 {
     "id": 12345,
@@ -311,21 +307,20 @@ Response
 }
 ```
 
-<!---
-#### References
+#### Ссылки
 
-[Guide](docs/guide.md)
+[Полное руководство](docs/guide.md)
 
-[Matching functions](docs/match_functions.md)
-
---->
+[Функции сопоставления](docs/match_functions.md)
 
 
 
 
 
 
-### Dynamic matching of query parameters with a full C# block
+
+
+### Динамическое сопоставление параметров запроса полным C# - блоком
 [match_dynamic_csharp_full.rules](docs/examples/quick_start/match_dynamic_csharp_full.rules)
 
 ```
@@ -368,13 +363,13 @@ example: match_dynamic_csharp_full
 }
 ```
 
-Request
+Запрос
 ```
 curl --location 'http://localhost/payment/1' \
 --header 'example: match_dynamic_csharp_full'
 ```
 
-Response
+Ответ
 ```
 {
     "id": 12345,
@@ -382,13 +377,13 @@ Response
 }
 ```
 
-Request
+Запрос
 ```
 curl --location 'http://localhost/payment/10' \
 --header 'example: match_dynamic_csharp_full'
 ```
 
-Response
+Ответ
 ```
 {
     "id": 12345,
@@ -396,13 +391,11 @@ Response
 }
 ```
 
-<!---
-#### References
+#### Ссылки
 
-[Guide](docs/guide.md)
+[Полное руководство](docs/guide.md)
 
-[Matching functions](docs/match_functions.md)
---->
+[Функции сопоставления](docs/match_functions.md)
 
 
 
@@ -411,7 +404,10 @@ Response
 
 
 
-### Dynamic response generation
+
+
+
+### Динамическая генерация ответов
 [generation_dynamic.rules](docs/examples/quick_start/generation_dynamic.rules)
 
 ```
@@ -437,12 +433,12 @@ Request-Time: {{ now >> format: H:mm:ss }}
     "customer": "{{ str }}"
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/order'
 ```
 
-Response
+Ответ
 ```
 Request-Time: 12:07:16
 
@@ -455,16 +451,16 @@ Request-Time: 12:07:16
     "customer": "eyshxbdiwf1d6991nhjd"
 }
 ```
-<!---
-#### References
 
-[Guide](docs/guide.md)
+#### Ссылки
 
-[Generation functions](docs/generation_functions.md)
---->
+[Полное руководство](docs/guide.md)
+
+[Функции генерации](docs/generation_functions.md)
 
 
-### Extracting request parameters
+
+### Извлечение параметров запроса
 [extract_request_data.rules](docs/examples/quick_start/extract_request_data.rules)
 
 ```
@@ -493,7 +489,7 @@ Request-Id: {{ req.header: Id}}
     "account": "{{ req.body.jpath: $.account }}"
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/payment/account?fast=false' \
 --header 'Id: 987' \
@@ -503,7 +499,7 @@ curl --location 'http://localhost/payment/account?fast=false' \
 }'
 ```
 
-Response
+Ответ
 ```
 Request-Id: 987
 
@@ -513,15 +509,15 @@ Request-Id: 987
     "account": "9876543210"
 }
 ```
-<!---
-#### References
 
-[Guide](docs/guide.md)
+#### Ссылки
 
-[Generation functions](docs/generation_functions.md)
---->
+[Полное руководство](docs/guide.md)
 
-### Extracting dynamically mapped data
+[Функции генерации](docs/generation_functions.md)
+
+
+### Извлечение динамически сопоставленных данных
 
 [extract.value.system.rules](docs/examples/quick_start/extract.value.system.rules)
 
@@ -541,13 +537,13 @@ example: extract.value.system
     "balance": {{ float }}
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/balance/79161112233' \
 --header 'example: extract.value.system'
 ```
 
-Response
+Ответ
 ```
 {
     "phone": 9161112233,
@@ -556,12 +552,12 @@ Response
 ```
 
 
-### Using Variables
-The value of the variable is calculated once during request processing.
+### Использование переменных
+Значение переменной вычисляется один раз за время обработки запроса. 
 
-It is used to pass the same calculated dynamic value to different parts of the request.
+Используется для того, чтобы в разные части запроса передавать одно и то же вычисленное динамическое значение. 
 
-Often used when implementing callbacks (to be discussed later).
+Часто используется при осуществлении обратных вызовов (будут рассмотрены далее).
 
 [variables.rules](docs/examples/quick_start/variables.rules)
 ```
@@ -589,13 +585,13 @@ Request-Id: {{ $$requestId >> format: N }}
     "request_id": "{{ $$requestId }}"
 }
 ```
-Request
+Запрос
 ```
 curl --location --request POST 'http://localhost/payment' \
 --header 'example: variables'
 ```
 
-Response
+Ответ
 ```
 Request-Id: 1cfc7bc5ea6146a79dc2820fe7c6c63c
 
@@ -603,15 +599,15 @@ Request-Id: 1cfc7bc5ea6146a79dc2820fe7c6c63c
     "request_id": "1cfc7bc5-ea61-46a7-9dc2-820fe7c6c63c"
 }
 ```
-<!---
-#### References
 
-[Guide](docs/guide.md)
---->
+#### Ссылки
 
+[Полное руководство](docs/guide.md)
 
 
-### Callbacks
+
+
+### Обратные вызовы
 [call.rules](docs/examples/quick_start/call.rules)
 
 ```
@@ -663,13 +659,13 @@ POST /api/callback
 ~ code
 200
 ```
-Request
+Запрос
 ```
 curl --location --request POST 'http://localhost/payment' \
 --header 'example: call'
 ```
 
-Response
+Ответ
 ```
 {
     "id": 338, 
@@ -677,7 +673,7 @@ Response
 }
 
 ```
-Callback
+Обратный вызов
 ```
 POST http://localhost/api/callback
       
@@ -690,15 +686,15 @@ Content-Length: 42
 }
 ```
 
-<!---
-#### References
 
-[Guide](docs/guide.md)
---->
+#### Ссылки
 
+[Полное руководство](docs/guide.md)
 
 
-### Comments
+
+
+### Комментарии
 [comments.rules](docs/examples/quick_start/comments.rules)
 ```
 -------------------- rule
@@ -719,12 +715,12 @@ GET /comments
 hello!## comment the rest of the line
 hello ### comment in the middle of the line ### world!
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/comments'
 ```
 
-Response
+Ответ
 ```
 hello!
 http://hello
@@ -733,9 +729,9 @@ http://hello
 
 
 
-### Rule prioritization
-One request can match several rules,
-LIRA will choose the most private one (this is the default behavior, it is configurable)
+### Приоритизация правил
+Одному запросу может соответствовать несколько правил, 
+LIRA выберет наиболее частное (это поведение по умолчанию, оно конфигурируется)
 
 [priority.rules](docs/examples/quick_start/priority.rules)
 ```
@@ -778,46 +774,46 @@ Request-Id: {{ any }}
 ~ body
 rule with GUID and header
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/priority/1'
 ```
-Response
+Ответ
 ```
 rule with ANY
 ```
 
-Request
+Запрос
 ```
 curl --location 'http://localhost/priority/6EC35301-1CF0-4F9B-8472-8CD8EBA02105'
 ```
-Response
+Ответ
 ```
 rule with GUID
 ```
 
-Request
+Запрос
 ```
 curl --location 'http://localhost/priority/6EC35301-1CF0-4F9B-8472-8CD8EBA02105' \
 --header 'Request-Id: 1'
 ```
-Response
+Ответ
 ```
 rule with GUID and header
 ```
 
-### Variability of responses
+### Вариативность ответов
 
-As a rule, it is required to check the behavior of the source system under different options
-response from an external system. Such variability is adjusted using *ranges*.
-Ranges are described in `*.ranges.json` files
+Как правило, требуется проверять поведение исходной системы при разных вариантах 
+ответа от внешней системы. Подобная вариативность настраивается с помощью *диапазонов* (**range**).
+Диапазоны описываются в файлах `*.ranges.json`
 
 
-#### Variability of responses. Simple example
+#### Вариативность ответов. Простой пример
 
-Depending on the payment amount, we will issue different statuses: `ok` or `reject`
+В зависимости от суммы платежа будем выдавать разный статус: `ok` или `reject`
 
-File `global.ranges.json`
+Файл `global.ranges.json`
 
 ```json
 {
@@ -872,19 +868,19 @@ jpath: $.amount >> {{ range: amount/reject }}
 }
 ```
 
-Getting the value of the `amount` field to receive a response with the status `ok`
+Получаем значение поля `amount` для получения ответа со статусом `ok`
 
-Request
+Запрос
 ```
 curl --location 'http://localhost/sys/range/val/amount/ok/1'
 ```
 
-Response
+Ответ
 ```
 201534.92
 ```
 
-Uses the value `201534.92` received in the response to perform the request
+Использует значение `201534.92` полученное в ответе для выполнения запроса
 
 ```
 curl --location 'http://localhost/payment' \
@@ -894,21 +890,21 @@ curl --location 'http://localhost/payment' \
     "amount": 201534.92
 }'
 ```
-Response
+Ответ
 ```
 {
     "status": "ok"
 }
 ```
-To receive a response with the `reject` status, ask for the `amount` value for it
+Для получения ответа со статусом `reject` запрашимаем значение `amount` для него
 ```
 curl --location 'http://localhost/sys/range/val/amount/reject/1'
 ```
-Response
+Ответ
 ```
 401386.54
 ```
-Uses the value `401386.54` received in the response to perform the request
+Использует значение `401386.54` полученное в ответе для выполнения запроса
 ```
 curl --location 'http://localhost/payment' \
 --header 'example: range.easy' \
@@ -917,7 +913,7 @@ curl --location 'http://localhost/payment' \
     "amount": 401386.54
 }'
 ```
-Response
+Ответ
 ```
 {
     "status": "reject"
@@ -928,14 +924,16 @@ Response
 
 
 
-#### Variability of responses. Complicated example
+#### Вариативность ответов. Усложненный пример
 
-Let's assume that when making a payment, we return its identifier `payment_id` to the system under test and then use this identifier to refund the payment. We need to provide two different responses to refund:
-`ok` or `reject`.
+Предположим, что при выполнеии платежа мы возвращаем в тестируемую систему его 
+идентификатор `payment_id` и далее используя этот идентификатор выполняем возврат
+платежа (*refund*). Нам нужно обеспечить два разных ответа на возврат платежа: 
+`ok` или `reject`. 
 
-Let's look at how this is configured using ranges
+Рассмотрим как это настраивается с помощью диапазонов
 
-Let's change the file [global.ranges.json](docs/examples/quick_start/global.ranges.json) as follows
+Изменим файл [global.ranges.json](docs/examples/quick_start/global.ranges.json) следующим образом
 
 ```json
 {
@@ -1042,21 +1040,21 @@ example: range.medium
 }
 ```
 
-***Scenario for obtaining `ok` status for refund***
+***Сценарий получения статуса `ok` на возврат***
 
-Getting the value of the `amount` field to receive a response with the status `ok`
+Получаем значение поля `amount` для получения ответа со статусом `ok`
 
-Request
+Запрос
 ```
 curl --location 'http://localhost/sys/range/val/amount/ok/1'
 ```
 
-Response
+Ответ
 ```
 118297.44
 ```
 
-Uses the value `118297.44` received in the response to perform the request
+Использует значение `118297.44` полученное в ответе для выполнения запроса
 
 ```
 curl --location 'http://localhost/payment' \
@@ -1066,7 +1064,7 @@ curl --location 'http://localhost/payment' \
     "amount": 118297.44
 }'
 ```
-Response
+Ответ
 ```
 {
     "id": 1,
@@ -1074,12 +1072,12 @@ Response
 }
 
 ```
-We use the received `id` value to perform a refund
+Используем полученное значение `id` для выполнения возврата платежа
 ```
 curl --location --request POST 'http://localhost/payment/refund/1' \
 --header 'example: range.medium'
 ```
-Response
+Ответ
 ```
 {
     "status": "ok"
@@ -1087,18 +1085,18 @@ Response
 
 ```
 
-***Scenario for obtaining the `reject` status for a refund***
+***Сценарий получения статуса `reject` на возврат***
 
 
-To receive a response with the `reject` status for a refund, we request the `amount` value for it
+Для получения ответа со статусом `reject` на возврат запрашимаем значение `amount` для него
 ```
 curl --location 'http://localhost/sys/range/val/amount/refund_reject/1'
 ```
-Response
+Ответ
 ```
 742387.47
 ```
-Uses the value `742387.47` received in the response to rerform the request
+Использует значение `742387.47` полученное в ответе для выполнения запроса
 ```
 curl --location 'http://localhost/payment' \
 --header 'example: range.medium' \
@@ -1107,41 +1105,40 @@ curl --location 'http://localhost/payment' \
     "amount": 742387.47
 }'
 ```
-Response
+Ответ
 ```
 {
     "id": 4611686018427387904,
     "status": "ok"
 }
 ```
-We use the received `id` value to perform a refund
+Используем полученное значение `id` для выполнения возврата платежа
 ```
 curl --location --request POST 'http://localhost/payment/refund/4611686018427387904' \
 --header 'example: range.medium'
 ```
-Response
+Ответ
 ```
 {
     "status": "reject"
 }
 ```
-<!---
-#### References
+#### Ссылки
 
-[Ranges](docs/ranges.md)
+[Диапазоны](docs/ranges.md)
 
-[Guide](docs/guide.md)
-
---->
+[Полное руководство](docs/guide.md)
 
 
 
-### Variability of responses with unchanged request data
 
-:triangular_flag_on_post: If you run this example in Postman,
-then you need to disable the function of adding the Postman-Token header,
-because a new value is written to it with each request
-and the server interprets such requests as different
+
+### Вариативность ответов при неизменных данных запроса
+
+:triangular_flag_on_post: Если выполнять этот пример в Postman, 
+то необходимо отлючить функцию добавления заголовка Postman-Token, 
+т.к. в него записывается новое значение при каждом запросе 
+и сервер интерпретирует такие запросы как разные
 
 [conditions.rules](docs/examples/quick_start/conditions.rules)
 ```
@@ -1192,26 +1189,26 @@ elapsed > 4 second
     "status": "ok"
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/pay/status'
 ```
 
-Responseы:
+Ответы:
 
-Less than 2 seconds have passed since the first request
+С момента первого запроса прошло менее 2 секунд
 ```
 {
     "status": "registered"
 }
 ```
-2 to 4 seconds have passed since the first request
+С момента первого запроса прошло от 2 до 4 секунд
 ```
 {
     "status": "pending"
 }
 ```
-More than 4 seconds have passed since the first request
+С момента первого запроса прошло более 4 секунд
 ```
 {
     "status": "ok"
@@ -1222,7 +1219,7 @@ More than 4 seconds have passed since the first request
 
 
 
-### Defining your own functions
+### Определение собственных функций
 [custom_function.rules](docs/examples/quick_start/custom_function.rules)
 
 ```
@@ -1250,32 +1247,32 @@ $payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
     ## "created_at": "{{ payment.now }}"
 }
 ```
-Request
+Запрос
 ```
 curl --location --request POST 'http://localhost/payment' \
 --header 'example: custom_function'
 ```
 
-Response
+Ответ
 ```
 {
     "created_at": "09 Sep 2023 02:36 PM"
 }
 ```
-<!---
-#### References
 
-[Guide](docs/guide.md)
---->
+#### Ссылки
 
+[Полное руководство](docs/guide.md)
 
 
-### Common variables and functions
-Variables and functions can be declared at the rules file level
-and in this case, reuse within one file,
-or declare it at the global level and use it in any rule
 
-#### Declaration at the file level
+
+### Общие переменные и функции
+Переменные и функции можно задекларировать на уровне файла с правилами 
+и в этом случае переиспользовать в рамках одного файла, 
+либо задекларировать на глобальном уровне и использовать в любом правиле
+
+#### Декларирование на уровне файла
 
 [declare.shared.file.rules](docs/examples/quick_start/declare.shared.file.rules)
 
@@ -1318,46 +1315,46 @@ example: declare.shared.file
     "balance": {{ amount }}
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/payment' \
 --header 'example: declare.shared.file'
 ```
-Response
+Ответ
 ```
 {
     "amount": 26.81
 }
 ```
 
-Request
+Запрос
 ```
 curl --location 'http://localhost/account' \
 --header 'example: declare.shared.file'
 ```
-Response
+Ответ
 ```
 {
     "balance": 59.26
 }
 ```
-<!---
-#### References
 
-[Guide](docs/guide.md)
---->
+#### Ссылки
 
-#### Declaration at the global level
-Declaration at the global level is made in `*.declare` files
+[Полное руководство](docs/guide.md)
 
-Let's add a file
+
+#### Декларирование на глобальном уровне
+Декларирование на глобильном уровне производится в файлах `*.declare`
+
+Добавим файл 
 [declare.shared.global.declare](docs/examples/quick_start/declare.shared.global.declare)
 
 ```
 $age = {{ int: [1 - 122]}}
 ```
 
-Let's create a rule
+Создадим правило
 
 [declare.shared.global.rules](docs/examples/quick_start/declare.shared.global.rules)
 
@@ -1380,12 +1377,12 @@ example: declare.shared.global
 }
 ```
 
-Request
+Запрос
 ```
 curl --location 'http://localhost/person' \
 --header 'example: declare.shared.global'
 ```
-Response
+Ответ
 ```
 {
     "age": 64
@@ -1394,9 +1391,9 @@ Response
 
 
 
-### Multiline variables and functions
-Variables and functions support multiline declarations.
-This can be used to create response templates
+### Многострочные переменные и функции
+Переменные и функции поддерживают многострочные объявления. 
+Это может использоваться для создания шаблонов ответов
 
 [multiline_functions.rules](docs/examples/quick_start/multiline_functions.rules)
 ```
@@ -1442,12 +1439,12 @@ example: multiline_functions
 ~ body
 {{ template.order }}
 ```
-Request
+Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
 --header 'example: multiline_functions'
 ```
-Response
+Ответ
 ```
 {
     "id": 1930876293,
@@ -1458,12 +1455,12 @@ Response
     "customer": "zsiw62s7hdj4vq7iw1xz"
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/order' \
 --header 'example: multiline_functions'
 ```
-Response
+Ответ
 ```
 {
     "id": 1874972789,
@@ -1476,17 +1473,17 @@ Response
 ```
 
 
-### User dictionaries
-System functions cannot satisfy all possible needs for generating random data.
+### Пользовательские справочники
+Системные функции не могут удовлетворить все возможные потребности для геренации случайных данных.
 
-To do this, you can use user dictionaries.
+Для этого можно использовать пользовательские справочники.
 
-To define it, you need to add a text file with
-extension `.set`, the file name without the extension `.set` is the name of the dictionary.
+Для его определения нужно добавить в рабочий каталог сервера текстовый файл с 
+расширением `.set`, имя файла без расширения `.set` является именем справочника.
 
-Each line is a directory value.
+Каждая строка является значением справочника.
 
-#### Data generation
+#### Генерация данных
 [name.first.set](docs/examples/quick_start/name.first.set)
 ```
 Nikolay
@@ -1516,18 +1513,18 @@ example: set.generation
     "name": "{{ name.first }} {{ name.last }}"
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/person' \
 --header 'example: set.generation'
 ```
-Response
+Ответ
 ```
 {
     "name": "John Fischer"
 }
 ```
-#### Matching
+#### Сопоставление
 [car.set](docs/examples/quick_start/car.set)
 ```
 ACURA
@@ -1552,12 +1549,12 @@ example: set.match
     "engine_capacity": {{ float: [0.5 - 10] }}
 }
 ```
-Request
+Запрос
 ```
-curl --location 'http://localhost/product/ACURA' \
+curl --location 'http://localhost/product/BUGATTI' \
 --header 'example: set.match'
 ```
-Response
+Ответ
 ```
 {
     "release_date": "2023-08-27T13:53:01.8264609"
@@ -1566,7 +1563,7 @@ Response
 ```
 
 
-### Repeating blocks
+### Повторение блоков
 
 [repeat_block.rules](docs/examples/quick_start/repeat_block.rules)
 ```
@@ -1598,12 +1595,12 @@ $order =
     ]
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/orders/123' \
 --header 'example: repeat_block'
 ```
-Response
+Ответ
 ```
 {
   "orders": [
@@ -1634,11 +1631,15 @@ Response
 
 
 
-#### Changing the value of json nodes in response templates
-Often in json response templates (which are simply functions that generate some values) you need to change some of the data and leave the rest unchanged. This is done by explicitly defining the function's return type as `json`. The block in which the function is used is a block of `C#` code, which will be discussed below.
+#### Изменение значение узлов json в шаблонах ответов
+Часто в шаблонах json ответов (которые представляют собой просто функции, 
+генерирующие некоторые значения) необходимо изменить часть данных, 
+а остальные оставить без изменений. Это делается с помощью явного определения типа  
+возвращаемого функцией значения как `json`. Блок, в котором используется функция является 
+блоком `C#` - кода, который будет рассмотрен ниже. 
 
-:triangular_flag_on_post: When calling functions in C# blocks
-The `$` character used in function declarations cannot be omitted
+:triangular_flag_on_post: При вызовах функций в C# - блоках 
+символ `$` используемый при объявлении функций не может быть опущен
 
 [change_json.rules](docs/examples/quick_start/change_json.rules)
 ```
@@ -1692,12 +1693,12 @@ example: change_json
         .replace("$.customer", "nikolas john")
 }}
 ```
-Request
+Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
 --header 'example: change_json'
 ```
-Response
+Ответ
 ```
 {
   "id": 1753774650,
@@ -1708,12 +1709,12 @@ Response
   "customer": "vasily pupkin"
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/order' \
 --header 'example: change_json'
 ```
-Response
+Ответ
 ```
 {
   "id": 1545541359,
@@ -1726,14 +1727,15 @@ Response
 ```
 
 
-### Defining dynamic blocks in C#
-In some cases, the functionality of the built-in functions is not enough to describe specific logic. In this case, you can use code blocks in C#
+### Определение динамических блоков на языке C#
+В некоторых случаях функциональности встроенных функций не хватает для описания
+специфичной логики. В этом случае можно использовать блоки кода на языке C#
 
 
 
-#### Short blocks
-Imply instructions without the use of additional variables and
-returning **not** `void` value
+#### Короткие блоки
+Подразумевают инструцию без использования дополнительных переменных и 
+возвращающую **не** `void` значение
 
 [charp.short.rules](docs/examples/quick_start/charp.short.rules)
 ```
@@ -1751,11 +1753,11 @@ GET /very/old/event
     "date": {{ DateTime.Now.AddYears(-100 - Random.Shared.Next(1, 100)) }}
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/very/old/event'
 ```
-Response
+Ответ
 ```
 {
     "date": 0926-11-12T14:14:55.0009386+02:31
@@ -1764,7 +1766,7 @@ Response
 
 
 
-#### Full blocks
+#### Полные блоки
 [charp.full.rules](docs/examples/quick_start/charp.full.rules)
 ```cs
 -------------------- rule
@@ -1811,7 +1813,7 @@ jpath: $.number >> {{ any }}
      }}
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/payment/card' \
 --header 'example: csharp.full' \
@@ -1820,14 +1822,14 @@ curl --location 'http://localhost/payment/card' \
     "number": "2222333344445678"
 }'
 ```
-Response
+Ответ
 ```
 {
     "mnemonic": "MIR *5678"
 }
 ```
 
-#### Extractiong dynamically matched data in blocks in C#
+#### Извлечение динамически сопоставленных данных в блоках на C#
 
 [extract.value.charp.rules](docs/examples/quick_start/extract.value.charp.rules)
 
@@ -1850,13 +1852,13 @@ example: extract.value.charp
     "balance": {{ float }}
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/balance/79161112233' \
 --header 'example: extract.value.csharp'
 ```
 
-Response
+Ответ
 ```
 {
     "phone": 9161112233,
@@ -1864,12 +1866,12 @@ Response
 }
 ```
 
-#### Defining classes
-To share logic, `*.cs` files are used with specific
-they contain classes and methods in C#.
+#### Определение классов
+Для совместного использования логики используются файлы `*.cs` с определенными 
+в них классами и методами на языке C#. 
 
-It should be noted that in the example, the data for calculating the card mnemonics is extracted from different
-fields
+Нужно обратить внимание, что в примере, данные для вычисления мнемоники карты, извлекаются из разных 
+полей
 
 [CardNumber.cs](docs/examples/quick_start/CardNumber.cs)
 ```cs
@@ -1946,7 +1948,7 @@ mnemonic was generated from 'pan' field: {{
     CardNumber.GetMnemonic(req.body.jpath("$.pan")) 
 }}
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/payment/card' \
 --header 'example: charp.class.mnenonic' \
@@ -1955,11 +1957,11 @@ curl --location 'http://localhost/payment/card' \
     "number": "2222333344445678"
 }'
 ```
-Response
+Ответ
 ```
 mnemonic was generated from 'number' field: MIR *5678
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/payment/card' \
 --header 'example: charp.class.mnenonic' \
@@ -1968,12 +1970,12 @@ curl --location 'http://localhost/payment/card' \
     "pan": "2222333344445678"
 }'
 ```
-Response
+Ответ
 ```
 mnemonic was generated from 'pan' field: MIR *5678
 ```
 
-#### Example of overlaying a signature
+#### Пример накладывания подписи
 [SignatureCalculator.cs](docs/examples/quick_start/SignatureCalculator.cs)
 ```cs
 using System.Security.Cryptography;
@@ -2030,12 +2032,12 @@ $response =
         .add("sign", SignatureCalculator.Get($response, "very_secret_key"))
 }}
 ```
-Request
+Запрос
 ```
 curl --location --request POST 'http://localhost/payment' \
 --header 'example: charp.class.sign'
 ```
-Response
+Ответ
 ```
 {
   "id": 911482583,
@@ -2045,15 +2047,15 @@ Response
 }
 ```
 
-###Using interval functionality in C# blocks
+### Использование функциональности интервалов в C# - блоках
 
-#### For matching
+#### Для сопоставления
 
-Sometimes the function for determining membership in a range (`range`) requires
-pass the previously modified value. This may be necessary, for example,
-in cases where one of the APIs takes a value not in basic currency units (rubles, dollars, euros, etc.), but in minimal ones (kopecks, cents, etc.) and the application multiplies the original value before transmitting the value. In this case, we need to first change the value by dividing it by the desired amount.
+Иногда в функцию определения принадлежности к диапазону (`range`) требуется
+передать предварительно измененное значение. Это бывает необходимо, например, 
+в случаях, если одно из API принимает значение не в основных единицах валюты (рубли, доллары, евро и т.д.), а минимальных (копейки, центы и т.д.) и приложение перед передачей значения домножает исходное значение. В этом случае нам необходимо предварительно изменить значение, разделив его на нужную величину.
 
-The `value` system variable is used to access the current value.
+Для доступа к текущему значению используется системная переменная `value`.
 
 [global.ranges.json](docs/examples/quick_start/global.ranges.json)
 
@@ -2104,7 +2106,7 @@ return range("amount/ok", amount);
     "status": "ok"
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/payment' \
 --header 'example: range.csharp' \
@@ -2113,14 +2115,14 @@ curl --location 'http://localhost/payment' \
     "amount": 20153492
 }'
 ```
-Response
+Ответ
 ```
 {
     "status": "ok"
 }
 ```
 
-#### For generation
+#### Для генерации
 ```
 -------------------- rule
 
@@ -2140,7 +2142,7 @@ example: ranges.csharp.generation
     "fee": {{ range("amount/ok") * 100 >> format: #. ### without decimals ### }}
 }
 ```
-Request
+Запрос
 ```
 curl --location --request GET 'http://localhost/payment' \
 --header 'example: ranges.csharp.generation' \
@@ -2149,7 +2151,7 @@ curl --location --request GET 'http://localhost/payment' \
     "amount": 20153492
 }'
 ```
-Response
+Ответ
 ```
 {
     "status": "ok"
@@ -2157,11 +2159,11 @@ Response
 }
 ```
 
-### Execute arbitrary code when processing a rule
-In some cases, arbitrary logic needs to be executed during rule processing. This can be done in the `action` section.
+### Выполнение произвольного кода при обработке правила
+В некоторых случаях в процессе обработки правила требуется выполнить произвольную логику. Это можно сделать в секции `action`.
 
-In the example below, the first rule saves the file, and the second
-a check is made for the existence of the file and, if the file exists, the response body is read from it and one of the fields is changed.
+В примере ниже, в первом правиле выполняется сохранение файла, а во втором 
+выполняется проверка на существование файла и, если файл существует, то тело ответа считывается из него и выполняется изменение одного из полей.
 
 [action.rules](docs/examples/quick_start/action.rules)
 ```
@@ -2219,13 +2221,13 @@ $body:json = {{ File.ReadAllText($"/tmp/{value("id")}.dat") }}
 }}
 ```
 
-Request
+Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
 --header 'example: action'
 ```
 
-Response
+Ответ
 ```
 {
     "id": 62,
@@ -2234,12 +2236,12 @@ Response
 }
 ```
 
-Request
+Запрос
 ```
 curl --location 'http://localhost/order/62' \
 --header 'example: action'
 ```
-Response
+Ответ
 ```
 {
   "id": 62,
@@ -2249,9 +2251,9 @@ Response
 ```
 
 
-###Save state
-Sometimes in complex scenarios you need to save state between requests.
-In this case, the methods of the `cache` class are used.
+### Сохранение состояния
+Иногда в сложных сценариях требуется сохранение состояния между запросами.
+В этом случае используются методы класса `cache`.
 
 [cache.rules](docs/examples/quick_start/cache.rules)
 ```
@@ -2351,12 +2353,12 @@ example: cache
 ~ body
 Order not found
 ```
-Request
+Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
 --header 'example: cache'
 ```
-Response
+Ответ
 ```
 {
   "id": 13,
@@ -2364,12 +2366,12 @@ Response
   "created_at": "2024-01-03T13:56:50.9407108"
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/order/13' \
 --header 'example: cache'
 ```
-Response
+Ответ
 ```
 {
   "id": 13,
@@ -2377,30 +2379,30 @@ Response
   "created_at": "2024-01-03T13:56:50.9407108"
 }
 ```
-Request
+Запрос
 ```
 curl --location --request POST 'http://localhost/order/cancel/13' \
 --header 'example: cache'
 ```
-Response
+Ответ
 ```
 200
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/order/13' \
 --header 'example: cache'
 ```
-Response
+Ответ
 ```
 404
 
 Order not found
 ```
 
-###Save state. Storing a set of data under one key
+### Сохранение состояния. Хранение набора данных под одним ключом
 
-To implement more complex logic when saving state, you can use an object with multiple fields. Let's consider an example with saving the first response body and an attempt counter that is incremented to a certain value.
+Для реализации более сложной логики при сохранении состояния можно использовать объект с несколькими полями. Рассмотрим пример с сохранением первого тела ответа и счетчиком попыток, который инкрементируется до определенного значения.
 
 [cache.medium.rules](docs/examples/quick_start/cache.medium.rules)
 ```
@@ -2514,12 +2516,12 @@ example: cache.medium
             .replace("$.status", "paid")
 }}
 ```
-Request
+Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
 --header 'example: cache.medium'
 ```
-Response
+Ответ
 ```
 {
   "id": 15,
@@ -2527,12 +2529,12 @@ Response
   "created_at": "2023-05-30T08:59:37.9894136"
 }
 ```
-Repeat the request 3 times
+3 раза повторяем запрос
 ```
 curl --location 'http://localhost/order/15' \
 --header 'example: cache.medium'
 ```
-Response
+Ответ
 ```
 {
   "id": 15,
@@ -2540,7 +2542,7 @@ Response
   "created_at": "2023-12-22T21:24:52.0163788"
 }
 ```
-When we repeat the request further, we get a response
+при дальнейшем повторе запроса получаем ответ
 ```
 {
   "id": 15,
@@ -2549,11 +2551,12 @@ When we repeat the request further, we get a response
 }
 ```
 
-### Overriding system functions
-System functions can be overridden by user functions.
-Those. if for some reason the logic for generating the value of the system function is not suitable, then it can be replaced with your own
+### Переопределение системных функций
+Системные функции могут быть переопределены пользовательскими.
+Т.е. если по какой-то причине логика генерации значения системной функции
+не подходит, то ее можно заменить своей
 
-In the example below, the `now` function generates a date without a time component
+В примере ниже фукция `now` генерирует дату без составляющей времени 
 
 [override.rules](docs/examples/quick_start/override.rules)
 ```
@@ -2579,22 +2582,23 @@ $now = {{ DateTime.Now.ToString("yyyy-MM-dd") }}
 }
 ```
 
-Request
+Запрос
 ```
 curl --location 'http://localhost/order' \
 --header 'example: override'
 ```
-Response
+Ответ
 ```
 {
     "created_at": "2023-10-08"
 }
 ```
 
-### Data conversion
-Once the value is generated, it can be converted either using built-in functions or using C# code
+### Преобразование данных
+После генерации значения его пожно преобразовать либо с помощью встроенных функций, 
+либо с помощью кода на языке C#
 
-#### Using built-in functions
+#### Использование строенных функций
 [transform.rules](docs/examples/quick_start/transform.rules)
 ```
 -------------------- rule
@@ -2614,12 +2618,12 @@ example: transform
     "customer": "{{ name >> lower  }}"
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/order' \
 --header 'example: transform'
 ```
-Response
+Ответ
 ```
 {
     "id": 1418089089,
@@ -2628,7 +2632,7 @@ Response
     "customer": "hermione longbottom"
 }
 ```
-#### Using the C# language
+#### Использование языка C#
 [transform.csharp.rules](docs/examples/quick_start/transform.csharp.rules)
 ```
 -------------------- rule
@@ -2648,12 +2652,12 @@ example: transform.csharp
     "customer": "{{ name >> value.ToLower()  }}"
 }
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/order' \
 --header 'example: transform.csharp'
 ```
-Response
+Ответ
 ```
 {
     "id": 2356628928,
@@ -2663,14 +2667,14 @@ Response
 }
 ```
 
-### Formatting various types of data
-Formatting of different data types is based on a common formatting mechanism
-**.NET**
+### Форматирование различных типов данных
+Форматирование разных типов данных основано на общем механизме форматирования
+**.NET** 
 
-A detailed description of formats for different data types can be found at
-[link](https://learn.microsoft.com/ru-ru/dotnet/standard/base-types/formatting-types)
+Подробное описание форматов для разных типов данных можно найти по 
+[ссылке](https://learn.microsoft.com/ru-ru/dotnet/standard/base-types/formatting-types)
 
-You can determine the data type of built-in functions using the following rule:
+Определить тип данных встроенных функций можно следующим правилом
 
 [format_gettype.rules](docs/examples/quick_start/format_gettype.rules)
 ```
@@ -2689,11 +2693,11 @@ GET /get_type
 {{ date >> value.GetType() }}
 {{ int >> value.GetType() }}
 ```
-Request
+Запрос
 ```
 curl --location 'http://localhost/get_type'
 ```
-Response
+Ответ
 ```
 System.Guid
 System.Decimal
@@ -2701,8 +2705,8 @@ System.DateTime
 System.Int64
 ```
 
-Formatting can be done either using the built-in
-the `format` function, or the `ToString()` method in a C# block.
+Форматирование можно осуществить либо использованием встроенной 
+функции `format`, либо методом `ToString()` в C# - блоке
 
 [format.rules](docs/examples/quick_start/format.rules)
 ```
@@ -2727,18 +2731,16 @@ GET /format
 {{ Guid.NewGuid() >> format: B }}
 ```
 
-Request
+Запрос
 ```
 curl --location 'http://localhost/format'
 ```
-Response
+Ответ
 ```
 fccbb0617f8143eebe3a8759570d8859
 77f02f06-e021-4565-b95e-9488ad02b9d2
 {a740ca3e-0c4c-46b2-9e6b-6bfe77f79da9}
 ```
 
-<!---
-## What's next?
-[Complete Guide](docs/guide.md)
---->
+## Что дальше?
+[Полное руководство](docs/guide.md)
