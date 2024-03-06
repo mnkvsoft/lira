@@ -2045,7 +2045,7 @@ Response
 }
 ```
 
-###Using interval functionality in C# blocks
+### Using interval functionality in C# blocks
 
 #### For matching
 
@@ -2249,7 +2249,7 @@ Response
 ```
 
 
-###Save state
+### Save state
 Sometimes in complex scenarios you need to save state between requests.
 In this case, the methods of the `cache` class are used.
 
@@ -2398,7 +2398,7 @@ Response
 Order not found
 ```
 
-###Save state. Storing a set of data under one key
+### Save state. Storing a set of data under one key
 
 To implement more complex logic when saving state, you can use an object with multiple fields. Let's consider an example with saving the first response body and an attempt counter that is incremented to a certain value.
 
