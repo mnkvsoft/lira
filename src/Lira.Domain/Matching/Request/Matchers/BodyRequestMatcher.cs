@@ -17,8 +17,9 @@ public class BodyRequestMatcher : IRequestMatcher
         _extractToMatchFunctionMap = extractToMatchFunctionMap;
     }
 
-    internal async Task<RequestMatchResult> IsMatch(RequestData request)
+    async Task<RequestMatchResult> IRequestMatcher.IsMatch(RequestContext context)
     {
+        var request = context.RequestData;
         var matchedValuesSet = new Dictionary<string, string?>();
         request.Body.Position = 0;
         var stream = new StreamReader(request.Body);
@@ -40,7 +41,7 @@ public class BodyRequestMatcher : IRequestMatcher
             weight += TextPatternPartWeightCalculator.Calculate(matcher);
         }
 
-        return RequestMatchResult.Matched(weight, matchedValuesSet);
+        return RequestMatchResult.Matched(name: "body", weight, matchedValuesSet);
     }
 
 }

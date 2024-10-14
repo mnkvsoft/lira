@@ -12,8 +12,9 @@ public class HeadersRequestMatcher : IRequestMatcher
         _headers = headers;
     }
 
-    internal Task<RequestMatchResult> IsMatch(RequestData request)
+    Task<RequestMatchResult> IRequestMatcher.IsMatch(RequestContext context)
     {
+        var request = context.RequestData; ;
         var matchedValuesSet = new Dictionary<string, string?>();
         int weight = 0;
 
@@ -39,6 +40,6 @@ public class HeadersRequestMatcher : IRequestMatcher
             weight += TextPatternPartWeightCalculator.Calculate(pattern);
             
         }
-        return Task.FromResult(RequestMatchResult.Matched(weight, matchedValuesSet));
+        return Task.FromResult(RequestMatchResult.Matched(name: "headers", weight, matchedValuesSet));
     }
 }

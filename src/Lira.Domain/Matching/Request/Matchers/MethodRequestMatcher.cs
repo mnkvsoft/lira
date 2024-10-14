@@ -4,9 +4,9 @@ namespace Lira.Domain.Matching.Request.Matchers;
 
 public record MethodRequestMatcher(HttpMethod ExpectedMethod) : IRequestMatcher
 {
-    internal Task<RequestMatchResult> IsMatch(RequestData request)
+    Task<RequestMatchResult> IRequestMatcher.IsMatch(RequestContext context)
     {
-        bool isMatch = ExpectedMethod.Method.Equals(request.Method);
-        return Task.FromResult(isMatch ? RequestMatchResult.Matched(WeightValue.StaticFull, ImmutableDictionary<string, string?>.Empty) : RequestMatchResult.NotMatched);
+        bool isMatch = ExpectedMethod.Method.Equals(context.RequestData.Method);
+        return Task.FromResult(isMatch ? RequestMatchResult.Matched(name: "method", WeightValue.StaticFull, ImmutableDictionary<string, string?>.Empty) : RequestMatchResult.NotMatched);
     }
 }

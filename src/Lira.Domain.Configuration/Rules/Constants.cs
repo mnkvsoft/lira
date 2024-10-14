@@ -10,6 +10,7 @@ class Constants
         public const string Condition = "condition";
         public const string Response = "response";
         public const string ActionPrefix = "action";
+        public const string Cache = "cache";
     }
 
     public static class BlockName

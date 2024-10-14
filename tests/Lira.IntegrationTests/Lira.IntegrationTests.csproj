@@ -32,13 +32,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="fixtures\debug\amout.ranges.json">
+    <None Update="fixtures\debug\less.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\debug\static_range_static_vs_code.rules">
+    <None Update="fixtures\debug\less.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\debug\static_range_static_vs_code.test">
+    <None Update="fixtures\rules\cache\short.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\call\1.rules">

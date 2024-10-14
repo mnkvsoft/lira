@@ -3,6 +3,11 @@ using Microsoft.Extensions.Primitives;
 
 namespace Lira.Domain;
 
+public record RequestContext(RequestData RequestData)
+{
+    public readonly Guid RequestId = Guid.NewGuid();
+}
+
 public record RequestData
 {
     public string Method { get; }

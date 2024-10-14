@@ -1,0 +1,18 @@
+
+###
+--------------------------------------- rule
+
+GET /cache/short/{{:id int }}
+
+----- cache
+
+key: "condition_" + value("id")
+time: 2 minute
+
+----- response
+
+~ body
+{
+    "id": {{ seq }},
+    "status": "pending"
+}

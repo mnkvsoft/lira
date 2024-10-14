@@ -8,40 +8,28 @@ public class Rule
     public string Name { get; }
 
     private readonly RequestMatcherSet _requestMatcherSet;
-    private readonly ConditionMatcherSet? _conditionMatcherSet;
     private readonly ActionsExecutor _actionsExecutor;
     private readonly ResponseStrategy _responseStrategy;
 
     public Rule(
         string name,
         RequestMatcherSet matchers,
-        ConditionMatcherSet? conditionMatcherSet,
         ActionsExecutor actionsExecutor,
         ResponseStrategy responseStrategy)
     {
         _requestMatcherSet = matchers;
 
         Name = name;
-        _conditionMatcherSet = conditionMatcherSet;
         _actionsExecutor = actionsExecutor;
         _responseStrategy = responseStrategy;
     }
 
-    public async Task<IRuleExecutor?> GetExecutor(RequestData request, Guid requestId)
+    public async Task<IRuleExecutor?> GetExecutor(RequestContext context)
     {
-        var matchResult = await _requestMatcherSet.IsMatch(request);
+        var matchResult = await _requestMatcherSet.IsMatch(context);
 
-        if (matchResult is RuleMatchResult.NotMatched)
-            return null;
-
-        var matched = (RuleMatchResult.Matched)matchResult;
-        if (_conditionMatcherSet == null)
-            return new RuleExecutor(request, this, matched.MatchedValues, matched.Weight);
-
-        bool conditionsIsMatch = await _conditionMatcherSet.IsMatch(request, requestId);
-
-        if (conditionsIsMatch)
-            return new RuleExecutor(request, this, matched.MatchedValues, matched.Weight); ;
+        if (matchResult is RuleMatchResult.Matched matched)
+            return new RuleExecutor(context.RequestData, this, matched.MatchedValues, matched.Weight); ;
 
         return null;
     }

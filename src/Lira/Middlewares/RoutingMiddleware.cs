@@ -83,7 +83,7 @@ class RoutingMiddleware : IMiddleware
             }
 
             if (_isLoggingEnabled)
-                _logger.LogInformation($"Was usage rule (times. search: {searchMs} ms, exe: {sw.GetElapsedDoubleMilliseconds()} ms. protocol: {context.Request.Protocol}): " + executor.Rule.Name);
+                _logger.LogInformation($"Was usage rule (times. search: {searchMs} ms, exe: {sw.GetElapsedDoubleMilliseconds()} ms. protocol: {context.Request.Protocol}. weight: {executor.Weight}): " + executor.Rule.Name);
             return;
         }
 
@@ -108,16 +108,16 @@ class RoutingMiddleware : IMiddleware
     {
         var allRules = await _rulesProvider.GetRules();
 
-        var requestId = Guid.NewGuid();
-
         var executors = new List<IRuleExecutor>();
+        var context = new RequestContext(request);
 
         foreach (var rule in allRules)
         {
             IRuleExecutor? executor;
             try
             {
-                executor = await rule.GetExecutor(request, requestId);
+                
+                executor = await rule.GetExecutor(context);
             }
             catch (Exception e)
             {

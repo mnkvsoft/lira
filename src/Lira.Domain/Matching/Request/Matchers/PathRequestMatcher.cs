@@ -2,7 +2,6 @@ using ArgValidation;
 
 namespace Lira.Domain.Matching.Request.Matchers;
 
-
 public class PathRequestMatcher : IRequestMatcher
 {
     private readonly IReadOnlyList<TextPatternPart> _segmentsPatterns;
@@ -13,8 +12,9 @@ public class PathRequestMatcher : IRequestMatcher
         _segmentsPatterns = expectedSegments;
     }
 
-    internal Task<RequestMatchResult> IsMatch(RequestData request)
+    Task<RequestMatchResult> IRequestMatcher.IsMatch(RequestContext context)
     {
+        var request = context.RequestData;
         var matchedValuesSet = new Dictionary<string, string?>();
         var currentSegments = request.Path.Value.Split('/');
 
@@ -36,6 +36,6 @@ public class PathRequestMatcher : IRequestMatcher
             weight += TextPatternPartWeightCalculator.Calculate(pattern);
         }
 
-        return Task.FromResult(RequestMatchResult.Matched(weight, matchedValuesSet));
+        return Task.FromResult(RequestMatchResult.Matched(name: "path", weight, matchedValuesSet));
     }
 }

@@ -20,7 +20,7 @@ class RequestMatchersParser
         _functionFactoryCSharp = functionFactoryCSharp;
     }
 
-    public RequestMatcherSet Parse(FileSection ruleSection, ParsingContext context)
+    public IReadOnlyCollection<IRequestMatcher> Parse(FileSection ruleSection, ParsingContext context)
     {
         var builder = new RequestMatchersBuilder();
 
@@ -43,12 +43,7 @@ class RequestMatchersParser
             builder.Add(CreateRequestMatcher(block, context));
         }
 
-        return (new RequestMatcherSet(
-            builder.GetOrNull<MethodRequestMatcher>(),
-            builder.GetOrNull<PathRequestMatcher>(),
-            builder.GetOrNull<QueryStringRequestMatcher>(),
-            builder.GetOrNull<HeadersRequestMatcher>(),
-            builder.GetOrNull<BodyRequestMatcher>()));
+        return builder.Matchers;
     }
 
     private IReadOnlyCollection<IRequestMatcher> GetMethodAndPathMatchersFromShortEntry(
@@ -81,22 +76,21 @@ class RequestMatchersParser
 
     private IRequestMatcher CreateRequestMatcher(FileBlock block, ParsingContext context)
     {
-        if (block.Name == Constants.BlockName.Rule.Method)
-            return CreateMethodRequestMather(block.GetSingleLine());
-
-        if (block.Name == Constants.BlockName.Rule.Query)
+        switch (block.Name)
         {
-            var query = block.GetSingleLine();
-            return CreateQueryStringMatcher(PatternParser.Parse(query), context);
+            case Constants.BlockName.Rule.Method:
+                return CreateMethodRequestMather(block.GetSingleLine());
+            case Constants.BlockName.Rule.Query:
+                return CreateQueryStringMatcher(PatternParser.Parse(block.GetSingleLine()), context);
+            case Constants.BlockName.Rule.Headers:
+                return CreateHeadersRequestMatcher(block, context);
+            case Constants.BlockName.Rule.Body:
+                return CreateBodyRequestMatcher(block, context);
+            case Constants.BlockName.Rule.Path:
+                return CreatePathRequestMatcher(PatternParser.Parse(block.GetSingleLine()), context);
+            default:
+                throw new Exception($"Unknown block '{block.Name}' in 'rule' section");
         }
-
-        if (block.Name == Constants.BlockName.Rule.Headers)
-            return CreateHeadersRequestMatcher(block, context);
-
-        if (block.Name == Constants.BlockName.Rule.Body)
-            return CreateBodyRequestMatcher(block, context);
-
-        throw new Exception($"Unknown block '{block.Name}' in 'rule' section");
     }
 
     private static MethodRequestMatcher CreateMethodRequestMather(string method)
@@ -289,13 +283,7 @@ class RequestMatchersParser
 
     private class RequestMatchersBuilder
     {
-        private readonly List<IRequestMatcher> _matchers = new();
-
-        public TRequestMatcher? GetOrNull<TRequestMatcher>() where TRequestMatcher : class, IRequestMatcher
-        {
-            var result = _matchers.FirstOrDefault(m => m is TRequestMatcher);
-            return (TRequestMatcher?)result;
-        }
+        public readonly List<IRequestMatcher> Matchers = new();
 
         public void AddRange(IEnumerable<IRequestMatcher> matchers)
         {
@@ -308,10 +296,10 @@ class RequestMatchersParser
         public void Add(IRequestMatcher matcher)
         {
             var type = matcher.GetType();
-            if (_matchers.FirstOrDefault(x => x.GetType() == matcher.GetType()) != null)
+            if (Matchers.FirstOrDefault(x => x.GetType() == matcher.GetType()) != null)
                 throw new InvalidOperationException($"Matcher '{type}' already added");
 
-            _matchers.Add(matcher);
+            Matchers.Add(matcher);
         }
     }
 }

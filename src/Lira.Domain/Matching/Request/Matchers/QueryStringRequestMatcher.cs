@@ -9,7 +9,7 @@ public class QueryStringRequestMatcher : IRequestMatcher
         _queryParamToPatternMap = queryParamToPatternMap;
     }
 
-    internal Task<RequestMatchResult> IsMatch(RequestData request)
+    Task<RequestMatchResult> IRequestMatcher.IsMatch(RequestContext context)
     {
         var matchedValuesSet = new Dictionary<string, string?>();
         int weight = 0;
@@ -17,7 +17,7 @@ public class QueryStringRequestMatcher : IRequestMatcher
         foreach (var pair in _queryParamToPatternMap)
         {
             var parName = pair.Key;
-            if (!request.Query.TryGetValue(parName, out var value))
+            if (!context.RequestData.Query.TryGetValue(parName, out var value))
                 return Task.FromResult(RequestMatchResult.NotMatched);
 
             var pattern = pair.Value;
@@ -28,6 +28,6 @@ public class QueryStringRequestMatcher : IRequestMatcher
 
             weight += TextPatternPartWeightCalculator.Calculate(pattern);
         }
-        return Task.FromResult(RequestMatchResult.Matched(weight, matchedValuesSet));
+        return Task.FromResult(RequestMatchResult.Matched(name: "query", weight, matchedValuesSet));
     }
 }

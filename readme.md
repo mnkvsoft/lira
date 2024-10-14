@@ -99,7 +99,7 @@ the server will give us a response with the http code `200` and the response bod
 Hello Nikolas!
 ```
 
-[Complete Guide](docs/guide.md)
+[Guide](docs/guide.md)
 
 ### Syntax highlighting
 
@@ -2740,5 +2740,5 @@ fccbb0617f8143eebe3a8759570d8859
 
 <!---
 ## What's next?
-[Complete Guide](docs/guide.md)
+[Guide](docs/guide.md)
 --->

@@ -1,4 +1,4 @@
-﻿using Lira.Domain.Extensions;
+using Lira.Domain.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using Lira.Common;
 
@@ -13,7 +13,7 @@ public interface IRequestStatisticStorage
     /// <param name="requestId">
     /// Is required so as not to add statistics for the same request from different rules
     /// </param>
-    Task<RequestStatistic> Add(RequestData request, Guid requestId);
+    Task<RequestStatistic> Add(RequestContext context);
 }
 
 class RequestStatisticStorage : IRequestStatisticStorage
@@ -25,20 +25,20 @@ class RequestStatisticStorage : IRequestStatisticStorage
         _cache = cache;
     }
 
-    public async Task<RequestStatistic> Add(RequestData request, Guid requestId)
+    public async Task<RequestStatistic> Add(RequestContext context)
     {
-        var hash = await GetHash(request);
+        var hash = await GetHash(context.RequestData);
 
         var statistic = _cache.Get<RequestStatistic>(hash);
 
         if (statistic != null)
         {
-            statistic.AddIfNotExist(requestId);
+            statistic.AddIfNotExist(context.RequestId);
         }
         else
         {
             statistic = new RequestStatistic();
-            statistic.AddIfNotExist(requestId);
+            statistic.AddIfNotExist(context.RequestId);
             _cache.Set(
                 hash,
                 statistic,

@@ -78,7 +78,7 @@ internal class RuleFileParser
         if (childSections.Count == 0)
             throw new Exception("Rule section is empty");
 
-        var requestMatcherSet = _requestMatchersParser.Parse(ruleSection, parsingContext);
+        var requestMatchers = _requestMatchersParser.Parse(ruleSection, parsingContext);
 
         var templates = GetTemplates(childSections, parsingContext);
         var ctx = parsingContext with { Templates = templates };
@@ -86,12 +86,16 @@ internal class RuleFileParser
         var variables = await GetDeclaredItems(childSections, ctx);
         ctx = ctx with { DeclaredItems = variables };
         
-        var existConditionSection = childSections.Any(x => x.Name == Constants.SectionName.Condition);
-
         ResponseStrategy responseStrategy;
         IReadOnlyCollection<Delayed<IAction>> externalCallers;
 
-        if (existConditionSection)
+        bool existsConditionSection = childSections.Any(x => x.Name == Constants.SectionName.Condition);
+        bool existsCacheSection = childSections.Any(x => x.Name == Constants.SectionName.Cache);
+
+        if (existsConditionSection && existsCacheSection)
+            throw new Exception("Section  and 2 cannot be declared together");
+
+        if (existsConditionSection)
         {
             AssertContainsOnlySections(childSections, new[] { Constants.SectionName.Condition, Constants.SectionName.Declare, Constants.SectionName.Templates });
 
@@ -110,22 +114,71 @@ internal class RuleFileParser
                     childConditionSections, _actionsParser.GetSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare));
 
                 ctx = ctx with { DeclaredItems = await GetDeclaredItems(childConditionSections, ctx) };
-                
-                var conditionMatcherSet = _conditionMatcherParser.Parse(conditionSection);
 
                 responseStrategy = await _responseStrategyParser.Parse(conditionSection, ctx);
                 externalCallers = await _actionsParser.Parse(childConditionSections, ctx);
 
+                var conditionMatchers = _conditionMatcherParser.Parse(conditionSection);
+
+                var matchers = new List<IRequestMatcher>();
+                matchers.AddRange(requestMatchers);
+                matchers.AddRange(conditionMatchers);
+
                 rules.Add(new Rule(
                     ruleName + $". Condition no. {i + 1}",
-                    requestMatcherSet,
-                    conditionMatcherSet,
+                    new RequestMatcherSet(matchers),
                     new ActionsExecutor(externalCallers, _loggerFactory),
                     responseStrategy));
             }
 
             return rules;
         }
+
+        //if (existsCacheSection)
+        //{
+        //    AssertContainsOnlySections(childSections, new[] { Constants.SectionName.Cache, Constants.SectionName.Declare, Constants.SectionName.Templates });
+
+        //    var conditionSections = childSections.Where(s => s.Name == Constants.SectionName.Cache).ToArray();
+
+        //    if (conditionSections.Length > 1)
+        //        throw new Exception($"There can only be one {Constants.SectionName.Cache} section");
+
+        //    var cacheSection = childSections.Single(s => s.Name == Constants.SectionName.Cache);
+
+        //    var rules = new List<Rule>();
+
+        //    if(cacheSection.ChildSections.Count > 0)
+        //        throw new Exception($"Section {Constants.SectionName.Cache} cannot contains child section. Contains: {string.Join(", ", cacheSection.ChildSections.Select(x => x.Name))}");
+
+
+
+        //    for (var i = 0; i < conditionSections.Length; i++)
+        //    {
+        //        var conditionSection = conditionSections[i];
+        //        var childConditionSections = conditionSection.ChildSections;
+        //        AssertContainsOnlySections(
+        //            childConditionSections, _actionsParser.GetSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare));
+
+        //        ctx = ctx with { DeclaredItems = await GetDeclaredItems(childConditionSections, ctx) };
+
+        //        responseStrategy = await _responseStrategyParser.Parse(conditionSection, ctx);
+        //        externalCallers = await _actionsParser.Parse(childConditionSections, ctx);
+
+        //        var conditionMatchers = _conditionMatcherParser.Parse(conditionSection);
+
+        //        var matchers = new List<IRequestMatcher>();
+        //        matchers.AddRange(requestMatchers);
+        //        matchers.AddRange(conditionMatchers);
+
+        //        rules.Add(new Rule(
+        //            ruleName + $". Condition no. {i + 1}",
+        //            new RequestMatcherSet(matchers),
+        //            new ActionsExecutor(externalCallers, _loggerFactory),
+        //            responseStrategy));
+        //    }
+
+        //    return rules;
+        //}
 
         AssertContainsOnlySections(
             childSections,
@@ -136,8 +189,7 @@ internal class RuleFileParser
 
         return new[] { new Rule(
             ruleName, 
-            requestMatcherSet, 
-            conditionMatcherSet: null, 
+            new RequestMatcherSet(requestMatchers), 
             new ActionsExecutor(externalCallers, _loggerFactory), 
             responseStrategy)};
     }

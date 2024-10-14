@@ -6,6 +6,7 @@ static class WeightValue
 {
     public const int StaticFull = 10;
     public const int StaticPart = 1;
+
     public static class Function
     {
         public const int Any = 3;
@@ -17,6 +18,9 @@ static class WeightValue
         // {{ some custom c# code or regex }} (8)
         public const int CustomRestriction = 8;
     }
+
+    // because conditions are triggered within one rule, then simply the more conditions, the greater the weight
+    public const int Condition = 1;
 }
 
 static class TextPatternPartWeightCalculator

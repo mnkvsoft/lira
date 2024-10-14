@@ -8,19 +8,13 @@ public interface IRuleMatchWeight : IComparable<IRuleMatchWeight>
 
 class RuleMatchWeight : IRuleMatchWeight
 {
-    private readonly int _method;
-    private readonly int _path;
-    private readonly int _query;
-    private readonly int _body;
-    private readonly int _headers;
+    private readonly int _weight;
+    private readonly IReadOnlyCollection<Matched> _matchedResults;
 
-    public RuleMatchWeight(int method, int path, int query, int body, int headers)
+    public RuleMatchWeight(IReadOnlyCollection<Matched> matchedResults)
     {
-        _method = method;
-        _path = path;
-        _query = query;
-        _body = body;
-        _headers = headers;
+        _weight = matchedResults.Sum(x => x.Weight);
+        _matchedResults = matchedResults;
     }
 
     public int CompareTo(IRuleMatchWeight? other)
@@ -31,17 +25,11 @@ class RuleMatchWeight : IRuleMatchWeight
         if (other is not RuleMatchWeight otherWeight)
             throw new UnsupportedInstanceType(other);
 
-        int compareResult = _method.CompareTo(otherWeight._method);
-        if (compareResult != 0)
-            return compareResult;
-        
-        compareResult = _path.CompareTo(otherWeight._path);
-        if (compareResult != 0)
-            return compareResult;
+        return _weight.CompareTo(otherWeight._weight);
+    }
 
-        int sum = _query + _body + _headers;
-        int sumOther = otherWeight._query + otherWeight._body + otherWeight._headers;
-
-        return sum.CompareTo(sumOther);
+    public override string ToString()
+    {
+        return _weight + " (" + string.Join(", ", _matchedResults.Select(x => x.Name + ": " + x.Weight)) + ")";
     }
 }

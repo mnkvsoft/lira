@@ -23,12 +23,12 @@ class ConditionMatcherParser
         public static readonly string Elapsed = "elapsed";
     }
 
-    public ConditionMatcherSet Parse(FileSection conditionSection)
+    public IReadOnlyCollection<IRequestMatcher> Parse(FileSection conditionSection)
     {
-        return new ConditionMatcherSet(_requestStatisticStorage, conditionSection.LinesWithoutBlock.Select(CreateConditionMatcher).ToArray());
+        return conditionSection.LinesWithoutBlock.Select(CreateConditionMatcher).ToArray();
     }
 
-    private IConditionMatcher CreateConditionMatcher(string line)
+    private IRequestMatcher CreateConditionMatcher(string line)
     {
         var splitResult = line.SplitBy(">=", "<=", "=", ">", "<", "in")?.Trim();
 
@@ -45,6 +45,7 @@ class ConditionMatcherParser
                     throw new ArgumentException($"Not range int value '{strValue}' in line {line}");
 
                 return new AttemptConditionMatcher(
+                    _requestStatisticStorage,
                     new ComparableMatchFunction<int>(ValueComparer<int>.MoreOrEquals(interval.From)),
                     new ComparableMatchFunction<int>(ValueComparer<int>.LessOrEquals(interval.To)));
             }
@@ -53,7 +54,7 @@ class ConditionMatcherParser
                 throw new ArgumentException($"Not int value '{strValue}' in line {line}");
 
             var comparer = GetValueComparer(splitter, value);
-            return new AttemptConditionMatcher(new ComparableMatchFunction<int>(comparer));
+            return new AttemptConditionMatcher(_requestStatisticStorage, new ComparableMatchFunction<int>(comparer));
         }
 
         if (variable == ConditionMatcherName.Elapsed)
@@ -64,13 +65,14 @@ class ConditionMatcherParser
                     throw new ArgumentException($"Not range int value '{strValue}' in line {line}");
 
                 return new ElapsedConditionMatcher(
+                    _requestStatisticStorage,
                     new ComparableMatchFunction<TimeSpan>(ValueComparer<TimeSpan>.MoreOrEquals(interval.From)),
                     new ComparableMatchFunction<TimeSpan>(ValueComparer<TimeSpan>.LessOrEquals(interval.To)));
             }
             
             var timespan = PrettyTimespanParser.Parse(strValue);
             var comparer = GetValueComparer(splitter, timespan);
-            return new ElapsedConditionMatcher(new ComparableMatchFunction<TimeSpan>(comparer));
+            return new ElapsedConditionMatcher(_requestStatisticStorage, new ComparableMatchFunction<TimeSpan>(comparer));
 
         }
         throw new Exception($"Unknown variable in condition section: '{variable}'");

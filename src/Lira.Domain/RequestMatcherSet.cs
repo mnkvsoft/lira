@@ -1,99 +1,33 @@
 using Lira.Domain.Extensions;
-using Lira.Domain.Matching.Request.Matchers;
 
 namespace Lira.Domain;
 
 public class RequestMatcherSet
 {
-    private readonly MethodRequestMatcher? _methodMatcher;
-    private readonly PathRequestMatcher? _pathMatcher;
-    private readonly QueryStringRequestMatcher? _queryStringMatcher;
-    private readonly HeadersRequestMatcher? _headersMatcher;
-    private readonly BodyRequestMatcher? _bodyMatcher;
+    private readonly IReadOnlyCollection<IRequestMatcher> _matchers;
 
-    public RequestMatcherSet(
-        MethodRequestMatcher? methodMatcher, 
-        PathRequestMatcher? pathMatcher, 
-        QueryStringRequestMatcher? queryStringMatcher, 
-        HeadersRequestMatcher? headersMatcher, 
-        BodyRequestMatcher? bodyMatcher)
+    public RequestMatcherSet(IReadOnlyCollection<IRequestMatcher> matchers)
     {
-        _methodMatcher = methodMatcher;
-        _pathMatcher = pathMatcher;
-        _queryStringMatcher = queryStringMatcher;
-        _headersMatcher = headersMatcher;
-        _bodyMatcher = bodyMatcher;
+        _matchers = matchers;
     }
-    
-    internal async Task<RuleMatchResult> IsMatch(RequestData request)
+
+    internal async Task<RuleMatchResult> IsMatch(RequestContext context)
     {
-        int weightMethod = 0;
-        int weightPath = 0;
-        int weightQuery = 0;
-        int weightBody = 0;
-        int weightHeaders = 0;
-
-        RequestMatchResult matchResult;
-
         var matchedValuesSet = new Dictionary<string, string?>();
+        var matcheds = new List<Matched>();
 
-        if (_methodMatcher != null)
+        foreach (var matcher in _matchers)
         {
-            matchResult = await _methodMatcher.IsMatch(request);
+            var matchResult = await matcher.IsMatch(context);
             if (matchResult is not Matched matched)
                 return RuleMatchResult.NotMatched.Instance;
 
             matchedValuesSet.Add(matched.MatchedValues);
-            weightMethod = matched.Weight;
-        }
-
-        if (_pathMatcher != null)
-        {
-            matchResult = await _pathMatcher.IsMatch(request);
-            if (matchResult is not Matched matched)
-                return RuleMatchResult.NotMatched.Instance;
-
-            matchedValuesSet.Add(matched.MatchedValues);
-            weightPath = matched.Weight;
-        }
-
-        if (_queryStringMatcher != null)
-        {
-            matchResult = await _queryStringMatcher.IsMatch(request);
-            if (matchResult is not Matched matched)
-                return RuleMatchResult.NotMatched.Instance;
-
-            matchedValuesSet.Add(matched.MatchedValues);
-            weightQuery = matched.Weight;
-        }
-
-        if (_headersMatcher != null)
-        {
-            matchResult = await _headersMatcher.IsMatch(request);
-            if (matchResult is not Matched matched)
-                return RuleMatchResult.NotMatched.Instance;
-
-            matchedValuesSet.Add(matched.MatchedValues);
-            weightHeaders = matched.Weight;
-        }
-
-        if (_bodyMatcher != null)
-        {
-            matchResult = await _bodyMatcher.IsMatch(request);
-            if (matchResult is not Matched matched)
-                return RuleMatchResult.NotMatched.Instance;
-
-            matchedValuesSet.Add(matched.MatchedValues);
-            weightBody = matched.Weight;
+            matcheds.Add(matched);
         }
 
         return new RuleMatchResult.Matched(
-            new RuleMatchWeight(
-                weightMethod,
-                weightPath,
-                weightQuery,
-                weightBody,
-                weightHeaders),
+            new RuleMatchWeight(matcheds),
             matchedValuesSet);
     }
 }
