@@ -8,13 +8,13 @@ public class Rule
     public string Name { get; }
 
     private readonly RequestMatcherSet _requestMatcherSet;
-    private readonly ActionsExecutor _actionsExecutor;
+    private readonly ActionsExecutor? _actionsExecutor;
     private readonly ResponseStrategy _responseStrategy;
 
     public Rule(
         string name,
         RequestMatcherSet matchers,
-        ActionsExecutor actionsExecutor,
+        ActionsExecutor? actionsExecutor,
         ResponseStrategy responseStrategy)
     {
         _requestMatcherSet = matchers;
@@ -29,16 +29,20 @@ public class Rule
         var matchResult = await _requestMatcherSet.IsMatch(context);
 
         if (matchResult is RuleMatchResult.Matched matched)
-            return new RuleExecutor(context.RequestData, this, matched.MatchedValues, matched.Weight); ;
+            return new RuleExecutor(context.RequestData, Rule: this, matched.MatchedValues, matched.Weight);
 
         return null;
     }
 
-    internal async Task Execute(HttpContextData httpContextData)
+    private async Task Execute(HttpContextData httpContextData)
     {
         await httpContextData.RuleExecutingContext.Request.SaveBody();
 
-        await _actionsExecutor.Execute(httpContextData.RuleExecutingContext);
+        if (_actionsExecutor != null)
+        {
+            await _actionsExecutor.Execute(httpContextData.RuleExecutingContext);
+        }
+
         await _responseStrategy.Execute(httpContextData);
     }
 

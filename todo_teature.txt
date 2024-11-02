@@ -1,7 +1,22 @@
+- cache response
+- save seq state
+- add pan range
+- rename set to dic
+- json.replace with obj
+
+example:
+
+$new.prop = { "a":1, "b":2 }
+
+$$var.replace("$.prop", $new.prop)
+$$var.replace("$.prop", $new.prop)
+
+- add overload:
+protected bool range(string rangeName, object? value, Func<string, string> change = null)
+
 - verify request
 - describe file section format
 - RequestStatisticStorage ttl to config
 - rules inheritance
 - repeat function
-- cache response
-- id for matching value
+

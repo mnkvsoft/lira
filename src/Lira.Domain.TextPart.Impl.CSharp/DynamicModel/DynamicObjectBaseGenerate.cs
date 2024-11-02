@@ -6,7 +6,7 @@ public class DynamicObjectBaseGenerate : DynamicObjectBase
     {
     }
 
-    protected IReadonlyCache cache => _cache;
+    protected IReadonlyCache cache => Cache;
 
     protected dynamic range(string rangeName)
     {

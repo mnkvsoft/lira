@@ -14,7 +14,7 @@ public abstract record ResponseStrategy(TimeSpan? Delay)
     }
 
     protected abstract Task ExecuteInternal(HttpContextData httpContextData);
-    
+
     public record Normal(TimeSpan? Delay, int Code, BodyGenerator? BodyGenerator, HeadersGenerator? HeadersGenerator) : ResponseStrategy(Delay)
     {
         protected override async Task ExecuteInternal(HttpContextData httpContextData)

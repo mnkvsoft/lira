@@ -9,17 +9,14 @@ public class BodyGenerator
         _parts = parts;
     }
 
-    internal IReadOnlyCollection<string> Create(RuleExecutingContext context)
+    internal IEnumerable<string> Create(RuleExecutingContext context)
     {
-        var result = new List<string>(_parts.Count);
         foreach (var part in _parts)
         {
             string? text = part.Get(context);
             
             if (text != null)
-                result.Add(text);
+                yield return text;
         }
-
-        return result;
     }
 }

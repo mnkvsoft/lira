@@ -21,6 +21,7 @@ static class WeightValue
 
     // because conditions are triggered within one rule, then simply the more conditions, the greater the weight
     public const int Condition = 1;
+    public const int Cache = 1;
 }
 
 static class TextPatternPartWeightCalculator

@@ -6,5 +6,5 @@ public class DynamicObjectBaseAction : DynamicObjectBase
     {
     }
 
-    protected ICache cache => _cache;
+    protected ICache cache => Cache;
 }

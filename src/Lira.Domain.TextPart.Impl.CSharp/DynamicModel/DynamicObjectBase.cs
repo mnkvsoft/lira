@@ -6,16 +6,16 @@ namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 public class DynamicObjectBase
 {
     public record Dependencies(IDeclaredPartsProvider DeclaredPartsProvider, Cache Cache, IRangesProvider RangesProvider);
-    
+
     private readonly IDeclaredPartsProvider _declaredPartsProvider;
-    protected readonly Cache _cache;
+    protected readonly Cache Cache;
     protected const string NewLine = Constants.NewLine;
     private readonly IRangesProvider _rangesProvider;
 
     public DynamicObjectBase(Dependencies dependencies)
     {
         _declaredPartsProvider = dependencies.DeclaredPartsProvider;
-        _cache = dependencies.Cache;
+        Cache = dependencies.Cache;
         _rangesProvider = dependencies.RangesProvider;
     }
 
@@ -24,15 +24,15 @@ public class DynamicObjectBase
         dynamic? part = _declaredPartsProvider.Get(name).Get(context);
         return part;
     }
-    
+
     public IObjectTextPart GetDeclaredPart(string name)
     {
         return _declaredPartsProvider.Get(name);
     }
-    
+
     protected string Repeat(RuleExecutingContext context, IObjectTextPart part, string separator, int count)
     {
-        return string.Join(separator, 
+        return string.Join(separator,
             Enumerable.Repeat("", count)
                 .Select(_ => part.Get(context)?.ToString() ?? ""));
     }

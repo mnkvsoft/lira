@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
-public class Cache : IReadonlyCache, ICache
+public class Cache : ICache
 {
     private readonly IMemoryCache _memoryCache;
     private readonly TimeSpan _defaultLifeTimeInCache;

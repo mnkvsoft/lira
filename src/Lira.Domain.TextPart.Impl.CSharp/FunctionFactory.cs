@@ -35,8 +35,14 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly Cache _cache;
     private readonly IRangesProvider _rangesProvider;
 
-    public FunctionFactory(IConfiguration configuration, ILoggerFactory loggerFactory, DynamicAssembliesUnloader unLoader,
-        Compiler compiler, CompilationStatistic compilationStatistic, Cache cache, IRangesProvider rangesProvider)
+    public FunctionFactory(
+        IConfiguration configuration,
+        ILoggerFactory loggerFactory,
+        DynamicAssembliesUnloader unLoader,
+        Compiler compiler,
+        CompilationStatistic compilationStatistic,
+        Cache cache,
+        IRangesProvider rangesProvider)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _path = configuration.GetRulesPath();
@@ -248,10 +254,10 @@ class FunctionFactory : IFunctionFactoryCSharp
         string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
             className,
             GetMethodBody(new Code(
-                ForCompile: 
-                code.StartsWith(repeatFunctionName) 
+                ForCompile:
+                code.StartsWith(repeatFunctionName)
                 ? ReplaceVariableNamesForRepeat(code, declaredPartsProvider)
-                : ReplaceVariableNames(code, declaredPartsProvider, contextParameterName), 
+                : ReplaceVariableNames(code, declaredPartsProvider, contextParameterName),
                 Source: code)),
             contextParameterName,
             ReservedVariable.Req,
@@ -271,7 +277,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         string classToCompile = ClassCodeCreator.CreateAction(
             className,
             WrapToTryCatch(new Code(
-                ForCompile: ReplaceVariableNames(code, declaredPartsProvider, contextParameterName) + ";", 
+                ForCompile: ReplaceVariableNames(code, declaredPartsProvider, contextParameterName) + ";",
                 Source: code)),
             contextParameterName,
             ReservedVariable.Req,
@@ -351,7 +357,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         return code;
     }
-    
+
     private static string ReplaceVariableNamesForRepeat(string code, IDeclaredPartsProvider declaredPartsProvider)
     {
         foreach (var name in declaredPartsProvider.GetAllNamesDeclared())

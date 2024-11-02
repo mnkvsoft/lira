@@ -7,7 +7,6 @@ public class ActionsExecutor
     private readonly IReadOnlyCollection<Delayed<IAction>> _actions;
     private readonly ILogger _logger;
 
-
     public ActionsExecutor(IReadOnlyCollection<Delayed<IAction>> actions, ILoggerFactory loggerFactory)
     {
         _actions = actions;
@@ -33,7 +32,7 @@ public class ActionsExecutor
         }
         else
         {
-            await action.Value.Execute(context);    
+            await action.Value.Execute(context);
         }
     }
 
