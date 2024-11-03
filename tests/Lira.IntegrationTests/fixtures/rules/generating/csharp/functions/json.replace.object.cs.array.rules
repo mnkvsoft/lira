@@ -1,0 +1,35 @@
+-------------------- declare
+
+$response:json =
+{
+    "result" : {},
+    "date": "2024-11-02T12:33:98.334Z"
+}
+
+-------------------- rule
+
+POST /payments
+
+~ headers
+example: json.replace.object.cs.array
+
+----- declare
+
+$result = {{
+    new [] {
+        new
+        {
+            status = "reject",
+            code = "90897",
+            message = "insufficient funds"
+        }
+    }
+}}
+
+----- response
+
+~ code
+200
+
+~ body
+{{ $response.replace("$.result", $result) }}

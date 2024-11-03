@@ -1,0 +1,51 @@
+-------------------- rule
+
+POST /mts-login/amserver/oauth2/idtokeninfo
+
+~ body
+{{ form: id_token }} >> test{{:phone regex: [0-9]{10,13} }}
+
+----- declare
+
+$login.response:json =
+{
+    "phone1": "{{ value("phone") }}",
+    "phone2": ""
+}
+
+----- response
+
+~ body
+{{
+    $login.response
+      .replace("$.phone2", value("phone"))
+}}
+
+
+###
+-------------------- rule
+
+POST /generating/csharp/functions/json/replace/value
+
+~ body
+{{ form: phone }} >> 7{{:phone int }}
+
+----- declare
+
+$json_var:json =
+{
+    "field1" : "value",
+    "field2" : 1
+}
+
+----- response
+
+~ code
+200
+
+~ body
+{{
+     $json_var
+        .replace("$.field1", value("phone"))
+        .replace("$.field2", 2)
+}}

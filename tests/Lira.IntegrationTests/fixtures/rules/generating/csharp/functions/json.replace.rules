@@ -2,15 +2,17 @@
 
 GET /generating/csharp/functions/json/replace
 
-
-
 ----- declare
 
-$$json_var = 
-{ 
-    "field1" : "value",
-    "field2" : 1
-} 
+$json_var =
+{
+    "stringField" : "value",
+    "intField" : 0,
+    "boolField" : false,
+    "arrayField": [],
+    "objectField1": {},
+    "objectField2": {}
+}
 
 ----- response
 
@@ -18,8 +20,12 @@ $$json_var =
 200
 
 ~ body
-{{ 
-     json($$json_var)
-        .replace("$.field1", "new_value") 
-        .replace("$.field2", 2)        
+{{
+     json($json_var)
+        .replace("$.stringField", "new_value")
+        .replace("$.intField", 1)
+        .replace("$.boolField", true)
+        .replace("$.arrayField", "[1,2,3]")
+        .replace("$.objectField1", "{\"a\": 123}")
+        .replace("$.objectField2", "{'b': 'value'}")
 }}

@@ -1,0 +1,36 @@
+###
+-------------------- declare
+
+$response:json =
+{
+    "result" : {},
+    "date": "2024-11-02T12:33:98.334Z"
+}
+
+-------------------- rule
+
+POST /payments
+
+~ body
+{{ jpath: $.amount }} >> {{ range: amount/reject }}
+
+~ headers
+example: generating/csharp/functions/json.replace.object.cs
+
+----- declare
+
+$result = {{
+    new
+    {
+        status = "reject",
+        code = "90897",
+        message = "insufficient funds"
+    }
+}}
+----- response
+
+~ code
+200
+
+~ body
+{{ $response.replace("$.result", $result) }}

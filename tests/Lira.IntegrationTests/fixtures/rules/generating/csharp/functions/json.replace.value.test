@@ -1,0 +1,11 @@
+-------------------- case
+
+POST /mts-login/amserver/oauth2/idtokeninfo
+
+~ body
+id_token=test79161112233
+
+----- expected
+
+~ code
+200

@@ -165,6 +165,7 @@ class FunctionFactory : IFunctionFactoryCSharp
                         Compiled: new Assembly[]
                         {
                             typeof(IObjectTextPart).Assembly,
+                            typeof(IObjectTextPart).Assembly,
                             typeof(IRangesProvider).Assembly,
                             typeof(Json).Assembly,
                             typeof(RequestData).Assembly,
@@ -248,10 +249,10 @@ class FunctionFactory : IFunctionFactoryCSharp
         string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
             className,
             GetMethodBody(new Code(
-                ForCompile: 
-                code.StartsWith(repeatFunctionName) 
+                ForCompile:
+                code.StartsWith(repeatFunctionName)
                 ? ReplaceVariableNamesForRepeat(code, declaredPartsProvider)
-                : ReplaceVariableNames(code, declaredPartsProvider, contextParameterName), 
+                : ReplaceVariableNames(code, declaredPartsProvider, contextParameterName),
                 Source: code)),
             contextParameterName,
             ReservedVariable.Req,
@@ -271,7 +272,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         string classToCompile = ClassCodeCreator.CreateAction(
             className,
             WrapToTryCatch(new Code(
-                ForCompile: ReplaceVariableNames(code, declaredPartsProvider, contextParameterName) + ";", 
+                ForCompile: ReplaceVariableNames(code, declaredPartsProvider, contextParameterName) + ";",
                 Source: code)),
             contextParameterName,
             ReservedVariable.Req,
@@ -324,6 +325,12 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private static string WrapToTryCatch(Code code)
     {
+        string escapedCode = code.Source
+            .Replace("\\", "\\\\")
+            .Replace("\"", "\\\"")
+            .Replace("\r\n", "\" + nl + \"")
+            .Replace("\n", "\" + nl + \"");
+
         return @"try
             {
                 " + code.ForCompile + @"
@@ -332,10 +339,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             {
                 var nl = NewLine;
                 throw new Exception(" + "\"An error has occurred while execute code block: \" + nl + \"" +
-               code.Source
-                   .Replace("\"", "\\\"")
-                   .Replace("\r\n", "\" + nl + \"")
-                   .Replace("\n", "\" + nl + \"") +
+               escapedCode +
                "\", e);" + @"
             }";
     }
@@ -351,7 +355,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         return code;
     }
-    
+
     private static string ReplaceVariableNamesForRepeat(string code, IDeclaredPartsProvider declaredPartsProvider)
     {
         foreach (var name in declaredPartsProvider.GetAllNamesDeclared())

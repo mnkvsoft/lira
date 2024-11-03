@@ -1,0 +1,21 @@
+-------------------- case
+
+POST /payments
+
+~ headers
+example: json.replace.object.cs.array
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "result": {
+    "status": "reject",
+    "code": "90897",
+    "message": "insufficient funds"
+  },
+  "date": "2024-11-02T12:33:98.334Z"
+}

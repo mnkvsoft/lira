@@ -12,6 +12,30 @@
     <Compile Remove="fixtures\rules\generating\csharp_blocks\**" />
     <EmbeddedResource Remove="fixtures\rules\generating\csharp_blocks\**" />
     <None Remove="fixtures\rules\generating\csharp_blocks\**" />
+    <None Update="fixtures\rules\generating\csharp\functions\json.replace.value.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp\functions\json.replace.value.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp\functions\json.replace.object.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp\functions\json.replace.object.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp\functions\json.replace.object.cs.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp\functions\json.replace.object.cs.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp\functions\json.replace.object.cs.array.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\csharp\functions\json.replace.object.cs.array.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
