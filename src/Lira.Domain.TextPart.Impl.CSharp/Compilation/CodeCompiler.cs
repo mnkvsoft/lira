@@ -74,6 +74,7 @@ static class CodeCompiler
             MetadataReference.CreateFromFile(typeof(System.Runtime.CompilerServices.DynamicAttribute).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(System.Text.Json.JsonDocument).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(System.Text.RegularExpressions.Regex).Assembly.Location),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "mscorlib.dll")),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.dll")),
             MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Core.dll")),
