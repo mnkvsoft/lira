@@ -8,4 +8,6 @@ GET /action/set_variable
 200
 
 ~ body
-value from action section
+{
+    "message": "json from action"
+}

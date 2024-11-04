@@ -4,7 +4,12 @@ GET /action/set_variable
 
 ----- action
 
-bag.key = "value from action section";
+bag.key =
+"""
+{
+    "message": "json from action"
+}
+""";
 
 ----- response
 
