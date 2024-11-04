@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/csharp/functions/json/replace
+GET /generating/types/json/replace
 
 ----- declare
 

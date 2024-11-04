@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/csharp/functions/json
+
+----- expected
+
+~ code
+200
+
+~ body
+Lira.Domain.TextPart.Types.Json

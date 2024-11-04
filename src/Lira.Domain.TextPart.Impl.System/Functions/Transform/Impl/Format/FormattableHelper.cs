@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+﻿using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.System.Functions.Transform.Impl.Format;
 
@@ -13,32 +13,17 @@ internal static class FormattableHelper
 
     private static IFormattable GetFormattable(object value)
     {
-        IFormattable formattable;
+        if (value is IFormattable formattable)
+            return formattable;
 
-        if (value is IFormattable f)
-            formattable = f;
-        else if (value is string valueStr)
-            formattable = GetFormattable(valueStr);
-        else
-            throw new Exception($"Cannot format {value.GetType()} with value '{value}'");
+        if (value is string valueStr)
+        {
+            var typed = valueStr.Typed();
 
-        return formattable;
-    }
+            if (typed is IFormattable f)
+                return f;
+        }
 
-    private static IFormattable GetFormattable(string value)
-    {
-        if (long.TryParse(value, CultureInfo.InvariantCulture, out var longValue))
-            return longValue;
-
-        if (decimal.TryParse(value, CultureInfo.InvariantCulture, out var decimalValue))
-            return decimalValue;
-
-        if (Guid.TryParse(value, CultureInfo.InvariantCulture, out var guidValue))
-            return guidValue;
-
-        if (DateTime.TryParse(value, CultureInfo.InvariantCulture, out var dateValue))
-            return dateValue;
-
-        throw new Exception($"Cannot convert string value '{value}' to formattable");
+        throw new Exception($"Cannot format {value.GetType()} with value '{value}'");
     }
 }

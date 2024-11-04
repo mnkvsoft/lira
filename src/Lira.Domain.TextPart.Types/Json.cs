@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Lira.Common.Extensions;
+using Newtonsoft.Json.Linq;
 
 namespace Lira.Domain.TextPart.Types;
 
@@ -18,6 +19,9 @@ public class Json
 
     public Json replace(string path, object newValue)
     {
+        if(newValue is string str)
+            return new Json(ReplacePath(Value, path, str.Typed()));
+
         return new Json(ReplacePath(Value, path, newValue));
     }
 
@@ -56,9 +60,7 @@ public class Json
     private static JToken GetNewToken(JToken currentToken, object newValue)
     {
         if (currentToken is JValue)
-        {
             return JToken.FromObject(newValue);
-        }
 
         if(newValue is string str)
             return JToken.Parse(str.Trim());
