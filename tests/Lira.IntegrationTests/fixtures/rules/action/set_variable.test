@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /action/set_variable
+
+----- expected
+
+~ code
+200
+
+~ body
+value from action section

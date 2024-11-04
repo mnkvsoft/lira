@@ -36,7 +36,7 @@ static class ClassCodeCreator
             .Replace("[input]", inputArgumentName)
             .Replace("[code]", code);
     }
-    
+
     public static string CreateMatchFunction(
         string className,
         string code,
@@ -51,7 +51,7 @@ static class ClassCodeCreator
             .Replace("[input]", inputArgumentName)
             .Replace("[code]", code);
     }
-    
+
     public static string CreateAction(
         string className,
         string code,
@@ -116,7 +116,8 @@ public class [className] : DynamicObjectBaseGenerate, IObjectTextPart
     public dynamic? Get(RuleExecutingContext [context])
     {
         var [externalRequestVariableName] = new RequestModel([context].Request);
-        
+        dynamic bag = new Bag([context], readOnly: true);
+
         [code]
 
         string [repeat](IObjectTextPart part, string separator = "","", int? count = null, int? from = null, int? to = null)
@@ -130,6 +131,8 @@ public class [className] : DynamicObjectBaseGenerate, IObjectTextPart
                 cnt = Random.Shared.Next(3, 9);
             return Repeat([context], part, separator, cnt);
         }
+
+
 
         string? value(string name)
         {
@@ -156,7 +159,7 @@ public class [className] : DynamicObjectBase, ITransformFunction
     }
 }
 ";
-        
+
         public readonly static string IMatchFunction =
             "[namespaces]" + Nl + Nl +
             ImportNamespaces + Nl + Nl +
@@ -178,7 +181,7 @@ public class [className] : DynamicObjectBaseMatch, IMatchFunction
     }
 }
 ";
-        
+
         public readonly static string IAction =
             "[namespaces]" + Nl + Nl +
             ImportNamespaces + Nl + Nl +
@@ -196,6 +199,8 @@ public class [className] : DynamicObjectBaseAction, IAction
     public async Task Execute(RuleExecutingContext [context])
     {
         var [externalRequestVariableName] = new RequestModel([context].Request);
+        dynamic bag = new Bag([context], readOnly: false);
+
         [code]
 
         string? value(string name)
@@ -205,7 +210,7 @@ public class [className] : DynamicObjectBaseAction, IAction
     }
 }
 ";
-        
+
     }
 }
 

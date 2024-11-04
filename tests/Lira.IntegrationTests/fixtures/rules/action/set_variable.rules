@@ -1,0 +1,12 @@
+-------------------- rule
+
+GET /action/set_variable
+
+----- action
+
+bag.key = "value from action section";
+
+----- response
+
+~ body
+{{ bag.key }}
