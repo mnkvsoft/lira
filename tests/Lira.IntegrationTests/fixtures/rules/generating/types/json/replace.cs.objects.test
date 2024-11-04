@@ -1,0 +1,20 @@
+-------------------- case
+
+GET /generating/types/json/replace/cs/objects
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "arrayField": [
+    1,
+    2,
+    3
+  ],
+  "objectField": {
+    "b": "value"
+  }
+}

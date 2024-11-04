@@ -1,4 +1,6 @@
-﻿namespace Lira.Common.Extensions;
+﻿using System.Globalization;
+
+namespace Lira.Common.Extensions;
 public static class StringExtensions
 {
     public static string TrimStart(this string value, string trimString)
@@ -46,7 +48,27 @@ public static class StringExtensions
     {
         return (value.part1.Trim(), value.part2?.Trim());
     }
-    
+
+    public static object Typed(this string value)
+    {
+        if (bool.TryParse(value, out var boolValue))
+            return boolValue;
+
+        if (long.TryParse(value, CultureInfo.InvariantCulture, out var longValue))
+            return longValue;
+
+        if (decimal.TryParse(value, CultureInfo.InvariantCulture, out var decimalValue))
+            return decimalValue;
+
+        if (Guid.TryParse(value, CultureInfo.InvariantCulture, out var guidValue))
+            return guidValue;
+
+        if (DateTime.TryParse(value, CultureInfo.InvariantCulture, out var dateValue))
+            return dateValue;
+
+        return value;
+    }
+
     public static TwoPartsRequired SplitToTwoPartsRequired(this string value, string splitter)
     {
         var index = value.IndexOf(splitter, StringComparison.Ordinal);
@@ -82,7 +104,7 @@ public static class StringExtensions
 
     public static SplitResult Trim(this SplitResult splitResult)
     {
-        return new SplitResult(splitResult.Splitter, splitResult.LeftPart.Trim(), splitResult.RightPart.Trim());    
+        return new SplitResult(splitResult.Splitter, splitResult.LeftPart.Trim(), splitResult.RightPart.Trim());
     }
 }
 

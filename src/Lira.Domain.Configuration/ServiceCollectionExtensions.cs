@@ -8,6 +8,7 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Variables;
 using Lira.Domain.DataModel;
 using Lira.Domain.TextPart.Impl.CSharp;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 using Lira.Domain.TextPart.Impl.System;
 
 namespace Lira.Domain.Configuration;
@@ -38,7 +39,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IntParser>()
             .AddSingleton<FloatParser>()
             .AddSingleton<HexParser>()
-            
+
             .AddSingleton<RangesLoader>()
             .AddSingleton<RangesProvider>()
             .AddSingleton<IRangesProvider>(provider => provider.GetRequiredService<RangesProvider>())

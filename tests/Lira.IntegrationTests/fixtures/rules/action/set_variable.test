@@ -1,0 +1,13 @@
+-------------------- case
+
+GET /action/set_variable
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "message": "json from action"
+}

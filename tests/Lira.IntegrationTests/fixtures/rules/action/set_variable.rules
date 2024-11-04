@@ -1,0 +1,17 @@
+-------------------- rule
+
+GET /action/set_variable
+
+----- action
+
+bag.key =
+"""
+{
+    "message": "json from action"
+}
+""";
+
+----- response
+
+~ body
+{{ bag.key }}

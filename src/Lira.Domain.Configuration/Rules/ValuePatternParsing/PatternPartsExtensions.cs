@@ -9,7 +9,7 @@ static class PatternPartsExtensions
 
     public static TwoPartsWithSecondRequired Trim(this TwoPartsWithSecondRequired parts)
         => new TwoPartsWithSecondRequired(parts.One.Trim(), parts.Second.Trim());
-    
+
     public static TwoPartsWithSecondOptional Trim(this TwoPartsWithSecondOptional parts)
         => new TwoPartsWithSecondOptional(parts.One.Trim(), parts.Second?.Trim());
 
@@ -19,13 +19,13 @@ static class PatternPartsExtensions
     {
         var temp = new List<PatternPart>(parts);
         temp.Reverse();
-        
+
         var reversed = new PatternParts(temp);
         reversed = reversed.TrimStart();
-        
+
         temp = new List<PatternPart>(reversed);
         temp.Reverse();
-        
+
         return new PatternParts(temp);
     }
 
@@ -40,7 +40,7 @@ static class PatternPartsExtensions
             {
                 if(string.IsNullOrWhiteSpace(st.Value))
                     continue;
-                
+
                 temp.Add(new PatternPart.Static(st.Value.TrimStart()));
                 start = false;
                 continue;
@@ -53,20 +53,30 @@ static class PatternPartsExtensions
         return new PatternParts(temp);
     }
 
-    public static bool ContainsDynamic(this PatternParts parts) 
+    public static bool ContainsDynamic(this PatternParts parts)
         => parts.Any(x => x is PatternPart.Dynamic);
-    
-    public static bool ContainsInStatic(this PatternParts parts, string value) 
+
+    public static bool ContainsInStatic(this PatternParts parts, string value)
         => parts.Any(x => x is PatternPart.Static st && st.Value.Contains(value));
-    public static IReadOnlyCollection<PatternParts> GetLines(this PatternParts parts) 
+    public static IReadOnlyCollection<PatternParts> GetLines(this PatternParts parts)
         => parts.Split("\n");
-    public static PatternPart.Dynamic GetSingleDynamic(this PatternParts parts) 
-        => (PatternPart.Dynamic)parts.Single(x => x is PatternPart.Dynamic);
-    
+    public static PatternPart.Dynamic GetSingleDynamic(this PatternParts parts)
+    {
+        if(parts.Count != 1)
+            throw new Exception($"Expecting only one dynamic block. Current count: {parts.Count}. Value: {parts} ");
+
+        var part = parts.Single();
+
+        if(part is not PatternPart.Dynamic dyn)
+            throw new Exception($"Expecting only one dynamic block. Current block is static. Value: {parts} ");
+
+        return dyn;
+    }
+
     public static PatternParts Replace(this PatternParts parts, PatternPart currentValue, PatternPart newValue)
     {
         var result = new List<PatternPart>();
-        
+
         foreach (var part in parts)
         {
             if (part == currentValue)
@@ -75,14 +85,14 @@ static class PatternPartsExtensions
             }
             else
             {
-                result.Add(part);    
+                result.Add(part);
             }
-            
+
         }
 
         return new PatternParts(result);
     }
-    
+
     public static PatternParts Replace(this PatternParts parts, Predicate<PatternPart> predicate, Func<PatternPart, PatternPart> getNewValue)
     {
         var result = new List<PatternPart>();
@@ -107,7 +117,7 @@ static class PatternPartsExtensions
     public static TwoPartsWithSecondOptional SplitToTwoParts(this PatternParts parts, string splitter)
     {
         var splitted = parts.Split(splitter);
-        
+
         if (splitted.Count == 1)
             return new TwoPartsWithSecondOptional(splitted.First(), null);
 
@@ -122,7 +132,7 @@ static class PatternPartsExtensions
 
         return new TwoPartsWithSecondOptional(splitted.First(), new PatternParts(secondPart));
     }
-    
+
     public static TwoPartsWithSecondRequired SplitToTwoPartsRequired(this PatternParts parts, string splitter)
     {
         var splitted = parts.Split(splitter);
@@ -141,12 +151,12 @@ static class PatternPartsExtensions
 
         return new TwoPartsWithSecondRequired(splitted.First(), new PatternParts(secondPart));
     }
-    
+
     public static IReadOnlyList<PatternParts> Split(this PatternParts pathParts, string splitter)
     {
         var result = new List<PatternParts>(15);
 
-        List<PatternPart> remainder = new(); 
+        List<PatternPart> remainder = new();
         foreach (PatternPart patternPart in pathParts)
         {
             if (patternPart is PatternPart.Static @static)
@@ -158,11 +168,11 @@ static class PatternPartsExtensions
                     remainder.Add(@static);
                     continue;
                 }
-                
+
                 for (int i = 0; i < splitted.Length; i++)
                 {
                     string s = splitted[i];
-                    
+
                     if (i == splitted.Length - 1)
                     {
                         remainder.Add(new PatternPart.Static(s));
@@ -187,7 +197,7 @@ static class PatternPartsExtensions
 
         if (remainder.Count != 0)
             result.Add(new PatternParts(remainder));
-        
+
         return result;
     }
 }

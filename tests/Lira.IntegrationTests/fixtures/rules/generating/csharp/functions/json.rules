@@ -1,0 +1,22 @@
+-------------------- rule
+
+GET /generating/csharp/functions/json
+
+
+
+----- declare
+
+$json_var =
+{
+    "field1" : "value"
+}
+
+----- response
+
+~ code
+200
+
+~ body
+{{
+     json($json_var).GetType()
+}}

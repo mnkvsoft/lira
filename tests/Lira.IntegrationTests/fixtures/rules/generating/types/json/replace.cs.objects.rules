@@ -1,0 +1,23 @@
+-------------------- rule
+
+GET /generating/types/json/replace/cs/objects
+
+----- declare
+
+$json_var =
+{
+    "arrayField": [],
+    "objectField": {},
+}
+
+----- response
+
+~ code
+200
+
+~ body
+{{
+     json($json_var)
+        .replace("$.arrayField", new []{1,2,3})
+        .replace("$.objectField", new{b = "value"})
+}}

@@ -1,3 +1,5 @@
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMember.Global
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
 public interface IReadonlyCache

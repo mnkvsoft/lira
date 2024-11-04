@@ -1,7 +1,7 @@
 {
-  "pretty": {
+  "pretty_capacity": {
     "type": "int",
-    "interval": "1_000 - 100_000",
+    "start": "1_000",
     "capacity": "1k",
     "ranges": [
       "first",

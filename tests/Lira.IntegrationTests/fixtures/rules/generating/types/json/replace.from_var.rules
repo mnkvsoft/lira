@@ -1,0 +1,35 @@
+-------------------- rule
+
+GET /generating/types/json/replace/from_var
+
+----- declare
+
+$json_var =
+{
+    "stringField" : "value",
+    "intField" : 0,
+    "boolField" : false,
+    "arrayField": [],
+    "objectField": {},
+}
+
+$$stringVar = new_value
+$$intVar = 1
+$$boolVar = true
+$$arrayVar = [1,2,3]
+$$objectVar = {"b": "value"}
+
+----- response
+
+~ code
+200
+
+~ body
+{{
+     json($json_var)
+        .replace("$.stringField", $$stringVar)
+        .replace("$.intField", $$intVar)
+        .replace("$.boolField", $$boolVar)
+        .replace("$.arrayField", $$arrayVar)
+        .replace("$.objectField", $$objectVar)
+}}

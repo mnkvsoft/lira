@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /generating/csharp/functions/json/add/to/root
+GET /generating/types/json/add/to/root
 
 ----- expected
 

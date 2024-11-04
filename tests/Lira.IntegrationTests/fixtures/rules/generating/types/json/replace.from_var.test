@@ -1,0 +1,23 @@
+-------------------- case
+
+GET /generating/types/json/replace/from_var
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "stringField": "new_value",
+  "intField": 1,
+  "boolField": true,
+  "arrayField": [
+    1,
+    2,
+    3
+  ],
+  "objectField": {
+    "b": "value"
+  }
+}

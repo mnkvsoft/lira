@@ -62,7 +62,7 @@ public class Rules_Tests : TestBase
             {
                 res = await httpClient.SendAsync(req);
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 if(e.Message.Contains("The application aborted the request") && expectedSection.ExistBlock("aborted"))
                     continue;
