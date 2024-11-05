@@ -4,10 +4,10 @@ internal class Query : WithArgumentFunction<string>, IObjectTextPart
 {
     public override string Name => "req.query";
     public override bool ArgumentIsRequired => true;
-    
+
     private string _queryParamName = "";
 
-    public object? Get(RuleExecutingContext context) => context.Request.GetQueryParam(_queryParamName);
+    public object? Get(RuleExecutingContext context) => context.RequestContext.RequestData.GetQueryParam(_queryParamName);
 
 
     public override void SetArgument(string argument)

@@ -88,9 +88,17 @@ class RequestMatchersParser
                 return CreateBodyRequestMatcher(block, context);
             case Constants.BlockName.Rule.Path:
                 return CreatePathRequestMatcher(PatternParser.Parse(block.GetSingleLine()), context);
+            case Constants.BlockName.Rule.Request:
+                return CreateCustomRequestMatcher(block.GetSingleStringValue(), context);
             default:
                 throw new Exception($"Unknown block '{block.Name}' in 'rule' section");
         }
+    }
+
+    private IRequestMatcher CreateCustomRequestMatcher(string code, ParsingContext context)
+    {
+        var matcher = _functionFactoryCSharp.TryCreateRequestMatcher(code);
+        return matcher.GetFunctionOrThrow(code, context);
     }
 
     private static MethodRequestMatcher CreateMethodRequestMather(string method)
@@ -110,9 +118,9 @@ class RequestMatchersParser
 
         var patterns = new List<TextPatternPart>(segments.Count);
 
-        for (var i = 0; i < segments.Count; i++)
+        foreach (var segment in segments)
         {
-            patterns.Add(CreateValuePattern(segments[i], context));
+            patterns.Add(CreateValuePattern(segment, context));
         }
 
         return new PathRequestMatcher(patterns);
@@ -129,7 +137,7 @@ class RequestMatchersParser
             value = value?.Replace(
                 p => p is PatternPart.Static,
                 p => new PatternPart.Static(HttpUtility.UrlDecode(((PatternPart.Static)p).Value)));
-            
+
             patterns.Add(key.SingleStaticValueToString(), CreateValuePattern(value, context));
         }
 
@@ -140,8 +148,8 @@ class RequestMatchersParser
     {
         var headers = new Dictionary<string, TextPatternPart>();
         var patterns = PatternParser.Parse(block.Lines);
-        
-        
+
+
         foreach (var line in patterns.GetLines())
         {
             var (headerName, headerPattern) = line.SplitToTwoPartsRequired(Consts.ControlChars.HeaderSplitter).Trim();
@@ -158,7 +166,7 @@ class RequestMatchersParser
 
         var parts = PatternParser.Parse(block.Lines);
         var lines = parts.GetLines();
-        
+
         foreach (var line in lines)
         {
             if (!line.ContainsInStatic(Consts.ControlChars.PipelineSplitter))
@@ -194,8 +202,8 @@ class RequestMatchersParser
         ParsingContext context)
     {
         if(parts == null || parts.Count == 0)
-            return new TextPatternPart.NullOrEmpty(); 
-        
+            return new TextPatternPart.NullOrEmpty();
+
         if (parts.Count == 1)
         {
             if (parts[0] is PatternPart.Static stat)
@@ -266,7 +274,7 @@ class RequestMatchersParser
         if (context.CustomSets.TryGetCustomSetFunction(invoke, out var customSetFunction))
             return customSetFunction;
 
-        var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), invoke);
+        var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(invoke);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 

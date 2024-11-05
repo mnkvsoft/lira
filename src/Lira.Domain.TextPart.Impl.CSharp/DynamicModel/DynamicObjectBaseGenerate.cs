@@ -1,12 +1,15 @@
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMember.Global
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
-public class DynamicObjectBaseGenerate : DynamicObjectBase
+// ReSharper disable once UnusedType.Global
+public abstract class DynamicObjectBaseGenerate : DynamicObjectWithDeclaredPartsBase
 {
-    public DynamicObjectBaseGenerate(Dependencies dependencies) : base(dependencies)
+    protected DynamicObjectBaseGenerate(Dependencies dependencies) : base(dependencies)
     {
     }
 
-    protected IReadonlyCache cache => _cache;
+    protected IReadonlyCache cache => Cache;
 
     protected dynamic range(string rangeName)
     {

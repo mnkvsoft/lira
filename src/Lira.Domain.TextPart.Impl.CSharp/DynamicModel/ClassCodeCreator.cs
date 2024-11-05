@@ -52,6 +52,19 @@ static class ClassCodeCreator
             .Replace("[code]", code);
     }
 
+    public static string CreateRequestMatcher(
+        string className,
+        string code,
+        IReadOnlyCollection<string> namespaces,
+        IReadOnlyCollection<string> usingStaticTypes)
+    {
+        return CodeTemplate.IRequestMatcher
+            .Replace("[namespaces]", GetNamespaces(namespaces))
+            .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
+            .Replace("[className]", className)
+            .Replace("[code]", code);
+    }
+
     public static string CreateAction(
         string className,
         string code,
@@ -107,7 +120,7 @@ static class ClassCodeCreator
             "[usingstatic]" + Nl + Nl +
             Namespace + Nl + Nl +
             @"
-public class [className] : DynamicObjectBaseGenerate, IObjectTextPart
+public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
 {
     public [className](Dependencies dependencies) : base(dependencies)
     {
@@ -115,7 +128,7 @@ public class [className] : DynamicObjectBaseGenerate, IObjectTextPart
 
     public dynamic? Get(RuleExecutingContext [context])
     {
-        var [externalRequestVariableName] = new RequestModel([context].Request);
+        var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
         dynamic bag = new Bag([context], readOnly: true);
 
         [code]
@@ -132,8 +145,6 @@ public class [className] : DynamicObjectBaseGenerate, IObjectTextPart
             return Repeat([context], part, separator, cnt);
         }
 
-
-
         string? value(string name)
         {
             return [context].GetValue(name);
@@ -147,12 +158,8 @@ public class [className] : DynamicObjectBaseGenerate, IObjectTextPart
             "[usingstatic]" + Nl + Nl +
             Namespace + Nl + Nl +
             @"
-public class [className] : DynamicObjectBase, ITransformFunction
+public sealed class [className] : ITransformFunction
 {
-    public [className](Dependencies dependencies) : base(dependencies)
-    {
-    }
-
     public dynamic? Transform(dynamic? [input])
     {
         [code]
@@ -168,9 +175,9 @@ public class [className] : DynamicObjectBase, ITransformFunction
             "using Lira.Domain.Matching.Request;" + Nl +
             @"
 
-public class [className] : DynamicObjectBaseMatch, IMatchFunction
+public sealed class [className] : DynamicObjectBaseMatch, IMatchFunction
 {
-    public [className](Dependencies dependencies) : base(dependencies)
+    public [className](DependenciesBase dependencies) : base(dependencies)
     {
     }
 
@@ -178,6 +185,34 @@ public class [className] : DynamicObjectBaseMatch, IMatchFunction
     public bool IsMatch(string? [input])
     {
         [code]
+    }
+}
+";
+
+        public readonly static string IRequestMatcher =
+            "[namespaces]" + Nl + Nl +
+            ImportNamespaces + Nl + Nl +
+            "[usingstatic]" + Nl + Nl +
+            Namespace + Nl + Nl +
+            "using Lira.Domain.Matching.Request;" + Nl +
+            "using System.Collections.Immutable;" + Nl +
+
+            @"
+
+public sealed class [className] : DynamicObjectBaseRequestMatcher
+{
+    public [className](DependenciesBase dependencies) : base(dependencies)
+    {
+    }
+
+    protected override async Task<bool> IsMatchInternal(IRuleExecutingContextReadonly __ctx)
+    {
+        [code]
+
+        string? value(string name)
+        {
+            return __ctx.GetValue(name);
+        }
     }
 }
 ";
@@ -190,7 +225,7 @@ public class [className] : DynamicObjectBaseMatch, IMatchFunction
             "using Lira.Domain.Actions;" + Nl +
             @"
 
-public class [className] : DynamicObjectBaseAction, IAction
+public sealed class [className] : DynamicObjectBaseAction, IAction
 {
     public [className](Dependencies dependencies) : base(dependencies)
     {
@@ -198,7 +233,7 @@ public class [className] : DynamicObjectBaseAction, IAction
 
     public async Task Execute(RuleExecutingContext [context])
     {
-        var [externalRequestVariableName] = new RequestModel([context].Request);
+        var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
         dynamic bag = new Bag([context], readOnly: false);
 
         [code]

@@ -9,15 +9,15 @@ public class QueryStringRequestMatcher : IRequestMatcher
         _queryParamToPatternMap = queryParamToPatternMap;
     }
 
-    Task<RequestMatchResult> IRequestMatcher.IsMatch(RequestContext context)
+    Task<RequestMatchResult> IRequestMatcher.IsMatch(IRuleExecutingContextReadonly context)
     {
         var matchedValuesSet = new Dictionary<string, string?>();
         int weight = 0;
-        
+
         foreach (var pair in _queryParamToPatternMap)
         {
             var parName = pair.Key;
-            if (!context.RequestData.Query.TryGetValue(parName, out var value))
+            if (!context.RequestContext.RequestData.Query.TryGetValue(parName, out var value))
                 return Task.FromResult(RequestMatchResult.NotMatched);
 
             var pattern = pair.Value;

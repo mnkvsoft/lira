@@ -26,27 +26,28 @@ public class Rule
 
     public async Task<IRuleExecutor?> GetExecutor(RequestContext context)
     {
-        var matchResult = await _requestMatcherSet.IsMatch(context);
+        var ruleExecutingContext = new RuleExecutingContext(context);
+        var matchResult = await _requestMatcherSet.IsMatch(ruleExecutingContext);
 
         if (matchResult is RuleMatchResult.Matched matched)
-            return new RuleExecutor(context.RequestData, this, matched.MatchedValues, matched.Weight); ;
+            return new RuleExecutor(ruleExecutingContext, this, matched.Weight); ;
 
         return null;
     }
 
-    internal async Task Execute(HttpContextData httpContextData)
+    private async Task Execute(HttpContextData httpContextData)
     {
-        await httpContextData.RuleExecutingContext.Request.SaveBody();
+        await httpContextData.RuleExecutingContext.RequestContext.RequestData.SaveBody();
 
         await _actionsExecutor.Execute(httpContextData.RuleExecutingContext);
         await _responseStrategy.Execute(httpContextData);
     }
 
-    record RuleExecutor(RequestData Request, Rule Rule, IReadOnlyDictionary<string, string?> MatchedValues, IRuleMatchWeight Weight) : IRuleExecutor
+    record RuleExecutor(RuleExecutingContext RuleExecutingContext, Rule Rule, IRuleMatchWeight Weight) : IRuleExecutor
     {
         public Task Execute(HttpResponse response)
         {
-            return Rule.Execute(new HttpContextData(new RuleExecutingContext(Request, MatchedValues), response));
+            return Rule.Execute(new HttpContextData(RuleExecutingContext, response));
         }
     }
 }

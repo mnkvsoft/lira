@@ -1,10 +1,13 @@
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedType.Global
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
-public class DynamicObjectBaseAction : DynamicObjectBase
+public abstract class DynamicObjectBaseAction : DynamicObjectWithDeclaredPartsBase
 {
-    public DynamicObjectBaseAction(Dependencies dependencies) : base(dependencies)
+    protected DynamicObjectBaseAction(Dependencies dependencies) : base(dependencies)
     {
     }
 
-    protected ICache cache => _cache;
+    protected ICache cache => Cache;
 }

@@ -60,17 +60,17 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         var result = CreateFunctionResult<IObjectTextPart>(
             assemblyPrefixName: prefix,
-            declaredPartsProvider,
             classToCompile,
             className,
-            customAssemblies.PeImages);
+            customAssemblies.PeImages,
+            new DynamicObjectWithDeclaredPartsBase.Dependencies(new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider), declaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
         return result;
     }
 
-    public CreateFunctionResult<ITransformFunction> TryCreateTransformFunction(IDeclaredPartsProvider declaredPartsProvider, string code)
+    public CreateFunctionResult<ITransformFunction> TryCreateTransformFunction(string code)
     {
         var sw = Stopwatch.StartNew();
 
@@ -87,7 +87,6 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         var result = CreateFunctionResult<ITransformFunction>(
             assemblyPrefixName: prefix,
-            declaredPartsProvider,
             classToCompile,
             className,
             customAssemblies.PeImages);
@@ -97,7 +96,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    public CreateFunctionResult<IMatchFunction> TryCreateMatchFunction(IDeclaredPartsProvider declaredPartsProvider, string code)
+    public CreateFunctionResult<IMatchFunction> TryCreateMatchFunction(string code)
     {
         var sw = Stopwatch.StartNew();
 
@@ -114,10 +113,36 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         var result = CreateFunctionResult<IMatchFunction>(
             assemblyPrefixName: prefix,
-            declaredPartsProvider,
             classToCompile,
             className,
-            customAssemblies.PeImages);
+            customAssemblies.PeImages,
+            new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider));
+
+        _compilationStatistic.AddTotalTime(sw.Elapsed);
+
+        return result;
+    }
+
+    public CreateFunctionResult<IRequestMatcher> TryCreateRequestMatcher(string code)
+    {
+        var sw = Stopwatch.StartNew();
+
+        string prefix = "RequestMatcher";
+        string className = GetClassName(prefix, code);
+        var customAssemblies = GetCustomAssemblies();
+
+        string classToCompile = ClassCodeCreator.CreateRequestMatcher(
+            className,
+            GetMethodBody(new Code(ForCompile: code, Source: code)),
+            GetNamespaces(customAssemblies.Loaded),
+            GetUsingStatic(customAssemblies.Loaded));
+
+        var result = CreateFunctionResult<IRequestMatcher>(
+            assemblyPrefixName: prefix,
+            classToCompile,
+            className,
+            customAssemblies.PeImages,
+            new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -136,10 +161,10 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         var result = CreateFunctionResult<IAction>(
             assemblyPrefixName: prefix,
-            declaredPartsProvider,
             classToCompile,
             className,
-            customAssemblies.PeImages);
+            customAssemblies.PeImages,
+            new DynamicObjectWithDeclaredPartsBase.Dependencies(CreateDependenciesBase(), declaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -148,10 +173,10 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private CreateFunctionResult<TFunction> CreateFunctionResult<TFunction>(
         string assemblyPrefixName,
-        IDeclaredPartsProvider declaredPartsProvider,
         string classToCompile,
         string className,
-        IReadOnlyCollection<PeImage> peImages)
+        IReadOnlyCollection<PeImage> peImages,
+        params object[] dependencies)
     {
         PeImage peImage;
 
@@ -165,8 +190,8 @@ class FunctionFactory : IFunctionFactoryCSharp
                         Compiled: new Assembly[]
                         {
                             typeof(IObjectTextPart).Assembly,
-                            typeof(IObjectTextPart).Assembly,
                             typeof(IRangesProvider).Assembly,
+                            typeof(Constants).Assembly,
                             typeof(Json).Assembly,
                             typeof(RequestData).Assembly,
                             GetType().Assembly
@@ -181,13 +206,15 @@ class FunctionFactory : IFunctionFactoryCSharp
         var classAssembly = Load(peImage);
 
         var type = classAssembly.GetTypes().Single(t => t.Name == className);
-        var function = (TFunction)Activator.CreateInstance(type, new DynamicObjectBase.Dependencies(declaredPartsProvider, _cache, _rangesProvider))!;
+        var function = (TFunction)Activator.CreateInstance(type, dependencies)!;
 
         return new CreateFunctionResult<TFunction>.Success(function);
     }
 
     private bool _customAssembliesWasInit;
+
     private IReadOnlyCollection<Assembly> _customLoadedAssemblies = null!;
+
     private IReadOnlyCollection<PeImage> _customPeImageAssemblies = null!;
 
     private (IReadOnlyCollection<Assembly> Loaded, IReadOnlyCollection<PeImage> PeImages) GetCustomAssemblies()
@@ -241,6 +268,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     }
 
     const string contextParameterName = "__ctxt";
+
     private static string CreateGeneratingFunctionClassCode(string className, IReadOnlyCollection<Assembly> customAssemblies,
         IDeclaredPartsProvider declaredPartsProvider, string code)
     {
@@ -337,7 +365,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             }
             catch (Exception e)
             {
-                var nl = NewLine;
+                var nl = Lira.Common.Constants.NewLine;
                 throw new Exception(" + "\"An error has occurred while execute code block: \" + nl + \"" +
                escapedCode +
                "\", e);" + @"
@@ -388,5 +416,10 @@ class FunctionFactory : IFunctionFactoryCSharp
                                AppDomain.CurrentDomain
                                    .GetAssemblies()
                                    .Count(x => x.GetName().Name?.StartsWith(AssemblyPrefix) == true));
+    }
+
+    private DynamicObjectBase.DependenciesBase CreateDependenciesBase()
+    {
+        return new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider);
     }
 }

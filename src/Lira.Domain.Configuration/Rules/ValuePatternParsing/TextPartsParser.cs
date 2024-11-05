@@ -4,7 +4,6 @@ using Lira.Common.Extensions;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.Custom;
-using Lira.Domain.TextPart.Impl.Custom.CustomSetModel;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 using Lira.Domain.TextPart.Impl.System;
 using Microsoft.Extensions.Logging;
@@ -20,15 +19,15 @@ class TextPartsParser : ITextPartsParser
 {
     private record Static(object Value) : IObjectTextPart
     {
-        public dynamic? Get(RuleExecutingContext context) => Value;
+        public dynamic Get(RuleExecutingContext context) => Value;
     }
 
     private readonly IFunctionFactorySystem _functionFactorySystem;
     private readonly IFunctionFactoryCSharp _functionFactoryCSharp;
     private readonly ILogger _logger;
-    
+
     public TextPartsParser(
-        IFunctionFactorySystem functionFactorySystem, 
+        IFunctionFactorySystem functionFactorySystem,
         IFunctionFactoryCSharp functionFactoryCSharp,
         ILoggerFactory loggerFactory)
     {
@@ -59,7 +58,7 @@ class TextPartsParser : ITextPartsParser
             _ => throw new UnsupportedInstanceType(patternPart)
         };
     }
-    
+
     private async Task<IReadOnlyCollection<IObjectTextPart>> GetDynamicParts(PatternPart.Dynamic dynamicPart, ParsingContext context)
     {
         string value = dynamicPart.Value;
@@ -72,12 +71,12 @@ class TextPartsParser : ITextPartsParser
         if (value.Contains("return"))
         {
             var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
-                new DeclaredPartsProvider(context.DeclaredItems), 
+                new DeclaredPartsProvider(context.DeclaredItems),
                 value);
 
             if (createFunctionResult is CreateFunctionResult<IObjectTextPart>.Failed failed)
                 throw failed.Exception;
-            
+
             pipeline = new TransformPipeline(((CreateFunctionResult<IObjectTextPart>.Success)createFunctionResult).Function);
         }
         else
@@ -90,7 +89,7 @@ class TextPartsParser : ITextPartsParser
             {
                 var invoke = pipelineItemsRaw[i].Trim();
                 pipeline.Add(CreateTransformFunction(invoke, context));
-            }    
+            }
         }
 
         return new[] { pipeline };
@@ -101,9 +100,7 @@ class TextPartsParser : ITextPartsParser
         if (_functionFactorySystem.TryCreateTransformFunction(invoke, out var transformFunction))
             return transformFunction;
 
-        var createFunctionResult = _functionFactoryCSharp.TryCreateTransformFunction(
-            new DeclaredPartsProvider(context.DeclaredItems),
-            invoke);
+        var createFunctionResult = _functionFactoryCSharp.TryCreateTransformFunction(invoke);
 
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
@@ -118,7 +115,7 @@ class TextPartsParser : ITextPartsParser
             var variable = declaredItems.Variables.GetOrThrow(varName);
             return variable;
         }
-        
+
         var declaredFunction = declaredItems.Functions.FirstOrDefault(x => x.Name == rawText.TrimStart(Consts.ControlChars.FunctionPrefix));
         context.CustomSets.TryGetCustomSetFunction(rawText, out var customSetFunction);
 
@@ -146,27 +143,27 @@ class TextPartsParser : ITextPartsParser
             return customSetFunction;
 
         var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
-            new DeclaredPartsProvider(declaredItems), 
+            new DeclaredPartsProvider(declaredItems),
             rawText);
 
         return createFunctionResult.GetFunctionOrThrow(rawText, context);
-        
+
         bool ContainsOnlyVariable(string s)
         {
             return s.StartsWith(Consts.ControlChars.VariablePrefix) && CustomItemName.IsValidName(s.TrimStart(Consts.ControlChars.VariablePrefix));
         }
-    }    
+    }
 
     private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadParts(
         ParsingContext context, string invoke)
     {
         var (wasRead, parts) = await TryReadPartsFromFile(context, invoke);
-        
+
         if (wasRead)
             return (true, parts!);
-        
+
         (wasRead, parts) = await TryReadPartsFromTemplate(context, invoke);
-        
+
         if (wasRead)
             return (true, parts!);
 
@@ -181,14 +178,14 @@ class TextPartsParser : ITextPartsParser
             var templateName = invoke.TrimStart(Consts.ControlChars.TemplatePrefix);
 
             var template = context.Templates.GetOrThrow(templateName);
-            
+
             var parts = await Parse(template.Value, context);
             return (true, parts);
         }
-        
+
         return (false, null);
     }
-    
+
     private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadPartsFromFile(
         ParsingContext context, string invoke)
     {
@@ -203,7 +200,7 @@ class TextPartsParser : ITextPartsParser
             filePath = context.RootPath + fileName;
         else
             filePath = Path.Combine(context.CurrentPath, fileName);
-        
+
         var encoding = encodingName == null ? Encoding.UTF8 : Encoding.GetEncoding(encodingName);
 
         string pattern = await File.ReadAllTextAsync(filePath, encoding);

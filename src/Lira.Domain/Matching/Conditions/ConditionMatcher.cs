@@ -16,9 +16,9 @@ internal abstract class ConditionMatcher : IRequestMatcher
         _requestStatisticStorage = requestStatisticStorage;
     }
 
-    public async Task<RequestMatchResult> IsMatch(RequestContext context)
+    public async Task<RequestMatchResult> IsMatch(IRuleExecutingContextReadonly context)
     {
-        var statistic = await _requestStatisticStorage.Add(context);
+        var statistic = await _requestStatisticStorage.Add(context.RequestContext);
         bool isMatch = IsMatch(statistic);
 
         if (!isMatch)
