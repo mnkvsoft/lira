@@ -3,6 +3,12 @@ using Lira.Common;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
 
+abstract record CompileResult
+{
+    public record Success(PeImage PeImage) : CompileResult;
+    public record Fault(string Message) : CompileResult;
+}
+
 record CompileUnit(string Code, string AssemblyName, UsageAssemblies? UsageAssemblies);
 
 class Compiler
@@ -16,22 +22,24 @@ class Compiler
         _peImagesCache = peImagesCache;
     }
 
-    public PeImage Compile(CompileUnit compileUnit)
+    public CompileResult Compile(CompileUnit compileUnit)
     {
         var sw = Stopwatch.StartNew();
 
         var hash = GetHash(compileUnit);
 
         if (_peImagesCache.TryGet(hash, out var peImage))
-            return peImage;
+            return new CompileResult.Success(peImage);
 
-        peImage = CodeCompiler.Compile(new[] { compileUnit.Code }, compileUnit.AssemblyName, compileUnit.UsageAssemblies);
+        var compileResult = CodeCompiler.Compile(new[] { compileUnit.Code }, compileUnit.AssemblyName, compileUnit.UsageAssemblies);
 
-        _peImagesCache.Add(hash, peImage);
-        
-        _compilationStatistic.AddCompilationTime(sw.Elapsed);
+        if (compileResult is CompileResult.Success success)
+        {
+            _peImagesCache.Add(hash, success.PeImage);
+            _compilationStatistic.AddCompilationTime(sw.Elapsed);
+        }
 
-        return peImage;
+        return compileResult;
     }
 
     private Hash GetHash(CompileUnit compileUnit)
@@ -54,10 +62,10 @@ class Compiler
                 sw.Write(assembly.FullName);
             }
         }
-        
+
         sw.Flush();
         memoryStream.Seek(0, SeekOrigin.Begin);
-        
+
         var hash = Sha1.Create(memoryStream);
         return hash;
     }

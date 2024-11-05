@@ -27,6 +27,7 @@ class Constants
             public const string Query = "query";
             public const string Headers = "headers";
             public const string Body = "body";
+            public const string Request = "req";
         }
 
         public class Response
@@ -37,7 +38,7 @@ class Constants
             public const string Abort = "fault";
             public const string Delay = Common.Delay;
         }
-        
+
         public class Action
         {
             public const string Code = "code";

@@ -12,9 +12,9 @@ public class PathRequestMatcher : IRequestMatcher
         _segmentsPatterns = expectedSegments;
     }
 
-    Task<RequestMatchResult> IRequestMatcher.IsMatch(RequestContext context)
+    Task<RequestMatchResult> IRequestMatcher.IsMatch(IRuleExecutingContextReadonly context)
     {
-        var request = context.RequestData;
+        var request = context.RequestContext.RequestData;
         var matchedValuesSet = new Dictionary<string, string?>();
         var currentSegments = request.Path.Value.Split('/');
 

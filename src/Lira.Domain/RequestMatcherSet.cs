@@ -1,5 +1,3 @@
-using Lira.Domain.Extensions;
-
 namespace Lira.Domain;
 
 public class RequestMatcherSet
@@ -11,9 +9,8 @@ public class RequestMatcherSet
         _matchers = matchers;
     }
 
-    internal async Task<RuleMatchResult> IsMatch(RequestContext context)
+    internal async Task<RuleMatchResult> IsMatch(RuleExecutingContext context)
     {
-        var matchedValuesSet = new Dictionary<string, string?>();
         var matcheds = new List<Matched>();
 
         foreach (var matcher in _matchers)
@@ -22,12 +19,10 @@ public class RequestMatcherSet
             if (matchResult is not Matched matched)
                 return RuleMatchResult.NotMatched.Instance;
 
-            matchedValuesSet.Add(matched.MatchedValues);
+            context.AddMatchedValue(matched.MatchedValues);
             matcheds.Add(matched);
         }
 
-        return new RuleMatchResult.Matched(
-            new RuleMatchWeight(matcheds),
-            matchedValuesSet);
+        return new RuleMatchResult.Matched(new RuleMatchWeight(matcheds));
     }
 }

@@ -1,3 +1,4 @@
+using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart.Impl.CSharp;
 
@@ -15,15 +16,13 @@ internal static class CreateFunctionResultExtensions
         var nl = Common.Constants.NewLine;
 
         throw new Exception(
-            $"Failed create dynamic block from:"  + nl +
-            "========== begin ==========" + nl + nl +
-            invoke + nl + nl +
-            "=========== end ===========" + nl +
+            "Failed create dynamic block:" + nl + nl +
+            invoke.WrapBeginEnd() +
+            "Attempt compile C# code failed. " + failed.Message  + nl + "Code:" + nl + nl +
+            failed.Code.WrapBeginEnd() +
             "System function, declared function or variable not found." + nl +
             $"Declared functions: {string.Join(", ", context.DeclaredItems.Functions.Select(x => Consts.ControlChars.FunctionPrefix + x.Name))}" + nl +
             $"Declared variables: {string.Join(", ", context.DeclaredItems.Variables.Select(x => Consts.ControlChars.VariablePrefix + x.Name))}" + nl +
-            $"Custom sets: {string.Join(", ", context.CustomSets.GetRegisteredNames())}" + nl +
-            "Attempt compile C# code failed: " + nl +
-            failed.Exception);
+            $"Custom sets: {string.Join(", ", context.CustomSets.GetRegisteredNames())}");
     }
 }

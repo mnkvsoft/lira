@@ -2,7 +2,7 @@ namespace Lira.Domain;
 
 public interface IRequestMatcher
 {
-    Task<RequestMatchResult> IsMatch(RequestContext context);
+    Task<RequestMatchResult> IsMatch(IRuleExecutingContextReadonly context);
 }
 
 public record RequestMatchResult

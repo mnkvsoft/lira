@@ -17,9 +17,9 @@ public class BodyRequestMatcher : IRequestMatcher
         _extractToMatchFunctionMap = extractToMatchFunctionMap;
     }
 
-    async Task<RequestMatchResult> IRequestMatcher.IsMatch(RequestContext context)
+    async Task<RequestMatchResult> IRequestMatcher.IsMatch(IRuleExecutingContextReadonly context)
     {
-        var request = context.RequestData;
+        var request = context.RequestContext.RequestData;
         var matchedValuesSet = new Dictionary<string, string?>();
         request.Body.Position = 0;
         var stream = new StreamReader(request.Body);
@@ -37,7 +37,7 @@ public class BodyRequestMatcher : IRequestMatcher
                 return RequestMatchResult.NotMatched;
 
             matchedValuesSet.AddIfValueIdNotNull(matched);
-            
+
             weight += TextPatternPartWeightCalculator.Calculate(matcher);
         }
 
