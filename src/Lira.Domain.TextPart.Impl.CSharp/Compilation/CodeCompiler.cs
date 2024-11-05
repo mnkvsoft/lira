@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Lira.Common;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -12,7 +12,7 @@ record PeImage(byte[] Bytes);
 
 static class CodeCompiler
 {
-    public static PeImage Compile(IReadOnlyCollection<string> codes, string assemblyName, UsageAssemblies? usageAssemblies = null)
+    public static CompileResult Compile(IReadOnlyCollection<string> codes, string assemblyName, UsageAssemblies? usageAssemblies = null)
     {
         var compilation = CreateCompilation(codes, usageAssemblies, assemblyName);
 
@@ -21,12 +21,12 @@ static class CodeCompiler
         var emitResult = compilation.Emit(ms);
 
         if (!emitResult.Success)
-            throw CreateException(codes, emitResult);
+            return new CompileResult.Fault(CreateFaultMessage(emitResult));
 
         ms.Seek(0, SeekOrigin.Begin);
 
         var bytes = ms.ToArray();
-        return new PeImage(bytes);
+        return new CompileResult.Success(new PeImage(bytes));
     }
 
     private static CSharpCompilation CreateCompilation(IReadOnlyCollection<string> codes, UsageAssemblies? usageAssemblies,
@@ -43,20 +43,30 @@ static class CodeCompiler
         return compilation;
     }
 
-    private static Exception CreateException(IReadOnlyCollection<string> codes, EmitResult result)
+    private static string CreateFaultMessage(EmitResult result)
     {
         var failures = result.Diagnostics.Where(diagnostic =>
             diagnostic.IsWarningAsError ||
-            diagnostic.Severity == DiagnosticSeverity.Error);
+            diagnostic.Severity == DiagnosticSeverity.Error)
+            .ToArray();
+
+        var sb = new StringBuilder();
+        sb.AppendLine("Errors: ");
 
 
-        var code = string.Join(new string(Enumerable.Repeat('-', 30).ToArray()), codes);
-        foreach (var diagnostic in failures)
+        if (!failures.Any())
         {
-            return new Exception($"Failed to compile. Error: {diagnostic.Id} {diagnostic.GetMessage()}. Code:{Constants.NewLine}'{code}'");
+            sb.AppendLine("- unknown error while compiling code");
+        }
+        else
+        {
+            foreach (var diagnostic in failures)
+            {
+                sb.AppendLine($"- {diagnostic.Id} {diagnostic.GetMessage()}");
+            }
         }
 
-        return new Exception($"Unknown error while compiling code '{code}'");
+        return sb.ToString();
     }
 
     private static IReadOnlyCollection<MetadataReference> GetReferences(UsageAssemblies? usageAssemblies)

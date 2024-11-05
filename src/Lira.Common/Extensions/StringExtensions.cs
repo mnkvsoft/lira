@@ -49,6 +49,15 @@ public static class StringExtensions
         return (value.part1.Trim(), value.part2?.Trim());
     }
 
+    public static string WrapBeginEnd(this string value)
+    {
+        var nl = Constants.NewLine;
+        return
+            "========== begin ==========" + nl + nl +
+            value + nl + nl +
+            "=========== end ===========" + nl + nl;
+    }
+
     public static object Typed(this string value)
     {
         if (bool.TryParse(value, out var boolValue))

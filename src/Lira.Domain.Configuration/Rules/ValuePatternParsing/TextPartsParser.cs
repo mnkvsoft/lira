@@ -74,10 +74,8 @@ class TextPartsParser : ITextPartsParser
                 new DeclaredPartsProvider(context.DeclaredItems),
                 value);
 
-            if (createFunctionResult is CreateFunctionResult<IObjectTextPart>.Failed failed)
-                throw failed.Exception;
-
-            pipeline = new TransformPipeline(((CreateFunctionResult<IObjectTextPart>.Success)createFunctionResult).Function);
+           var function = createFunctionResult.GetFunctionOrThrow(value, context);
+            pipeline = new TransformPipeline(function);
         }
         else
         {

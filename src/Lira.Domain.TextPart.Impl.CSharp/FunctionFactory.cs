@@ -4,6 +4,7 @@ using System.Runtime.Loader;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Lira.Common;
+using Lira.Common.Extensions;
 using Lira.Configuration;
 using Lira.Domain.Actions;
 using Lira.Domain.Matching.Request;
@@ -178,31 +179,26 @@ class FunctionFactory : IFunctionFactoryCSharp
         IReadOnlyCollection<PeImage> peImages,
         params object[] dependencies)
     {
-        PeImage peImage;
+        var compileResult = _compiler.Compile(
+            new CompileUnit(
+                classToCompile,
+                AssemblyName: GetAssemblyName(assemblyPrefixName + className),
+                new UsageAssemblies(
+                    Compiled: new Assembly[]
+                    {
+                        typeof(IObjectTextPart).Assembly,
+                        typeof(IRangesProvider).Assembly,
+                        typeof(Constants).Assembly,
+                        typeof(Json).Assembly,
+                        typeof(RequestData).Assembly,
+                        GetType().Assembly
+                    },
+                    Runtime: peImages)));
 
-        try
-        {
-            peImage = _compiler.Compile(
-                new CompileUnit(
-                    classToCompile,
-                    AssemblyName: GetAssemblyName(assemblyPrefixName + className),
-                    new UsageAssemblies(
-                        Compiled: new Assembly[]
-                        {
-                            typeof(IObjectTextPart).Assembly,
-                            typeof(IRangesProvider).Assembly,
-                            typeof(Constants).Assembly,
-                            typeof(Json).Assembly,
-                            typeof(RequestData).Assembly,
-                            GetType().Assembly
-                        },
-                        Runtime: peImages)));
-        }
-        catch (Exception e)
-        {
-            return new CreateFunctionResult<TFunction>.Failed(e);
-        }
+        if(compileResult is CompileResult.Fault fault)
+            return new CreateFunctionResult<TFunction>.Failed(fault.Message, classToCompile);
 
+        var peImage =((CompileResult.Success)compileResult).PeImage;
         var classAssembly = Load(peImage);
 
         var type = classAssembly.GetTypes().Single(t => t.Name == className);
@@ -238,14 +234,24 @@ class FunctionFactory : IFunctionFactoryCSharp
         if (csharpFiles.Length == 0)
             return Array.Empty<CustomAssembly>();
 
-        var codes = csharpFiles.Select(File.ReadAllText).ToList();
+        var codes = csharpFiles.Select(file => new
+        {
+            Content = File.ReadAllText(file),
+            File = file
+        });
 
         var result = new List<CustomAssembly>();
 
         foreach (var code in codes)
         {
-            var peImage = _compiler.Compile(new CompileUnit(code, GetAssemblyName(GetClassName("CustomType", code)),
-                UsageAssemblies: null));
+            var compileResult = _compiler.Compile(new CompileUnit(code.Content, GetAssemblyName(GetClassName("CustomType", code.Content)), UsageAssemblies: null));
+
+            var nl = Constants.NewLine;
+
+            if(compileResult is CompileResult.Fault fault)
+                throw new Exception($"An error occurred while compile C# file '{code.File}'. " + fault.Message + nl  + nl + "Code:" + nl + code.Content.WrapBeginEnd());
+
+            var peImage =((CompileResult.Success)compileResult).PeImage;
             var assembly = Load(peImage);
             result.Add(new CustomAssembly(assembly, peImage));
         }

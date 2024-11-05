@@ -2,6 +2,7 @@
 // ReSharper disable UnusedMember.Global
 
 using System.Collections.Immutable;
+using Lira.Domain.Matching.Request;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
@@ -16,7 +17,7 @@ public abstract class DynamicObjectBaseRequestMatcher : DynamicObjectBaseMatch, 
     {
         bool isMatch = await IsMatchInternal(ctx);
         return isMatch
-            ? RequestMatchResult.Matched(name: "custom", 100, ImmutableDictionary<string, string?>.Empty)
+            ? RequestMatchResult.Matched(name: "custom_code", WeightValue.CustomCode, ImmutableDictionary<string, string?>.Empty)
             : RequestMatchResult.NotMatched;
     }
 
