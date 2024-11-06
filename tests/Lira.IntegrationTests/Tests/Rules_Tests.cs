@@ -4,6 +4,7 @@ using Moq.Contrib.HttpClient;
 using Lira.Common.Extensions;
 using Lira.ExternalCalling.Http.Caller;
 using Lira.FileSectionFormat;
+using Lira.FileSectionFormat.Extensions;
 
 namespace Lira.IntegrationTests.Tests;
 
@@ -126,7 +127,7 @@ public class Rules_Tests : TestBase
                 var bodyBlock = httpCallSection.GetBlockOrNull("body");
                 if (bodyBlock != null)
                 {
-                    string expectedBody = bodyBlock.GetSingleStringValue();
+                    string expectedBody = bodyBlock.GetLinesAsString();
                     Assert.That(expectedBody, Is.EqualTo(await message.Content!.ReadAsStringAsync()));
                 }
 

@@ -14,7 +14,7 @@ internal class Range : RangeBase, IMatchFunctionSystem
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
 
 
-    public bool IsMatch(string? value)
+    public bool IsMatch(RuleExecutingContext context, string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
             return false;

@@ -12,7 +12,7 @@ public class PathRequestMatcher : IRequestMatcher
         _segmentsPatterns = expectedSegments;
     }
 
-    Task<RequestMatchResult> IRequestMatcher.IsMatch(IRuleExecutingContextReadonly context)
+    Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext context)
     {
         var request = context.RequestContext.RequestData;
         var matchedValuesSet = new Dictionary<string, string?>();
@@ -26,7 +26,7 @@ public class PathRequestMatcher : IRequestMatcher
         {
             var pattern = _segmentsPatterns[i];
             var current = currentSegments[i];
-            var matchResult = pattern.Match(current);
+            var matchResult = pattern.Match(context, current);
 
             if (matchResult is not TextPatternPart.MatchResult.Matched matched)
                 return Task.FromResult(RequestMatchResult.NotMatched);

@@ -9,7 +9,7 @@ internal class Guid : FunctionBase, IMatchFunctionSystem
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Type;
 
-    public bool IsMatch(string? value)
+    public bool IsMatch(RuleExecutingContext context, string? value)
     {
         return global::System.Guid.TryParse(value, out _);
     }

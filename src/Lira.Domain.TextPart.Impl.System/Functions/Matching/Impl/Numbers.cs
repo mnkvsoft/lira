@@ -24,7 +24,7 @@ internal abstract class Number<T> : WithRangeArgumentFunction<T>, IMatchFunction
 
     protected abstract bool TryParse(string? value, out T result);
 
-    public bool IsMatch(string? value)
+    public bool IsMatch(RuleExecutingContext context, string? value)
     {
         if (!TryParse(value, out T number))
             return false;

@@ -6,5 +6,5 @@ internal class Seq : FunctionBase, IObjectTextPart
 
     public override string Name => "seq";
 
-    public dynamic? Get(RuleExecutingContext context) => Interlocked.Increment(ref _counter);
+    public dynamic Get(RuleExecutingContext context) => Interlocked.Increment(ref _counter);
 }

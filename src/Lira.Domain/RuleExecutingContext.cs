@@ -2,13 +2,7 @@ using Lira.Domain.Extensions;
 
 namespace Lira.Domain;
 
-public interface IRuleExecutingContextReadonly
-{
-    RequestContext RequestContext { get; }
-    string? GetValue(string id);
-}
-
-public record RuleExecutingContext(RequestContext RequestContext) : IRuleExecutingContextReadonly
+public record RuleExecutingContext(RequestContext RequestContext)
 {
     public IDictionary<string, object?> Items { get; } = new Dictionary<string, object?>();
 

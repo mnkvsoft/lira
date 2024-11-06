@@ -17,7 +17,7 @@ public class BodyRequestMatcher : IRequestMatcher
         _extractToMatchFunctionMap = extractToMatchFunctionMap;
     }
 
-    async Task<RequestMatchResult> IRequestMatcher.IsMatch(IRuleExecutingContextReadonly context)
+    async Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext context)
     {
         var request = context.RequestContext.RequestData;
         var matchedValuesSet = new Dictionary<string, string?>();
@@ -33,7 +33,7 @@ public class BodyRequestMatcher : IRequestMatcher
 
             var value = extractor.Extract(body);
 
-            if (matcher.Match(value) is not TextPatternPart.MatchResult.Matched matched)
+            if (matcher.Match(context, value) is not TextPatternPart.MatchResult.Matched matched)
                 return RequestMatchResult.NotMatched;
 
             matchedValuesSet.AddIfValueIdNotNull(matched);

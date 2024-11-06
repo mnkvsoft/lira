@@ -3,6 +3,7 @@ using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
 using Lira.FileSectionFormat;
+using Lira.FileSectionFormat.Extensions;
 
 namespace Lira.Domain.Configuration.Rules.Parsers;
 
@@ -35,8 +36,8 @@ public class GeneratingHttpDataParser
         return headers;
     }
 
-    public Task<ObjectTextParts> ParseBody(FileBlock block, IParsingContext parsingContext)
+    public Task<ObjectTextParts> ParseText(string text, IParsingContext parsingContext)
     {
-        return _partsParser.Parse(block.GetSingleStringValue(), parsingContext);
+        return _partsParser.Parse(text, parsingContext);
     }
 }

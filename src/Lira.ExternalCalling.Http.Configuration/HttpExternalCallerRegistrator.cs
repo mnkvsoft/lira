@@ -8,6 +8,7 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
 using Lira.ExternalCalling.Http.Caller;
 using Lira.FileSectionFormat;
+using Lira.FileSectionFormat.Extensions;
 
 namespace Lira.ExternalCalling.Http.Configuration;
 

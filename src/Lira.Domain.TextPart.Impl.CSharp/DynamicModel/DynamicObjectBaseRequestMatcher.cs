@@ -13,7 +13,7 @@ public abstract class DynamicObjectBaseRequestMatcher : DynamicObjectBaseMatch, 
     {
     }
 
-    public async Task<RequestMatchResult> IsMatch(IRuleExecutingContextReadonly ctx)
+    public async Task<RequestMatchResult> IsMatch(RuleExecutingContext ctx)
     {
         bool isMatch = await IsMatchInternal(ctx);
         return isMatch
@@ -21,5 +21,5 @@ public abstract class DynamicObjectBaseRequestMatcher : DynamicObjectBaseMatch, 
             : RequestMatchResult.NotMatched;
     }
 
-    protected abstract Task<bool> IsMatchInternal(IRuleExecutingContextReadonly ctx);
+    protected abstract Task<bool> IsMatchInternal(RuleExecutingContext ctx);
 }

@@ -1,4 +1,6 @@
-﻿namespace Lira.FileSectionFormat;
+﻿using Lira.Common.Extensions;
+
+namespace Lira.FileSectionFormat.Extensions;
 
 public static class FileSectionExtensions
 {
@@ -13,7 +15,7 @@ public static class FileSectionExtensions
     {
         return section.Blocks.Where(x => names.Contains(x.Name)).ToArray();
     }
-    
+
     public static FileSection GetSingleChildSection(this FileSection section, string name)
     {
         var sections = section.ChildSections.Where(x => x.Name == name).ToArray();
@@ -25,7 +27,7 @@ public static class FileSectionExtensions
 
         return sections[0];
     }
-    
+
     public static FileSection? GetSingleChildSectionOrNull(this FileSection section, string name)
     {
         var sections = section.ChildSections.Where(x => x.Name == name).ToArray();
@@ -93,7 +95,7 @@ public static class FileSectionExtensions
     public static string GetStringValueFromRequiredBlock(this FileSection section, string blockName)
     {
         var block = section.GetBlockRequired(blockName);
-        return block.GetSingleStringValue();
+        return block.GetLinesAsString();
     }
 
     public static string GetStringValueFromBlockOrEmpty(this FileSection section, string blockName)
@@ -101,7 +103,12 @@ public static class FileSectionExtensions
         var block = section.GetBlockOrNull(blockName);
         if (block == null)
             return string.Empty;
-        return block.GetSingleStringValue();
+        return block.GetLinesAsString();
+    }
+
+    public static string GetLinesWithoutBlockAsString(this FileSection section)
+    {
+        return section.LinesWithoutBlock.JoinWithNewLine();
     }
 
     public static IReadOnlyCollection<string> GetLinesFromBlockOrEmpty(this FileSection section, string blockName)

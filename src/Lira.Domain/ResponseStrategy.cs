@@ -1,3 +1,4 @@
+using Lira.Domain.Generating;
 using Lira.Domain.Generating.Writers;
 using Microsoft.AspNetCore.Http;
 
@@ -14,15 +15,15 @@ public abstract record ResponseStrategy(TimeSpan? Delay)
     }
 
     protected abstract Task ExecuteInternal(HttpContextData httpContextData);
-    
-    public record Normal(TimeSpan? Delay, int Code, BodyGenerator? BodyGenerator, HeadersGenerator? HeadersGenerator) : ResponseStrategy(Delay)
+
+    public record Normal(TimeSpan? Delay, IHttCodeGenerator CodeGenerator, BodyGenerator? BodyGenerator, HeadersGenerator? HeadersGenerator) : ResponseStrategy(Delay)
     {
         protected override async Task ExecuteInternal(HttpContextData httpContextData)
         {
             var context = httpContextData.RuleExecutingContext;
             var response = httpContextData.Response;
 
-            response.StatusCode = Code;
+            response.StatusCode = CodeGenerator.Generate(httpContextData.RuleExecutingContext);
 
             if (HeadersGenerator != null)
             {
