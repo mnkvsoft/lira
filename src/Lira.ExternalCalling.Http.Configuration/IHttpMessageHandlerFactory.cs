@@ -9,6 +9,10 @@ class HttpMessageHandlerFactory : IHttpMessageHandlerFactory
 {
     public HttpMessageHandler Create()
     {
-        return new HttpClientHandler();
+        return new HttpClientHandler
+        {
+            ClientCertificateOptions = ClientCertificateOption.Manual,
+            ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+        };
     }
 }

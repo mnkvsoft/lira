@@ -55,20 +55,20 @@ public class HttpAction : IAction
             foreach (var header in _headers)
             {
                 string value = header.TextParts.Generate(context);
-                
+
                 if (header.Name == Header.ContentType)
                 {
                     contentType = value;
                     continue;
                 }
-                
+
                 req.Headers.Add(header.Name, value);
             }
         }
 
         if (string.IsNullOrWhiteSpace(contentType))
             throw new Exception("Header Content-Type is required");
-        
+
         req.Content = new StringContent(_bodyParts?.Generate(context) ?? "", Encoding.UTF8, contentType);
         return req;
     }
