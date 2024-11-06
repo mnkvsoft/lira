@@ -92,8 +92,10 @@ public static class SectionFileParser
         var sections = new List<FileSection>();
         foreach (var sectionLines in sectionsLines)
         {
-            string sectionName = GetName(sectionLines[0]);
-            var section = new FileSection(sectionName);
+            var nameAndKey = CleanFromSectionPrefix(sectionLines[0]).Split(':');
+            string sectionName = nameAndKey[0];
+            string? sectionKey = nameAndKey.Length == 1 ? null : nameAndKey[1];
+            var section = new FileSection(sectionName, sectionKey);
 
             sections.Add(section);
 
@@ -181,7 +183,7 @@ public static class SectionFileParser
         return false;
     }
 
-    private static string GetName(string cleanLine) => cleanLine.TrimStart(GetStartSectionString(cleanLine)).Trim();
+    private static string CleanFromSectionPrefix(string cleanLine) => cleanLine.TrimStart(GetStartSectionString(cleanLine)).Trim();
 
     private static string GetStartSectionString(string line)
     {

@@ -10,6 +10,7 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Templating;
 using Lira.Domain.Configuration.Variables;
 using System.Diagnostics;
+using Lira.Domain.Configuration.CustomSets;
 
 namespace Lira.Domain.Configuration;
 
@@ -112,8 +113,6 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IConfigurationLoader
         var rules = await _loadTask;
         return rules;
     }
-
-    record LoadResult(IReadOnlyCollection<Rule> Rules);
 
     private void WatchForFileChanges()
     {

@@ -1,0 +1,13 @@
+-------------------- case
+
+GET /simplified_notation/response_section_without_blocks
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "status": "ok"
+}

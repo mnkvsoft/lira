@@ -1,0 +1,5 @@
+-------------------- rule
+GET /simplified_notation/code_without_block
+
+----- response
+408

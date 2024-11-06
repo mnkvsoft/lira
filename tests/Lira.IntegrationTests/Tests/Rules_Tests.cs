@@ -36,7 +36,10 @@ public class Rules_Tests : TestBase
     [TestCaseSource(nameof(Cases))]
     public async Task RuleIsWork(string prettyTestFileName)
     {
-        string fixturesDirectory = GetFixturesDirectory();
+
+        try
+        {
+string fixturesDirectory = GetFixturesDirectory();
         var mocks = new AppMocks();
         await using var factory = new TestApplicationFactory(fixturesDirectory, mocks);
         var httpClient = factory.CreateDefaultClient();
@@ -86,7 +89,7 @@ public class Rules_Tests : TestBase
 
             if (bodyBlock != null)
             {
-                string expectedBody = expectedSection.GetStringValueFromRequiredBlock("body");
+                string expectedBody = expectedSection.GetStringValueFromRequiredBlock("body").Replace("<empty>", "");
 
                 string body = await res.Content.ReadAsStringAsync();
                 Assert.That(body, Is.EqualTo(expectedBody));
@@ -97,6 +100,14 @@ public class Rules_Tests : TestBase
             var httpCallSection = expectedSection.ChildSections.FirstOrDefault(x => x.Name == "action.call.http");
             AsserCallHttp(httpCallSection, mocks);
         }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw new Exception("sdfdsf: " + prettyTestFileName);
+        }
+
+
     }
 
     private static void AsserCallHttp(FileSection? httpCallSection, AppMocks mocks)

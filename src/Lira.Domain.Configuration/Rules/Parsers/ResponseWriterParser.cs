@@ -30,8 +30,21 @@ class ResponseStrategyParser
                 HeadersGenerator: null);
         }
 
-        if (responseSection.Blocks.Count == 0 && responseSection.LinesWithoutBlock.Count > 0)
+        if (responseSection.Blocks.Count == 0)
         {
+            if (responseSection.LinesWithoutBlock.Count == 0)
+            {
+                var strCode = responseSection.Key;
+                if(string.IsNullOrEmpty(strCode))
+                    throw new Exception("No response section found");
+
+                return new ResponseStrategy.Normal(
+                    Delay: null,
+                    new StaticHttCodeGenerator(strCode.ToHttpCode()),
+                    BodyGenerator: null,
+                    HeadersGenerator: null);
+            }
+
             if(responseSection.LinesWithoutBlock.Count == 1 && int.TryParse(responseSection.GetSingleLine(), out var code))
             {
                 return new ResponseStrategy.Normal(
@@ -105,6 +118,7 @@ class ResponseStrategyParser
 
         if (string.IsNullOrWhiteSpace(str))
             throw new Exception($"Empty http code: '{str}'");
+
         var textParts = await _httpDataParser.ParseText(str, parsingContext);
         return new DynamicHttCodeGenerator(textParts.WrapToTextParts());
     }

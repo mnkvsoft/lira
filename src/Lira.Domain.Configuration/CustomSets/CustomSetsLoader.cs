@@ -1,16 +1,15 @@
 using Lira.Common;
 using Lira.Common.Extensions;
-using Lira.Domain.TextPart.Impl.Custom.CustomSetModel;
 using Lira.FileSectionFormat;
 
-namespace Lira.Domain.Configuration.Templating;
+namespace Lira.Domain.Configuration.CustomSets;
 
 static class CustomSetsLoader
 {
-    public static async Task<CustomSets> Load(string path)
+    public static async Task<TextPart.Impl.Custom.CustomSetModel.CustomSets> Load(string path)
     {
         var templateFiles = DirectoryHelper.GetFiles(path, "*.set");
-        var result = new CustomSets();
+        var result = new TextPart.Impl.Custom.CustomSetModel.CustomSets();
 
         foreach (var file in templateFiles)
         {

@@ -1,8 +1,0 @@
--------------------- case
-
-GET /generating/http_code/without_block
-
------ expected
-
-~ code
-200

@@ -14,16 +14,22 @@ public record StaticHttCodeGenerator(int Code) : IHttCodeGenerator
 
 public record DynamicHttCodeGenerator(TextParts Parts) : IHttCodeGenerator
 {
-    public static readonly StaticHttCodeGenerator Code200 = new(200);
-
     public int Generate(RuleExecutingContext context)
     {
         string strCode = Parts.Generate(context);
-        if(!int.TryParse(strCode, out var code))
-            throw new Exception("Invalid http code: '" + strCode + "'");
+        return strCode.ToHttpCode();
+    }
+}
+
+public static class HttCodeStringExtensions
+{
+    public static int ToHttpCode(this string? str)
+    {
+        if(!int.TryParse(str, out var code))
+            throw new Exception("Invalid http code: '" + str + "'");
 
         if(code is < 100 or > 599)
-            throw new Exception("Invalid http code: " + strCode + "");
+            throw new Exception("Invalid http code: " + str + "");
 
         return code;
     }

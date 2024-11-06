@@ -1,7 +1,0 @@
--------------------- rule
-
-GET /generating/http_code/without_block
-
------ response
-
-200

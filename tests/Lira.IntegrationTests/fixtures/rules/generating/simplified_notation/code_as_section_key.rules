@@ -1,0 +1,5 @@
+-------------------- rule
+
+GET /simplified_notation/code_as_section_key
+
+----- response: 408

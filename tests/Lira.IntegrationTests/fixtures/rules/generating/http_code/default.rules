@@ -1,7 +1,0 @@
--------------------- rule
-
-GET /generating/http_code/default
-
------ response
-
-## block `code` is missing, by default code 200
