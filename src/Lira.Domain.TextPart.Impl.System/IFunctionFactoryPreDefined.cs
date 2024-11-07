@@ -7,18 +7,6 @@ using Lira.Domain.TextPart.Impl.System.Functions.Transform;
 
 namespace Lira.Domain.TextPart.Impl.System;
 
-public interface IFunctionFactorySystem
-{
-    bool TryCreateBodyExtractFunction(string invoke, [MaybeNullWhen(false)] out IBodyExtractFunction function);
-
-    bool TryCreateGeneratingFunction(string invoke, [MaybeNullWhen(false)] out IObjectTextPart function);
-
-    bool TryCreateTransformFunction(string invoke, [MaybeNullWhen(false)] out ITransformFunction function);
-
-    bool TryCreateMatchFunction(string invoke, [MaybeNullWhen(false)] out IMatchFunction function);
-}
-
-
 internal class FunctionFactorySystem : IFunctionFactorySystem
 {
     private readonly GeneratingFunctionFactory _generatingFunctionFactory;

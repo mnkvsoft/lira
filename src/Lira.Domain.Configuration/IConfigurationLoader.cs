@@ -11,16 +11,18 @@ using Lira.Domain.Configuration.Templating;
 using Lira.Domain.Configuration.Variables;
 using System.Diagnostics;
 using Lira.Domain.Configuration.CustomSets;
+using Lira.Domain.TextPart;
+using Lira.Domain.TextPart.Impl.System;
 
 namespace Lira.Domain.Configuration;
 
 public interface IConfigurationLoader
 {
     Task<ConfigurationState> GetState();
-    void ProvokeLoad();
+    void BeginLoading();
 }
 
-class ConfigurationLoader : IDisposable, IRulesProvider, IConfigurationLoader
+class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoader
 {
     private readonly string _path;
     private readonly ILogger _logger;
@@ -30,51 +32,71 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IConfigurationLoader
 
     private readonly RangesLoader _rangesLoader;
 
-    private Task<IReadOnlyCollection<Rule>> _loadTask;
+    private Task<ConfigurationState>? _beginLoadingTask;
+
     private ConfigurationState? _providerState;
+    private ConfigurationState.Ok? _lastOkConfiguration;
+
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly RangesProvider _rangesProvider;
+    private readonly StateRepository _stateRepository;
+    private Guid Id = Guid.NewGuid();
+
 
     public ConfigurationLoader(
         IServiceScopeFactory serviceScopeFactory,
         ILoggerFactory loggerFactory,
         IConfiguration configuration,
         RangesLoader rangesLoader,
-        RangesProvider rangesProvider)
+        StateRepository stateRepository)
     {
-        _rangesProvider = rangesProvider;
         _rangesLoader = rangesLoader;
+        _stateRepository = stateRepository;
         _serviceScopeFactory = serviceScopeFactory;
         _logger = loggerFactory.CreateLogger(GetType());
         _path = configuration.GetRulesPath();
 
-        _loadTask = Load(_path);
-
-        _logger.LogInformation($"Rules path for watching: {_path}");
-
         _fileProvider = new PhysicalFileProvider(_path);
         _fileProvider.UsePollingFileWatcher = true;
         _fileProvider.UseActivePolling = true;
-
-        WatchForFileChanges();
     }
 
-
-    public void ProvokeLoad()
+    public void BeginLoading()
     {
-        // loading was init in constructor
-        // invoke only for create instanse
+        _beginLoadingTask = LoadConfigurationOnStart(_path).ContinueWith(x => _providerState = x.Result);
+        _logger.LogInformation($"Rules path for watching: {_path}");
     }
 
-    private async Task<IReadOnlyCollection<Rule>> Load(string path)
+    private async Task<ConfigurationState> LoadConfigurationOnStart(string path)
     {
-        _logger.LogInformation("Loading rules...");
-        var sw = Stopwatch.StartNew();
         try
         {
+            var configurationState = await ReadConfiguration(path);
 
-            var ranges = await _rangesLoader.Load(path);
-            _rangesProvider.Ranges = ranges;
+            if (configurationState is ConfigurationState.Ok ok)
+            {
+                await RestoreStates(ok);
+                _lastOkConfiguration = ok;
+            }
+
+            return configurationState;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "An unexpected error occured while load rules");
+            return new ConfigurationState.Error(DateTime.Now, e);
+        }
+        finally
+        {
+            WatchForFileChanges();
+        }
+    }
+
+    private async Task<ConfigurationState> ReadConfiguration(string path)
+    {
+        try
+        {
+            _logger.LogInformation("Loading rules...");
+            var sw = Stopwatch.StartNew();
 
             var templates = await TemplatesLoader.Load(path);
             var customSets = await CustomSetsLoader.Load(path);
@@ -89,6 +111,10 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IConfigurationLoader
             using var scope = _serviceScopeFactory.CreateScope();
             var provider = scope.ServiceProvider;
 
+            var ranges = await _rangesLoader.Load(path);
+            var rulesProvider = provider.GetRequiredService<RangesProvider>();
+            rulesProvider.Ranges = ranges;
+
             var globalVariablesParser = provider.GetRequiredService<DeclaredItemsLoader>();
 
             var variables = await globalVariablesParser.Load(context, path);
@@ -97,21 +123,41 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IConfigurationLoader
             var rules = await rulesLoader.LoadRules(path, context with { DeclaredItems = variables });
 
             _logger.LogInformation($"{rules.Count} rules were successfully loaded ({(int)sw.ElapsedMilliseconds} ms)");
+            var sequence = provider.GetRequiredService<Sequence>();
 
-            return rules;
+            return new ConfigurationState.Ok(DateTime.Now, rules, ranges, sequence);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occured while load rules");
-            throw;
+            return new ConfigurationState.Error(DateTime.Now, ex);
         }
     }
 
-
     async Task<IReadOnlyCollection<Rule>> IRulesProvider.GetRules()
     {
-        var rules = await _loadTask;
-        return rules;
+        if (_providerState != null)
+        {
+            return GetFromState(_providerState);
+        }
+
+        if(_beginLoadingTask == null)
+            throw new Exception("Method BeginLoading() must be called first");
+
+        return GetFromState(await _beginLoadingTask);
+
+        IReadOnlyCollection<Rule> GetFromState(ConfigurationState state)
+        {
+            if (state is ConfigurationState.Ok ok)
+            {
+                _logger.LogInformation($"GetRules count: " +  ok.Rules.Count);
+                return ok.Rules;
+            }
+
+            var error = (ConfigurationState.Error)state;
+
+            throw new Exception("An error occured while loading configuration: " + error.Exception.Message);
+        }
     }
 
     private void WatchForFileChanges()
@@ -120,17 +166,39 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IConfigurationLoader
         _fileChangeToken.RegisterChangeCallback(Notify, default);
     }
 
-    private void Notify(object? state)
+    private void Notify(object? state) => _ = OnChange();
+
+    private async Task OnChange()
     {
-        OnChange();
+        _logger.LogInformation($"Change was detected in {_path}");
+        var state = await ReadConfiguration(_path);
+
+        if (state is ConfigurationState.Ok ok)
+        {
+            if (_lastOkConfiguration != null)
+                await SaveStates(_lastOkConfiguration);
+
+            await RestoreStates(ok);
+
+            _lastOkConfiguration = ok;
+
+        }
+
+        _providerState = state;
+
         WatchForFileChanges();
     }
 
-    private void OnChange()
+    private async Task SaveStates(ConfigurationState.Ok okState)
     {
-        _logger.LogInformation($"Change was detected in {_path}");
-        _providerState = null;
-        _loadTask = Load(_path);
+        var currentStates = GetWithStates(okState);
+        foreach (var currentState in currentStates)
+        {
+            currentState.Seal();
+        }
+
+        var states = currentStates.Select(s => new KeyValuePair<string, string>(s.StateId, s.GetState())).ToDictionary();
+        await _stateRepository.UpdateStates(states);
     }
 
     public async Task<ConfigurationState> GetState()
@@ -138,21 +206,65 @@ class ConfigurationLoader : IDisposable, IRulesProvider, IConfigurationLoader
         if (_providerState != null)
             return _providerState;
 
+        if(_beginLoadingTask == null)
+            throw new Exception("Method BeginLoading() must be called first");
+
+        return await _beginLoadingTask;
+    }
+
+    private async Task RestoreStates(ConfigurationState.Ok ok)
+    {
+        var savesStates = await _stateRepository.GetStates();
+        var withStates = GetWithStates(ok);
+
+        foreach (var withState in withStates)
+        {
+            var stateId = withState.StateId;
+
+            if (savesStates.TryGetValue(stateId, out var state))
+                withState.RestoreState(state);
+        }
+    }
+
+    private static IReadOnlyCollection<IWithState> GetWithStates(ConfigurationState.Ok ok)
+    {
+        // var withStates = ok.Ranges
+        //     .Select(x => x.Value)
+        //     .Cast<IWithState>()
+        //     .ToList();
+        //
+        // withStates.Add(ok.Sequence);
+        // return withStates;
+
+        return [ok.Sequence];
+    }
+
+    bool _disposed;
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed)
+            return;
+
         try
         {
-            await _loadTask;
-            _providerState = new ConfigurationState.Ok(DateTime.Now);
+            _fileProvider.Dispose();
+            if (_lastOkConfiguration != null)
+            {
+                await SaveStates(_lastOkConfiguration);
+                _logger.LogInformation("States have been saved " + Id);
+            }
+            else
+            {
+                _logger.LogInformation("States have not been saved");
+            }
         }
         catch (Exception e)
         {
-            _providerState = new ConfigurationState.Error(DateTime.Now, e);
+            _logger.LogError(e, "An unexpected error occured while disposing configuration");
         }
-
-        return _providerState;
-    }
-
-    public void Dispose()
-    {
-        _fileProvider.Dispose();
+        finally
+        {
+            _disposed = true;
+        }
     }
 }

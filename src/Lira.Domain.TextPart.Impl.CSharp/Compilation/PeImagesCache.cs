@@ -7,8 +7,8 @@ namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
 
 class PeImagesCache : IDisposable
 {
-    private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "Lira");
-    
+    private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "lira", "pe_images");
+
     private bool _wasInit;
     private readonly Dictionary<Hash, PeImageCacheEntry> _hashToEntryMap = new();
     private readonly ILogger _logger;
@@ -42,7 +42,7 @@ class PeImagesCache : IDisposable
     {
         if(_hashToEntryMap.ContainsKey(hash))
             return;
-        
+
         _hashToEntryMap.Add(
             hash,
             new PeImageCacheEntry(peImage) { IsNew = true });
@@ -54,10 +54,10 @@ class PeImagesCache : IDisposable
             return;
 
         var sw = Stopwatch.StartNew();
-        
-        if (!Directory.Exists(TempPath)) 
+
+        if (!Directory.Exists(TempPath))
             Directory.CreateDirectory(TempPath);
-        
+
         var files = Directory.GetFiles(TempPath);
 
         foreach (string filePath in files)
@@ -65,9 +65,9 @@ class PeImagesCache : IDisposable
             string strHash = filePath.GetFileName();
             var hash = Hash.Parse(strHash);
             var peImage = new PeImage(File.ReadAllBytes(filePath));
-            _hashToEntryMap.Add(hash, new PeImageCacheEntry(peImage));    
+            _hashToEntryMap.Add(hash, new PeImageCacheEntry(peImage));
         }
-        
+
         _wasInit = true;
         var nl = Constants.NewLine;
         _logger.LogDebug("PE image cache." + nl +
@@ -84,7 +84,7 @@ class PeImagesCache : IDisposable
             var entry = pair.Value;
 
             string filePath = Path.Combine(TempPath, hash.ToString());
-            
+
             if (entry.IsNew)
             {
                 IgnoreIoExceptionForTests(() => File.WriteAllBytes(filePath, entry.PeImage.Bytes));
@@ -93,7 +93,7 @@ class PeImagesCache : IDisposable
 
             if (entry.WasUsed)
                 continue;
-            
+
             IgnoreIoExceptionForTests(() => File.Delete(filePath));
         }
     }

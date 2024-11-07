@@ -10,7 +10,7 @@ public abstract class Data
     protected Data(DataName name, string info)
     {
         Arg.NotDefault(name, nameof(name));
-        Arg.NotNullOrWhitespace(info, nameof(info));    
+        Arg.NotNullOrWhitespace(info, nameof(info));
 
         Name = name;
         Info = info;

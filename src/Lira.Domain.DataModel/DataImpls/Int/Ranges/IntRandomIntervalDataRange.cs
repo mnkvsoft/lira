@@ -2,11 +2,11 @@
 
 namespace Lira.Domain.DataModel.DataImpls.Int.Ranges;
 
-public class IntSetIntervalDataRange : IntDataRange
+public class IntRandomIntervalDataRange : IntDataRange
 {
     private Interval<long> Interval { get; }
 
-    public IntSetIntervalDataRange(DataName name, Interval<long> interval) : base(name)
+    public IntRandomIntervalDataRange(DataName name, Interval<long> interval) : base(name)
     {
         Interval = interval;
     }

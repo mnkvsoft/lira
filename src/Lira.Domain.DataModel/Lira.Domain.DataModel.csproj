@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lira.Common\Lira.Common.csproj" />
+    <ProjectReference Include="..\Lira.Domain.TextPart\Lira.Domain.TextPart.csproj" />
   </ItemGroup>
 
 </Project>

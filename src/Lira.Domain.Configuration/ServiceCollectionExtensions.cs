@@ -34,6 +34,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<RuleFileParser>()
             .AddSingleton<ConfigurationLoader>()
             .AddSingleton<IConfigurationLoader>(provider => provider.GetRequiredService<ConfigurationLoader>())
+            .AddSingleton<StateRepository>()
 
             .AddSingleton<GuidParser>()
             .AddSingleton<IntParser>()
@@ -41,8 +42,8 @@ public static class ServiceCollectionExtensions
             .AddSingleton<HexParser>()
 
             .AddSingleton<RangesLoader>()
-            .AddSingleton<RangesProvider>()
-            .AddSingleton<IRangesProvider>(provider => provider.GetRequiredService<RangesProvider>())
+            .AddScoped<RangesProvider>()
+            .AddScoped<IRangesProvider>(provider => provider.GetRequiredService<RangesProvider>())
 
             .AddTransient<RulesLoader>()
             .AddSingleton<IRulesProvider>(provider => provider.GetRequiredService<ConfigurationLoader>());
