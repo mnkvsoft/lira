@@ -23,6 +23,7 @@ public class RequestModel
     public string? query(string name) => _data.GetQueryParam(name);
 
     public string? path(int index) => _data.GetPath(index);
+    public string path() => _data.Path;
 
     public record BodyModel(string Value)
     {

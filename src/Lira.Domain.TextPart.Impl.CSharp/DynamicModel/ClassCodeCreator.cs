@@ -55,6 +55,7 @@ static partial class ClassCodeCreator
     public static string CreateRequestMatcher(
         string className,
         string code,
+        string externalRequestVariableName,
         IReadOnlyCollection<string> namespaces,
         IReadOnlyCollection<string> usingStaticTypes)
     {
@@ -62,6 +63,7 @@ static partial class ClassCodeCreator
             .Replace("[namespaces]", GetNamespaces(namespaces))
             .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
             .Replace("[className]", className)
+            .Replace("[externalRequestVariableName]", externalRequestVariableName)
             .Replace("[code]", code);
     }
 

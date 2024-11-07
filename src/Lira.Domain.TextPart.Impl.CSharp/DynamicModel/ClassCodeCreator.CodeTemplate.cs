@@ -117,6 +117,8 @@ public sealed class [className] : DynamicObjectBaseRequestMatcher
 
     protected override async Task<bool> IsMatchInternal(RuleExecutingContext __ctx)
     {
+        var [externalRequestVariableName] = new RequestModel(__ctx.RequestContext.RequestData);
+
         [code]
 
         string? value(string name)

@@ -36,10 +36,7 @@ public class Rules_Tests : TestBase
     [TestCaseSource(nameof(Cases))]
     public async Task RuleIsWork(string prettyTestFileName)
     {
-
-        try
-        {
-string fixturesDirectory = GetFixturesDirectory();
+        string fixturesDirectory = GetFixturesDirectory();
         var mocks = new AppMocks();
         await using var factory = new TestApplicationFactory(fixturesDirectory, mocks);
         var httpClient = factory.CreateDefaultClient();
@@ -68,7 +65,7 @@ string fixturesDirectory = GetFixturesDirectory();
             }
             catch (Exception e)
             {
-                if(e.Message.Contains("The application aborted the request") && expectedSection.ExistBlock("aborted"))
+                if (e.Message.Contains("The application aborted the request") && expectedSection.ExistBlock("aborted"))
                     continue;
                 throw;
             }
@@ -100,14 +97,6 @@ string fixturesDirectory = GetFixturesDirectory();
             var httpCallSection = expectedSection.ChildSections.FirstOrDefault(x => x.Name == "action.call.http");
             AsserCallHttp(httpCallSection, mocks);
         }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw new Exception("sdfdsf: " + prettyTestFileName);
-        }
-
-
     }
 
     private static void AsserCallHttp(FileSection? httpCallSection, AppMocks mocks)

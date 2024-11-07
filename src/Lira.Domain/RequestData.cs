@@ -17,12 +17,14 @@ public record RequestData
     {
         int realIndex = index + 1;
 
-        if (Path.Value.Length < realIndex)
+        var segments = Path.Value.Split('/');
+
+        if (segments.Length - 1 < realIndex)
             return null;
 
-        return Path.Value.Split('/')[realIndex];
+        return segments[realIndex];
     }
-    
+
     public string? GetHeader(string name)
     {
         if (Headers.TryGetValue(name, out StringValues values))
@@ -30,7 +32,7 @@ public record RequestData
 
         return null;
     }
-    
+
     public string? GetQueryParam(string name)
     {
         if (Query.TryGetValue(name, out StringValues values))
@@ -38,7 +40,7 @@ public record RequestData
 
         return null;
     }
-    
+
     public QueryString QueryString { get; }
     public IHeaderDictionary Headers { get; }
     public IQueryCollection Query { get; }

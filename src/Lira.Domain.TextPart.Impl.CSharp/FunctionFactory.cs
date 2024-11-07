@@ -135,6 +135,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         string classToCompile = ClassCodeCreator.CreateRequestMatcher(
             className,
             GetMethodBody(new Code(ForCompile: code, Source: code)),
+            ReservedVariable.Req,
             GetNamespaces(customAssemblies.Loaded),
             GetUsingStatic(customAssemblies.Loaded));
 
