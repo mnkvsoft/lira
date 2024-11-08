@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using System.Collections.Immutable;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Lira.Common;
+using Lira.Domain.Configuration;
 using Moq.Contrib.HttpClient;
 
 namespace Lira.IntegrationTests;
@@ -16,16 +17,21 @@ public class AppMocks
             .ReturnsResponse(System.Net.HttpStatusCode.OK);
         });
 
+    public Mock<IStateRepository> StateRepository = new Mock<IStateRepository>().Apply(r =>
+    {
+        r.Setup(x => x.GetStates())
+            .ReturnsAsync(ImmutableDictionary<string, string>.Empty);
+    });
+
     public IServiceCollection Configure(IServiceCollection services)
     {
-        services.RemoveAll(typeof(ExternalCalling.Http.Configuration.IHttpMessageHandlerFactory));
-
         var mock = new Mock<ExternalCalling.Http.Configuration.IHttpMessageHandlerFactory>();
         mock
             .Setup(x => x.Create())
             .Returns(HttpMessageHandler.Object);
 
-        services.AddSingleton(mock.Object);
+        services.Replace(mock.Object);
+        services.Replace(StateRepository.Object);
 
         return services;
     }

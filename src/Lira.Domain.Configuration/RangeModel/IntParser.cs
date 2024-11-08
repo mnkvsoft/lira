@@ -17,31 +17,31 @@ class IntParser
     {
         _logger = loggerFactory.CreateLogger(GetType());
     }
-    
+
     public Data Parse(DataName name, DataOptionsDto dto)
     {
         var fullInfo = new StringBuilder().AppendLine("Type: int");
-        
+
         var (intervals, info) = GetIntervalsWithInfo(dto);
         fullInfo.AppendLine(info);
-        
+
         var mode = dto.Mode ?? "seq";
         fullInfo.AppendLine($"Mode({(dto.Mode == null ? "default" : "manual")}): " + mode);
-        
+
         _logger.LogDebug(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
 
         var infoForData = new StringBuilder().AddInfo(fullInfo, intervals).ToString();
         if (mode == "seq")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,
-                p => (DataRange<long>)new IntSeqDataRange(p.Key, new Int64Sequence(p.Value)));
+                p => (IntDataRange)new IntSeqDataRange(p.Key, new Int64Sequence(p.Value)));
             return new IntData(name, seqDatas, infoForData);
         }
 
         if (mode == "random")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,
-                p => (DataRange<long>)new IntSetIntervalDataRange(p.Key, p.Value));
+                p => (IntDataRange)new IntRandomIntervalDataRange(p.Key, p.Value));
             return new IntData(name, seqDatas, infoForData);
         }
 
@@ -49,7 +49,7 @@ class IntParser
     }
 
     internal record IntervalsWithCapacity(IReadOnlyDictionary<DataName, Interval<long>> Intervals, string RangeInfo);
-    
+
     private static IntervalsWithCapacity GetIntervalsWithInfo(DataOptionsDto dto)
     {
         if (!string.IsNullOrEmpty(dto.Interval) && !string.IsNullOrEmpty(dto.Start))
@@ -96,7 +96,7 @@ class IntParser
 
         ulong tempCapacity = intervalLength / (ulong)ranges.Length;
         long capacity = tempCapacity > long.MaxValue ? long.MaxValue : (long)tempCapacity;
-        
+
         var intervals = new Dictionary<DataName, Interval<long>>();
 
         for (int i = 0; i < ranges.Length; i++)
@@ -109,7 +109,7 @@ class IntParser
             intervals.Add(name, new Interval<long>(from, i == ranges.Length - 1 ? interval.To : to));
         }
 
-        return new IntervalsWithCapacity(intervals, 
+        return new IntervalsWithCapacity(intervals,
             $"Interval({intervalInfo}): " + interval + Constants.NewLine +
             "Capacity(auto): " + capacity);
     }

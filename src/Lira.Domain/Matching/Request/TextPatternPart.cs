@@ -6,7 +6,7 @@ public abstract record TextPatternPart
     {
         public record NotMatch : MatchResult
         {
-            public static readonly NotMatch Instance = new NotMatch();
+            public static readonly NotMatch Instance = new();
         }
 
         public record Matched(string? DynamicValueId, string? DynamicValue) : MatchResult
@@ -15,11 +15,11 @@ public abstract record TextPatternPart
         }
     }
 
-    public abstract MatchResult Match(string? value);
+    public abstract MatchResult Match(RuleExecutingContext context, string? value);
 
     public record Static(string Expected) : TextPatternPart
     {
-        public override MatchResult Match(string? current)
+        public override MatchResult Match(RuleExecutingContext context, string? current)
         {
             return Expected.Equals(current, StringComparison.OrdinalIgnoreCase)
                 ? MatchResult.Matched.WithoutDynamic
@@ -30,7 +30,7 @@ public abstract record TextPatternPart
 
     public record NullOrEmpty : TextPatternPart
     {
-        public override MatchResult Match(string? current)
+        public override MatchResult Match(RuleExecutingContext context, string? current)
         {
             return string.IsNullOrWhiteSpace(current)
                ? MatchResult.Matched.WithoutDynamic
@@ -40,7 +40,7 @@ public abstract record TextPatternPart
 
     public record Dynamic(string? Start, string? End, IMatchFunction MatchFunction, string? ValueId) : TextPatternPart
     {
-        public override MatchResult Match(string? current)
+        public override MatchResult Match(RuleExecutingContext context, string? current)
         {
             MatchResult.NotMatch notMatch = MatchResult.NotMatch.Instance;
             var toMatch = current;
@@ -67,7 +67,7 @@ public abstract record TextPatternPart
                 toMatch = toMatch!.Substring(0, toMatch.Length - End.Length);
             }
 
-            return MatchFunction.IsMatch(toMatch)
+            return MatchFunction.IsMatch(context, toMatch)
                ? new MatchResult.Matched(ValueId, toMatch)
                : notMatch;
         }

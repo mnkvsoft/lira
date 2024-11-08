@@ -44,7 +44,7 @@ public class CustomSetFunction : IObjectTextPart, IMatchFunction
         return _list.Random();
     }
 
-    public bool IsMatch(string? value)
+    public bool IsMatch(RuleExecutingContext context, string? value)
     {
         if (value == null)
             return false;

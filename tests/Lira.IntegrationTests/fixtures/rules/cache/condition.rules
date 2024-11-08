@@ -8,9 +8,9 @@ attempt = 1
 
 ----- declare
 
-$$response:json = 
+$$response:json =
 {
-    "id": {{ seq }},
+    "id": 1,
     "status": "pending"
 }
 
@@ -36,7 +36,7 @@ attempt = 2
 200
 
 ~ body
-{{ 
+{{
     cache.get("condition_" + value("id"))
         .replace("status", "ok")
 }}

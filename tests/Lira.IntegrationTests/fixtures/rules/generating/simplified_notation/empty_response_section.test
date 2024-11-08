@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /simplified_notation/code_without_block
+
+----- expected
+
+~ code
+408
+
+~ body
+<empty>

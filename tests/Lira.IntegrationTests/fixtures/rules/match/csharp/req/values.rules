@@ -1,7 +1,7 @@
 
 -------------------- rule
 
-POST /match/sharp/req/{{:accountNumber regex:^[0-9]{20}$ }}
+POST /match/sharp/req/values/{{:accountNumber regex:^[0-9]{20}$ }}
 
 ~ body
 {{ jpath: $.amount }} >> {{:amount float }}
@@ -20,7 +20,6 @@ return enoughMoney;
 
 ----- response
 
-~ body
 {
     "transactionId": 12345
 }

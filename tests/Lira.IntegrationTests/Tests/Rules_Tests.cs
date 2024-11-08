@@ -4,6 +4,7 @@ using Moq.Contrib.HttpClient;
 using Lira.Common.Extensions;
 using Lira.ExternalCalling.Http.Caller;
 using Lira.FileSectionFormat;
+using Lira.FileSectionFormat.Extensions;
 
 namespace Lira.IntegrationTests.Tests;
 
@@ -64,7 +65,7 @@ public class Rules_Tests : TestBase
             }
             catch (Exception e)
             {
-                if(e.Message.Contains("The application aborted the request") && expectedSection.ExistBlock("aborted"))
+                if (e.Message.Contains("The application aborted the request") && expectedSection.ExistBlock("aborted"))
                     continue;
                 throw;
             }
@@ -85,7 +86,7 @@ public class Rules_Tests : TestBase
 
             if (bodyBlock != null)
             {
-                string expectedBody = expectedSection.GetStringValueFromRequiredBlock("body");
+                string expectedBody = expectedSection.GetStringValueFromRequiredBlock("body").Replace("<empty>", "");
 
                 string body = await res.Content.ReadAsStringAsync();
                 Assert.That(body, Is.EqualTo(expectedBody));
@@ -126,7 +127,7 @@ public class Rules_Tests : TestBase
                 var bodyBlock = httpCallSection.GetBlockOrNull("body");
                 if (bodyBlock != null)
                 {
-                    string expectedBody = bodyBlock.GetSingleStringValue();
+                    string expectedBody = bodyBlock.GetLinesAsString();
                     Assert.That(expectedBody, Is.EqualTo(await message.Content!.ReadAsStringAsync()));
                 }
 

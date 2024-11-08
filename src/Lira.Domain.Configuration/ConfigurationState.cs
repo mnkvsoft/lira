@@ -1,8 +1,13 @@
-﻿namespace Lira.Domain.Configuration;
+﻿using Lira.Domain.TextPart;
+
+namespace Lira.Domain.Configuration;
 
 public abstract record ConfigurationState
 {
-    public record Ok(DateTime LoadTime) : ConfigurationState;
+    public record Ok(
+        DateTime LoadTime,
+        IReadOnlyCollection<Rule> Rules,
+        IReadOnlyCollection<IState> States) : ConfigurationState;
 
     public record Error(DateTime LoadTime, Exception Exception) : ConfigurationState;
 }

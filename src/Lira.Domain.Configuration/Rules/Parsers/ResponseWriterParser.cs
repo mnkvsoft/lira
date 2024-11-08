@@ -1,8 +1,10 @@
 ﻿using Lira.Common.PrettyParsers;
 using Lira.Domain.Generating.Writers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+using Lira.Domain.Generating;
 using Lira.Domain.TextPart;
 using Lira.FileSectionFormat;
+using Lira.FileSectionFormat.Extensions;
 
 namespace Lira.Domain.Configuration.Rules.Parsers;
 
@@ -23,8 +25,42 @@ class ResponseStrategyParser
         {
             return new ResponseStrategy.Normal(
                 Delay: null,
-                Code: 200,
+                StaticHttCodeGenerator.Code200,
                 BodyGenerator: null,
+                HeadersGenerator: null);
+        }
+
+        if (responseSection.Blocks.Count == 0)
+        {
+            if (responseSection.LinesWithoutBlock.Count == 0)
+            {
+                var strCode = responseSection.Key;
+                if(string.IsNullOrEmpty(strCode))
+                    throw new Exception("No response section found");
+
+                return new ResponseStrategy.Normal(
+                    Delay: null,
+                    new StaticHttCodeGenerator(strCode.ToHttpCode()),
+                    BodyGenerator: null,
+                    HeadersGenerator: null);
+            }
+
+            if(responseSection.LinesWithoutBlock.Count == 1 && int.TryParse(responseSection.GetSingleLine(), out var code))
+            {
+                return new ResponseStrategy.Normal(
+                    Delay: null,
+                    new StaticHttCodeGenerator(code),
+                    BodyGenerator: null,
+                    HeadersGenerator: null);
+            }
+
+            string text = responseSection.GetLinesWithoutBlockAsString();
+            var parts = await _httpDataParser.ParseText(text, parsingContext);
+
+            return new ResponseStrategy.Normal(
+                Delay: null,
+                StaticHttCodeGenerator.Code200,
+                new BodyGenerator(parts.WrapToTextParts()),
                 HeadersGenerator: null);
         }
 
@@ -51,7 +87,7 @@ class ResponseStrategyParser
 
         return new ResponseStrategy.Normal(
             delay,
-            GetHttpCode(responseSection),
+            await GetHttpCodeGenerator(responseSection, parsingContext),
             await GetBodyGenerator(responseSection, parsingContext),
             await GetHeadersGenerator(responseSection, parsingContext));
     }
@@ -71,17 +107,20 @@ class ResponseStrategyParser
         return delay;
     }
 
-    private static int GetHttpCode(FileSection responseSection)
+    private async Task<IHttCodeGenerator> GetHttpCodeGenerator(FileSection responseSection, ParsingContext parsingContext)
     {
-        if (responseSection.LinesWithoutBlock.Count > 0)
-            return ParseHttpCode(responseSection.GetSingleLine());
-
         var codeBlock = responseSection.GetBlock(Constants.BlockName.Response.Code);
 
         if (codeBlock == null)
-            return 200;
+            return StaticHttCodeGenerator.Code200;
 
-        return ParseHttpCode(codeBlock.GetSingleLine());
+        var str = codeBlock.GetLinesAsString();
+
+        if (string.IsNullOrWhiteSpace(str))
+            throw new Exception($"Empty http code: '{str}'");
+
+        var textParts = await _httpDataParser.ParseText(str, parsingContext);
+        return new DynamicHttCodeGenerator(textParts.WrapToTextParts());
     }
 
     private async Task<BodyGenerator?> GetBodyGenerator(FileSection responseSection, ParsingContext parsingContext)
@@ -91,7 +130,7 @@ class ResponseStrategyParser
 
         if (bodyBlock != null)
         {
-            var parts = await _httpDataParser.ParseBody(bodyBlock, parsingContext);
+            var parts = await _httpDataParser.ParseText(bodyBlock.GetLinesAsString(), parsingContext);
             bodyWriter = new BodyGenerator(parts.WrapToTextParts());
         }
 
@@ -106,12 +145,5 @@ class ResponseStrategyParser
             return new HeadersGenerator(await _httpDataParser.ParseHeaders(headersBlock, parsingContext));
 
         return null;
-    }
-
-    private static int ParseHttpCode(string? str)
-    {
-        if (!int.TryParse(str, out var httpCode))
-            throw new Exception($"Invalid http code: '{str}'");
-        return httpCode;
     }
 }

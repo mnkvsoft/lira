@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
-using Lira.Common;
+using Lira.Common.Extensions;
 
-namespace Lira.FileSectionFormat;
+namespace Lira.FileSectionFormat.Extensions;
 
 public static class FileBlockExtensions
 {
@@ -16,7 +16,7 @@ public static class FileBlockExtensions
 
         return lines[0];
     }
-    
+
     public static T? GetValue<T>(this FileBlock block)
     {
         var line = GetSingleLine(block);
@@ -24,5 +24,5 @@ public static class FileBlockExtensions
         return (T?)tc.ConvertFrom(line);
     }
 
-    public static string GetSingleStringValue(this FileBlock block) => block.Lines.JoinWithNewLine();
+    public static string GetLinesAsString(this FileBlock block) => block.Lines.JoinWithNewLine();
 }

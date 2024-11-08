@@ -1,4 +1,4 @@
-namespace _my;
+namespace _my1;
 
 public static class CardNumber
 {

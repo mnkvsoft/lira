@@ -1,4 +1,4 @@
-﻿namespace Lira.Common;
+﻿namespace Lira.Common.Extensions;
 
 public static class PathExtensions
 {
@@ -6,7 +6,7 @@ public static class PathExtensions
     {
         return new FileInfo(filePath).Directory!.FullName;
     }
-    
+
     public static string GetFileName(this string filePath)
     {
         return new FileInfo(filePath).Name;

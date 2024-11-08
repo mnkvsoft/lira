@@ -12,7 +12,7 @@ internal class Regex : WithArgumentFunction<string>, IMatchFunctionSystem
     private global::System.Text.RegularExpressions.Regex _regex = null!;
 
 
-    public bool IsMatch(string? value)
+    public bool IsMatch(RuleExecutingContext context, string? value)
     {
         return _regex.IsMatch(value ?? "");
     }

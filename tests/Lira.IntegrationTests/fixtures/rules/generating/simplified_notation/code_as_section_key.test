@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /simplified_notation/code_as_section_key
+
+----- expected
+
+~ code
+408
+
+~ body
+<empty>

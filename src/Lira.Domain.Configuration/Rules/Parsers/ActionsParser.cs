@@ -1,9 +1,11 @@
 using Lira.Common;
+using Lira.Common.Extensions;
 using Lira.Common.PrettyParsers;
 using Lira.Domain.Actions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.FileSectionFormat;
+using Lira.FileSectionFormat.Extensions;
 
 namespace Lira.Domain.Configuration.Rules.Parsers;
 
@@ -85,7 +87,7 @@ class ActionsParser
         {
             var codeBlock = section.GetBlockRequired(Constants.BlockName.Action.Code);
 
-            code = codeBlock.GetSingleStringValue();
+            code = codeBlock.GetLinesAsString();
         }
 
         return code;

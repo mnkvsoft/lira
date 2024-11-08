@@ -1,0 +1,32 @@
+-------------------- rule
+
+GET /bag/chain/{{
+
+    ## verify that phone number
+    if(!long.TryParse(value, out var phone))
+        return false;
+
+    ## the account balance is encoded in its number
+    var balance = decimal.Parse(value[^4..]);
+
+    ## save for use in Action section
+    bag.balance = balance;
+
+    return true;
+}}
+
+~ body
+{{ jpath: $.amount }} >> {{:amount float }}
+
+----- action
+
+var amount = decimal.Parse(value("amount"));
+int code = bag.balance >= amount ? 200 : 400;
+
+## save for use in Response section
+bag.code = code;
+
+----- response
+
+~ code
+{{ bag.code }}

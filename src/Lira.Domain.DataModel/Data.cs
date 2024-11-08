@@ -1,4 +1,5 @@
 using ArgValidation;
+using Lira.Domain.TextPart;
 
 namespace Lira.Domain.DataModel;
 
@@ -10,7 +11,7 @@ public abstract class Data
     protected Data(DataName name, string info)
     {
         Arg.NotDefault(name, nameof(name));
-        Arg.NotNullOrWhitespace(info, nameof(info));    
+        Arg.NotNullOrWhitespace(info, nameof(info));
 
         Name = name;
         Info = info;
@@ -18,4 +19,5 @@ public abstract class Data
 
     public abstract DataRange Get(DataName rangeName);
     public abstract DataRange? Find(DataName rangeName);
+    public abstract IEnumerable<IState> GetStates();
 }

@@ -6,6 +6,7 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.System;
 using Lira.FileSectionFormat;
+using Lira.FileSectionFormat.Extensions;
 
 namespace Lira.Domain.Configuration.Rules.Parsers;
 
@@ -89,7 +90,7 @@ class RequestMatchersParser
             case Constants.BlockName.Rule.Path:
                 return CreatePathRequestMatcher(PatternParser.Parse(block.GetSingleLine()), context);
             case Constants.BlockName.Rule.Request:
-                return CreateCustomRequestMatcher(block.GetSingleStringValue(), context);
+                return CreateCustomRequestMatcher(block.GetLinesAsString(), context);
             default:
                 throw new Exception($"Unknown block '{block.Name}' in 'rule' section");
         }

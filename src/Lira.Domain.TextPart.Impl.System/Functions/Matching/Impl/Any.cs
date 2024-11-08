@@ -7,8 +7,8 @@ internal class Any : FunctionBase, IMatchFunctionSystem
     public override string Name => "any";
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Any;
-    
-    public bool IsMatch(string? value)
+
+    public bool IsMatch(RuleExecutingContext context, string? value)
     {
         // means that there is no such node in json when checking the body
         if (value == null)

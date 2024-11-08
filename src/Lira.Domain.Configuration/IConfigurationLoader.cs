@@ -1,159 +1,172 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Lira.Configuration;
-using Lira.Domain.Configuration.RangeModel;
 using Lira.Domain.Configuration.Rules;
-using Lira.Domain.Configuration.Rules.ValuePatternParsing;
-using Lira.Domain.Configuration.Templating;
-using Lira.Domain.Configuration.Variables;
-using System.Diagnostics;
+using Lira.Domain.TextPart;
 
 namespace Lira.Domain.Configuration;
 
 public interface IConfigurationLoader
 {
     Task<ConfigurationState> GetState();
-    void ProvokeLoad();
+    void BeginLoading();
 }
 
-class ConfigurationLoader : IDisposable, IRulesProvider, IConfigurationLoader
+class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoader
 {
     private readonly string _path;
-    private readonly ILogger _logger;
-
+    private readonly ILogger<ConfigurationLoader> _logger;
+    private readonly ConfigurationReader _configurationReader;
     private readonly PhysicalFileProvider _fileProvider;
     private IChangeToken? _fileChangeToken;
 
-    private readonly RangesLoader _rangesLoader;
+    private Task<ConfigurationState>? _configurationLoadingTask;
 
-    private Task<IReadOnlyCollection<Rule>> _loadTask;
-    private ConfigurationState? _providerState;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly RangesProvider _rangesProvider;
+    private ConfigurationState.Ok? _lastOkConfiguration;
+
+    private readonly IStateRepository _stateRepository;
 
     public ConfigurationLoader(
-        IServiceScopeFactory serviceScopeFactory,
-        ILoggerFactory loggerFactory,
         IConfiguration configuration,
-        RangesLoader rangesLoader,
-        RangesProvider rangesProvider)
+        IStateRepository stateRepository,
+        ILogger<ConfigurationLoader> logger, ConfigurationReader configurationReader)
     {
-        _rangesProvider = rangesProvider;
-        _rangesLoader = rangesLoader;
-        _serviceScopeFactory = serviceScopeFactory;
-        _logger = loggerFactory.CreateLogger(GetType());
+        _stateRepository = stateRepository;
+        _logger = logger;
+        _configurationReader = configurationReader;
         _path = configuration.GetRulesPath();
-
-        _loadTask = Load(_path);
-
-        _logger.LogInformation($"Rules path for watching: {_path}");
 
         _fileProvider = new PhysicalFileProvider(_path);
         _fileProvider.UsePollingFileWatcher = true;
         _fileProvider.UseActivePolling = true;
-
-        WatchForFileChanges();
     }
 
-
-    public void ProvokeLoad()
+    public void BeginLoading()
     {
-        // loading was init in constructor
-        // invoke only for create instanse
+        _configurationLoadingTask = LoadConfiguration(_path);
+        _logger.LogInformation($"Rules path for watching: {_path}");
     }
 
-    private async Task<IReadOnlyCollection<Rule>> Load(string path)
+    private async Task OnChange()
     {
-        _logger.LogInformation("Loading rules...");
-        var sw = Stopwatch.StartNew();
+        _logger.LogInformation($"Change was detected in {_path}");
+        var loadConfigurationTask = LoadConfiguration(_path);
+        await loadConfigurationTask;
+        _configurationLoadingTask = loadConfigurationTask;
+    }
+
+    private async Task<ConfigurationState> LoadConfiguration(string path)
+    {
         try
         {
+            var (rules, newStates) = await _configurationReader.Read(path);
 
-            var ranges = await _rangesLoader.Load(path);
-            _rangesProvider.Ranges = ranges;
+            if (_lastOkConfiguration != null)
+            {
+                var lastStates = _lastOkConfiguration.States;
+                await SaveStates(lastStates);
+                RestoreStates(newStates, lastStates.ToDictionary(x => x.StateId, x => x.GetState()));
+            }
+            else
+            {
+                var savedStates = await _stateRepository.GetStates();
+                RestoreStates(newStates, savedStates);
+            }
 
-            var templates = await TemplatesLoader.Load(path);
-            var customSets = await CustomSetsLoader.Load(path);
-
-            var context = new ParsingContext(
-                new DeclaredItems(),
-                templates,
-                customSets,
-                RootPath: path,
-                CurrentPath: path);
-
-            using var scope = _serviceScopeFactory.CreateScope();
-            var provider = scope.ServiceProvider;
-
-            var globalVariablesParser = provider.GetRequiredService<DeclaredItemsLoader>();
-
-            var variables = await globalVariablesParser.Load(context, path);
-
-            var rulesLoader = provider.GetRequiredService<RulesLoader>();
-            var rules = await rulesLoader.LoadRules(path, context with { DeclaredItems = variables });
-
-            _logger.LogInformation($"{rules.Count} rules were successfully loaded ({(int)sw.ElapsedMilliseconds} ms)");
-
-            return rules;
+            _lastOkConfiguration = new ConfigurationState.Ok(DateTime.Now, rules, newStates);
+            return _lastOkConfiguration;
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            _logger.LogError(ex, "An unexpected error occured while load rules");
-            throw;
+            _logger.LogError(e, "An unexpected error occured while load rules");
+            return new ConfigurationState.Error(DateTime.Now, e);
+        }
+        finally
+        {
+            WatchForFileChanges();
         }
     }
-
 
     async Task<IReadOnlyCollection<Rule>> IRulesProvider.GetRules()
     {
-        var rules = await _loadTask;
-        return rules;
-    }
+        if (_configurationLoadingTask == null)
+            throw new Exception("Method BeginLoading() must be called first");
 
-    record LoadResult(IReadOnlyCollection<Rule> Rules);
+        var state = await _configurationLoadingTask;
+
+        if (state is ConfigurationState.Ok ok)
+            return ok.Rules;
+
+        var error = (ConfigurationState.Error)state;
+
+        throw new Exception("An error occured while loading configuration: " + error.Exception.Message);
+    }
 
     private void WatchForFileChanges()
     {
         _fileChangeToken = _fileProvider.Watch("**/*.*");
-        _fileChangeToken.RegisterChangeCallback(Notify, default);
+        _fileChangeToken.RegisterChangeCallback(state => _ = OnChange(), default);
     }
 
-    private void Notify(object? state)
+    private async Task SaveStates(IReadOnlyCollection<IState> currentStates)
     {
-        OnChange();
-        WatchForFileChanges();
-    }
+        foreach (var currentState in currentStates)
+        {
+            currentState.Seal();
+        }
 
-    private void OnChange()
-    {
-        _logger.LogInformation($"Change was detected in {_path}");
-        _providerState = null;
-        _loadTask = Load(_path);
+        var states = currentStates.Select(s => new KeyValuePair<string, string>(s.StateId, s.GetState()))
+            .ToDictionary();
+        await _stateRepository.UpdateStates(states);
     }
 
     public async Task<ConfigurationState> GetState()
     {
-        if (_providerState != null)
-            return _providerState;
+        if (_configurationLoadingTask == null)
+            throw new Exception("Method BeginLoading() must be called first");
+
+        return await _configurationLoadingTask;
+    }
+
+    private void RestoreStates(IReadOnlyCollection<IState> states, IReadOnlyDictionary<string, string> savedStates)
+    {
+        foreach (var withState in states)
+        {
+            var stateId = withState.StateId;
+
+            if (savedStates.TryGetValue(stateId, out var state))
+                withState.RestoreState(state);
+        }
+    }
+
+    bool _disposed;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed)
+            return;
 
         try
         {
-            await _loadTask;
-            _providerState = new ConfigurationState.Ok(DateTime.Now);
+            _fileProvider.Dispose();
+            if (_lastOkConfiguration != null)
+            {
+                await SaveStates(_lastOkConfiguration.States);
+            }
+            else
+            {
+                _logger.LogInformation("States have not been saved");
+            }
         }
         catch (Exception e)
         {
-            _providerState = new ConfigurationState.Error(DateTime.Now, e);
+            _logger.LogError(e, "An unexpected error occured while disposing configuration");
         }
-
-        return _providerState;
-    }
-
-    public void Dispose()
-    {
-        _fileProvider.Dispose();
+        finally
+        {
+            _disposed = true;
+        }
     }
 }

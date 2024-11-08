@@ -16,6 +16,6 @@ var app = builder.Build();
 startup.Configure(app);
 
 var loader = app.Services.GetRequiredService<IConfigurationLoader>();
-loader.ProvokeLoad();
+loader.BeginLoading();
 
 app.Run();

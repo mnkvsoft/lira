@@ -1,0 +1,8 @@
+-------------------- rule
+
+GET /simplified_notation/response_section_without_blocks
+
+----- response
+{
+    "status": "ok"
+}
