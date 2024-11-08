@@ -5,13 +5,13 @@ namespace Lira.IntegrationTests.Tests;
 public class ReloadRules_Tests : TestBase
 {
     private static string Nl = Constants.NewLine;
-    private static readonly TimeSpan PhysicalFileProviderPoolingInterval = TimeSpan.FromSeconds(20);
+    private static readonly TimeSpan PhysicalFileProviderPoolingInterval = TimeSpan.FromSeconds(10);
 
     [Test]
     public async Task AddNewRule()
     {
         string rulesPath = CreateRulesPath();
-        await using var factory = new TestApplicationFactory(rulesPath);
+        await using var factory = new TestApplicationFactory(rulesPath, new AppMocks());
         var httpClient = factory.CreateDefaultClient();
 
         var response1 = await httpClient.GetAsync("/test");
@@ -49,7 +49,7 @@ public class ReloadRules_Tests : TestBase
 
         );
 
-        await using var factory = new TestApplicationFactory(rulesPath);
+        await using var factory = new TestApplicationFactory(rulesPath, new AppMocks());
         var httpClient = factory.CreateDefaultClient();
 
         var response1 = await httpClient.GetAsync("/test");
@@ -80,7 +80,7 @@ public class ReloadRules_Tests : TestBase
 
         );
 
-        await using var factory = new TestApplicationFactory(rulesPath);
+        await using var factory = new TestApplicationFactory(rulesPath, new AppMocks());
         var httpClient = factory.CreateDefaultClient();
 
         var response1 = await httpClient.GetAsync("/test");

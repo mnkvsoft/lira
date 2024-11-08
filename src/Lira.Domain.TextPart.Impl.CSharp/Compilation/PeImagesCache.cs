@@ -6,6 +6,8 @@ using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
 
+
+
 class PeImagesCache : IDisposable
 {
     private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "lira", "pe_images");
@@ -13,9 +15,16 @@ class PeImagesCache : IDisposable
     private bool _wasInit;
     private readonly Dictionary<Hash, PeImageCacheEntry> _hashToEntryMap = new();
     private readonly ILogger _logger;
+    private readonly State _state;
 
-    public PeImagesCache(ILoggerFactory loggerFactory)
+    public class State
     {
+        public DateTime? LastClean { get; set; }
+    }
+
+    public PeImagesCache(ILoggerFactory loggerFactory, State state)
+    {
+        _state = state;
         _logger = loggerFactory.CreateLogger(GetType());
     }
 
@@ -79,6 +88,8 @@ class PeImagesCache : IDisposable
 
     public void Dispose()
     {
+        var notUsed = new List<string>(_hashToEntryMap.Keys.Count);
+
         foreach (var pair in _hashToEntryMap)
         {
             var hash = pair.Key;
@@ -95,7 +106,22 @@ class PeImagesCache : IDisposable
             if (entry.WasUsed)
                 continue;
 
-            IgnoreIoExceptionForTests(() => File.Delete(filePath));
+            notUsed.Add(filePath);
+        }
+
+        if (_state.LastClean == null)
+        {
+            _state.LastClean = DateTime.UtcNow;
+            return;
+        }
+
+        if (DateTime.UtcNow - _state.LastClean.Value > TimeSpan.FromDays(1))
+        {
+            foreach (var notUsedFile in notUsed)
+            {
+                File.Delete(notUsedFile);
+            }
+            _state.LastClean = DateTime.UtcNow;
         }
     }
 

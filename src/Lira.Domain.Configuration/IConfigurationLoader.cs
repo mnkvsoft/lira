@@ -26,11 +26,11 @@ class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoad
 
     private ConfigurationState.Ok? _lastOkConfiguration;
 
-    private readonly StateRepository _stateRepository;
+    private readonly IStateRepository _stateRepository;
 
     public ConfigurationLoader(
         IConfiguration configuration,
-        StateRepository stateRepository,
+        IStateRepository stateRepository,
         ILogger<ConfigurationLoader> logger, ConfigurationReader configurationReader)
     {
         _stateRepository = stateRepository;

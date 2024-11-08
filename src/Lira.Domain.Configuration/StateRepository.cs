@@ -3,7 +3,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain.Configuration;
 
-class StateRepository(ILogger<StateRepository> logger)
+public interface IStateRepository
+{
+    Task UpdateStates(IReadOnlyDictionary<string, string> states);
+    Task<IReadOnlyDictionary<string, string>> GetStates();
+}
+
+class StateRepository(ILogger<StateRepository> logger) : IStateRepository
 {
     private static readonly string StatesPath = Path.Combine(Path.GetTempPath(), "lira", "states");
 

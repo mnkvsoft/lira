@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<RuleFileParser>()
             .AddSingleton<ConfigurationLoader>()
             .AddSingleton<IConfigurationLoader>(provider => provider.GetRequiredService<ConfigurationLoader>())
-            .AddSingleton<StateRepository>()
+            .AddSingleton<IStateRepository, StateRepository>()
 
             .AddSingleton<GuidParser>()
             .AddSingleton<IntParser>()
