@@ -1,4 +1,5 @@
 ﻿using Lira.Common;
+using Lira.Domain.TextPart;
 
 namespace Lira.Domain.DataModel.DataImpls.Int.Ranges;
 
@@ -16,5 +17,10 @@ public class IntRandomIntervalDataRange : IntDataRange
     public override bool IsBelong(long value)
     {
         return Interval.InRange(value);
+    }
+
+    public override IState? GetState(DataName parentName)
+    {
+        return null;
     }
 }

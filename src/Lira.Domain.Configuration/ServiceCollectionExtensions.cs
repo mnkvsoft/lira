@@ -41,6 +41,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<FloatParser>()
             .AddSingleton<HexParser>()
 
+            .AddSingleton<ConfigurationReader>()
             .AddSingleton<RangesLoader>()
             .AddScoped<RangesProvider>()
             .AddScoped<IRangesProvider>(provider => provider.GetRequiredService<RangesProvider>())

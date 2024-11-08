@@ -1,8 +1,24 @@
+using Lira.Domain.TextPart;
+
 namespace Lira.Domain.DataModel.DataImpls.Int;
 
 public class IntData : Data<long>
 {
-    public IntData(DataName name, IReadOnlyDictionary<DataName, DataRange<long>> ranges, string info) : base(name, ranges, info)
+    private readonly IReadOnlyDictionary<DataName, IntDataRange> _ranges;
+
+    public IntData(DataName name, IReadOnlyDictionary<DataName, IntDataRange> ranges, string info)
+        : base(name, ranges.ToDictionary(p => p.Key, p => (DataRange<long>)p.Value), info)
     {
+        _ranges = ranges;
+    }
+
+    public override IEnumerable<IState> GetStates()
+    {
+        foreach (var range in _ranges)
+        {
+            var state = range.Value.GetState(Name);
+            if (state != null)
+                yield return state;
+        }
     }
 }

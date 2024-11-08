@@ -1,9 +1,9 @@
 namespace Lira.Domain.TextPart.Impl.System;
 
-public class Sequence: IWithState
+public class SystemSequence : IState
 {
-    private static long _counter;
-    private bool _sealed = false;
+    private long _counter;
+    private bool _sealed;
 
     public long Next()
     {

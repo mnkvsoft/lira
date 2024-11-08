@@ -34,14 +34,14 @@ class IntParser
         if (mode == "seq")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,
-                p => (DataRange<long>)new IntSeqDataRange(p.Key, new Int64Sequence(p.Value)));
+                p => (IntDataRange)new IntSeqDataRange(p.Key, new Int64Sequence(p.Value)));
             return new IntData(name, seqDatas, infoForData);
         }
 
         if (mode == "random")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,
-                p => (DataRange<long>)new IntRandomIntervalDataRange(p.Key, p.Value));
+                p => (IntDataRange)new IntRandomIntervalDataRange(p.Key, p.Value));
             return new IntData(name, seqDatas, infoForData);
         }
 

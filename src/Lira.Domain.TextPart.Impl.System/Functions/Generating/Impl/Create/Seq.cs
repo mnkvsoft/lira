@@ -2,9 +2,9 @@ namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
 
 internal class Seq : FunctionBase, IObjectTextPart
 {
-    private readonly Sequence _sequence;
+    private readonly SystemSequence _sequence;
 
-    public Seq(Sequence sequence) => _sequence = sequence;
+    public Seq(SystemSequence sequence) => _sequence = sequence;
 
     public override string Name => "seq";
 

@@ -1,4 +1,7 @@
-﻿namespace Lira.Domain.DataModel.DataImpls.Int.Ranges;
+﻿using Lira.Common;
+using Lira.Domain.TextPart;
+
+namespace Lira.Domain.DataModel.DataImpls.Int.Ranges;
 
 public class IntSeqDataRange : IntDataRange
 {
@@ -17,5 +20,10 @@ public class IntSeqDataRange : IntDataRange
     public override bool IsBelong(long value)
     {
         return Sequence.Interval.InRange(value);
+    }
+
+    public override IState GetState(DataName parentName)
+    {
+        return new SequenceState(Sequence, parentName + "." + Name);
     }
 }

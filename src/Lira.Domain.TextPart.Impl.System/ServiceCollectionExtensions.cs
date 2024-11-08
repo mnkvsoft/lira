@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<IFunctionFactorySystem, FunctionFactorySystem>()
             .AddScoped<GeneratingFunctionFactory>()
             .AddScoped<TransformFunctionFactory>()
-            .AddScoped<Sequence>()
+            .AddScoped<SystemSequence>()
             .AddScoped<MatchFunctionFactory>();
     }
 }

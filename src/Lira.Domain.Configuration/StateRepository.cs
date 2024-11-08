@@ -1,8 +1,9 @@
 using System.Collections.Immutable;
+using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain.Configuration;
 
-class StateRepository
+class StateRepository(ILogger<StateRepository> logger)
 {
     private static readonly string StatesPath = Path.Combine(Path.GetTempPath(), "lira", "states");
 
@@ -16,6 +17,8 @@ class StateRepository
             var path = Path.Combine(StatesPath, stateId);
             await File.WriteAllTextAsync(path, stateValue);
         }
+
+        logger.LogInformation($"{states.Count} states have been saved to: {StatesPath}");
     }
 
     public async Task<IReadOnlyDictionary<string, string>> GetStates()

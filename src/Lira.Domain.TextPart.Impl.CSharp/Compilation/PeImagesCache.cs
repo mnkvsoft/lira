@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Lira.Common;
+using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
 

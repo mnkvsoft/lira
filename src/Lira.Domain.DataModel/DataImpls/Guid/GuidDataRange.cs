@@ -1,4 +1,5 @@
 using Lira.Common;
+using Lira.Domain.TextPart;
 
 namespace Lira.Domain.DataModel.DataImpls.Guid;
 
@@ -16,4 +17,6 @@ public class GuidDataRange : DataRange<System.Guid>
     public override System.Guid Next() => _seq.Next().ToRandomGuid();
 
     public override bool TryParse(string str, out System.Guid value) => System.Guid.TryParse(str, out value);
+
+    public IState GetState(DataName parentName) => new SequenceState(_seq, parentName + "." + Name);
 }

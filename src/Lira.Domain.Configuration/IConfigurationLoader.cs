@@ -1,18 +1,10 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Lira.Configuration;
-using Lira.Domain.Configuration.RangeModel;
 using Lira.Domain.Configuration.Rules;
-using Lira.Domain.Configuration.Rules.ValuePatternParsing;
-using Lira.Domain.Configuration.Templating;
-using Lira.Domain.Configuration.Variables;
-using System.Diagnostics;
-using Lira.Domain.Configuration.CustomSets;
 using Lira.Domain.TextPart;
-using Lira.Domain.TextPart.Impl.System;
 
 namespace Lira.Domain.Configuration;
 
@@ -25,31 +17,25 @@ public interface IConfigurationLoader
 class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoader
 {
     private readonly string _path;
-    private readonly ILogger _logger;
-
+    private readonly ILogger<ConfigurationLoader> _logger;
+    private readonly ConfigurationReader _configurationReader;
     private readonly PhysicalFileProvider _fileProvider;
     private IChangeToken? _fileChangeToken;
 
-    private readonly RangesLoader _rangesLoader;
-
-    private Task<ConfigurationState>? _beginLoadingTask;
+    private Task<ConfigurationState>? _configurationLoadingTask;
 
     private ConfigurationState.Ok? _lastOkConfiguration;
 
-    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly StateRepository _stateRepository;
 
     public ConfigurationLoader(
-        IServiceScopeFactory serviceScopeFactory,
-        ILoggerFactory loggerFactory,
         IConfiguration configuration,
-        RangesLoader rangesLoader,
-        StateRepository stateRepository)
+        StateRepository stateRepository,
+        ILogger<ConfigurationLoader> logger, ConfigurationReader configurationReader)
     {
-        _rangesLoader = rangesLoader;
         _stateRepository = stateRepository;
-        _serviceScopeFactory = serviceScopeFactory;
-        _logger = loggerFactory.CreateLogger(GetType());
+        _logger = logger;
+        _configurationReader = configurationReader;
         _path = configuration.GetRulesPath();
 
         _fileProvider = new PhysicalFileProvider(_path);
@@ -59,34 +45,38 @@ class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoad
 
     public void BeginLoading()
     {
-        _beginLoadingTask = LoadConfigurationOnStart(_path);
+        _configurationLoadingTask = LoadConfiguration(_path);
         _logger.LogInformation($"Rules path for watching: {_path}");
     }
 
     private async Task OnChange()
     {
         _logger.LogInformation($"Change was detected in {_path}");
-        var loadConfigurationTask = LoadConfigurationOnStart(_path);
+        var loadConfigurationTask = LoadConfiguration(_path);
         await loadConfigurationTask;
-        _beginLoadingTask = loadConfigurationTask;
+        _configurationLoadingTask = loadConfigurationTask;
     }
 
-    private async Task<ConfigurationState> LoadConfigurationOnStart(string path)
+    private async Task<ConfigurationState> LoadConfiguration(string path)
     {
         try
         {
-            var configurationState = await ReadConfiguration(path);
+            var (rules, newStates) = await _configurationReader.Read(path);
 
-            if (configurationState is ConfigurationState.Ok ok)
+            if (_lastOkConfiguration != null)
             {
-                if (_lastOkConfiguration != null)
-                    await SaveStates(_lastOkConfiguration);
-
-                await RestoreStates(ok);
-                _lastOkConfiguration = ok;
+                var lastStates = _lastOkConfiguration.States;
+                await SaveStates(lastStates);
+                RestoreStates(newStates, lastStates.ToDictionary(x => x.StateId, x => x.GetState()));
+            }
+            else
+            {
+                var savedStates = await _stateRepository.GetStates();
+                RestoreStates(newStates, savedStates);
             }
 
-            return configurationState;
+            _lastOkConfiguration = new ConfigurationState.Ok(DateTime.Now, rules, newStates);
+            return _lastOkConfiguration;
         }
         catch (Exception e)
         {
@@ -99,47 +89,12 @@ class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoad
         }
     }
 
-    private async Task<ConfigurationState> ReadConfiguration(string path)
-    {
-        _logger.LogInformation("Loading rules...");
-        var sw = Stopwatch.StartNew();
-
-        var templates = await TemplatesLoader.Load(path);
-        var customSets = await CustomSetsLoader.Load(path);
-
-        var context = new ParsingContext(
-            new DeclaredItems(),
-            templates,
-            customSets,
-            RootPath: path,
-            CurrentPath: path);
-
-        using var scope = _serviceScopeFactory.CreateScope();
-        var provider = scope.ServiceProvider;
-
-        var ranges = await _rangesLoader.Load(path);
-        var rulesProvider = provider.GetRequiredService<RangesProvider>();
-        rulesProvider.Ranges = ranges;
-
-        var globalVariablesParser = provider.GetRequiredService<DeclaredItemsLoader>();
-
-        var variables = await globalVariablesParser.Load(context, path);
-
-        var rulesLoader = provider.GetRequiredService<RulesLoader>();
-        var rules = await rulesLoader.LoadRules(path, context with { DeclaredItems = variables });
-
-        _logger.LogInformation($"{rules.Count} rules were successfully loaded ({(int)sw.ElapsedMilliseconds} ms)");
-        var sequence = provider.GetRequiredService<Sequence>();
-
-        return new ConfigurationState.Ok(DateTime.Now, rules, ranges, sequence);
-    }
-
     async Task<IReadOnlyCollection<Rule>> IRulesProvider.GetRules()
     {
-        if (_beginLoadingTask == null)
+        if (_configurationLoadingTask == null)
             throw new Exception("Method BeginLoading() must be called first");
 
-        var state = await _beginLoadingTask;
+        var state = await _configurationLoadingTask;
 
         if (state is ConfigurationState.Ok ok)
             return ok.Rules;
@@ -155,9 +110,8 @@ class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoad
         _fileChangeToken.RegisterChangeCallback(state => _ = OnChange(), default);
     }
 
-    private async Task SaveStates(ConfigurationState.Ok okState)
+    private async Task SaveStates(IReadOnlyCollection<IState> currentStates)
     {
-        var currentStates = GetWithStates(okState);
         foreach (var currentState in currentStates)
         {
             currentState.Seal();
@@ -170,37 +124,21 @@ class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoad
 
     public async Task<ConfigurationState> GetState()
     {
-        if (_beginLoadingTask == null)
+        if (_configurationLoadingTask == null)
             throw new Exception("Method BeginLoading() must be called first");
 
-        return await _beginLoadingTask;
+        return await _configurationLoadingTask;
     }
 
-    private async Task RestoreStates(ConfigurationState.Ok ok)
+    private void RestoreStates(IReadOnlyCollection<IState> states, IReadOnlyDictionary<string, string> savedStates)
     {
-        var savesStates = await _stateRepository.GetStates();
-        var withStates = GetWithStates(ok);
-
-        foreach (var withState in withStates)
+        foreach (var withState in states)
         {
             var stateId = withState.StateId;
 
-            if (savesStates.TryGetValue(stateId, out var state))
+            if (savedStates.TryGetValue(stateId, out var state))
                 withState.RestoreState(state);
         }
-    }
-
-    private static IReadOnlyCollection<IWithState> GetWithStates(ConfigurationState.Ok ok)
-    {
-        // var withStates = ok.Ranges
-        //     .Select(x => x.Value)
-        //     .Cast<IWithState>()
-        //     .ToList();
-        //
-        // withStates.Add(ok.Sequence);
-        // return withStates;
-
-        return [ok.Sequence];
     }
 
     bool _disposed;
@@ -215,8 +153,7 @@ class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoad
             _fileProvider.Dispose();
             if (_lastOkConfiguration != null)
             {
-                await SaveStates(_lastOkConfiguration);
-                _logger.LogInformation("States have been saved");
+                await SaveStates(_lastOkConfiguration.States);
             }
             else
             {

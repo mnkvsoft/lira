@@ -1,6 +1,6 @@
 namespace Lira.Domain.TextPart;
 
-public interface IWithState
+public interface IState
 {
     string StateId { get; }
     void RestoreState(string value);
