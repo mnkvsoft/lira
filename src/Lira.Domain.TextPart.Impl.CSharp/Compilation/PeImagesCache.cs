@@ -6,8 +6,6 @@ using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
 
-
-
 class PeImagesCache : IDisposable
 {
     private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "lira", "pe_images");
@@ -50,7 +48,7 @@ class PeImagesCache : IDisposable
 
     public void Add(Hash hash, PeImage peImage)
     {
-        if(_hashToEntryMap.ContainsKey(hash))
+        if (_hashToEntryMap.ContainsKey(hash))
             return;
 
         _hashToEntryMap.Add(
@@ -81,47 +79,57 @@ class PeImagesCache : IDisposable
         _wasInit = true;
         var nl = Constants.NewLine;
         _logger.LogDebug("PE image cache." + nl +
-            $"Directory: {TempPath}" + nl +
-            $"Count: {files.Length}" + nl +
-            $"Duration: {(int)sw.ElapsedMilliseconds} ms");
+                         $"Directory: {TempPath}" + nl +
+                         $"Count: {files.Length}" + nl +
+                         $"Duration: {(int)sw.ElapsedMilliseconds} ms");
     }
 
     public void Dispose()
     {
-        var notUsed = new List<string>(_hashToEntryMap.Keys.Count);
-
-        foreach (var pair in _hashToEntryMap)
+        try
         {
-            var hash = pair.Key;
-            var entry = pair.Value;
+            var notUsed = new List<string>(_hashToEntryMap.Keys.Count);
 
-            string filePath = Path.Combine(TempPath, hash.ToString());
-
-            if (entry.IsNew)
+            foreach (var pair in _hashToEntryMap)
             {
-                IgnoreIoExceptionForTests(() => File.WriteAllBytes(filePath, entry.PeImage.Bytes));
-                continue;
+                var hash = pair.Key;
+                var entry = pair.Value;
+
+                string filePath = Path.Combine(TempPath, hash.ToString());
+
+                if (entry.IsNew)
+                {
+                    IgnoreIoExceptionForTests(() => File.WriteAllBytes(filePath, entry.PeImage.Bytes));
+                    continue;
+                }
+
+                if (entry.WasUsed)
+                    continue;
+
+                notUsed.Add(filePath);
             }
 
-            if (entry.WasUsed)
-                continue;
+            // cleaning
 
-            notUsed.Add(filePath);
-        }
-
-        if (_state.LastClean == null)
-        {
-            _state.LastClean = DateTime.UtcNow;
-            return;
-        }
-
-        if (DateTime.UtcNow - _state.LastClean.Value > TimeSpan.FromDays(1))
-        {
-            foreach (var notUsedFile in notUsed)
+            if (_state.LastClean == null)
             {
-                File.Delete(notUsedFile);
+                _state.LastClean = DateTime.UtcNow;
+                return;
             }
-            _state.LastClean = DateTime.UtcNow;
+
+            if (DateTime.UtcNow - _state.LastClean.Value > TimeSpan.FromDays(1))
+            {
+                foreach (var notUsedFile in notUsed)
+                {
+                    File.Delete(notUsedFile);
+                }
+
+                _state.LastClean = DateTime.UtcNow;
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while disposing PE image cache");
         }
     }
 
@@ -132,10 +140,10 @@ class PeImagesCache : IDisposable
         {
             action();
         }
-        catch (IOException e) when(e.Message.Contains("The process cannot access the file"))
+        catch (IOException e) when (e.Message.Contains("The process cannot access the file"))
         {
         }
-        catch (UnauthorizedAccessException e) when(e.Message.Contains("Access to the path"))
+        catch (UnauthorizedAccessException e) when (e.Message.Contains("Access to the path"))
         {
         }
     }
