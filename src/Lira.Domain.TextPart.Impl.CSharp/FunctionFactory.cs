@@ -36,7 +36,8 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly Cache _cache;
     private readonly IRangesProvider _rangesProvider;
 
-    public FunctionFactory(IConfiguration configuration, ILoggerFactory loggerFactory, DynamicAssembliesUnloader unLoader,
+    public FunctionFactory(IConfiguration configuration, ILoggerFactory loggerFactory,
+        DynamicAssembliesUnloader unLoader,
         Compiler compiler, CompilationStatistic compilationStatistic, Cache cache, IRangesProvider rangesProvider)
     {
         _logger = loggerFactory.CreateLogger(GetType());
@@ -49,7 +50,8 @@ class FunctionFactory : IFunctionFactoryCSharp
         _rangesProvider = rangesProvider;
     }
 
-    public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(IDeclaredPartsProvider declaredPartsProvider, string code)
+    public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(
+        IDeclaredPartsProvider declaredPartsProvider, string code)
     {
         var sw = Stopwatch.StartNew();
 
@@ -57,14 +59,16 @@ class FunctionFactory : IFunctionFactoryCSharp
         var customAssemblies = GetCustomAssemblies();
         var className = GetClassName(prefix, code);
 
-        var classToCompile = CreateGeneratingFunctionClassCode(className, customAssemblies.Loaded, declaredPartsProvider, code);
+        var classToCompile =
+            CreateGeneratingFunctionClassCode(className, customAssemblies.Loaded, declaredPartsProvider, code);
 
         var result = CreateFunctionResult<IObjectTextPart>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,
             customAssemblies.PeImages,
-            new DynamicObjectWithDeclaredPartsBase.Dependencies(new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider), declaredPartsProvider));
+            new DynamicObjectWithDeclaredPartsBase.Dependencies(
+                new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider), declaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -182,7 +186,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     {
         var compileResult = _compiler.Compile(
             new CompileUnit(
-                classToCompile,
+                new[] { classToCompile },
                 AssemblyName: GetAssemblyName(assemblyPrefixName + className),
                 new UsageAssemblies(
                     Compiled: new Assembly[]
@@ -196,10 +200,10 @@ class FunctionFactory : IFunctionFactoryCSharp
                     },
                     Runtime: peImages)));
 
-        if(compileResult is CompileResult.Fault fault)
+        if (compileResult is CompileResult.Fault fault)
             return new CreateFunctionResult<TFunction>.Failed(fault.Message, classToCompile);
 
-        var peImage =((CompileResult.Success)compileResult).PeImage;
+        var peImage = ((CompileResult.Success)compileResult).PeImage;
         var classAssembly = Load(peImage);
 
         var type = classAssembly.GetTypes().Single(t => t.Name == className);
@@ -235,27 +239,25 @@ class FunctionFactory : IFunctionFactoryCSharp
         if (csharpFiles.Length == 0)
             return Array.Empty<CustomAssembly>();
 
-        var codes = csharpFiles.Select(file => new
-        {
-            Content = File.ReadAllText(file),
-            File = file
-        });
+        var codes = csharpFiles.Select(File.ReadAllText).ToArray();
 
         var result = new List<CustomAssembly>();
 
-        foreach (var code in codes)
-        {
-            var compileResult = _compiler.Compile(new CompileUnit(code.Content, GetAssemblyName(GetClassName("CustomType", code.Content)), UsageAssemblies: null));
+        var compileResult = _compiler.Compile(
+            new CompileUnit(
+                codes,
+                GetAssemblyName(GetClassName("CustomType", codes)),
+                UsageAssemblies: null));
 
-            var nl = Constants.NewLine;
+        var nl = Constants.NewLine;
 
-            if(compileResult is CompileResult.Fault fault)
-                throw new Exception($"An error occurred while compile C# file '{code.File}'. " + fault.Message + nl  + nl + "Code:" + nl + code.Content.WrapBeginEnd());
+        if (compileResult is CompileResult.Fault fault)
+            throw new Exception("An error occurred while compile C# files. " + fault.Message + nl + "Files:" + nl + nl +
+                                csharpFiles.JoinWithNewLine());
 
-            var peImage =((CompileResult.Success)compileResult).PeImage;
-            var assembly = Load(peImage);
-            result.Add(new CustomAssembly(assembly, peImage));
-        }
+        var peImage = ((CompileResult.Success)compileResult).PeImage;
+        var assembly = Load(peImage);
+        result.Add(new CustomAssembly(assembly, peImage));
 
         return result;
     }
@@ -276,7 +278,8 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     const string contextParameterName = "__ctxt";
 
-    private static string CreateGeneratingFunctionClassCode(string className, IReadOnlyCollection<Assembly> customAssemblies,
+    private static string CreateGeneratingFunctionClassCode(string className,
+        IReadOnlyCollection<Assembly> customAssemblies,
         IDeclaredPartsProvider declaredPartsProvider, string code)
     {
         const string repeatFunctionName = "repeat";
@@ -286,8 +289,8 @@ class FunctionFactory : IFunctionFactoryCSharp
             GetMethodBody(new Code(
                 ForCompile:
                 code.StartsWith(repeatFunctionName)
-                ? ReplaceVariableNamesForRepeat(code, declaredPartsProvider)
-                : ReplaceVariableNames(code, declaredPartsProvider, contextParameterName),
+                    ? ReplaceVariableNamesForRepeat(code, declaredPartsProvider)
+                    : ReplaceVariableNames(code, declaredPartsProvider, contextParameterName),
                 Source: code)),
             contextParameterName,
             ReservedVariable.Req,
@@ -379,7 +382,8 @@ class FunctionFactory : IFunctionFactoryCSharp
             }";
     }
 
-    private static string ReplaceVariableNames(string code, IDeclaredPartsProvider declaredPartsProvider, string requestParameterName)
+    private static string ReplaceVariableNames(string code, IDeclaredPartsProvider declaredPartsProvider,
+        string requestParameterName)
     {
         foreach (var name in declaredPartsProvider.GetAllNamesDeclared())
         {
@@ -401,9 +405,9 @@ class FunctionFactory : IFunctionFactoryCSharp
         return code;
     }
 
-    private static string GetClassName(string prefix, string code)
+    private static string GetClassName(string prefix, params string[] codes)
     {
-        return prefix + "_" + Sha1.Create(code);
+        return prefix + "_" + Sha1.Create(string.Concat(codes));
     }
 
     public void Dispose()
@@ -411,18 +415,18 @@ class FunctionFactory : IFunctionFactoryCSharp
         var stat = _compilationStatistic;
         var nl = Constants.NewLine;
         _logger.LogDebug($"Dynamic csharp compilation statistic: " + nl +
-                               $"Revision: {_revision}" + nl +
-                               $"Total time: {(int)stat.TotalTime.TotalMilliseconds} ms. " + nl +
-                               $"Assembly load time: {(int)stat.TotalLoadAssemblyTime.TotalMilliseconds} ms. " + nl +
-                               $"Count load assemblies: {stat.CountLoadAssemblies}. " + nl +
-                               $"Compilation time: {(int)stat.TotalCompilationTime.TotalMilliseconds} ms. " + nl);
+                         $"Revision: {_revision}" + nl +
+                         $"Total time: {(int)stat.TotalTime.TotalMilliseconds} ms. " + nl +
+                         $"Assembly load time: {(int)stat.TotalLoadAssemblyTime.TotalMilliseconds} ms. " + nl +
+                         $"Count load assemblies: {stat.CountLoadAssemblies}. " + nl +
+                         $"Compilation time: {(int)stat.TotalCompilationTime.TotalMilliseconds} ms. " + nl);
 
         _unLoader.UnloadUnused(new DynamicAssembliesContext(_revision, _context));
 
         _logger.LogDebug("Count dynamic assemblies in current domain: " +
-                               AppDomain.CurrentDomain
-                                   .GetAssemblies()
-                                   .Count(x => x.GetName().Name?.StartsWith(AssemblyPrefix) == true));
+                         AppDomain.CurrentDomain
+                             .GetAssemblies()
+                             .Count(x => x.GetName().Name?.StartsWith(AssemblyPrefix) == true));
     }
 
     private DynamicObjectBase.DependenciesBase CreateDependenciesBase()

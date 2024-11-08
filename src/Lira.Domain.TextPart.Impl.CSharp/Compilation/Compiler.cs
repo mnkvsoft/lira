@@ -9,7 +9,7 @@ abstract record CompileResult
     public record Fault(string Message) : CompileResult;
 }
 
-record CompileUnit(string Code, string AssemblyName, UsageAssemblies? UsageAssemblies);
+record CompileUnit(IReadOnlyCollection<string> Codes, string AssemblyName, UsageAssemblies? UsageAssemblies);
 
 class Compiler
 {
@@ -31,7 +31,7 @@ class Compiler
         if (_peImagesCache.TryGet(hash, out var peImage))
             return new CompileResult.Success(peImage);
 
-        var compileResult = CodeCompiler.Compile(new[] { compileUnit.Code }, compileUnit.AssemblyName, compileUnit.UsageAssemblies);
+        var compileResult = CodeCompiler.Compile(compileUnit.Codes, compileUnit.AssemblyName, compileUnit.UsageAssemblies);
 
         if (compileResult is CompileResult.Success success)
         {
@@ -47,7 +47,7 @@ class Compiler
         using var memoryStream = new MemoryStream();
         using var sw = new StreamWriter(memoryStream);
 
-        sw.Write(compileUnit.Code);
+        sw.Write(string.Concat(compileUnit.Codes));
 
         var usageAssemblies = compileUnit.UsageAssemblies;
         if (usageAssemblies != null)
