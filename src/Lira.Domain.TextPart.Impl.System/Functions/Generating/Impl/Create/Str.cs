@@ -6,10 +6,10 @@ internal class Str : WithArgumentFunction<int>, IObjectTextPart
 {
     public override string Name => "str";
     public override bool ArgumentIsRequired => false;
-    
+
     private int _length = 20;
-    
-    public dynamic? Get(RuleExecutingContext context) => GetRandomString(_length);
+
+    public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(GetRandomString(_length));
 
     public override void SetArgument(int argument)
     {

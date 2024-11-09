@@ -12,8 +12,8 @@ class AllExtractFunction : FunctionBase, IBodyExtractFunction, IObjectTextPart
         return value;
     }
 
-    public dynamic? Get(RuleExecutingContext context)
+    public Task<dynamic?> Get(RuleExecutingContext context)
     {
-        return context.RequestContext.RequestData.ReadBody();
+        return Task.FromResult<dynamic?>(context.RequestContext.RequestData.ReadBody());
     }
 }

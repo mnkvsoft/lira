@@ -6,7 +6,7 @@ internal class Path : WithArgumentFunction<int>, IObjectTextPart
     public override bool ArgumentIsRequired => true;
     private int _index = 0;
 
-    public dynamic? Get(RuleExecutingContext context) => context.RequestContext.RequestData.GetPath(_index);
+    public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(context.RequestContext.RequestData.GetPath(_index));
 
 
     public override void SetArgument(int argument)

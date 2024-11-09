@@ -4,10 +4,10 @@ internal class Echo : WithArgumentFunction<string>, IObjectTextPart
 {
     public override string Name => "echo";
     public override bool ArgumentIsRequired => true;
-    
+
     private object? _value;
 
-    public dynamic? Get(RuleExecutingContext context) => _value;
+    public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(_value);
 
 
     public override void SetArgument(string? argument)

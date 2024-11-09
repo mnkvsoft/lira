@@ -26,5 +26,17 @@ public class TextParts : IReadOnlyCollection<ITextPart>
 
 public static class TextPartsExtensions
 {
-    public static string Generate(this IReadOnlyCollection<ITextPart> parts, RuleExecutingContext context) => string.Concat(parts.Select(p => p.Get(context)));
+    public static async Task<string> Generate(this IReadOnlyCollection<ITextPart> parts, RuleExecutingContext context)
+    {
+        var strs = new List<string>(parts.Count);
+
+        foreach (var part in parts)
+        {
+            string? str = await part.Get(context);
+            if(str != null)
+                strs.Add(str);
+        }
+
+        return string.Concat(strs);
+    }
 }

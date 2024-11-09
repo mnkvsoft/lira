@@ -39,9 +39,9 @@ public class CustomSetFunction : IObjectTextPart, IMatchFunction
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
 
-    public dynamic Get(RuleExecutingContext context)
+    public Task<dynamic?> Get(RuleExecutingContext context)
     {
-        return _list.Random();
+        return Task.FromResult<dynamic?>(_list.Random());
     }
 
     public Task<bool> IsMatch(RuleExecutingContext context, string? value)

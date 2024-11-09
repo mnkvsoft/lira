@@ -39,7 +39,7 @@ public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
     {
     }
 
-    public dynamic? Get(RuleExecutingContext [context])
+    public async Task<dynamic?> Get(RuleExecutingContext [context])
     {
         var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
         dynamic bag = new Bag([context], readOnly: true);
