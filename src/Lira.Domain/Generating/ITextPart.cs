@@ -2,5 +2,5 @@ namespace Lira.Domain.Generating;
 
 public interface ITextPart
 {
-    string? Get(RuleExecutingContext context);
+    Task<string?> Get(RuleExecutingContext context);
 }

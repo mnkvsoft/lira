@@ -9,13 +9,13 @@ public class BodyGenerator
         _parts = parts;
     }
 
-    internal IReadOnlyCollection<string> Create(RuleExecutingContext context)
+    internal async Task<IReadOnlyCollection<string>> Create(RuleExecutingContext context)
     {
         var result = new List<string>(_parts.Count);
         foreach (var part in _parts)
         {
-            string? text = part.Get(context);
-            
+            string? text = await part.Get(context);
+
             if (text != null)
                 result.Add(text);
         }

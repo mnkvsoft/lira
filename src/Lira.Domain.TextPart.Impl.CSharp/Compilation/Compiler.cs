@@ -57,9 +57,9 @@ class Compiler
                 sw.Write(GetHash(peImage));
             }
 
-            foreach (var assembly in usageAssemblies.Compiled)
+            foreach (var location in usageAssemblies.AssembliesLocations)
             {
-                sw.Write(assembly.FullName);
+                sw.Write(location);
             }
         }
 

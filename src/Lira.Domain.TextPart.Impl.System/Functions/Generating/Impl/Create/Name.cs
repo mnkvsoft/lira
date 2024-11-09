@@ -4,8 +4,8 @@ internal class Name_ : FunctionBase, IObjectTextPart
 {
     public override string Name => "name";
 
-    public dynamic? Get(RuleExecutingContext context)
+    public Task<dynamic?> Get(RuleExecutingContext context)
     {
-        return NameFirst.Next() + " " + NameLast.Next();
+        return Task.FromResult<dynamic?>(NameFirst.Next() + " " + NameLast.Next());
     }
 }

@@ -12,7 +12,7 @@ public class HeadersRequestMatcher : IRequestMatcher
         _headers = headers;
     }
 
-    Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext context)
+    async Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext context)
     {
         var request = context.RequestContext.RequestData;
         var matchedValuesSet = new Dictionary<string, string?>();
@@ -26,7 +26,7 @@ public class HeadersRequestMatcher : IRequestMatcher
             var isMatch = false;
             foreach (var value in values)
             {
-                if (pattern.Match(context, value) is TextPatternPart.MatchResult.Matched matched)
+                if (await pattern.Match(context, value) is TextPatternPart.MatchResult.Matched matched)
                 {
                     matchedValuesSet.AddIfValueIdNotNull(matched);
                     isMatch = true;
@@ -35,11 +35,11 @@ public class HeadersRequestMatcher : IRequestMatcher
             }
 
             if (!isMatch)
-                return Task.FromResult(RequestMatchResult.NotMatched);
+                return RequestMatchResult.NotMatched;
 
             weight += TextPatternPartWeightCalculator.Calculate(pattern);
 
         }
-        return Task.FromResult(RequestMatchResult.Matched(name: "headers", weight, matchedValuesSet));
+        return RequestMatchResult.Matched(name: "headers", weight, matchedValuesSet);
     }
 }

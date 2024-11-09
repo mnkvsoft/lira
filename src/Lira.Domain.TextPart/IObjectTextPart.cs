@@ -2,5 +2,5 @@ namespace Lira.Domain.TextPart;
 
 public interface IObjectTextPart
 {
-    dynamic? Get(RuleExecutingContext context);
+    Task<dynamic?> Get(RuleExecutingContext context);
 }

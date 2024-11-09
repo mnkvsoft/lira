@@ -33,7 +33,7 @@ public class BodyRequestMatcher : IRequestMatcher
 
             var value = extractor.Extract(body);
 
-            if (matcher.Match(context, value) is not TextPatternPart.MatchResult.Matched matched)
+            if (await matcher.Match(context, value) is not TextPatternPart.MatchResult.Matched matched)
                 return RequestMatchResult.NotMatched;
 
             matchedValuesSet.AddIfValueIdNotNull(matched);

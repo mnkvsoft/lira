@@ -9,8 +9,9 @@ static partial class ClassCodeCreator
         private static readonly string Nl = Constants.NewLine;
 
         private readonly static string ImportNamespaces =
+            "[usingstatic]" + Nl + Nl +
+
             "using System;" + Nl +
-            "using System.IO;" + Nl +
             "using System.Text;" + Nl +
             "using System.Linq;" + Nl +
             "using System.Collections;" + Nl +
@@ -19,15 +20,17 @@ static partial class ClassCodeCreator
             "using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;" + Nl +
             "using Lira.Domain;" + Nl +
             "using Lira.Domain.TextPart;" + Nl +
-            "using Lira.Domain.TextPart.Impl.CSharp;" + Nl +
-            "using static Lira.Domain.TextPart.Impl.CSharp.Functions.JsonUtils;" + Nl +
-            "[namespaces]";
+            "using Lira.Domain.TextPart.Impl.CSharp;" + Nl + Nl +
+
+            "[namespaces]" + Nl + Nl +
+            "[usings]" + Nl + Nl +
+
+            "using static Lira.Domain.TextPart.Impl.CSharp.Functions.JsonUtils;" + Nl;
 
         private const string Namespace = "namespace __DynamicGenerated;";
 
         public readonly static string IObjectTextPart =
             ImportNamespaces + Nl + Nl +
-            "[usingstatic]" + Nl + Nl +
             Namespace + Nl + Nl +
             @"
 public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
@@ -36,14 +39,14 @@ public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
     {
     }
 
-    public dynamic? Get(RuleExecutingContext [context])
+    public async Task<dynamic?> Get(RuleExecutingContext [context])
     {
         var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
         dynamic bag = new Bag([context], readOnly: true);
 
         [code]
 
-        string [repeat](IObjectTextPart part, string separator = "","", int? count = null, int? from = null, int? to = null)
+        Task<string> [repeat](IObjectTextPart part, string separator = "","", int? count = null, int? from = null, int? to = null)
         {
             int cnt;
             if(count != null)
@@ -63,9 +66,7 @@ public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
 }";
 
         public readonly static string ITransformFunction =
-            "[namespaces]" + Nl + Nl +
             ImportNamespaces + Nl + Nl +
-            "[usingstatic]" + Nl + Nl +
             Namespace + Nl + Nl +
             @"
 public sealed class [className] : ITransformFunction
@@ -78,9 +79,7 @@ public sealed class [className] : ITransformFunction
 ";
 
         public readonly static string IMatchFunction =
-            "[namespaces]" + Nl + Nl +
             ImportNamespaces + Nl + Nl +
-            "[usingstatic]" + Nl + Nl +
             Namespace + Nl + Nl +
             "using Lira.Domain.Matching.Request;" + Nl +
             @"
@@ -92,7 +91,7 @@ public sealed class [className] : DynamicObjectBaseMatch, IMatchFunction
     }
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
-    public bool IsMatch(RuleExecutingContext __ctx, string? [input])
+    public async Task<bool> IsMatch(RuleExecutingContext __ctx, string? [input])
     {
         dynamic bag = new Bag(__ctx, readOnly: false);
         [code]
@@ -101,9 +100,7 @@ public sealed class [className] : DynamicObjectBaseMatch, IMatchFunction
 ";
 
         public readonly static string IRequestMatcher =
-            "[namespaces]" + Nl + Nl +
             ImportNamespaces + Nl + Nl +
-            "[usingstatic]" + Nl + Nl +
             Namespace + Nl + Nl +
             "using Lira.Domain.Matching.Request;" + Nl +
             "using System.Collections.Immutable;" + Nl +
@@ -130,9 +127,7 @@ public sealed class [className] : DynamicObjectBaseRequestMatcher
 ";
 
         public readonly static string IAction =
-            "[namespaces]" + Nl + Nl +
             ImportNamespaces + Nl + Nl +
-            "[usingstatic]" + Nl + Nl +
             Namespace + Nl + Nl +
             "using Lira.Domain.Actions;" + Nl +
             @"

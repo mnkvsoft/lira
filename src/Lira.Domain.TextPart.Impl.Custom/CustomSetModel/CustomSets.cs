@@ -39,16 +39,16 @@ public class CustomSetFunction : IObjectTextPart, IMatchFunction
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
 
-    public dynamic Get(RuleExecutingContext context)
+    public Task<dynamic?> Get(RuleExecutingContext context)
     {
-        return _list.Random();
+        return Task.FromResult<dynamic?>(_list.Random());
     }
 
-    public bool IsMatch(RuleExecutingContext context, string? value)
+    public Task<bool> IsMatch(RuleExecutingContext context, string? value)
     {
         if (value == null)
-            return false;
+            return Task.FromResult(false);
 
-        return _hashSet.Contains(value);
+        return Task.FromResult(_hashSet.Contains(value));
     }
 }

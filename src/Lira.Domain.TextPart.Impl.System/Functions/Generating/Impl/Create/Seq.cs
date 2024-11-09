@@ -8,5 +8,5 @@ internal class Seq : FunctionBase, IObjectTextPart
 
     public override string Name => "seq";
 
-    public dynamic Get(RuleExecutingContext context) => _sequence.Next();
+    public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(_sequence.Next());
 }

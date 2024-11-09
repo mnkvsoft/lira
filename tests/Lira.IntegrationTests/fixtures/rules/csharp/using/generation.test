@@ -1,0 +1,14 @@
+-------------------- case
+
+GET /csharp/using/generation
+
+----- expected
+
+~ code
+204
+
+~ body
+page not found
+
+~ headers
+Trace-Id: not-found

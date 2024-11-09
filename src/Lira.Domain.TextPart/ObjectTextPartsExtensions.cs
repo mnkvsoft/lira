@@ -4,9 +4,25 @@ namespace Lira.Domain.TextPart;
 
 public static class ObjectTextPartsExtensions
 {
-    public static dynamic? Generate(this IReadOnlyCollection<IObjectTextPart> parts, RuleExecutingContext context)
+    public static async Task<dynamic?> Generate(this IReadOnlyCollection<IObjectTextPart> parts, RuleExecutingContext context)
     {
-        return parts.Count == 1 ? parts.First().Get(context) : string.Concat(parts.Select(p => GetStringValue(p.Get(context))));
+        if (parts.Count == 1)
+        {
+            var first = parts.First();
+            dynamic? o = await first.Get(context);
+            return o;
+        }
+
+        var results = new List<string>(parts.Count);
+        foreach (var part in parts)
+        {
+            var obj = await part.Get(context);
+            var str = GetStringValue(obj);
+            if (str != null)
+                results.Add(str);
+        }
+
+        return string.Concat(results);
     }
 
     public static TextParts WrapToTextParts(this IReadOnlyCollection<IObjectTextPart> parts)
@@ -16,7 +32,10 @@ public static class ObjectTextPartsExtensions
 
     private record TextPartAdapter(IObjectTextPart ObjectTextPart) : ITextPart
     {
-        public string? Get(RuleExecutingContext context) => GetStringValue(ObjectTextPart.Get(context));
+        public async Task<string?> Get(RuleExecutingContext context)
+        {
+            return GetStringValue(await ObjectTextPart.Get(context));
+        }
     }
 
     private static string? GetStringValue(dynamic? obj)

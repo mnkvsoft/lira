@@ -12,9 +12,9 @@ internal class Regex : WithArgumentFunction<string>, IMatchFunctionSystem
     private global::System.Text.RegularExpressions.Regex _regex = null!;
 
 
-    public bool IsMatch(RuleExecutingContext context, string? value)
+    public Task<bool> IsMatch(RuleExecutingContext context, string? value)
     {
-        return _regex.IsMatch(value ?? "");
+        return Task.FromResult(_regex.IsMatch(value ?? ""));
     }
 
     public override void SetArgument(string argument)

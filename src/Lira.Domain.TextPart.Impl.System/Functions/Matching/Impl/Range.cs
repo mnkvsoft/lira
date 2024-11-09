@@ -14,15 +14,15 @@ internal class Range : RangeBase, IMatchFunctionSystem
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
 
 
-    public bool IsMatch(RuleExecutingContext context, string? value)
+    public Task<bool> IsMatch(RuleExecutingContext context, string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            return false;
+            return Task.FromResult(false);
 
         var range = GetRange();
 
         var isMatch = range.ValueIsBelong(value);
 
-        return isMatch;
+        return Task.FromResult(isMatch);
     }
 }

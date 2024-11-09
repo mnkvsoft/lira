@@ -10,25 +10,25 @@ public record Variable : IObjectTextPart, IUniqueSetItem
 
     public string Name => _name.Value;
     public string EntityName => "variable";
-    
+
     public Variable(CustomItemName name, IReadOnlyCollection<IObjectTextPart> parts)
     {
         _parts = parts;
         _name = name;
     }
 
-    public dynamic? Get(RuleExecutingContext context)
+    public async Task<dynamic?> Get(RuleExecutingContext context)
     {
         var key = "variable_" + _name;
         if (context.Items.TryGetValue(key, out var value))
         {
             if (value == NullValue)
                 return null;
-                
+
             return value;
         }
 
-        object? newValue = _parts.Generate(context);
+        dynamic? newValue = await _parts.Generate(context);
         context.Items.Add(key, newValue ?? NullValue);
         return newValue;
     }

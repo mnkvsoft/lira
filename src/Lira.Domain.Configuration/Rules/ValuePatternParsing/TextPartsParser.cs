@@ -19,7 +19,7 @@ class TextPartsParser : ITextPartsParser
 {
     private record Static(object Value) : IObjectTextPart
     {
-        public dynamic Get(RuleExecutingContext context) => Value;
+        public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(Value);
     }
 
     private readonly IFunctionFactorySystem _functionFactorySystem;

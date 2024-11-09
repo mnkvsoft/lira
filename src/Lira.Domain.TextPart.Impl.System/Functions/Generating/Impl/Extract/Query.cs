@@ -7,7 +7,7 @@ internal class Query : WithArgumentFunction<string>, IObjectTextPart
 
     private string _queryParamName = "";
 
-    public object? Get(RuleExecutingContext context) => context.RequestContext.RequestData.GetQueryParam(_queryParamName);
+    public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(context.RequestContext.RequestData.GetQueryParam(_queryParamName));
 
 
     public override void SetArgument(string argument)
@@ -23,7 +23,7 @@ internal class Value : WithArgumentFunction<string>, IObjectTextPart
 
     private string _nameId = "";
 
-    public object? Get(RuleExecutingContext context) => context.GetValue(_nameId);
+    public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(context.GetValue(_nameId));
 
     public override void SetArgument(string argument)
     {

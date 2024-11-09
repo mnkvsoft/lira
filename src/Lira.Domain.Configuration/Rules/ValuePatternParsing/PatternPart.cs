@@ -1,17 +1,14 @@
 ﻿using System.Collections;
-using System.Diagnostics;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
 abstract record PatternPart
 {
-    [DebuggerDisplay("Value{Name}")]
     public record Static(string Value) : PatternPart
     {
-        public override string ToString() => "[[" + Value + "]]";
+        public override string ToString() => Value;
     }
 
-    [DebuggerDisplay("Value{{{Name}}}")]
     public record Dynamic(string Value) : PatternPart
     {
         public override string ToString() => "{{" + Value + "}}";

@@ -7,7 +7,7 @@ internal class NameFirst : FunctionBase, IObjectTextPart
 {
     public override string Name => "name.first";
 
-    public dynamic? Get(RuleExecutingContext context) => Next();
+    public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(Next());
 
     public static string Next() => FirstNames.Random();
 

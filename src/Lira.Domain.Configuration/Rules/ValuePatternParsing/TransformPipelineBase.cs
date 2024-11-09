@@ -5,12 +5,12 @@ namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 record TransformPipeline(IObjectTextPart ObjectTextPart) : IObjectTextPart
 {
     private readonly List<ITransformFunction> _transformFunctions = new();
-        
+
     private dynamic? ExecutePipeline(dynamic? startValue)
     {
         if (_transformFunctions.Count == 0)
             return startValue;
-            
+
         dynamic? result = startValue;
         foreach (var function in _transformFunctions)
         {
@@ -25,5 +25,9 @@ record TransformPipeline(IObjectTextPart ObjectTextPart) : IObjectTextPart
         _transformFunctions.Add(transform);
     }
 
-    public dynamic? Get(RuleExecutingContext context) => ExecutePipeline(ObjectTextPart.Get(context));
+    public async Task<dynamic?> Get(RuleExecutingContext context)
+    {
+        dynamic? value = await ObjectTextPart.Get(context);
+        return ExecutePipeline(value);
+    }
 }

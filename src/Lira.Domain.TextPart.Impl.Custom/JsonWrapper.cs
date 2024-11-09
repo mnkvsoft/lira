@@ -13,10 +13,10 @@ public class JsonWrapper : IObjectTextPart
         _declaredName = declaredName;
     }
 
-    public dynamic? Get(RuleExecutingContext context)
+    public async Task<dynamic?> Get(RuleExecutingContext context)
     {
-        dynamic? value = _parts.Generate(context);
-        
+        dynamic? value = await _parts.Generate(context);
+
         if (value is not string json)
             throw new Exception(GetMessage(value));
 
@@ -28,7 +28,7 @@ public class JsonWrapper : IObjectTextPart
         {
             throw new Exception(GetMessage(value), e);
         }
-        
+
         string GetMessage(dynamic? o)
         {
             return $"Value in {_declaredName} cannot be convert to json. Value: {o?.ToString()}";
