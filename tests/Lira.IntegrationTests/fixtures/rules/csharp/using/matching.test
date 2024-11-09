@@ -1,0 +1,16 @@
+-------------------- case
+
+POST /csharp/using/matching/11111222223333344444?amount=200
+
+~ body
+{
+    "destination": "99999888887777766666"
+}
+
+~ headers
+Request-Id: acaf1628-d03d-40b7-aa72-10375f023360
+
+----- expected
+
+~ code
+200

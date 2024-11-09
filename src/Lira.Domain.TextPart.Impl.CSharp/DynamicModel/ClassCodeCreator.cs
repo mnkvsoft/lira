@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Lira.Common;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
