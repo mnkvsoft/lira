@@ -1,12 +1,11 @@
-﻿using System.Reflection;
-using System.Text;
+﻿using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
 
-record UsageAssemblies(IReadOnlyCollection<Assembly> Compiled, IReadOnlyCollection<PeImage> Runtime);
+record UsageAssemblies(IReadOnlyCollection<PeImage> Runtime, IReadOnlyCollection<string> AssembliesLocations);
 
 record PeImage(byte[] Bytes);
 
@@ -97,7 +96,7 @@ static class CodeCompiler
 
         if (usageAssemblies != null)
         {
-            result.AddRange(usageAssemblies.Compiled.Select(a => MetadataReference.CreateFromFile(a.Location)));
+            result.AddRange(usageAssemblies.AssembliesLocations.Select(location =>  MetadataReference.CreateFromFile(location)));
             result.AddRange(usageAssemblies.Runtime.Select(peImage => MetadataReference.CreateFromImage(peImage.Bytes)));
         }
 
