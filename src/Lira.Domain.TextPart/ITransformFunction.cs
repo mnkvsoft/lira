@@ -1,7 +1,6 @@
-﻿namespace Lira.Domain.TextPart
+﻿namespace Lira.Domain.TextPart;
+
+public interface ITransformFunction
 {
-    public interface ITransformFunction
-    {
-        dynamic? Transform(dynamic? dynamic);
-    }
+    dynamic? Transform(dynamic? dynamic);
 }

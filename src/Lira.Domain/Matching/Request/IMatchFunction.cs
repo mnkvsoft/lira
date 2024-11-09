@@ -4,5 +4,5 @@ public interface IMatchFunction
 {
     MatchFunctionRestriction Restriction { get; }
 
-    bool IsMatch(RuleExecutingContext context, string? value);
+    Task<bool> IsMatch(RuleExecutingContext context, string? value);
 }

@@ -105,10 +105,10 @@
     <None Update="fixtures\rules\match\csharp\req\values.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\csharp\using.rules">
+    <None Update="fixtures\rules\csharp\using\generation.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\csharp\using.test">
+    <None Update="fixtures\rules\csharp\using\generation.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

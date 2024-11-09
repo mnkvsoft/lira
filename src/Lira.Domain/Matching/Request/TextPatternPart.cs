@@ -15,32 +15,32 @@ public abstract record TextPatternPart
         }
     }
 
-    public abstract MatchResult Match(RuleExecutingContext context, string? value);
+    public abstract Task<MatchResult> Match(RuleExecutingContext context, string? value);
 
     public record Static(string Expected) : TextPatternPart
     {
-        public override MatchResult Match(RuleExecutingContext context, string? current)
+        public override Task<MatchResult> Match(RuleExecutingContext context, string? current)
         {
-            return Expected.Equals(current, StringComparison.OrdinalIgnoreCase)
+            return Task.FromResult<MatchResult>(Expected.Equals(current, StringComparison.OrdinalIgnoreCase)
                 ? MatchResult.Matched.WithoutDynamic
-                : MatchResult.NotMatch.Instance;
+                : MatchResult.NotMatch.Instance);
 
         }
     }
 
     public record NullOrEmpty : TextPatternPart
     {
-        public override MatchResult Match(RuleExecutingContext context, string? current)
+        public override Task<MatchResult> Match(RuleExecutingContext context, string? current)
         {
-            return string.IsNullOrWhiteSpace(current)
+            return Task.FromResult<MatchResult>(string.IsNullOrWhiteSpace(current)
                ? MatchResult.Matched.WithoutDynamic
-               : MatchResult.NotMatch.Instance;
+               : MatchResult.NotMatch.Instance);
         }
     }
 
     public record Dynamic(string? Start, string? End, IMatchFunction MatchFunction, string? ValueId) : TextPatternPart
     {
-        public override MatchResult Match(RuleExecutingContext context, string? current)
+        public override async Task<MatchResult> Match(RuleExecutingContext context, string? current)
         {
             MatchResult.NotMatch notMatch = MatchResult.NotMatch.Instance;
             var toMatch = current;
@@ -67,7 +67,7 @@ public abstract record TextPatternPart
                 toMatch = toMatch!.Substring(0, toMatch.Length - End.Length);
             }
 
-            return MatchFunction.IsMatch(context, toMatch)
+            return await MatchFunction.IsMatch(context, toMatch)
                ? new MatchResult.Matched(ValueId, toMatch)
                : notMatch;
         }

@@ -91,7 +91,7 @@ public sealed class [className] : DynamicObjectBaseMatch, IMatchFunction
     }
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
-    public bool IsMatch(RuleExecutingContext __ctx, string? [input])
+    public async Task<bool> IsMatch(RuleExecutingContext __ctx, string? [input])
     {
         dynamic bag = new Bag(__ctx, readOnly: false);
         [code]

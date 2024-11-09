@@ -1,0 +1,35 @@
+-------------------- rule
+
+GET /csharp/using/generation
+
+----- response
+
+~ headers
+Trace-Id: {{
+    @using System.IO;
+
+    if(File.Exists("header"))
+        return File.ReadAllText("header");
+
+    return "not-found";
+}}
+
+~ code
+{{
+    @using System.IO;
+
+    if(File.Exists("code"))
+        return File.ReadAllText("code");
+
+    return 204;
+}}
+
+~ body
+{{
+    @using System.IO;
+
+    if(File.Exists("page"))
+        return File.ReadAllText("page");
+
+    return "page not found";
+}}

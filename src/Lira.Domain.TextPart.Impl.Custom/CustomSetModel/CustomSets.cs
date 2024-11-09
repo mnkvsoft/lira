@@ -44,11 +44,11 @@ public class CustomSetFunction : IObjectTextPart, IMatchFunction
         return _list.Random();
     }
 
-    public bool IsMatch(RuleExecutingContext context, string? value)
+    public Task<bool> IsMatch(RuleExecutingContext context, string? value)
     {
         if (value == null)
-            return false;
+            return Task.FromResult(false);
 
-        return _hashSet.Contains(value);
+        return Task.FromResult(_hashSet.Contains(value));
     }
 }

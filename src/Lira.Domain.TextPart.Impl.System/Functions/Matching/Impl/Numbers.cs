@@ -24,15 +24,15 @@ internal abstract class Number<T> : WithRangeArgumentFunction<T>, IMatchFunction
 
     protected abstract bool TryParse(string? value, out T result);
 
-    public bool IsMatch(RuleExecutingContext context, string? value)
+    public Task<bool> IsMatch(RuleExecutingContext context, string? value)
     {
         if (!TryParse(value, out T number))
-            return false;
+            return Task.FromResult(false);
 
         if (_range == null)
-            return true;
+            return Task.FromResult(true);
 
-        return _range.InRange(number);
+        return Task.FromResult(_range.InRange(number));
     }
 
     public override void SetArgument(Interval<T> argument)

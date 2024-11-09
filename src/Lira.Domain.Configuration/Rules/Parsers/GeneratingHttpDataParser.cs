@@ -19,19 +19,18 @@ public class GeneratingHttpDataParser
     public async Task<IReadOnlyCollection<GeneratingHeader>> ParseHeaders(FileBlock block, IParsingContext parsingContext)
     {
         var headers = new List<GeneratingHeader>();
-        foreach (var line in block.Lines)
-        {
-            if (string.IsNullOrEmpty(line))
-                break;
+        var patterns = PatternParser.Parse(block.Lines);
+        var headersLines = patterns.Split(Common.Constants.NewLine);
 
+        foreach (var line in headersLines)
+        {
             var (headerName, headerPattern) = line.SplitToTwoParts(":").Trim();
 
             if (headerPattern == null)
                 throw new Exception($"Empty matching for header '{headerPattern}' in line: '{line}'");
 
-            var parts = await _partsParser.Parse(headerPattern, parsingContext);
-
-            headers.Add(new GeneratingHeader(headerName, parts.WrapToTextParts()));
+            var headerParts = await _partsParser.Parse(headerPattern.ToString(), parsingContext);
+            headers.Add(new GeneratingHeader(headerName.SingleStaticValueToString(), headerParts.WrapToTextParts()));
         }
         return headers;
     }
