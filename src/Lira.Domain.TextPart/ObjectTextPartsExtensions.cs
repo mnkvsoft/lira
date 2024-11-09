@@ -6,7 +6,23 @@ public static class ObjectTextPartsExtensions
 {
     public static async Task<dynamic?> Generate(this IReadOnlyCollection<IObjectTextPart> parts, RuleExecutingContext context)
     {
-        return parts.Count == 1 ? await parts.First().Get(context) : string.Concat(parts.Select(async p => GetStringValue(await p.Get(context))));
+        if (parts.Count == 1)
+        {
+            var first = parts.First();
+            dynamic? o = await first.Get(context);
+            return o;
+        }
+
+        var results = new List<string>(parts.Count);
+        foreach (var part in parts)
+        {
+            var obj = await part.Get(context);
+            var str = GetStringValue(obj);
+            if (str != null)
+                results.Add(str);
+        }
+
+        return string.Concat(results);
     }
 
     public static TextParts WrapToTextParts(this IReadOnlyCollection<IObjectTextPart> parts)
@@ -18,8 +34,7 @@ public static class ObjectTextPartsExtensions
     {
         public async Task<string?> Get(RuleExecutingContext context)
         {
-            var bj = await ObjectTextPart.Get(context);
-            return GetStringValue(bj);
+            return GetStringValue(await ObjectTextPart.Get(context));
         }
     }
 

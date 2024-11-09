@@ -9,17 +9,17 @@ Trace-Id: {{
     @using System.IO;
 
     if(File.Exists("header"))
-        return File.ReadAllText("header");
+        return await File.ReadAllTextAsync("header");
 
     return "not-found";
 }}
 
 ~ code
 {{
-    @using System.IO;
+    @using System.IO
 
     if(File.Exists("code"))
-        return File.ReadAllText("code");
+        return await File.ReadAllTextAsync("code");
 
     return 204;
 }}
@@ -29,7 +29,7 @@ Trace-Id: {{
     @using System.IO;
 
     if(File.Exists("page"))
-        return File.ReadAllText("page");
+        return await File.ReadAllTextAsync("page");
 
     return "page not found";
 }}

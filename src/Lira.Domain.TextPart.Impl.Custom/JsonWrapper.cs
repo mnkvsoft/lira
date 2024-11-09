@@ -13,16 +13,16 @@ public class JsonWrapper : IObjectTextPart
         _declaredName = declaredName;
     }
 
-    public Task<dynamic?> Get(RuleExecutingContext context)
+    public async Task<dynamic?> Get(RuleExecutingContext context)
     {
-        dynamic value = _parts.Generate(context);
+        dynamic? value = await _parts.Generate(context);
 
         if (value is not string json)
             throw new Exception(GetMessage(value));
 
         try
         {
-            return Task.FromResult<dynamic?>(new Json(json));
+            return new Json(json);
         }
         catch (Exception e)
         {

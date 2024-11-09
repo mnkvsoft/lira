@@ -46,7 +46,7 @@ public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
 
         [code]
 
-        string [repeat](IObjectTextPart part, string separator = "","", int? count = null, int? from = null, int? to = null)
+        Task<string> [repeat](IObjectTextPart part, string separator = "","", int? count = null, int? from = null, int? to = null)
         {
             int cnt;
             if(count != null)

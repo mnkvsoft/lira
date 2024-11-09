@@ -1,4 +1,7 @@
 // ReSharper disable UnusedMember.Global
+
+using System.Text;
+
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
 public class DynamicObjectWithDeclaredPartsBase : DynamicObjectBase
@@ -14,10 +17,9 @@ public class DynamicObjectWithDeclaredPartsBase : DynamicObjectBase
         _declaredPartsProvider = dependencies.DeclaredPartsProvider;
     }
 
-    protected dynamic? GetDeclaredPart(string name, RuleExecutingContext context)
+    protected Task<dynamic?> GetDeclaredPart(string name, RuleExecutingContext context)
     {
-        dynamic? part = _declaredPartsProvider.Get(name).Get(context);
-        return part;
+        return _declaredPartsProvider.Get(name).Get(context);
     }
 
     protected IObjectTextPart GetDeclaredPart(string name)
@@ -25,10 +27,15 @@ public class DynamicObjectWithDeclaredPartsBase : DynamicObjectBase
         return _declaredPartsProvider.Get(name);
     }
 
-    protected string Repeat(RuleExecutingContext context, IObjectTextPart part, string separator, int count)
+    protected async Task<string> Repeat(RuleExecutingContext context, IObjectTextPart part, string separator, int count)
     {
-        return string.Join(separator,
-            Enumerable.Repeat("", count)
-                .Select(_ => part.Get(context)?.ToString() ?? ""));
+        var parts = new List<string>(count);
+        for (var i = 0; i < count; i++)
+        {
+            var obj = await part.Get(context);
+            parts.Add(obj?.ToString() ?? string.Empty);
+        }
+
+        return string.Join(separator, parts);
     }
 }

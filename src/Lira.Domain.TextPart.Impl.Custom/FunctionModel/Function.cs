@@ -17,5 +17,9 @@ public record Function : IObjectTextPart, IUniqueSetItem
         _name = name;
     }
 
-    public Task<dynamic?> Get(RuleExecutingContext context) => _parts.Generate(context);
+    public async Task<dynamic?> Get(RuleExecutingContext context)
+    {
+        var generate = await _parts.Generate(context);
+        return generate;
+    }
 }

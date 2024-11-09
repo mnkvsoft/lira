@@ -314,22 +314,25 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     const string ContextParameterName = "__ctxt";
 
-    private static string CreateGeneratingFunctionClassCode(string className,
+    private static string CreateGeneratingFunctionClassCode(
+        string className,
         IReadOnlyCollection<Assembly> customAssemblies,
-        IDeclaredPartsProvider declaredPartsProvider, string code)
+        IDeclaredPartsProvider declaredPartsProvider,
+        string code)
     {
         const string repeatFunctionName = "repeat";
 
         var (withoutUsings, usings) = ExtractUsings(code);
 
+        withoutUsings = withoutUsings.StartsWith(repeatFunctionName)
+            ? ReplaceVariableNamesForRepeat(withoutUsings, declaredPartsProvider).Replace(repeatFunctionName, "await " + repeatFunctionName)
+            : ReplaceVariableNames(withoutUsings, declaredPartsProvider, ContextParameterName);
+
         string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
             className,
             GetMethodBody(new Code(
-                ForCompile:
-                withoutUsings.StartsWith(repeatFunctionName)
-                    ? ReplaceVariableNamesForRepeat(withoutUsings, declaredPartsProvider)
-                    : ReplaceVariableNames(withoutUsings, declaredPartsProvider, ContextParameterName),
-                Source: withoutUsings)),
+                ForCompile: withoutUsings,
+                Source: code)),
             ContextParameterName,
             ReservedVariable.Req,
             repeatFunctionName,
@@ -449,8 +452,8 @@ class FunctionFactory : IFunctionFactoryCSharp
         foreach (var name in declaredPartsProvider.GetAllNamesDeclared())
         {
             code = code.Replace(name,
-                $"GetDeclaredPart(" +
-                $"\"{name}\", {requestParameterName})");
+                $"(await GetDeclaredPart(" +
+                $"\"{name}\", {requestParameterName}))");
         }
 
         return code;

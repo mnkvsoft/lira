@@ -28,7 +28,7 @@ public record Variable : IObjectTextPart, IUniqueSetItem
             return value;
         }
 
-        object? newValue = await _parts.Generate(context);
+        dynamic? newValue = await _parts.Generate(context);
         context.Items.Add(key, newValue ?? NullValue);
         return newValue;
     }
