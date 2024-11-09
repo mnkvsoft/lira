@@ -1,0 +1,13 @@
+-------------------- rule
+
+GET /csharp/using
+
+----- response
+{{
+    @using System.IO;
+
+    if(File.Exists("page.html"))
+        return File.ReadAllText("page.html");
+
+    return "page not found";
+}}

@@ -105,7 +105,10 @@
     <None Update="fixtures\rules\match\csharp\req\values.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\ArgValidation.dll">
+    <None Update="fixtures\rules\csharp\using.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\csharp\using.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

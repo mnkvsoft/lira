@@ -86,10 +86,13 @@ class FunctionFactory : IFunctionFactoryCSharp
         string className = GetClassName(prefix, code);
         var customAssemblies = GetCustomAssemblies();
 
+        var (withoutUsings, usings) = ExtractUsings(code);
+
         string classToCompile = ClassCodeCreator.CreateTransformFunction(
             className,
-            WrapToTryCatch(new Code(ForCompile: $"return {code};", Source: code)),
+            WrapToTryCatch(new Code(ForCompile: $"return {withoutUsings};", Source: code)),
             ReservedVariable.Value,
+            usings,
             GetNamespaces(customAssemblies.Loaded),
             GetUsingStatic(customAssemblies.Loaded));
 
@@ -111,11 +114,13 @@ class FunctionFactory : IFunctionFactoryCSharp
         string prefix = "MatchFunction";
         string className = GetClassName(prefix, code);
         var customAssemblies = GetCustomAssemblies();
+        var (withoutUsings, usings) = ExtractUsings(code);
 
         string classToCompile = ClassCodeCreator.CreateMatchFunction(
             className,
-            GetMethodBody(new Code(ForCompile: code, Source: code)),
+            GetMethodBody(new Code(ForCompile: withoutUsings, Source: code)),
             ReservedVariable.Value,
+            usings,
             GetNamespaces(customAssemblies.Loaded),
             GetUsingStatic(customAssemblies.Loaded));
 
@@ -138,11 +143,12 @@ class FunctionFactory : IFunctionFactoryCSharp
         string prefix = "RequestMatcher";
         string className = GetClassName(prefix, code);
         var customAssemblies = GetCustomAssemblies();
-
+        var (withoutUsings, usings) = ExtractUsings(code);
         string classToCompile = ClassCodeCreator.CreateRequestMatcher(
             className,
-            GetMethodBody(new Code(ForCompile: code, Source: code)),
+            GetMethodBody(new Code(ForCompile: withoutUsings, Source: code)),
             ReservedVariable.Req,
+            usings,
             GetNamespaces(customAssemblies.Loaded),
             GetUsingStatic(customAssemblies.Loaded));
 
@@ -327,9 +333,9 @@ class FunctionFactory : IFunctionFactoryCSharp
             ContextParameterName,
             ReservedVariable.Req,
             repeatFunctionName,
+            usings,
             GetNamespaces(customAssemblies),
-            GetUsingStatic(customAssemblies),
-            usings);
+            GetUsingStatic(customAssemblies));
 
         return classToCompile;
     }
@@ -340,13 +346,16 @@ class FunctionFactory : IFunctionFactoryCSharp
         IDeclaredPartsProvider declaredPartsProvider,
         string code)
     {
+        var (withoutUsings, usings) = ExtractUsings(code);
+
         string classToCompile = ClassCodeCreator.CreateAction(
             className,
             WrapToTryCatch(new Code(
-                ForCompile: ReplaceVariableNames(code, declaredPartsProvider, ContextParameterName) + ";",
+                ForCompile: ReplaceVariableNames(withoutUsings, declaredPartsProvider, ContextParameterName) + ";",
                 Source: code)),
             ContextParameterName,
             ReservedVariable.Req,
+            usings,
             GetNamespaces(customAssemblies),
             GetUsingStatic(customAssemblies));
 
@@ -379,10 +388,12 @@ class FunctionFactory : IFunctionFactoryCSharp
         foreach (var line in code.Split(Constants.NewLine))
         {
             if (line.StartsWith("@using"))
+            {
                 usings.Add(line[1..]);
+            }
             else
             {
-                newCode.AppendLine(line);
+                newCode.Append((newCode.Length > 0 ? Constants.NewLine : "") + line);
             }
         }
         return (newCode.ToString(), usings);

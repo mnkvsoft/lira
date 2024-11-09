@@ -106,7 +106,7 @@ static partial class ClassCodeCreator
 
     private static string GetUsings(IReadOnlyCollection<string> usings)
     {
-        return usings.Count == 0 ? "" : string.Join(Constants.NewLine, usings.Select(n => n + ";"));
+        return usings.Count == 0 ? "" : string.Join(Constants.NewLine, usings);
     }
 }
 
