@@ -211,7 +211,7 @@ POST /payment/{{ any }}?fast={{ any }}
 Request-Id: {{ guid }}
 
 ~ body
-jpath: $.number >> 4444{{ int }}
+{{ jpath: $.number }} >> 4444{{ int }}
 
 ----- response
 
@@ -472,7 +472,7 @@ POST /payment/{{ any }}?fast={{ any }}
 Id: {{ any }}
 
 ~ body
-jpath: $.account >> {{ any }}
+{{ jpath: $.account }} >> {{ any }}
 
 ----- response
 
@@ -838,7 +838,7 @@ POST /payment
 example: range.easy
 
 ~ body
-jpath: $.amount >> {{ range: amount/ok }}
+{{ jpath: $.amount }} >> {{ range: amount/ok }}
 
 ----- response
 
@@ -855,7 +855,7 @@ jpath: $.amount >> {{ range: amount/ok }}
 POST /payment
 
 ~ body
-jpath: $.amount >> {{ range: amount/reject }}
+{{ jpath: $.amount }} >> {{ range: amount/reject }}
 
 ----- response
 
@@ -969,7 +969,7 @@ POST /payment
 example: range.medium
 
 ~ body
-jpath: $.amount >> {{ range: amount/ok }}
+{{ jpath: $.amount }} >> {{ range: amount/ok }}
 
 ----- response
 
@@ -1009,7 +1009,7 @@ POST /payment
 example: range.medium
 
 ~ body
-jpath: $.amount >> {{ range: amount/refund_reject }}
+{{ jpath: $.amount }} >> {{ range: amount/refund_reject }}
 
 ----- response
 
