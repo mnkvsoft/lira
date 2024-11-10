@@ -1,4 +1,6 @@
 using System.Collections.Immutable;
+using Lira.Common;
+using Lira.Common.State;
 using Lira.Domain.TextPart;
 
 namespace Lira.Domain.DataModel.DataImpls.Hex;
@@ -10,8 +12,8 @@ public class HexData : Data<string>
     {
     }
 
-    public override IReadOnlySet<IState> GetStates()
+    public override IReadOnlySet<IStateful> GetStates()
     {
-        return ImmutableHashSet<IState>.Empty;
+        return ImmutableHashSet<IStateful>.Empty;
     }
 }

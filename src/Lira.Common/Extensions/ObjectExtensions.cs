@@ -1,4 +1,4 @@
-﻿namespace Lira.Common;
+﻿namespace Lira.Common.Extensions;
 
 public static class ObjectExtensions
 {

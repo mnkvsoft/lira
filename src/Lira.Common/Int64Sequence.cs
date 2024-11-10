@@ -11,7 +11,13 @@ public class Int64Sequence
     public Int64Sequence(Interval<long> interval)
     {
         Interval = interval;
-        _value = interval.From - 1;
+        _value = Interval.From - 1;
+    }
+
+    public Int64Sequence()
+    {
+        Interval = new Interval<long>(1, long.MaxValue);
+        _value = Interval.From - 1;
     }
 
     public long Next()

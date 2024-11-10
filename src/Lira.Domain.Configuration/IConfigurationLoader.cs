@@ -1,10 +1,10 @@
+using Lira.Common.State;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Lira.Configuration;
 using Lira.Domain.Configuration.Rules;
-using Lira.Domain.TextPart;
 
 namespace Lira.Domain.Configuration;
 
@@ -65,14 +65,17 @@ class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoad
 
             if (_lastOkConfiguration != null)
             {
-                var lastStates = _lastOkConfiguration.States;
+                var lastStates = _lastOkConfiguration.Statefuls;
                 await SaveStates(lastStates);
-                RestoreStates(newStates, lastStates.ToDictionary(x => x.StateId, x => x.GetState()));
+
+                var savedValues = await _stateRepository.GetStates();
+                IReadOnlyDictionary<string, IState> states = lastStates.ToDictionary(x => x.StateId, x => x.GetState());
+                RestoreStates(newStates, savedValues, states);
             }
             else
             {
                 var savedStates = await _stateRepository.GetStates();
-                RestoreStates(newStates, savedStates);
+                RestoreStates(newStates, savedStates, statesInMemory: null);
             }
 
             _lastOkConfiguration = new ConfigurationState.Ok(DateTime.Now, rules, newStates);
@@ -110,14 +113,9 @@ class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoad
         _fileChangeToken.RegisterChangeCallback(state => _ = OnChange(), default);
     }
 
-    private async Task SaveStates(IReadOnlyCollection<IState> currentStates)
+    private async Task SaveStates(IReadOnlyCollection<IStateful> currentStates)
     {
-        foreach (var currentState in currentStates)
-        {
-            currentState.Seal();
-        }
-
-        var states = currentStates.Select(s => new KeyValuePair<string, string>(s.StateId, s.GetState()))
+        var states = currentStates.Select(s => new KeyValuePair<string, string>(s.StateId, s.GetState().Value))
             .ToDictionary();
         await _stateRepository.UpdateStates(states);
     }
@@ -130,14 +128,26 @@ class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoad
         return await _configurationLoadingTask;
     }
 
-    private void RestoreStates(IReadOnlyCollection<IState> states, IReadOnlyDictionary<string, string> savedStates)
+    private void RestoreStates(
+        IReadOnlyCollection<IStateful> statefuls,
+        IReadOnlyDictionary<string, string> savedStates,
+        IReadOnlyDictionary<string, IState>? statesInMemory)
     {
-        foreach (var withState in states)
+        foreach (var withState in statefuls)
         {
             var stateId = withState.StateId;
 
-            if (savedStates.TryGetValue(stateId, out var state))
-                withState.RestoreState(state);
+            if (statesInMemory != null)
+            {
+                if (statesInMemory.TryGetValue(stateId, out var stateInMemory))
+                {
+                    withState.RestoreState(stateInMemory);
+                    continue;
+                }
+            }
+
+            if (savedStates.TryGetValue(stateId, out var stateValue))
+                withState.RestoreState(stateValue);
         }
     }
 
@@ -153,7 +163,12 @@ class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoad
             _fileProvider.Dispose();
             if (_lastOkConfiguration != null)
             {
-                await SaveStates(_lastOkConfiguration.States);
+                foreach (var stateful in _lastOkConfiguration.Statefuls)
+                {
+                    stateful.GetState().Seal();
+                }
+
+                await SaveStates(_lastOkConfiguration.Statefuls);
             }
             else
             {

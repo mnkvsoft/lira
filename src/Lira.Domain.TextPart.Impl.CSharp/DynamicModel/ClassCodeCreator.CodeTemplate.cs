@@ -17,6 +17,7 @@ static partial class ClassCodeCreator
             "using System.Collections;" + Nl +
             "using System.Collections.Generic;" + Nl + Nl +
             "using System.Threading.Tasks;" + Nl + Nl +
+            "using System.IO;" + Nl + Nl +
             "using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;" + Nl +
             "using Lira.Domain;" + Nl +
             "using Lira.Domain.TextPart;" + Nl +

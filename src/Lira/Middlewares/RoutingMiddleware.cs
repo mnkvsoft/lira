@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Text;
 using Lira.Domain;
 using Lira.Common;
+using Lira.Common.Extensions;
 using Lira.Domain.Configuration;
 using Lira.Domain.Configuration.Rules;
 using HttpContextData = Lira.Domain.HttpContextData;
@@ -116,7 +117,7 @@ class RoutingMiddleware : IMiddleware
             IRuleExecutor? executor;
             try
             {
-                
+
                 executor = await rule.GetExecutor(context);
             }
             catch (Exception e)

@@ -1,29 +1,25 @@
-﻿using Lira.Common;
-using Lira.Domain.TextPart;
+﻿using Lira.Common.State;
 
 namespace Lira.Domain.DataModel.DataImpls.Int.Ranges;
 
 public class IntSeqDataRange : IntDataRange
 {
-    public Int64Sequence Sequence { get; }
+    private readonly SequenceStateful _seq;
 
-    public IntSeqDataRange(DataName name, Int64Sequence seq) : base(name)
+    public IntSeqDataRange(DataName name, SequenceStateful seq) : base(name)
     {
-        Sequence = seq;
+        _seq = seq;
     }
 
     public override long Next()
     {
-        return Sequence.Next();
+        return _seq.Next();
     }
 
     public override bool IsBelong(long value)
     {
-        return Sequence.Interval.InRange(value);
+        return _seq.Interval.InRange(value);
     }
 
-    public override IState GetState(DataName parentName)
-    {
-        return new SequenceState(Sequence, parentName + "." + Name);
-    }
+    public override IStateful GetStateful() => _seq;
 }

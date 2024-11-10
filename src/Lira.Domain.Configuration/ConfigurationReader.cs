@@ -6,6 +6,8 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Templating;
 using Lira.Domain.Configuration.Variables;
 using System.Diagnostics;
+using Lira.Common;
+using Lira.Common.State;
 using Lira.Domain.Configuration.CustomSets;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.System;
@@ -17,7 +19,7 @@ class ConfigurationReader(
     IServiceScopeFactory serviceScopeFactory,
     ILogger<ConfigurationReader> logger)
 {
-    public async Task<(IReadOnlyCollection<Rule> Rules, IReadOnlyCollection<IState> States)> Read(string path)
+    public async Task<(IReadOnlyCollection<Rule> Rules, IReadOnlyCollection<IStateful> States)> Read(string path)
     {
         logger.LogInformation("Loading rules...");
         var sw = Stopwatch.StartNew();
@@ -51,7 +53,7 @@ class ConfigurationReader(
         var sequence = provider.GetRequiredService<SystemSequence>();
         var rangesStates = ranges.SelectMany(x => x.Value.GetStates());
 
-        var states = new Dictionary<string, IState>();
+        var states = new Dictionary<string, IStateful>();
         foreach (var state in rangesStates.Union([sequence]))
         {
             if(!states.TryAdd(state.StateId, state))

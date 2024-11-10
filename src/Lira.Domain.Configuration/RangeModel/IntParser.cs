@@ -1,6 +1,7 @@
 using System.Text;
 using Lira.Common;
 using Lira.Common.PrettyParsers;
+using Lira.Common.State;
 using Lira.Domain.Configuration.RangeModel.Dto;
 using Lira.Domain.DataModel;
 using Lira.Domain.DataModel.DataImpls.Int;
@@ -18,7 +19,7 @@ class IntParser
         _logger = loggerFactory.CreateLogger(GetType());
     }
 
-    public Data Parse(DataName name, DataOptionsDto dto)
+    public Data Parse(DataName rangeName, DataOptionsDto dto)
     {
         var fullInfo = new StringBuilder().AppendLine("Type: int");
 
@@ -28,24 +29,31 @@ class IntParser
         var mode = dto.Mode ?? "seq";
         fullInfo.AppendLine($"Mode({(dto.Mode == null ? "default" : "manual")}): " + mode);
 
-        _logger.LogDebug(new StringBuilder().AddInfoForLog(name, fullInfo, intervals).ToString());
+        _logger.LogDebug(new StringBuilder().AddInfoForLog(rangeName, fullInfo, intervals).ToString());
 
         var infoForData = new StringBuilder().AddInfo(fullInfo, intervals).ToString();
         if (mode == "seq")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,
-                p => (IntDataRange)new IntSeqDataRange(p.Key, new Int64Sequence(p.Value)));
-            return new IntData(name, seqDatas, infoForData);
+                p =>
+                {
+                    var subRangeName = p.Key;
+                    var seq = new Int64Sequence(p.Value);
+                    var stateId = Utils.GetStateId(rangeName, subRangeName);
+
+                    return (IntDataRange)new IntSeqDataRange(subRangeName, new SequenceStateful(seq, stateId));
+                });
+            return new IntData(rangeName, seqDatas, infoForData);
         }
 
         if (mode == "random")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,
                 p => (IntDataRange)new IntRandomIntervalDataRange(p.Key, p.Value));
-            return new IntData(name, seqDatas, infoForData);
+            return new IntData(rangeName, seqDatas, infoForData);
         }
 
-        throw new Exception($"An error occurred while creating '{name}' data. For number access only 'seq' or 'set' values providing type");
+        throw new Exception($"An error occurred while creating '{rangeName}' data. For number access only 'seq' or 'set' values providing type");
     }
 
     internal record IntervalsWithCapacity(IReadOnlyDictionary<DataName, Interval<long>> Intervals, string RangeInfo);

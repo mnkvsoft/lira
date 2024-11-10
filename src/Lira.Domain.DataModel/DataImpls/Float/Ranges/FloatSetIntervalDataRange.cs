@@ -1,4 +1,5 @@
 ﻿using Lira.Common;
+using Lira.Common.Extensions;
 
 namespace Lira.Domain.DataModel.DataImpls.Float.Ranges;
 

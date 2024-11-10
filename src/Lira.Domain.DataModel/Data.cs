@@ -1,4 +1,6 @@
 using ArgValidation;
+using Lira.Common;
+using Lira.Common.State;
 using Lira.Domain.TextPart;
 
 namespace Lira.Domain.DataModel;
@@ -19,5 +21,5 @@ public abstract class Data
 
     public abstract DataRange Get(DataName rangeName);
     public abstract DataRange? Find(DataName rangeName);
-    public abstract IEnumerable<IState> GetStates();
+    public abstract IEnumerable<IStateful> GetStates();
 }

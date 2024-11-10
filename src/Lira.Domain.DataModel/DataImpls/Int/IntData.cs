@@ -1,4 +1,4 @@
-using Lira.Domain.TextPart;
+using Lira.Common.State;
 
 namespace Lira.Domain.DataModel.DataImpls.Int;
 
@@ -12,11 +12,11 @@ public class IntData : Data<long>
         _ranges = ranges;
     }
 
-    public override IEnumerable<IState> GetStates()
+    public override IEnumerable<IStateful> GetStates()
     {
         foreach (var range in _ranges)
         {
-            var state = range.Value.GetState(Name);
+            var state = range.Value.GetStateful();
             if (state != null)
                 yield return state;
         }

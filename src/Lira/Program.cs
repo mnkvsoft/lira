@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Reflection;
 using Lira;
 using Lira.Domain.Configuration;
 
@@ -17,5 +18,7 @@ startup.Configure(app);
 
 var loader = app.Services.GetRequiredService<IConfigurationLoader>();
 loader.BeginLoading();
+var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Application");
+logger.LogInformation("App version: " + Assembly.GetEntryAssembly()!.GetName().Version);
 
 app.Run();

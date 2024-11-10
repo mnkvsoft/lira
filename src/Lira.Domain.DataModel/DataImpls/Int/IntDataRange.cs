@@ -1,4 +1,4 @@
-using Lira.Domain.TextPart;
+using Lira.Common.State;
 
 namespace Lira.Domain.DataModel.DataImpls.Int;
 
@@ -10,5 +10,5 @@ public abstract class IntDataRange : DataRange<long>
 
     public override bool TryParse(string str, out long value) => long.TryParse(str, out value);
 
-    public abstract IState? GetState(DataName parentName);
+    public abstract IStateful? GetStateful();
 }

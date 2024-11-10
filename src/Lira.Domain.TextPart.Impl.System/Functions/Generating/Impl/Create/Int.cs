@@ -1,4 +1,5 @@
 using Lira.Common;
+using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
 

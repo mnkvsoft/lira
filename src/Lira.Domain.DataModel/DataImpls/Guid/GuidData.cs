@@ -1,3 +1,5 @@
+using Lira.Common;
+using Lira.Common.State;
 using Lira.Domain.TextPart;
 
 namespace Lira.Domain.DataModel.DataImpls.Guid;
@@ -12,5 +14,5 @@ public class GuidData : Data<System.Guid>
         _ranges = ranges;
     }
 
-    public override IEnumerable<IState> GetStates() => _ranges.Select(p=> p.Value.GetState(Name));
+    public override IEnumerable<IStateful> GetStates() => _ranges.Select(p=> p.Value.GetState());
 }

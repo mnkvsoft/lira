@@ -1,13 +1,14 @@
 using Lira.Common;
+using Lira.Common.State;
 using Lira.Domain.TextPart;
 
 namespace Lira.Domain.DataModel.DataImpls.Guid;
 
 public class GuidDataRange : DataRange<System.Guid>
 {
-    private readonly Int64Sequence _seq;
+    private readonly SequenceStateful _seq;
 
-    public GuidDataRange(DataName name, Int64Sequence seq, string? format) : base(name, format)
+    public GuidDataRange(DataName name, SequenceStateful seq, string? format) : base(name, format)
     {
         _seq = seq;
     }
@@ -18,5 +19,5 @@ public class GuidDataRange : DataRange<System.Guid>
 
     public override bool TryParse(string str, out System.Guid value) => System.Guid.TryParse(str, out value);
 
-    public IState GetState(DataName parentName) => new SequenceState(_seq, parentName + "." + Name);
+    public IStateful GetState() => _seq;
 }

@@ -1,4 +1,6 @@
 using System.Collections.Immutable;
+using Lira.Common;
+using Lira.Common.State;
 using Lira.Domain.TextPart;
 
 namespace Lira.Domain.DataModel.DataImpls.Float;
@@ -10,5 +12,5 @@ public class FloatData : Data<decimal>
     {
     }
 
-    public override IEnumerable<IState> GetStates() => Array.Empty<IState>();
+    public override IEnumerable<IStateful> GetStates() => Array.Empty<IStateful>();
 }

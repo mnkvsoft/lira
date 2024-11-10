@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Lira.Common;
+using Lira.Common.Extensions;
 using Lira.Domain.Configuration;
 using Moq.Contrib.HttpClient;
 
