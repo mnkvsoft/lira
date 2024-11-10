@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.Extensions.Logging;
+using Lira.Common.Extensions;
 
 namespace Lira.Domain.Configuration;
 
@@ -20,7 +21,7 @@ class StateRepository(ILogger<StateRepository> logger) : IStateRepository
 
         foreach (var (stateId, stateValue) in states)
         {
-            var path = Path.Combine(StatesPath, stateId);
+            var path = Path.Combine(StatesPath, stateId + ".state");
             await File.WriteAllTextAsync(path, stateValue);
         }
 
@@ -35,7 +36,7 @@ class StateRepository(ILogger<StateRepository> logger) : IStateRepository
         var states = new Dictionary<string, string>();
         foreach (var stateFilePath in Directory.GetFiles(StatesPath))
         {
-            var stateId = Path.GetFileName(stateFilePath);
+            var stateId = Path.GetFileName(stateFilePath).TrimEnd(".state");
             var stateValue = await File.ReadAllTextAsync(stateFilePath);
             states.Add(stateId, stateValue);
         }

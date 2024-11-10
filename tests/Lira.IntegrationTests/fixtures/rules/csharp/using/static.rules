@@ -1,0 +1,12 @@
+-------------------- rule
+
+GET /csharp/using/static
+
+----- response
+{
+    "rrn": "{{
+        @using static utils.stringUtils;
+
+        return digits(10);
+}}"
+}

@@ -1,14 +1,16 @@
 using System;
 using System.Text;
+
+// namespace from third party lib
 using ArgValidation;
 
-namespace _my;
+namespace utils;
 
-public static class StringUtils
+public static class stringUtils
 {
     private static char[] _digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '8'];
 
-    public static string Digits(int length)
+    public static string digits(int length)
     {
         Arg.Validate(length, nameof(length))
             .MoreThan(1);

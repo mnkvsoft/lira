@@ -70,7 +70,7 @@ class PeImagesCache : IDisposable
 
         foreach (string filePath in files)
         {
-            string strHash = filePath.GetFileName();
+            string strHash = Path.GetFileName(filePath);
             var hash = Hash.Parse(strHash);
             var peImage = new PeImage(File.ReadAllBytes(filePath));
             _hashToEntryMap.Add(hash, new PeImageCacheEntry(peImage));

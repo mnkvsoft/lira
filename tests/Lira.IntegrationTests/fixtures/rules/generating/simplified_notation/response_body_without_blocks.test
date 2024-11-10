@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /simplified_notation/response_section_without_blocks
+GET /simplified_notation/response_body_without_blocks
 
 ----- expected
 

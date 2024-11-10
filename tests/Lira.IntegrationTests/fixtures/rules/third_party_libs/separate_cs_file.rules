@@ -1,0 +1,9 @@
+-------------------- rule
+
+GET /third_party_libs/separate_cs_file
+
+----- response
+
+{
+    "rrn": "{{ utils.stringUtils.digits(10) }}"
+}

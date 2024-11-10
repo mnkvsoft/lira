@@ -14,7 +14,7 @@ static class CustomDictsLoader
         foreach (var file in templateFiles)
         {
             var lines = TextCleaner.DeleteEmptiesAndComments(await File.ReadAllTextAsync(file));
-            result.Add(file.GetFileName().TrimEnd(".dic"), lines);
+            result.Add(Path.GetFileName(file).TrimEnd(".dic"), lines);
         }
 
         return result;

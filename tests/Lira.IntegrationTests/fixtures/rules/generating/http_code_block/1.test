@@ -1,0 +1,8 @@
+-------------------- case
+
+GET /http_code_block/408
+
+----- expected
+
+~ code
+408

@@ -1,0 +1,12 @@
+-------------------- rule
+
+GET /csharp/using/alias
+
+----- response
+{
+    "rrn": "{{
+        @using util = utils.stringUtils;
+
+        return util.digits(10);
+    }}"
+}

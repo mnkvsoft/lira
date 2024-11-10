@@ -1,0 +1,13 @@
+-------------------- case
+
+GET /csharp/using/static
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "rrn": "1122334455"
+}

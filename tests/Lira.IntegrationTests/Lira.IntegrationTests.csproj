@@ -75,16 +75,16 @@
     <None Update="fixtures\rules\bag\chain.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\simplified_notation\empty_response_section.rules">
+    <None Update="fixtures\rules\generating\simplified_notation\code_without_block.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\simplified_notation\empty_response_section.test">
+    <None Update="fixtures\rules\generating\simplified_notation\code_without_block.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\simplified_notation\response_section_without_blocks.rules">
+    <None Update="fixtures\rules\generating\simplified_notation\response_body_without_blocks.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\simplified_notation\response_section_without_blocks.test">
+    <None Update="fixtures\rules\generating\simplified_notation\response_body_without_blocks.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\simplified_notation\code_as_section_key.rules">
@@ -130,6 +130,36 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\external_libs\in_rule.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\csharp\using\static.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\third_party_libs\separate_cs_file.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\third_party_libs\in_rule.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\third_party_libs\in_rule.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\third_party_libs\separate_cs_file.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\csharp\using\static.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\csharp\using\alias.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\csharp\using\alias.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\http_code_block\1.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\http_code_block\1.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -1232,7 +1262,7 @@
 
   <ItemGroup>
     <Compile Remove="fixtures\rules\external_libs\StringUtils.cs" />
-    <Content Include="fixtures\rules\external_libs\StringUtils.cs">
+    <Content Include="fixtures\rules\third_party_libs\StringUtils.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

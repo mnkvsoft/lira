@@ -1,0 +1,8 @@
+-------------------- rule
+
+GET /http_code_block/{{:response_code int:200-599 }}
+
+----- response
+
+~ code
+{{ value: response_code }}

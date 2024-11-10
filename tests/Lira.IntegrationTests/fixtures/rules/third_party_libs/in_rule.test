@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /external_libs/separate_cs_file
+GET /third_party_libs/in_rule
 
 ----- expected
 

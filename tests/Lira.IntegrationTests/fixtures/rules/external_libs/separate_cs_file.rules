@@ -1,9 +1,0 @@
--------------------- rule
-
-GET /external_libs/separate_cs_file
-
------ response
-
-{
-    "rrn": "{{ StringUtils.Digits(10) }}"
-}

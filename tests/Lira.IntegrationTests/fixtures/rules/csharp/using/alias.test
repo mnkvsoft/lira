@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /external_libs/in_rule
+GET /csharp/using/alias
 
 ----- expected
 

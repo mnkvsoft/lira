@@ -1,0 +1,13 @@
+-------------------- case
+
+GET /third_party_libs/separate_cs_file
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "rrn": "1122334455"
+}

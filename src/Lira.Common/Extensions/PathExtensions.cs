@@ -6,9 +6,4 @@ public static class PathExtensions
     {
         return new FileInfo(filePath).Directory!.FullName;
     }
-
-    public static string GetFileName(this string filePath)
-    {
-        return new FileInfo(filePath).Name;
-    }
 }
