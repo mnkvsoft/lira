@@ -272,7 +272,7 @@ class RequestMatchersParser
         if (_functionFactorySystem.TryCreateMatchFunction(invoke, out var function))
             return function;
 
-        if (context.CustomSets.TryGetCustomSetFunction(invoke, out var customSetFunction))
+        if (context.CustomDicts.TryGetCustomSetFunction(invoke, out var customSetFunction))
             return customSetFunction;
 
         var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(invoke);

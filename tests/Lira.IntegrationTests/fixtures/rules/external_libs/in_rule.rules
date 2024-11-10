@@ -1,0 +1,33 @@
+-------------------- rule
+
+GET /external_libs/in_rule
+
+----- response
+
+{
+    "rrn": "{{
+        @using ArgValidation;
+
+        return digits(10);
+
+        string digits(int length)
+        {
+            Arg.Validate(length, nameof(length))
+                .MoreThan(1);
+
+            char[] digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '8'];
+
+            var sb = new StringBuilder();
+            for (int i = 0; i < length; i++)
+            {
+                var digit = digits[Random.Shared.Next(0, digits.Length)];
+                sb.Append(digit);
+            }
+
+            // return static value for test validation
+            // return sb.ToString();
+            return "1122334455";
+        }
+
+    }}"
+}

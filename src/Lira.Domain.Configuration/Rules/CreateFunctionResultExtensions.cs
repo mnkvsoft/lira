@@ -23,6 +23,6 @@ internal static class CreateFunctionResultExtensions
             "System function, declared function or variable not found." + nl +
             $"Declared functions: {string.Join(", ", context.DeclaredItems.Functions.Select(x => Consts.ControlChars.FunctionPrefix + x.Name))}" + nl +
             $"Declared variables: {string.Join(", ", context.DeclaredItems.Variables.Select(x => Consts.ControlChars.VariablePrefix + x.Name))}" + nl +
-            $"Custom sets: {string.Join(", ", context.CustomSets.GetRegisteredNames())}");
+            $"Custom sets: {string.Join(", ", context.CustomDicts.GetRegisteredNames())}");
     }
 }

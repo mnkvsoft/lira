@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /generating/custom_set
+GET /external_libs/in_rule
 
 ----- expected
 
@@ -8,4 +8,6 @@ GET /generating/custom_set
 200
 
 ~ body
-red
+{
+    "rrn": "1122334455"
+}

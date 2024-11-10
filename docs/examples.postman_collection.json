@@ -180,13 +180,13 @@
 					"response": []
 				},
 				{
-					"name": "set.generation",
+					"name": "dic.generation",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "example",
-								"value": "set.generation",
+								"value": "dic.generation",
 								"type": "text"
 							}
 						],
@@ -226,13 +226,13 @@
 					"response": []
 				},
 				{
-					"name": "set.match",
+					"name": "dic.match",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "example",
-								"value": "set.match",
+								"value": "dic.match",
 								"type": "text"
 							}
 						],

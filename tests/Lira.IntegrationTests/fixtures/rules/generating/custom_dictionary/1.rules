@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/custom_set
+GET /generating/custom_dictionary
 
 ----- response
 

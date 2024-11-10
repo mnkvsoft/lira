@@ -117,6 +117,21 @@
     <None Update="fixtures\rules\csharp\using\matching.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\external_libs\separate_cs_file.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\external_libs\separate_cs_file.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\ArgValidation.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\external_libs\in_rule.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\external_libs\in_rule.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -260,7 +275,7 @@
     <None Update="fixtures\rules\match\custom_set\1.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\match\custom_set\phone.vip.set">
+    <None Update="fixtures\rules\match\custom_set\phone.vip.dic">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\match\priority\static_range_static_vs_code.rules">
@@ -1213,6 +1228,13 @@
     <None Update="fixtures\rules\generating\repeat\count.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="fixtures\rules\external_libs\StringUtils.cs" />
+    <Content Include="fixtures\rules\external_libs\StringUtils.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

@@ -1479,32 +1479,32 @@ curl --location 'http://localhost/order' \
 Для этого можно использовать пользовательские справочники.
 
 Для его определения нужно добавить в рабочий каталог сервера текстовый файл с 
-расширением `.set`, имя файла без расширения `.set` является именем справочника.
+расширением `.dic`, имя файла без расширения `.dic` является именем справочника.
 
 Каждая строка является значением справочника.
 
 #### Генерация данных
-[name.first.set](docs/examples/quick_start/name.first.set)
+[name.first.dic](docs/examples/quick_start/name.first.dic)
 ```
 Nikolay
 John
 Leon
 ```
-[name.last.set](docs/examples/quick_start/name.last.set)
+[name.last.dic](docs/examples/quick_start/name.last.dic)
 ```
 Ivanov
 Müller
 Fischer
 Jones
 ```
-[set.generation.rules](docs/examples/quick_start/set.generation.rules)
+[dic.generation.rules](docs/examples/quick_start/dic.generation.rules)
 ```
 -------------------- rule
 
 GET /person
 
 ~ headers
-example: set.generation
+example: dic.generation
 
 ----- response
 
@@ -1516,7 +1516,7 @@ example: set.generation
 Запрос
 ```
 curl --location 'http://localhost/person' \
---header 'example: set.generation'
+--header 'example: dic.generation'
 ```
 Ответ
 ```
@@ -1525,21 +1525,21 @@ curl --location 'http://localhost/person' \
 }
 ```
 #### Сопоставление
-[car.set](docs/examples/quick_start/car.set)
+[car.dic](docs/examples/quick_start/car.dic)
 ```
 ACURA
 ALFA ROMEO
 ASTON MARTIN
 ...
 ```
-[set.match.rules](docs/examples/quick_start/set.match.rules)
+[dic.match.rules](docs/examples/quick_start/dic.match.rules)
 ```
 -------------------- rule
 
 GET /product/{{ car }}
 
 ~ headers
-example: set.match
+example: dic.match
 
 ----- response
 
@@ -1552,7 +1552,7 @@ example: set.match
 Запрос
 ```
 curl --location 'http://localhost/product/BUGATTI' \
---header 'example: set.match'
+--header 'example: dic.match'
 ```
 Ответ
 ```

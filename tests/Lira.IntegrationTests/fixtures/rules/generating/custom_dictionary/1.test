@@ -1,8 +1,11 @@
 -------------------- case
 
-GET /match/custom_dictionary/7775555555
+GET /generating/custom_dictionary
 
 ----- expected
 
 ~ code
 200
+
+~ body
+red

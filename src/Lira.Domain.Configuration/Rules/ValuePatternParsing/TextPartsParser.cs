@@ -115,7 +115,7 @@ class TextPartsParser : ITextPartsParser
         }
 
         var declaredFunction = declaredItems.Functions.FirstOrDefault(x => x.Name == rawText.TrimStart(Consts.ControlChars.FunctionPrefix));
-        context.CustomSets.TryGetCustomSetFunction(rawText, out var customSetFunction);
+        context.CustomDicts.TryGetCustomSetFunction(rawText, out var customSetFunction);
 
         if (_functionFactorySystem.TryCreateGeneratingFunction(rawText, out var function))
         {

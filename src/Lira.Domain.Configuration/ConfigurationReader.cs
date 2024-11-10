@@ -25,7 +25,7 @@ class ConfigurationReader(
         var sw = Stopwatch.StartNew();
 
         var templates = await TemplatesLoader.Load(path);
-        var customSets = await CustomSetsLoader.Load(path);
+        var customSets = await CustomDictsLoader.Load(path);
 
         var context = new ParsingContext(
             new DeclaredItems(),

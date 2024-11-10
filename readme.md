@@ -1476,38 +1476,38 @@ Response
 ```
 
 
-### User dictionaries
+### Custom dictionaries
 System functions cannot satisfy all possible needs for generating random data.
 
-To do this, you can use user dictionaries.
+To do this, you can use custom dictionaries.
 
 To define it, you need to add a text file with
-extension `.set`, the file name without the extension `.set` is the name of the dictionary.
+extension `.dic`, the file name without the extension `.dic` is the name of the dictionary.
 
 Each line is a directory value.
 
 #### Data generation
-[name.first.set](docs/examples/quick_start/name.first.set)
+[name.first.dic](docs/examples/quick_start/name.first.dic)
 ```
 Nikolay
 John
 Leon
 ```
-[name.last.set](docs/examples/quick_start/name.last.set)
+[name.last.dic](docs/examples/quick_start/name.last.dic)
 ```
 Ivanov
 Müller
 Fischer
 Jones
 ```
-[set.generation.rules](docs/examples/quick_start/set.generation.rules)
+[dic.generation.rules](docs/examples/quick_start/dic.generation.rules)
 ```
 -------------------- rule
 
 GET /person
 
 ~ headers
-example: set.generation
+example: dic.generation
 
 ----- response
 
@@ -1519,7 +1519,7 @@ example: set.generation
 Request
 ```
 curl --location 'http://localhost/person' \
---header 'example: set.generation'
+--header 'example: dic.generation'
 ```
 Response
 ```
@@ -1528,21 +1528,21 @@ Response
 }
 ```
 #### Matching
-[car.set](docs/examples/quick_start/car.set)
+[car.dic](docs/examples/quick_start/car.dic)
 ```
 ACURA
 ALFA ROMEO
 ASTON MARTIN
 ...
 ```
-[set.match.rules](docs/examples/quick_start/set.match.rules)
+[dic.match.rules](docs/examples/quick_start/dic.match.rules)
 ```
 -------------------- rule
 
 GET /product/{{ car }}
 
 ~ headers
-example: set.match
+example: dic.match
 
 ----- response
 
@@ -1555,7 +1555,7 @@ example: set.match
 Request
 ```
 curl --location 'http://localhost/product/ACURA' \
---header 'example: set.match'
+--header 'example: dic.match'
 ```
 Response
 ```

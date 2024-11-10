@@ -1,4 +1,5 @@
 using Lira.Domain.Configuration.Templating;
+using Lira.Domain.TextPart.Impl.Custom.CustomDicModel;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -9,7 +10,7 @@ public interface IParsingContext
 record ParsingContext(
     IReadonlyDeclaredItems DeclaredItems,
     IReadOnlyCollection<Template> Templates,
-    TextPart.Impl.Custom.CustomSetModel.CustomSets CustomSets,
+    CustomDicts CustomDicts,
     string RootPath,
     string CurrentPath) : IParsingContext;
 

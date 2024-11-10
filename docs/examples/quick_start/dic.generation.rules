@@ -3,7 +3,7 @@
 GET /person
 
 ~ headers
-example: set.generation
+example: dic.generation
 
 ----- response
 

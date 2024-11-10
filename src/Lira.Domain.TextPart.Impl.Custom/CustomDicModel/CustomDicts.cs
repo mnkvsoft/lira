@@ -2,10 +2,10 @@ using System.Diagnostics.CodeAnalysis;
 using Lira.Common.Extensions;
 using Lira.Domain.Matching.Request;
 
-namespace Lira.Domain.TextPart.Impl.Custom.CustomSetModel;
-public class CustomSets
+namespace Lira.Domain.TextPart.Impl.Custom.CustomDicModel;
+public class CustomDicts
 {
-    private readonly Dictionary<string, CustomSetFunction> _map = new Dictionary<string, CustomSetFunction>();
+    private readonly Dictionary<string, CustomSetFunction> _map = new();
 
     public void Add(string name, IReadOnlyList<string> lines)
     {

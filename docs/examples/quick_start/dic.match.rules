@@ -3,7 +3,7 @@
 GET /product/{{ car }}
 
 ~ headers
-example: set.match
+example: dic.match
 
 ----- response
 
