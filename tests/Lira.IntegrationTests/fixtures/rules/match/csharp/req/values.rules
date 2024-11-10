@@ -23,3 +23,13 @@ return enoughMoney;
 {
     "transactionId": 12345
 }
+
+###
+Response:
+
+200
+
+{
+    "transactionId": 12345
+}
+###

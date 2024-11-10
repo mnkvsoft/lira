@@ -21,3 +21,21 @@ $json_var =
         .replace("$.arrayField", new []{1,2,3})
         .replace("$.objectField", new{b = "value"})
 }}
+
+###
+Response:
+
+200
+
+{
+  "arrayField": [
+    1,
+    2,
+    3
+  ],
+  "objectField": {
+    "b": "value"
+  }
+}
+
+###

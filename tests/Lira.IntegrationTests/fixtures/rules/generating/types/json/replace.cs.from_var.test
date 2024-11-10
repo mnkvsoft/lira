@@ -24,3 +24,27 @@ GET /generating/types/json/replace/cs/from_var
     "b": "value"
   }
 }
+
+###
+Response:
+
+200
+
+{
+  "stringField": "new_value",
+  "intField": 1,
+  "boolField": true,
+  "arrayField": [
+    1,
+    2,
+    3
+  ],
+  "objectField1": {
+    "b": "value"
+  },
+  "objectField2": {
+    "b": "value"
+  }
+}
+
+###

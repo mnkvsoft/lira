@@ -23,3 +23,13 @@ return allPath.StartsWith("/match/sharp/req/access_to_all_request_data/") &&
 {
     "transactionId": 12345
 }
+
+###
+Response:
+
+200
+
+{
+    "transactionId": 12345
+}
+###

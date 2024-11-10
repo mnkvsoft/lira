@@ -30,3 +30,9 @@ bag.code = code;
 
 ~ code
 {{ bag.code }}
+
+###
+Response:
+
+200
+###
