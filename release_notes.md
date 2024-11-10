@@ -59,3 +59,5 @@ docker run -p 80:8080 -e LibsPath=/tmp/lira/libs -v c:/lira/rules:/app/rules -v 
 - [code without block](tests/Lira.IntegrationTests/fixtures/rules/generating/simplified_notation/code_without_block.rules)
 
 - [response body without blocks](tests/Lira.IntegrationTests/fixtures/rules/generating/simplified_notation/response_body_without_blocks.rules)
+
+## Disabled certificate validation in section `action.call.http`
