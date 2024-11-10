@@ -1,4 +1,4 @@
-namespace _my1;
+namespace _my;
 
 public static class CardNumber
 {
@@ -23,7 +23,7 @@ public static class CardNumber
 
         string last4 = cardNumber[^4..];
         string result = paymentSystem + " *" + last4;
-        
+
         return result;
     }
 }
