@@ -24,6 +24,7 @@ public class RequestModel
 
     public string? path(int index) => _data.GetPath(index);
     public string path() => _data.Path;
+    public string method() => _data.Method;
 
     public record BodyModel(string Value)
     {

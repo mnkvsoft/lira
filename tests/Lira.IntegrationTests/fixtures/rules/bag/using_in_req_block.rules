@@ -1,0 +1,20 @@
+-------------------- rule
+
+## POST /bag/using_in_req_block/## response code ##
+
+~ method
+POST
+
+~ req
+
+if(req.path().StartsWith("/bag/using_in_req_block/"))
+{
+    bag.code = req.path(2);
+    return true;
+}
+
+return false;
+
+----- response
+~ code
+{{ bag.code }}
