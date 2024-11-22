@@ -3,11 +3,12 @@ using Lira.Domain.Matching.Request;
 
 namespace Lira.Domain.TextPart.Impl.System.Functions.Matching.Impl;
 
-internal class Regex : WithArgumentFunction<string>, IMatchFunctionSystem
+internal class Regex : WithArgumentFunction<string>, IMatchFunctionTyped
 {
     public override string Name => "regex";
     public override bool ArgumentIsRequired => true;
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
+    public PartType ValueType => PartType.String;
 
     private global::System.Text.RegularExpressions.Regex _regex = null!;
 

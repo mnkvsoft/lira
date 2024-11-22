@@ -2,12 +2,12 @@
 
 namespace Lira.Domain.TextPart.Impl.System.Functions.Matching.Impl;
 
-internal class Guid : FunctionBase, IMatchFunctionSystem
+internal class Guid : FunctionBase, IMatchFunctionTyped
 {
-
     public override string Name => "guid";
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Type;
+    public PartType ValueType => PartType.Guid;
 
     public Task<bool> IsMatch(RuleExecutingContext context, string? value)
     {

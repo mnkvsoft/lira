@@ -33,7 +33,7 @@ internal class MatchFunctionFactory
         _serviceProvider = serviceProvider;
     }
 
-    public bool TryCreate(string value, [MaybeNullWhen(false)] out IMatchFunction matchFunction)
+    public bool TryCreate(string value, [MaybeNullWhen(false)] out IMatchFunctionTyped matchFunction)
     {
         matchFunction = null;
         var (functionName, argument) = value.SplitToTwoParts(":").Trim();
@@ -44,7 +44,7 @@ internal class MatchFunctionFactory
         if (!_serviceProvider.TryGetFunction(functionType, out var function))
             return false;
 
-        if (function is not IMatchFunctionSystem matchPrettyFunction)
+        if (function is not IMatchFunctionTyped matchPrettyFunction)
             throw new Exception($"Function {functionType} not implemented {nameof(IMatchFunctionSystem)}");
 
         function.SetArgumentIfNeed(argument);

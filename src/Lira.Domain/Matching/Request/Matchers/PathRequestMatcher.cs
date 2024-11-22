@@ -15,7 +15,6 @@ public class PathRequestMatcher : IRequestMatcher
     async Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext context)
     {
         var request = context.RequestContext.RequestData;
-        var matchedValuesSet = new Dictionary<string, string?>();
         var currentSegments = request.Path.Value.Split('/');
 
         if (_segmentsPatterns.Count != currentSegments.Length)
@@ -28,14 +27,12 @@ public class PathRequestMatcher : IRequestMatcher
             var current = currentSegments[i];
             var matchResult = await pattern.Match(context, current);
 
-            if (matchResult is not TextPatternPart.MatchResult.Matched matched)
+            if (matchResult is not TextPatternPart.MatchResult.Matched)
                 return RequestMatchResult.NotMatched;
-
-            matchedValuesSet.AddIfValueIdNotNull(matched);
 
             weight += TextPatternPartWeightCalculator.Calculate(pattern);
         }
 
-        return RequestMatchResult.Matched(name: "path", weight, matchedValuesSet);
+        return RequestMatchResult.Matched(name: "path", weight);
     }
 }

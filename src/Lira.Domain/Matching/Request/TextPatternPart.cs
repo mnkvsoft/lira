@@ -9,9 +9,9 @@ public abstract record TextPatternPart
             public static readonly NotMatch Instance = new();
         }
 
-        public record Matched(string? DynamicValueId, string? DynamicValue) : MatchResult
+        public record Matched : MatchResult
         {
-            public static readonly Matched WithoutDynamic = new(null, null);
+            public static readonly Matched WithoutDynamic = new();
         }
     }
 
@@ -38,7 +38,7 @@ public abstract record TextPatternPart
         }
     }
 
-    public record Dynamic(string? Start, string? End, IMatchFunction MatchFunction, string? ValueId) : TextPatternPart
+    public record Dynamic(string? Start, string? End, IMatchFunction MatchFunction) : TextPatternPart
     {
         public override async Task<MatchResult> Match(RuleExecutingContext context, string? current)
         {
@@ -68,7 +68,7 @@ public abstract record TextPatternPart
             }
 
             return await MatchFunction.IsMatch(context, toMatch)
-               ? new MatchResult.Matched(ValueId, toMatch)
+               ? new MatchResult.Matched()
                : notMatch;
         }
     }

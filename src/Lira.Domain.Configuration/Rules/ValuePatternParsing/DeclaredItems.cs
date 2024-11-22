@@ -5,24 +5,24 @@ namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
 interface IReadonlyDeclaredItems
 {
-    IReadOnlyCollection<Variable> Variables { get; }
+    IReadOnlyCollection<DeclaredVariable> Variables { get; }
 
     IReadOnlyCollection<Function> Functions { get; }
 }
 class DeclaredItems : IReadonlyDeclaredItems
 {
     public VariableSet Variables { get; }
-    IReadOnlyCollection<Variable> IReadonlyDeclaredItems.Variables => Variables;
-    
+    IReadOnlyCollection<DeclaredVariable> IReadonlyDeclaredItems.Variables => Variables;
+
     public FunctionSet Functions { get; }
     IReadOnlyCollection<Function> IReadonlyDeclaredItems.Functions => Functions;
-    
+
     public DeclaredItems(IReadonlyDeclaredItems items)
     {
         Variables = new VariableSet(items.Variables);
         Functions = new FunctionSet(items.Functions);
     }
-    
+
     public DeclaredItems()
     {
         Variables = new VariableSet();

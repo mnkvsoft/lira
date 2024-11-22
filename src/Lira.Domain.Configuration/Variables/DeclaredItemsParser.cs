@@ -29,14 +29,14 @@ class DeclaredItemsParser
                      Consts.ControlChars.FunctionPrefix))
         {
             ObjectTextParts parts = await _textPartsParser.Parse(pattern, newContext);
-            
-            var (name, type) = nameWithType.SplitToTwoParts(":").Trim();
+
+            var (name, type) = nameWithType.SplitToTwoParts(Consts.ControlChars.SetType).Trim();
             if (type != null)
             {
                 switch (type)
                 {
-                    case "json":
-                        parts = new ObjectTextParts(new[] { new JsonWrapper(parts, name) });
+                    case Consts.Type.Json:
+                        parts = new ObjectTextParts([new JsonWrapper(parts, name)]);
                         break;
                     default:
                         throw new Exception($"Unknown type '{type}' for '{name}'");
@@ -45,7 +45,7 @@ class DeclaredItemsParser
 
             if (name.StartsWith(Consts.ControlChars.VariablePrefix))
             {
-                var variable = new Variable(new CustomItemName(name.TrimStart(Consts.ControlChars.VariablePrefix)), parts);
+                var variable = new DeclaredVariable(new CustomItemName(name.TrimStart(Consts.ControlChars.VariablePrefix)), parts);
                 all.Variables.Add(variable);
                 onlyNew.Variables.Add(variable);
             }

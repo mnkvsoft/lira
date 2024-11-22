@@ -3,6 +3,7 @@ using Lira.Domain.Matching.Request;
 using Lira.Domain.Matching.Request.Matchers;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.System;
 using Lira.FileSectionFormat;
@@ -279,16 +280,21 @@ class RequestMatchersParser
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 
-    private static (string? id, string invoke) GetIdAndRawInvoke(string value)
+    private static (VariableInfo? variable, string invoke) GetVariableAndRawInvoke(string value)
     {
-        if (value.StartsWith(":"))
+        var prefix = Consts.ControlChars.WriteToVariablePrefix;
+        if (value.StartsWith(prefix))
         {
-            var (id, invoke) = value.TrimStart(":").TrimStart().SplitToTwoPartsRequired(" ").Trim();
-            return (id, invoke);
+            var (variableNameAndType, invoke) = value.TrimStart(prefix).TrimStart().SplitToTwoPartsRequired(" ").Trim();
+            var (name, type) = variableNameAndType.SplitToTwoParts(Consts.ControlChars.SetType);
+
+            return (variableNameAndType, invoke);
         }
 
         return (null, value);
     }
+
+    record VariableInfo(string Name, PartType? Type);
 
     private class RequestMatchersBuilder
     {

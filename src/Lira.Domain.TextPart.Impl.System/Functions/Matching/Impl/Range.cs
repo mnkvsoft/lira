@@ -3,7 +3,7 @@ using Lira.Domain.Matching.Request;
 
 namespace Lira.Domain.TextPart.Impl.System.Functions.Matching.Impl;
 
-internal class Range : RangeBase, IMatchFunctionSystem
+internal class Range : RangeBase, IMatchFunctionTyped
 {
     public Range(IRangesProvider dataProvider) : base(dataProvider)
     {
@@ -12,6 +12,7 @@ internal class Range : RangeBase, IMatchFunctionSystem
     public override string Name => "range";
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
+    public PartType ValueType => PartType.String;
 
 
     public Task<bool> IsMatch(RuleExecutingContext context, string? value)

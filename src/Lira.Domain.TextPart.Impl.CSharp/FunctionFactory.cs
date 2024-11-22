@@ -107,7 +107,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    public CreateFunctionResult<IMatchFunction> TryCreateMatchFunction(string code)
+    public CreateFunctionResult<IMatchFunctionTyped> TryCreateMatchFunction(string code)
     {
         var sw = Stopwatch.StartNew();
 
@@ -124,7 +124,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             GetNamespaces(customAssemblies.Loaded),
             GetUsingStatic(customAssemblies.Loaded));
 
-        var result = CreateFunctionResult<IMatchFunction>(
+        var result = CreateFunctionResult<IMatchFunctionTyped>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,

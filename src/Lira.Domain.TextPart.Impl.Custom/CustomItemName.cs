@@ -10,7 +10,7 @@ public readonly struct CustomItemName : IEquatable<CustomItemName>
     {
         Arg.Validate(value, nameof(value))
             .NotNullOrWhitespace();
-        
+
         if (!IsValidName(value))
             throw new ArgumentException($"Variable name must contains only letters or '_','.'. Current: '{value}'");
 
@@ -29,7 +29,7 @@ public readonly struct CustomItemName : IEquatable<CustomItemName>
         return true;
     }
 
-    private static bool IsAllowedCharInName(char c) => char.IsLetter(c) || char.IsDigit(c) || c == '_' || c == '-' || c == '.';
+    private static bool IsAllowedCharInName(char c) => char.IsLetter(c) || char.IsDigit(c) || c == '_' || c == '.';
 
     public bool Equals(CustomItemName other)
     {

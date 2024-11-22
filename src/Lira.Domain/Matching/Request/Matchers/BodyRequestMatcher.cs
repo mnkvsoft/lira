@@ -20,7 +20,6 @@ public class BodyRequestMatcher : IRequestMatcher
     async Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext context)
     {
         var request = context.RequestContext.RequestData;
-        var matchedValuesSet = new Dictionary<string, string?>();
         request.Body.Position = 0;
         var stream = new StreamReader(request.Body);
         var body = await stream.ReadToEndAsync();
@@ -36,12 +35,10 @@ public class BodyRequestMatcher : IRequestMatcher
             if (await matcher.Match(context, value) is not TextPatternPart.MatchResult.Matched matched)
                 return RequestMatchResult.NotMatched;
 
-            matchedValuesSet.AddIfValueIdNotNull(matched);
-
             weight += TextPatternPartWeightCalculator.Calculate(matcher);
         }
 
-        return RequestMatchResult.Matched(name: "body", weight, matchedValuesSet);
+        return RequestMatchResult.Matched(name: "body", weight);
     }
 
 }

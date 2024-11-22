@@ -24,6 +24,6 @@ internal abstract class ConditionMatcher : IRequestMatcher
         if (!isMatch)
             return RequestMatchResult.NotMatched;
 
-        return RequestMatchResult.Matched(name: $"condition.{ConditionName}", WeightValue.Condition, matchedValues: ImmutableDictionary<string, string?>.Empty);
+        return RequestMatchResult.Matched(name: $"condition.{ConditionName}", WeightValue.Condition);
     }
 }

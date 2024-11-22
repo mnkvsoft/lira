@@ -28,7 +28,6 @@ public class HeadersRequestMatcher : IRequestMatcher
             {
                 if (await pattern.Match(context, value) is TextPatternPart.MatchResult.Matched matched)
                 {
-                    matchedValuesSet.AddIfValueIdNotNull(matched);
                     isMatch = true;
                     break;
                 }
@@ -40,6 +39,6 @@ public class HeadersRequestMatcher : IRequestMatcher
             weight += TextPatternPartWeightCalculator.Calculate(pattern);
 
         }
-        return RequestMatchResult.Matched(name: "headers", weight, matchedValuesSet);
+        return RequestMatchResult.Matched(name: "headers", weight);
     }
 }

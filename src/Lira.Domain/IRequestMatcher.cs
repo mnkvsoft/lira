@@ -8,9 +8,9 @@ public interface IRequestMatcher
 public record RequestMatchResult
 {
     public static readonly RequestMatchResult NotMatched = new NotMatched();
-    public static RequestMatchResult Matched(string name, int weight, IReadOnlyDictionary<string, string?> matchedValues) => new Matched(name, weight, matchedValues);
+    public static RequestMatchResult Matched(string name, int weight) => new Matched(name, weight);
 }
 
 public record NotMatched : RequestMatchResult;
-public record Matched(string Name, int Weight, IReadOnlyDictionary<string, string?> MatchedValues) : RequestMatchResult;
+public record Matched(string Name, int Weight) : RequestMatchResult;
 

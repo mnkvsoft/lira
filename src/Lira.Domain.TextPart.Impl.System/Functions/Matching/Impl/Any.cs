@@ -2,11 +2,13 @@ using Lira.Domain.Matching.Request;
 
 namespace Lira.Domain.TextPart.Impl.System.Functions.Matching.Impl;
 
-internal class Any : FunctionBase, IMatchFunctionSystem
+internal class Any : FunctionBase, IMatchFunctionTyped
 {
     public override string Name => "any";
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Any;
+
+    public PartType ValueType => PartType.String;
 
     public Task<bool> IsMatch(RuleExecutingContext context, string? value)
     {

@@ -38,6 +38,7 @@ public class CustomSetFunction : IObjectTextPart, IMatchFunction
     }
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
+    public PartType ValueType => PartType.String;
 
     public Task<dynamic?> Get(RuleExecutingContext context)
     {

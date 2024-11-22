@@ -11,7 +11,6 @@ public class QueryStringRequestMatcher : IRequestMatcher
 
     async Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext context)
     {
-        var matchedValuesSet = new Dictionary<string, string?>();
         int weight = 0;
 
         foreach (var pair in _queryParamToPatternMap)
@@ -24,10 +23,8 @@ public class QueryStringRequestMatcher : IRequestMatcher
             if (await pattern.Match(context, value) is not TextPatternPart.MatchResult.Matched matched)
                 return RequestMatchResult.NotMatched;
 
-            matchedValuesSet.AddIfValueIdNotNull(matched);
-
             weight += TextPatternPartWeightCalculator.Calculate(pattern);
         }
-        return RequestMatchResult.Matched(name: "query", weight, matchedValuesSet);
+        return RequestMatchResult.Matched(name: "query", weight);
     }
 }

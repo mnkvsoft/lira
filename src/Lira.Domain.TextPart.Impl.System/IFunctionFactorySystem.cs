@@ -12,5 +12,5 @@ public interface IFunctionFactorySystem
 
     bool TryCreateTransformFunction(string invoke, [MaybeNullWhen(false)] out ITransformFunction function);
 
-    bool TryCreateMatchFunction(string invoke, [MaybeNullWhen(false)] out IMatchFunction function);
+    bool TryCreateMatchFunction(string invoke, [MaybeNullWhen(false)] out IMatchFunctionTyped function);
 }

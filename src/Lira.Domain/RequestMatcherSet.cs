@@ -19,7 +19,6 @@ public class RequestMatcherSet
             if (matchResult is not Matched matched)
                 return RuleMatchResult.NotMatched.Instance;
 
-            context.AddMatchedValue(matched.MatchedValues);
             matcheds.Add(matched);
         }
 

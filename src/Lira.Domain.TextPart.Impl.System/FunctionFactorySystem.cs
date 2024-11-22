@@ -30,7 +30,7 @@ internal class FunctionFactorySystem : IFunctionFactorySystem
         return _generatingFunctionFactory.TryCreateGeneratingFunction(invoke, out function);
     }
 
-    public bool TryCreateMatchFunction(string invoke, [MaybeNullWhen(false)] out IMatchFunction function)
+    public bool TryCreateMatchFunction(string invoke, [MaybeNullWhen(false)] out IMatchFunctionTyped function)
     {
         return _matchFunctionFactory.TryCreate(invoke, out function);
     }
