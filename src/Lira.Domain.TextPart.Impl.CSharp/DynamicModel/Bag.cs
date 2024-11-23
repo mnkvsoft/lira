@@ -1,4 +1,5 @@
 using System.Dynamic;
+using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
@@ -6,12 +7,13 @@ namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 public class Bag : DynamicObject
 {
     private readonly bool _readOnly;
-    private readonly IDictionary<string, object?> _items;
+    private readonly RuleExecutingContext _context;
+    private static readonly Type BagKey = typeof(Bag);
 
     public Bag(RuleExecutingContext context, bool readOnly)
     {
         _readOnly = readOnly;
-        _items = context.Items;
+        _context = context;
     }
 
     public override bool TrySetMember(SetMemberBinder binder, object? value)
@@ -23,7 +25,9 @@ public class Bag : DynamicObject
         if (string.IsNullOrEmpty(name))
             throw new Exception("Name is empty");
 
-        _items.Add("bag_" + name, value);
+        var bagItems = _context.Items.GetOrCreate(BagKey, () => new Dictionary<string, object?>());
+
+        bagItems.Add(name, value);
 
         return true;
     }
@@ -34,7 +38,12 @@ public class Bag : DynamicObject
         if (string.IsNullOrEmpty(name))
             throw new Exception("Name is empty");
 
-        if (!_items.TryGetValue("bag_" + name, out result))
+        if (!_context.Items.TryGetValue(BagKey, out var bagItemsObj))
+            throw new Exception($"Bag item '{name}' not existing");
+
+        var bagItems = (Dictionary<string, object?>)bagItemsObj;
+
+        if (!bagItems.TryGetValue(name, out result))
             throw new Exception($"Bag item '{name}' not existing");
 
         return true;

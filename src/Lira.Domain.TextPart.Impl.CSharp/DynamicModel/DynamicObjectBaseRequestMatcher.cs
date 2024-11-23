@@ -1,7 +1,6 @@
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
 
-using System.Collections.Immutable;
 using Lira.Domain.Matching.Request;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
@@ -11,13 +10,14 @@ public abstract class DynamicObjectBaseRequestMatcher : DynamicObjectBaseMatch, 
 {
     protected DynamicObjectBaseRequestMatcher(DependenciesBase dependencies) : base(dependencies)
     {
+        //\$\$[a-zA-Z0-9\._]+\s+=(?=[^=])
     }
 
     public async Task<RequestMatchResult> IsMatch(RuleExecutingContext ctx)
     {
         bool isMatch = await IsMatchInternal(ctx);
         return isMatch
-            ? RequestMatchResult.Matched(name: "custom_code", WeightValue.CustomCode, ImmutableDictionary<string, string?>.Empty)
+            ? RequestMatchResult.Matched(name: "custom_code", WeightValue.CustomCode)
             : RequestMatchResult.NotMatched;
     }
 

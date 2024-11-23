@@ -1,3 +1,5 @@
+using Lira.Common.Extensions;
+
 namespace Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
 public interface IVariablesProvider
@@ -8,7 +10,6 @@ public interface IVariablesProvider
 
 public class VariablesProvider : IVariablesProvider
 {
-    static readonly Type ItemsKey = typeof(VariablesProvider);
     private readonly IReadOnlyDictionary<CustomItemName, DeclaredVariable> _declaredVariables;
     private static readonly object NullValue = new();
 
@@ -44,30 +45,14 @@ public class VariablesProvider : IVariablesProvider
 
     private static Dictionary<CustomItemName, dynamic?> GetVariablesDict(RuleExecutingContext ctx)
     {
-        Dictionary<CustomItemName, dynamic?> variables;
-
-        if (ctx.Items.TryGetValue(ItemsKey, out var variablesObj))
-        {
-            variables = (Dictionary<CustomItemName, dynamic?>)variablesObj!;
-        }
-        else
-        {
-            variables = new Dictionary<CustomItemName, dynamic?>();
-            ctx.Items.Add(ItemsKey, variables);
-        }
-
-        return variables;
+        return ctx.Items.GetOrCreate(key: typeof(VariablesProvider), () => new Dictionary<CustomItemName, dynamic?>());
     }
 
     private static void SetVariable(IDictionary<CustomItemName, dynamic?> variables, CustomItemName name, dynamic? value)
     {
         if (value == null)
-        {
             variables[name] = NullValue;
-        }
         else
-        {
             variables[name] = value;
-        }
     }
 }
