@@ -6,14 +6,14 @@ namespace Lira.Domain.TextPart.Impl.System.Functions.Matching.Impl;
 internal class Int : Number<long>
 {
     public override string Name => "int";
-    public override PartType ValueType => PartType.Int;
+    public override ReturnType ValueType => ReturnType.Int;
     protected override bool TryParse(string? value, out long result) => long.TryParse(value, out result);
 }
 
 internal class Float : Number<decimal>
 {
     public override string Name => "float";
-    public override PartType ValueType => PartType.Decimal;
+    public override ReturnType ValueType => ReturnType.Decimal;
     protected override bool TryParse(string? value, out decimal result) => decimal.TryParse(value, out result);
 }
 
@@ -21,7 +21,7 @@ internal abstract class Number<T> : WithRangeArgumentFunction<T>, IMatchFunction
 {
     public override bool ArgumentIsRequired => false;
     public MatchFunctionRestriction Restriction => _range == null ? MatchFunctionRestriction.Type : MatchFunctionRestriction.Range;
-    public abstract PartType ValueType { get; }
+    public abstract ReturnType ValueType { get; }
 
     private Interval<T>? _range;
 

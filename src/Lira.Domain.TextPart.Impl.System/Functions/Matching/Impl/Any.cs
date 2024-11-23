@@ -8,7 +8,7 @@ internal class Any : FunctionBase, IMatchFunctionTyped
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Any;
 
-    public PartType ValueType => PartType.String;
+    public ReturnType ValueType => ReturnType.String;
 
     public Task<bool> IsMatch(RuleExecutingContext context, string? value)
     {

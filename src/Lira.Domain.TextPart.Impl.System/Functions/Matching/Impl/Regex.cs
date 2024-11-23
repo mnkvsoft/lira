@@ -8,7 +8,7 @@ internal class Regex : WithArgumentFunction<string>, IMatchFunctionTyped
     public override string Name => "regex";
     public override bool ArgumentIsRequired => true;
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
-    public PartType ValueType => PartType.String;
+    public ReturnType ValueType => ReturnType.String;
 
     private global::System.Text.RegularExpressions.Regex _regex = null!;
 

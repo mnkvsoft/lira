@@ -1,0 +1,195 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using Lira.Domain.TextPart.Types;
+
+namespace Lira.Domain.TextPart;
+
+public static class TypedValueCreator
+{
+    public static bool TryCreate(ReturnType type, dynamic? value, out dynamic? result, out Exception? exception)
+    {
+        exception = null;
+        if (type == ReturnType.Json)
+            return TryCreateJson(value, out result, out exception);
+
+        if (type == ReturnType.String)
+            return TryCreateString(value, out result);
+
+        if (type == ReturnType.Int)
+            return TryCreateInt(value, out result);
+
+        if (type == ReturnType.Date)
+            return TryCreateDate(value, out result);
+
+        if (type == ReturnType.Guid)
+            return TryCreateGuid(value, out result);
+
+        if (type == ReturnType.Decimal)
+            return TryCreateDecimal(value, out result);
+
+        throw new ArgumentOutOfRangeException(nameof(type), type, null);
+    }
+
+    private static bool TryCreateString(dynamic? value, out dynamic? result)
+    {
+        result = null;
+
+        if (value is string)
+        {
+            result= value;
+            return true;
+        }
+
+        if (value is null)
+            return true;
+
+        if (value is IConvertible convertible)
+        {
+            result = convertible.ToString(CultureInfo.InvariantCulture);
+            return true;
+        }
+
+        result = value.ToString();
+        return true;
+    }
+
+    private static bool TryCreateInt(dynamic? value, [MaybeNullWhen(false)] out dynamic result)
+    {
+        result = null;
+
+        if (value is null)
+            return false;
+
+        if (value is long)
+        {
+            result = value;
+            return true;
+        }
+
+        if (value is IConvertible convertible)
+        {
+           result = convertible.ToInt64(CultureInfo.InvariantCulture);
+           return true;
+        }
+
+        if (long.TryParse(value.ToString(), CultureInfo.InvariantCulture, out long longValue))
+        {
+            result = longValue;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryCreateDecimal(dynamic? value, [MaybeNullWhen(false)] out dynamic result)
+    {
+        result = null;
+
+        if (value is null)
+            return false;
+
+        if (value is decimal)
+        {
+            result = value;
+            return true;
+        }
+
+        if (value is IConvertible convertible)
+        {
+            result = convertible.ToDecimal(CultureInfo.InvariantCulture);
+            return true;
+        }
+
+        if (decimal.TryParse(value.ToString(), CultureInfo.InvariantCulture, out decimal dec))
+        {
+            result = dec;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryCreateDate(dynamic? value, [MaybeNullWhen(false)] out dynamic result)
+    {
+        result = null;
+
+        if (value is null)
+            return false;
+
+        if (value is DateTime)
+        {
+            result = value;
+            return true;
+        }
+
+        if (value is IConvertible convertible)
+        {
+            result = convertible.ToDateTime(CultureInfo.InvariantCulture);
+            return true;
+        }
+
+        if (DateTime.TryParse(value.ToString(), CultureInfo.InvariantCulture, out DateTime date))
+        {
+            result = date;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryCreateGuid(dynamic? value, [MaybeNullWhen(false)] out dynamic result)
+    {
+        result = null;
+
+        if (value is null)
+            return false;
+
+        if (value is Guid)
+        {
+            result = value;
+            return true;
+        }
+
+        if (Guid.TryParse(value.ToString(), CultureInfo.InvariantCulture, out Guid guid))
+        {
+            result = guid;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryCreateJson(dynamic? value, [MaybeNullWhen(false)] out dynamic result, out Exception? exception)
+    {
+        result = null;
+        exception = null;
+
+        if (value is null)
+            return false;
+
+        if (value is Json)
+        {
+            result = value;
+            return true;
+        }
+
+        if (value is not string json)
+            return false;
+
+        try
+        {
+            result = new Json(json);
+            return true;
+        }
+        catch (Exception e)
+        {
+            exception = e;
+            return false;
+        }
+
+        // string GetMessage(dynamic? o)
+        // {
+        //     return $"Value in {_declaredName} cannot be convert to json. Value: {o?.ToString()}";
+        // }
+    }
+}

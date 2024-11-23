@@ -26,7 +26,7 @@ public class CustomDicts
     }
 }
 
-public class CustomSetFunction : IObjectTextPart, IMatchFunction
+public class CustomSetFunction : IObjectTextPart, IMatchFunctionTyped
 {
     private readonly IReadOnlyList<string> _list;
     private readonly HashSet<string> _hashSet;
@@ -38,7 +38,7 @@ public class CustomSetFunction : IObjectTextPart, IMatchFunction
     }
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
-    public PartType ValueType => PartType.String;
+    public ReturnType ValueType => ReturnType.String;
 
     public Task<dynamic?> Get(RuleExecutingContext context)
     {

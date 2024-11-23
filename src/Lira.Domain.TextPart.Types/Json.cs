@@ -1,5 +1,7 @@
 ﻿using Lira.Common.Extensions;
 using Newtonsoft.Json.Linq;
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMember.Global
 
 namespace Lira.Domain.TextPart.Types;
 

@@ -12,7 +12,7 @@ internal class Range : RangeBase, IMatchFunctionTyped
     public override string Name => "range";
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
-    public PartType ValueType => PartType.String;
+    public ReturnType ValueType => ReturnType.String;
 
 
     public Task<bool> IsMatch(RuleExecutingContext context, string? value)

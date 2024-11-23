@@ -5,6 +5,8 @@ using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
+using Lira.Domain.TextPart.Impl.Custom;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 using Lira.Domain.TextPart.Impl.System;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;
@@ -15,11 +17,16 @@ class RequestMatchersParser
 {
     private readonly IFunctionFactorySystem _functionFactorySystem;
     private readonly IFunctionFactoryCSharp _functionFactoryCSharp;
+    private readonly IVariablesProvider _variablesProvider;
 
-    public RequestMatchersParser(IFunctionFactorySystem functionFactorySystem, IFunctionFactoryCSharp functionFactoryCSharp)
+    public RequestMatchersParser(
+        IFunctionFactorySystem functionFactorySystem,
+        IFunctionFactoryCSharp functionFactoryCSharp,
+        IVariablesProvider variablesProvider)
     {
         _functionFactorySystem = functionFactorySystem;
         _functionFactoryCSharp = functionFactoryCSharp;
+        _variablesProvider = variablesProvider;
     }
 
     public IReadOnlyCollection<IRequestMatcher> Parse(FileSection ruleSection, ParsingContext context)
@@ -49,8 +56,8 @@ class RequestMatchersParser
     }
 
     private IReadOnlyCollection<IRequestMatcher> GetMethodAndPathMatchersFromShortEntry(
-            FileSection ruleSection,
-            ParsingContext context)
+        FileSection ruleSection,
+        ParsingContext context)
     {
         var lines = ruleSection.LinesWithoutBlock;
 
@@ -173,15 +180,19 @@ class RequestMatchersParser
         {
             if (!line.ContainsInStatic(Consts.ControlChars.PipelineSplitter))
             {
-                if (!_functionFactorySystem.TryCreateBodyExtractFunction(FunctionName.ExtractBody.All, out var function))
+                if (!_functionFactorySystem.TryCreateBodyExtractFunction(FunctionName.ExtractBody.All,
+                        out var function))
                     throw new InvalidOperationException(
                         $"Cannot create system function extract body function '{FunctionName.ExtractBody.All}'");
 
-                patterns.Add(new KeyValuePair<IBodyExtractFunction, TextPatternPart>(function, CreateValuePattern(line, context)));
+                patterns.Add(
+                    new KeyValuePair<IBodyExtractFunction, TextPatternPart>(function,
+                        CreateValuePattern(line, context)));
                 continue;
             }
 
-            var (extractFunctionInvoke, pattern) = line.SplitToTwoPartsRequired(Consts.ControlChars.PipelineSplitter).Trim();
+            var (extractFunctionInvoke, pattern) =
+                line.SplitToTwoPartsRequired(Consts.ControlChars.PipelineSplitter).Trim();
 
             // can write either
             // {{ xpath://employee[1]/text() }}
@@ -189,7 +200,8 @@ class RequestMatchersParser
             // xpath://employee[1]/text()
             var extractFunctionInvokeStr = extractFunctionInvoke.GetSingleDynamic().Value.Trim();
 
-            if (!_functionFactorySystem.TryCreateBodyExtractFunction(extractFunctionInvokeStr, out var bodyExtractFunction))
+            if (!_functionFactorySystem.TryCreateBodyExtractFunction(extractFunctionInvokeStr,
+                    out var bodyExtractFunction))
                 throw new Exception($"System function '{extractFunctionInvokeStr}' not found");
 
             patterns.Add(new KeyValuePair<IBodyExtractFunction, TextPatternPart>(bodyExtractFunction,
@@ -203,7 +215,7 @@ class RequestMatchersParser
         PatternParts? parts,
         ParsingContext context)
     {
-        if(parts == null || parts.Count == 0)
+        if (parts == null || parts.Count == 0)
             return new TextPatternPart.NullOrEmpty();
 
         if (parts.Count == 1)
@@ -213,8 +225,10 @@ class RequestMatchersParser
 
             if (parts[0] is PatternPart.Dynamic dyn)
             {
-                var (id, invoke) = GetIdAndRawInvoke(dyn.Value);
-                return new TextPatternPart.Dynamic(Start: null, End: null, CreateMatchFunction(invoke, context), id);
+                var (variableInfo, invoke) = GetVariableInfoAndRawInvoke(dyn.Value);
+                var matchFunction = CreateMatchFunction(invoke, context);
+
+                return new TextPatternPart.Dynamic(Start: null, End: null, WithSaveVariableIfNeed(matchFunction, variableInfo));
             }
         }
 
@@ -229,16 +243,20 @@ class RequestMatchersParser
             if (parts[0] is PatternPart.Static @static)
             {
                 PatternPart.Dynamic dyn = ((PatternPart.Dynamic)parts[1]);
-                var (id, invoke) = GetIdAndRawInvoke(dyn.Value);
-                return new TextPatternPart.Dynamic(Start: @static.Value, End: null,
-                    CreateMatchFunction(invoke, context), id);
+                var (variableInfo, invoke) = GetVariableInfoAndRawInvoke(dyn.Value);
+                return new TextPatternPart.Dynamic(
+                    Start: @static.Value,
+                    End: null,
+                    WithSaveVariableIfNeed(CreateMatchFunction(invoke, context), variableInfo));
             }
 
             if (parts[0] is PatternPart.Static dynamic)
             {
-                var (id, invoke) = GetIdAndRawInvoke(dynamic.Value);
-                return new TextPatternPart.Dynamic(Start: null, End: ((PatternPart.Static)parts[1]).Value,
-                    CreateMatchFunction(invoke, context), id);
+                var (variableInfo, invoke) = GetVariableInfoAndRawInvoke(dynamic.Value);
+                return new TextPatternPart.Dynamic(
+                    Start: null,
+                    End: ((PatternPart.Static)parts[1]).Value,
+                    WithSaveVariableIfNeed(CreateMatchFunction(invoke, context), variableInfo));
             }
         }
 
@@ -253,14 +271,24 @@ class RequestMatchersParser
             if (parts[2] is not PatternPart.Static end)
                 throw new Exception($"Third part must be static. Current value: {parts}");
 
-            var (id, invoke) = GetIdAndRawInvoke(@dynamic.Value);
-            return new TextPatternPart.Dynamic(start.Value, end.Value, CreateMatchFunction(invoke, context), id);
+            var (variableInfo, invoke) = GetVariableInfoAndRawInvoke(@dynamic.Value);
+            return new TextPatternPart.Dynamic(
+                start.Value,
+                end.Value,
+                WithSaveVariableIfNeed(CreateMatchFunction(invoke, context), variableInfo));
         }
 
         throw new Exception($"'{parts}' contains more than 3 block static or dynamic");
     }
 
-    private IMatchFunction CreateMatchFunction(string invoke, ParsingContext context)
+    private IMatchFunction WithSaveVariableIfNeed(IMatchFunctionTyped matchFunction, VariableInfo? variableInfo)
+    {
+        if (variableInfo == null)
+            return matchFunction;
+        return new MatchFunctionWithSaveVariable(matchFunction, variableInfo, _variablesProvider);
+    }
+
+    private IMatchFunctionTyped CreateMatchFunction(string invoke, ParsingContext context)
     {
         if (invoke.StartsWith(Consts.ControlChars.TemplatePrefix))
         {
@@ -280,21 +308,21 @@ class RequestMatchersParser
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 
-    private static (VariableInfo? variable, string invoke) GetVariableAndRawInvoke(string value)
+    private static (VariableInfo? variable, string invoke) GetVariableInfoAndRawInvoke(string value)
     {
         var prefix = Consts.ControlChars.WriteToVariablePrefix;
         if (value.StartsWith(prefix))
         {
             var (variableNameAndType, invoke) = value.TrimStart(prefix).TrimStart().SplitToTwoPartsRequired(" ").Trim();
-            var (name, type) = variableNameAndType.SplitToTwoParts(Consts.ControlChars.SetType);
+            var (name, typeStr) = variableNameAndType.SplitToTwoParts(Consts.ControlChars.SetType);
 
-            return (variableNameAndType, invoke);
+            var type = typeStr == null ? null : ReturnTypeParser.Parse(typeStr);
+            var varInfo = new VariableInfo(new CustomItemName(name), type);
+            return (varInfo, invoke);
         }
 
         return (null, value);
     }
-
-    record VariableInfo(string Name, PartType? Type);
 
     private class RequestMatchersBuilder
     {

@@ -7,7 +7,7 @@ internal class Guid : FunctionBase, IMatchFunctionTyped
     public override string Name => "guid";
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Type;
-    public PartType ValueType => PartType.Guid;
+    public ReturnType ValueType => ReturnType.Guid;
 
     public Task<bool> IsMatch(RuleExecutingContext context, string? value)
     {
