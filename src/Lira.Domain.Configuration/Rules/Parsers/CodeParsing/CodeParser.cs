@@ -5,7 +5,7 @@ namespace Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 
 public static class CodeParser
 {
-    public static IReadOnlyList<CodeToken> Parse(string code)
+    public static IReadOnlyCollection<CodeToken> Parse(string code)
     {
         var tokens = new List<CodeToken>();
         bool enterVariableName = false;
@@ -103,7 +103,7 @@ public static class CodeParser
         }
 
         if (enterVariableName)
-            tokens.Add(new CodeToken.ReadVariable(sbAccessToVariable.ToString()));
+            tokens.Add(new CodeToken.ReadItem(sbAccessToVariable.ToString()));
         else
             tokens.Add(new CodeToken.OtherCode(sbOtherCode.ToString()));
 
@@ -117,14 +117,14 @@ public static class CodeParser
             // case: if($$variable== "value")
             if (iterator.Current == '=')
             {
-                tokens.Add(new CodeToken.ReadVariable(sbAccessToVariable.ToString()));
+                tokens.Add(new CodeToken.ReadItem(sbAccessToVariable.ToString()));
                 sbAccessToVariable.Clear();
                 sbOtherCode.Clear().Append("==");
             }
             // case: $$variable= "value"
             else
             {
-                tokens.Add(new CodeToken.WriteVariable(sbAccessToVariable.ToString()));
+                tokens.Add(new CodeToken.WriteItem(sbAccessToVariable.ToString()));
                 sbAccessToVariable.Clear();
                 sbOtherCode.Remove(0, sbOtherCode.Length - 2);
             }
@@ -134,7 +134,7 @@ public static class CodeParser
 
         void AddReadVariableToken()
         {
-            tokens.Add(new CodeToken.ReadVariable(sbAccessToVariable.ToString()));
+            tokens.Add(new CodeToken.ReadItem(sbAccessToVariable.ToString()));
             sbAccessToVariable.Clear();
             sbOtherCode.Clear().Append(iterator.Current);
             enterVariableName = false;

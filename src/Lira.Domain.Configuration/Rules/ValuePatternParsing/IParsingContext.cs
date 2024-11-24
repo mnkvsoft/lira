@@ -22,7 +22,7 @@ class ParsingContext : IParsingContext, IReadonlyParsingContext
     public string RootPath { get; }
     public  DeclaredItems DeclaredItems { get; private set; }
     public string CurrentPath { get; private init; }
-    private TemplateSet Templates { get; set; }
+    public TemplateSet Templates { get; set; }
 
     public ParsingContext(IReadonlyParsingContext context,
         string? currentPath = null,

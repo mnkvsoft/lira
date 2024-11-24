@@ -2,6 +2,8 @@ using System.Web;
 using Lira.Domain.Matching.Request;
 using Lira.Domain.Matching.Request.Matchers;
 using Lira.Common.Extensions;
+using Lira.Domain.Configuration.Extensions;
+using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
@@ -223,7 +225,7 @@ class RequestMatchersParser
 
             if (parts[0] is PatternPart.Dynamic dyn)
             {
-                return new TextPatternPart.Dynamic(Start: null, End: null, GetVariableInfoAndRawInvoke(dyn.Value, context));
+                return new TextPatternPart.Dynamic(Start: null, End: null, CreateMatchFunctionWithSaveVariable(dyn.Value, context));
             }
         }
 
@@ -242,7 +244,7 @@ class RequestMatchersParser
                 return new TextPatternPart.Dynamic(
                     Start: @static.Value,
                     End: null,
-                    GetVariableInfoAndRawInvoke(dyn.Value, context));
+                    CreateMatchFunctionWithSaveVariable(dyn.Value, context));
             }
 
             if (parts[0] is PatternPart.Static dynamic)
@@ -250,7 +252,7 @@ class RequestMatchersParser
                 return new TextPatternPart.Dynamic(
                     Start: null,
                     End: ((PatternPart.Static)parts[1]).Value,
-                    GetVariableInfoAndRawInvoke(dynamic.Value, context));
+                    CreateMatchFunctionWithSaveVariable(dynamic.Value, context));
             }
         }
 
@@ -268,13 +270,13 @@ class RequestMatchersParser
             return new TextPatternPart.Dynamic(
                 start.Value,
                 end.Value,
-                GetVariableInfoAndRawInvoke(@dynamic.Value, context));
+                CreateMatchFunctionWithSaveVariable(@dynamic.Value, context));
         }
 
         throw new Exception($"'{parts}' contains more than 3 block static or dynamic");
     }
 
-    private IMatchFunctionTyped CreateMatchFunction(string invoke, IReadonlyParsingContext context)
+    private IMatchFunctionTyped CreateMatchFunction(string invoke, ParsingContext context)
     {
         if (invoke.StartsWith(Consts.ControlChars.TemplatePrefix))
         {
@@ -290,11 +292,30 @@ class RequestMatchersParser
         if (context.CustomDicts.TryGetCustomSetFunction(invoke, out var customSetFunction))
             return customSetFunction;
 
-        var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(invoke);
+        var codeTokens = CodeParser.Parse(invoke);
+
+        foreach (var codeToken in codeTokens)
+        {
+            if (codeToken is CodeToken.ReadItem readItem)
+            {
+                 if(!context.DeclaredItems.Exists(readItem.ItemName))
+                     throw new Exception($"Unknown declaration '{readItem.ItemName}'");
+            }
+            else if (codeToken is CodeToken.WriteItem writeItem)
+            {
+                if(writeItem.ItemName.StartsWith(Consts.ControlChars.FunctionPrefix))
+                    throw new Exception($"Function '{writeItem.ItemName}' cannot be assigned a value. Code: '{invoke}'");
+
+                var variableName = writeItem.ItemName.TrimStart(Consts.ControlChars.VariablePrefix);
+                context.DeclaredItems.Variables.Add(new RuntimeVariable(new CustomItemName(variableName), type: null));
+            }
+        }
+
+        var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(codeTokens);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 
-    private IMatchFunction GetVariableInfoAndRawInvoke(string value, ParsingContext context)
+    private IMatchFunction CreateMatchFunctionWithSaveVariable(string value, ParsingContext context)
     {
         var prefix = Consts.ControlChars.WriteToVariablePrefix;
         if (value.StartsWith(prefix))

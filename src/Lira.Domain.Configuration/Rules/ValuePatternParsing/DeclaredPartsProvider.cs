@@ -1,8 +1,6 @@
-﻿using Lira.Common.Extensions;
+﻿using Lira.Domain.Configuration.Extensions;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
-using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -15,16 +13,7 @@ class DeclaredPartsProvider : IDeclaredPartsProvider
         _items = items;
     }
 
-    public IObjectTextPart Get(string name)
-    {
-        if (name.StartsWith(Consts.ControlChars.VariablePrefix))
-            return _items.Variables.GetOrThrow(name.TrimStart(Consts.ControlChars.VariablePrefix));
-        
-        if (name.StartsWith(Consts.ControlChars.FunctionPrefix))
-            return _items.Functions.GetOrThrow(name.TrimStart(Consts.ControlChars.FunctionPrefix));
-        
-        throw new Exception($"Unknown declaration '{name}'");
-    }
+    public IObjectTextPart Get(string name) => _items.Get(name);
 
     public IReadOnlyCollection<string> GetAllNamesDeclared()
     {

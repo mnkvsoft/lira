@@ -10,6 +10,6 @@ public interface IFunctionFactoryCSharp : IDisposable
     CreateFunctionResult<IAction> TryCreateAction(IDeclaredPartsProvider declaredPartsProvider, string code);
     CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(IDeclaredPartsProvider declaredPartsProvider, string code);
     CreateFunctionResult<ITransformFunction> TryCreateTransformFunction(string code);
-    CreateFunctionResult<IMatchFunctionTyped> TryCreateMatchFunction(string code);
+    CreateFunctionResult<IMatchFunctionTyped> TryCreateMatchFunction(IReadOnlyList code);
     CreateFunctionResult<IRequestMatcher> TryCreateRequestMatcher(string code);
 }

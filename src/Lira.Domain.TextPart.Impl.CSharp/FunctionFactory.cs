@@ -112,7 +112,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    public CreateFunctionResult<IMatchFunctionTyped> TryCreateMatchFunction(string code)
+    public CreateFunctionResult<IMatchFunctionTyped> TryCreateMatchFunction(IReadOnlyList code)
     {
         var sw = Stopwatch.StartNew();
 
