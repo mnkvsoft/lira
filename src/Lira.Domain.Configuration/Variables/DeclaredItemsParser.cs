@@ -5,7 +5,7 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.Impl;
 
 namespace Lira.Domain.Configuration.Variables;
 
@@ -30,28 +30,21 @@ class DeclaredItemsParser
         {
             ObjectTextParts parts = await _textPartsParser.Parse(pattern, newContext);
 
-            var (name, type) = nameWithType.SplitToTwoParts(Consts.ControlChars.SetType).Trim();
-            if (type != null)
-            {
-                switch (type)
-                {
-                    case Consts.Type.Json:
-                        parts = new ObjectTextParts([new JsonWrapper(parts, name)]);
-                        break;
-                    default:
-                        throw new Exception($"Unknown type '{type}' for '{name}'");
-                }
-            }
+            ReturnType? type = null;
+            var (name, typeStr) = nameWithType.SplitToTwoParts(Consts.ControlChars.SetType).Trim();
+
+            if (typeStr != null)
+                type = ReturnType.Parse(typeStr);
 
             if (name.StartsWith(Consts.ControlChars.VariablePrefix))
             {
-                var variable = new DeclaredVariable(new CustomItemName(name.TrimStart(Consts.ControlChars.VariablePrefix)), parts);
+                var variable = new DeclaredVariable(new CustomItemName(name.TrimStart(Consts.ControlChars.VariablePrefix)), parts, type);
                 all.Variables.Add(variable);
                 onlyNew.Variables.Add(variable);
             }
             else if (name.StartsWith(Consts.ControlChars.FunctionPrefix))
             {
-                var function = new Function(new CustomItemName(name.TrimStart(Consts.ControlChars.FunctionPrefix)), parts);
+                var function = new Function(new CustomItemName(name.TrimStart(Consts.ControlChars.FunctionPrefix)), parts, type);
                 all.Functions.Add(function);
                 onlyNew.Functions.Add(function);
             }

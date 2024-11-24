@@ -19,13 +19,4 @@ class Consts
         public const string TemplatePrefix = "@@";
         public const string AssignmentOperator = "=";
     }
-
-    public static class Type
-    {
-        public const string Json = "json";
-        public const string String = "str";
-        public const string Int = "int";
-        public const string Guid = "guid";
-        public const string Decimal = "dec";
-    }
 }

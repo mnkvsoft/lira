@@ -2,7 +2,7 @@
 
 public static class VariablesCollectionExtensions
 {
-    public static DeclaredVariable GetOrThrow(this IReadOnlyCollection<DeclaredVariable> vars, string name)
+    public static Variable GetOrThrow(this IReadOnlyCollection<Variable> vars, string name)
     {
         var result = vars.FirstOrDefault(v => v.Name == name);
         if (result == null)

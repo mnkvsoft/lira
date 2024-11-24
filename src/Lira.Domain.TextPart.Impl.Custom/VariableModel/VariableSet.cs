@@ -2,9 +2,9 @@
 
 namespace Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
-public class VariableSet : UniqueSet<DeclaredVariable>
+public class VariableSet : UniqueSet<Variable>
 {
-    public VariableSet(IReadOnlyCollection<DeclaredVariable> variables) : base(variables)
+    public VariableSet(IReadOnlyCollection<Variable> variables) : base(variables)
     {
     }
 

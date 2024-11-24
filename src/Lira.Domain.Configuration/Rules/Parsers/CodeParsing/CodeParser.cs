@@ -1,23 +1,7 @@
 using System.Text;
 using Lira.Domain.TextPart.Impl.Custom;
 
-namespace Lira.Domain.Configuration.Rules.Parsers;
-
-public abstract record CodeToken
-{
-    public record WriteVariable(string ItemName) : CodeToken
-    {
-        public override string ToString() => $"[:w {ItemName}]";
-    }
-    public record ReadVariable(string ItemName) : CodeToken
-    {
-        public override string ToString() => $"[:r {ItemName}]";
-    }
-    public record OtherCode(string Code) : CodeToken
-    {
-        public override string ToString() => $"[:c {Code}]";
-    }
-}
+namespace Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 
 public static class CodeParser
 {
@@ -90,10 +74,10 @@ public static class CodeParser
                     if (iterator.Current == '$')
                     {
                         sbAccessToVariable.Append(iterator.Current);
-                    }
 
-                    iterator.MoveNext();
-                    sbOtherCode.Append(iterator.Current);
+                        iterator.MoveNext();
+                        sbOtherCode.Append(iterator.Current);
+                    }
 
                     if (CustomItemName.IsAllowedCharInName(iterator.Current))
                     {
@@ -101,7 +85,12 @@ public static class CodeParser
                         sbAccessToVariable.Append(iterator.Current);
                         if (sbOtherCode.Length > 0)
                         {
-                            tokens.Add(new CodeToken.OtherCode(sbOtherCode.ToString()[..(sbOtherCode.Length - sbAccessToVariable.Length)]));
+                            int length = sbOtherCode.Length - sbAccessToVariable.Length;
+                            if (length > 0)
+                            {
+                                tokens.Add(new CodeToken.OtherCode(sbOtherCode.ToString()[..length]));
+                            }
+
                             sbOtherCode.Clear();
                         }
                     }
@@ -135,10 +124,9 @@ public static class CodeParser
             // case: $$variable= "value"
             else
             {
-                sbAccessToVariable.Append('=');
                 tokens.Add(new CodeToken.WriteVariable(sbAccessToVariable.ToString()));
                 sbAccessToVariable.Clear();
-                sbOtherCode.Clear().Append(iterator.Current);
+                sbOtherCode.Remove(0, sbOtherCode.Length - 2);
             }
 
             enterVariableName = false;
