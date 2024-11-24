@@ -226,6 +226,8 @@ class RequestMatchersParser
             if (parts[0] is PatternPart.Dynamic dyn)
             {
                 var (variableInfo, invoke) = GetVariableInfoAndRawInvoke(dyn.Value);
+
+
                 var matchFunction = CreateMatchFunction(invoke, context);
 
                 return new TextPatternPart.Dynamic(Start: null, End: null, WithSaveVariableIfNeed(matchFunction, variableInfo));
