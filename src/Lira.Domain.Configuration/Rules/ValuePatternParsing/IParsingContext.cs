@@ -18,12 +18,11 @@ public interface IReadonlyParsingContext
 
 class ParsingContext : IParsingContext, IReadonlyParsingContext
 {
-    public  DeclaredItems DeclaredItems { get; private set; }
-    public TemplateSet Templates { get; private set; }
     public CustomDicts CustomDicts { get; }
     public string RootPath { get; }
-    public string CurrentPath { get; private set; }
-
+    public  DeclaredItems DeclaredItems { get; private set; }
+    public string CurrentPath { get; private init; }
+    private TemplateSet Templates { get; set; }
 
     public ParsingContext(IReadonlyParsingContext context,
         string? currentPath = null,
