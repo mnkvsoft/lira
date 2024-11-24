@@ -16,7 +16,7 @@ public class GeneratingHttpDataParser
         _partsParser = textGeneratorFactory;
     }
 
-    public async Task<IReadOnlyCollection<GeneratingHeader>> ParseHeaders(FileBlock block, IParsingContext parsingContext)
+    public async Task<IReadOnlyCollection<GeneratingHeader>> ParseHeaders(FileBlock block, IReadonlyParsingContext parsingContext)
     {
         var headers = new List<GeneratingHeader>();
         var patterns = PatternParser.Parse(block.Lines);
@@ -35,7 +35,7 @@ public class GeneratingHttpDataParser
         return headers;
     }
 
-    public Task<ObjectTextParts> ParseText(string text, IParsingContext parsingContext)
+    public Task<ObjectTextParts> ParseText(string text, IReadonlyParsingContext parsingContext)
     {
         return _partsParser.Parse(text, parsingContext);
     }

@@ -1,5 +1,4 @@
-﻿using Lira.Domain;
-using Lira.Common.Extensions;
+﻿using Lira.Common.Extensions;
 using Lira.Domain.Actions;
 using Lira.Domain.Configuration;
 using Lira.Domain.Configuration.Rules;
@@ -21,7 +20,7 @@ class BlockName
 public class HttpSystemActionRegistrator : ISystemActionRegistrator
 {
     public string Name => "call.http";
-    public GeneratingHttpDataParser _generatingHttpDataParser;
+    private readonly GeneratingHttpDataParser _generatingHttpDataParser;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ITextPartsParser _partsParser;
 
@@ -36,7 +35,7 @@ public class HttpSystemActionRegistrator : ISystemActionRegistrator
         _partsParser = partsParser;
     }
 
-    public async Task<IAction> Create(FileSection section, IParsingContext parsingContext)
+    public async Task<IAction> Create(FileSection section, IReadonlyParsingContext parsingContext)
     {
         var methodAndUrl = section.GetSingleLine();
         var (methodStr, urlStr) = methodAndUrl.SplitToTwoPartsRequired(" ");
@@ -52,14 +51,14 @@ public class HttpSystemActionRegistrator : ISystemActionRegistrator
 
         if(headers?.FirstOrDefault(x => x.Name == "Content-Type") == null)
             throw new Exception("Header Content-Type is required");
-        
+
         var caller = new HttpAction(
-            _httpClientFactory, 
-            method, 
-            urlParts.WrapToTextParts(), 
-            bodyParts.WrapToTextParts(), 
+            _httpClientFactory,
+            method,
+            urlParts.WrapToTextParts(),
+            bodyParts.WrapToTextParts(),
             headers);
-        
+
         return caller;
     }
 }

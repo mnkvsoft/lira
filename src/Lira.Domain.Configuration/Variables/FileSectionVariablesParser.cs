@@ -9,6 +9,6 @@ class FileSectionDeclaredItemsParser
 
     public FileSectionDeclaredItemsParser(DeclaredItemsParser parser) => _parser = parser;
 
-    public Task<IReadonlyDeclaredItems> Parse(FileSection variablesSection, ParsingContext parsingContext)
+    public Task<DeclaredItems> Parse(FileSection variablesSection, IReadonlyParsingContext parsingContext)
         => _parser.Parse(variablesSection.LinesWithoutBlock, parsingContext);
 }

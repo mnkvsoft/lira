@@ -25,14 +25,14 @@ class ConfigurationReader(
         var sw = Stopwatch.StartNew();
 
         var templates = await TemplatesLoader.Load(path);
-        var customSets = await CustomDictsLoader.Load(path);
+        var customDicts = await CustomDictsLoader.Load(path);
 
         var context = new ParsingContext(
             new DeclaredItems(),
             templates,
-            customSets,
-            RootPath: path,
-            CurrentPath: path);
+            customDicts,
+            rootPath: path,
+            currentPath: path);
 
         using var scope = serviceScopeFactory.CreateScope();
         var provider = scope.ServiceProvider;
@@ -44,9 +44,10 @@ class ConfigurationReader(
         var globalVariablesParser = provider.GetRequiredService<DeclaredItemsLoader>();
 
         var variables = await globalVariablesParser.Load(context, path);
+        context.SetDeclaredItems(variables);
 
         var rulesLoader = provider.GetRequiredService<RulesLoader>();
-        var rules = await rulesLoader.LoadRules(path, context with { DeclaredItems = variables });
+        var rules = await rulesLoader.LoadRules(path, context);
 
         logger.LogInformation($"{rules.Count} rules were successfully loaded ({(int)sw.ElapsedMilliseconds} ms)");
 

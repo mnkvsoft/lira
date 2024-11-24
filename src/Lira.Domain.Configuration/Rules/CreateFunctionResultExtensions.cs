@@ -6,7 +6,7 @@ namespace Lira.Domain.Configuration.Rules;
 
 internal static class CreateFunctionResultExtensions
 {
-    public static T GetFunctionOrThrow<T>(this CreateFunctionResult<T> createFunctionResult, string invoke, ParsingContext context)
+    public static T GetFunctionOrThrow<T>(this CreateFunctionResult<T> createFunctionResult, string invoke, IReadonlyParsingContext context)
     {
         if (createFunctionResult is CreateFunctionResult<T>.Success success)
             return success.Function;

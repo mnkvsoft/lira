@@ -18,10 +18,10 @@ class DeclaredItemsParser
         _textPartsParser = textPartsParser;
     }
 
-    public async Task<IReadonlyDeclaredItems> Parse(IReadOnlyCollection<string> lines, ParsingContext parsingContext)
+    public async Task<DeclaredItems> Parse(IReadOnlyCollection<string> lines, IReadonlyParsingContext parsingContext)
     {
         var all = new DeclaredItems(parsingContext.DeclaredItems);
-        var newContext = parsingContext with { DeclaredItems = all };
+        var newContext = new ParsingContext(parsingContext, declaredItems: all);
 
         var onlyNew = new DeclaredItems();
 

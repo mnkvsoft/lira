@@ -38,9 +38,14 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly Cache _cache;
     private readonly IRangesProvider _rangesProvider;
 
-    public FunctionFactory(IConfiguration configuration, ILoggerFactory loggerFactory,
+    public FunctionFactory(
+        IConfiguration configuration,
+        ILoggerFactory loggerFactory,
         DynamicAssembliesUnloader unLoader,
-        Compiler compiler, CompilationStatistic compilationStatistic, Cache cache, IRangesProvider rangesProvider)
+        Compiler compiler,
+        CompilationStatistic compilationStatistic,
+        Cache cache,
+        IRangesProvider rangesProvider)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _path = configuration.GetRulesPath();

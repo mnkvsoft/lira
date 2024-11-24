@@ -288,7 +288,7 @@ class RequestMatchersParser
         return new MatchFunctionWithSaveVariable(matchFunction, variableInfo, _variablesProvider);
     }
 
-    private IMatchFunctionTyped CreateMatchFunction(string invoke, ParsingContext context)
+    private IMatchFunctionTyped CreateMatchFunction(string invoke, IReadonlyParsingContext context)
     {
         if (invoke.StartsWith(Consts.ControlChars.TemplatePrefix))
         {

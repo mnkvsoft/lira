@@ -1,4 +1,3 @@
-using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.FileSectionFormat;
@@ -14,17 +13,17 @@ internal class DeclaredItemsLoader
         _parser = parser;
     }
 
-    public async Task<IReadonlyDeclaredItems> Load(ParsingContext parsingContext, string path)
+    public async Task<DeclaredItems> Load(IReadonlyParsingContext parsingContext, string path)
     {
         var result = new DeclaredItems();
-        var newContext = parsingContext with { DeclaredItems = result };
-        
+        var newContext = new ParsingContext(parsingContext, declaredItems: result);
+
         foreach (var variableFile in DirectoryHelper.GetFiles(path, "*.declare"))
         {
             try
             {
                 var lines = TextCleaner.DeleteEmptiesAndComments(await File.ReadAllTextAsync(variableFile));
-                result.Add(await _parser.Parse(lines, newContext with { CurrentPath = variableFile.GetDirectory()}));
+                result.Add(await _parser.Parse(lines, newContext.WithCurrentPath(variableFile.GetDirectory())));
             }
             catch (Exception exc)
             {

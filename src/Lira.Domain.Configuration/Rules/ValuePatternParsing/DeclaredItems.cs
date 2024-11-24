@@ -3,7 +3,7 @@ using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
-interface IReadonlyDeclaredItems
+public interface IReadonlyDeclaredItems
 {
     IReadOnlyCollection<DeclaredVariable> Variables { get; }
 

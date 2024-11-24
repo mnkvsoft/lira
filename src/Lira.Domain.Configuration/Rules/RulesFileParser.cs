@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.Actions;
 using Lira.Domain.Configuration.Rules.Parsers;
@@ -36,19 +35,19 @@ internal class RuleFileParser
         _actionsParser = actionsParser;
     }
 
-    public async Task<IReadOnlyCollection<Rule>> Parse(string ruleFile, ParsingContext parsingContext)
+    public async Task<IReadOnlyCollection<Rule>> Parse(string ruleFile, IReadonlyParsingContext parsingContext)
     {
         var sections = await SectionFileParser.Parse(ruleFile);
 
-        AssertContainsOnlySections(sections, new[] { Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Templates });
+        AssertContainsOnlySections(sections, [Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Templates]);
 
-        var ctx = parsingContext with { CurrentPath = ruleFile.GetDirectory() };
+        var ctx = new ParsingContext(parsingContext, currentPath: ruleFile.GetDirectory());
 
-        var templates = GetTemplates(sections, parsingContext);
-        ctx = ctx with { Templates = templates };
+        var templates = GetTemplates(sections, ctx);
+        ctx.SetTemplates(templates);
 
-        var variables = await GetDeclaredItems(sections, parsingContext);
-        ctx = ctx with { DeclaredItems = variables };
+        var declaredItems = await GetDeclaredItems(sections, ctx);
+        ctx.SetDeclaredItems(declaredItems);
 
         var rules = new List<Rule>();
         var ruleSections = sections.Where(s => s.Name == Constants.SectionName.Rule).ToArray();
@@ -71,20 +70,21 @@ internal class RuleFileParser
     private async Task<IReadOnlyCollection<Rule>> CreateRules(
         string ruleName,
         FileSection ruleSection,
-        ParsingContext parsingContext)
+        IReadonlyParsingContext parsingContext)
     {
         var childSections = ruleSection.ChildSections;
 
         if (childSections.Count == 0)
             throw new Exception("Rule section is empty");
 
-        var requestMatchers = _requestMatchersParser.Parse(ruleSection, parsingContext);
+        var ctx = new ParsingContext(parsingContext);
+        var requestMatchers = _requestMatchersParser.Parse(ruleSection, ctx);
 
         var templates = GetTemplates(childSections, parsingContext);
-        var ctx = parsingContext with { Templates = templates };
+        ctx.SetTemplates(templates);
 
-        var variables = await GetDeclaredItems(childSections, ctx);
-        ctx = ctx with { DeclaredItems = variables };
+        var declaredItems = await GetDeclaredItems(childSections, ctx);
+        ctx.SetDeclaredItems(declaredItems);
 
         ResponseStrategy responseStrategy;
         IReadOnlyCollection<Delayed<IAction>> externalCallers;
@@ -97,7 +97,7 @@ internal class RuleFileParser
 
         if (existsConditionSection)
         {
-            AssertContainsOnlySections(childSections, new[] { Constants.SectionName.Condition, Constants.SectionName.Declare, Constants.SectionName.Templates });
+            AssertContainsOnlySections(childSections, [Constants.SectionName.Condition, Constants.SectionName.Declare, Constants.SectionName.Templates]);
 
             var conditionSections = childSections.Where(s => s.Name == Constants.SectionName.Condition).ToArray();
 
@@ -113,7 +113,7 @@ internal class RuleFileParser
                 AssertContainsOnlySections(
                     childConditionSections, _actionsParser.GetSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare));
 
-                ctx = ctx with { DeclaredItems = await GetDeclaredItems(childConditionSections, ctx) };
+                ctx.SetDeclaredItems(await GetDeclaredItems(childConditionSections, ctx));
 
                 responseStrategy = await _responseStrategyParser.Parse(conditionSection, ctx);
                 externalCallers = await _actionsParser.Parse(childConditionSections, ctx);
@@ -194,7 +194,7 @@ internal class RuleFileParser
             responseStrategy)};
     }
 
-    private IReadOnlyCollection<Template> GetTemplates(IReadOnlyCollection<FileSection> childSections, ParsingContext parsingContext)
+    private TemplateSet GetTemplates(IReadOnlyCollection<FileSection> childSections, IReadonlyParsingContext parsingContext)
     {
         var result = new TemplateSet(parsingContext.Templates);
 
@@ -205,7 +205,7 @@ internal class RuleFileParser
         return result;
     }
 
-    private async Task<IReadonlyDeclaredItems> GetDeclaredItems(IReadOnlyCollection<FileSection> childSections, ParsingContext parsingContext)
+    private async Task<DeclaredItems> GetDeclaredItems(IReadOnlyCollection<FileSection> childSections, IReadonlyParsingContext parsingContext)
     {
         var result = new DeclaredItems(parsingContext.DeclaredItems);
 

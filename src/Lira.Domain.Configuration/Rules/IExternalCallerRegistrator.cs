@@ -8,5 +8,5 @@ public interface ISystemActionRegistrator
 {
     string Name { get; }
 
-    Task<IAction> Create(FileSection section, IParsingContext parsingContext);
+    Task<IAction> Create(FileSection section, IReadonlyParsingContext parsingContext);
 }

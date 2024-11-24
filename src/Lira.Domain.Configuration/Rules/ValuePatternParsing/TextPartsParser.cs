@@ -12,7 +12,7 @@ namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
 public interface ITextPartsParser
 {
-    Task<ObjectTextParts> Parse(string pattern, IParsingContext parsingContext);
+    Task<ObjectTextParts> Parse(string pattern, IReadonlyParsingContext parsingContext);
 }
 
 class TextPartsParser : ITextPartsParser
@@ -36,7 +36,7 @@ class TextPartsParser : ITextPartsParser
         _logger = loggerFactory.CreateLogger(GetType());
     }
 
-    public async Task<ObjectTextParts> Parse(string pattern, IParsingContext parsingContext)
+    public async Task<ObjectTextParts> Parse(string pattern, IReadonlyParsingContext parsingContext)
     {
         var patternParts = PatternParser.Parse(pattern);
 
@@ -169,7 +169,7 @@ class TextPartsParser : ITextPartsParser
     }
 
     private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadPartsFromTemplate(
-        ParsingContext context, string invoke)
+        IReadonlyParsingContext context, string invoke)
     {
         if (invoke.StartsWith(Consts.ControlChars.TemplatePrefix))
         {

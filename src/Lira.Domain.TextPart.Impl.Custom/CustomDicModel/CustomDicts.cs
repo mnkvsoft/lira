@@ -3,9 +3,25 @@ using Lira.Common.Extensions;
 using Lira.Domain.Matching.Request;
 
 namespace Lira.Domain.TextPart.Impl.Custom.CustomDicModel;
-public class CustomDicts
+
+public interface IReadOnlyCustomDicts
 {
-    private readonly Dictionary<string, CustomSetFunction> _map = new();
+    bool TryGetCustomSetFunction(string name, [MaybeNullWhen(false)] out CustomSetFunction function);
+    IReadOnlyCollection<string> GetRegisteredNames();
+}
+public class CustomDicts : IReadOnlyCustomDicts
+{
+    private readonly Dictionary<string, CustomSetFunction> _map;
+
+    public CustomDicts(IReadOnlyCustomDicts customDicts)
+    {
+        _map = ((CustomDicts)customDicts)._map.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    }
+
+    public CustomDicts()
+    {
+        _map = new Dictionary<string, CustomSetFunction>();
+    }
 
     public void Add(string name, IReadOnlyList<string> lines)
     {

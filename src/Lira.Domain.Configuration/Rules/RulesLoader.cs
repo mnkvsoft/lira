@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using Microsoft.Extensions.Logging;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
 namespace Lira.Domain.Configuration.Rules;
@@ -7,16 +5,10 @@ namespace Lira.Domain.Configuration.Rules;
 internal class RulesLoader
 {
     private readonly RuleFileParser _ruleFileParser;
-    
-    private readonly ILogger _logger;
 
-    public RulesLoader(ILoggerFactory loggerFactory, RuleFileParser ruleFileParser)
-    {
-        _ruleFileParser = ruleFileParser;
-        _logger = loggerFactory.CreateLogger(GetType());
-    }
-    
-    public async Task<IReadOnlyCollection<Rule>> LoadRules(string path, ParsingContext parsingContext)
+    public RulesLoader(RuleFileParser ruleFileParser) => _ruleFileParser = ruleFileParser;
+
+    public async Task<IReadOnlyCollection<Rule>> LoadRules(string path, IReadonlyParsingContext parsingContext)
     {
         var rulesFiles = DirectoryHelper.GetFiles(path, "*.rules");
         var rules = new List<Rule>(rulesFiles.Count * 3);
@@ -32,7 +24,7 @@ internal class RulesLoader
                 throw new FileParsingException(ruleFile, exc);
             }
         }
-        
+
         return rules;
     }
 }
