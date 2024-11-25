@@ -1,6 +1,6 @@
 --------------------------------------- rule
 
-GET /cache/condition/{{:id int }}
+GET /cache/condition/{{ >> $$id int }}
 
 -------------------- condition
 
@@ -24,7 +24,7 @@ $$response:json =
 
 ----- action
 
-cache.set("condition_" + value("id"), $$response)
+cache.set("condition_" + $$id, $$response)
 
 
 -------------------- condition
@@ -38,6 +38,6 @@ attempt = 2
 
 ~ body
 {{
-    cache.get("condition_" + value("id"))
+    cache.get("condition_" + $$id)
         .replace("status", "ok")
 }}

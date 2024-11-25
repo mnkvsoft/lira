@@ -5,7 +5,7 @@ namespace Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 public record Function : IObjectTextPart, IUniqueSetItem
 {
     private readonly IReadOnlyCollection<IObjectTextPart> _parts;
-    private readonly ReturnType? _type;
+    public readonly ReturnType? Type;
 
     private readonly CustomItemName _name;
     public string Name => _name.Value;
@@ -14,7 +14,7 @@ public record Function : IObjectTextPart, IUniqueSetItem
     public Function(CustomItemName name, IReadOnlyCollection<IObjectTextPart> parts, ReturnType? type)
     {
         _parts = parts;
-        _type = type;
+        Type = type;
         _name = name;
     }
 
@@ -23,14 +23,14 @@ public record Function : IObjectTextPart, IUniqueSetItem
         var value = await _parts.Generate(context);
         dynamic? valueToReturn = value;
 
-        if (_type != null)
+        if (Type != null)
         {
-            if (!TypedValueCreator.TryCreate(_type, value, out dynamic? valueTyped, out Exception exc))
+            if (!TypedValueCreator.TryCreate(Type, value, out dynamic? valueTyped, out Exception exc))
             {
                 throw new Exception(
                     $"Can't cast value '{value}' " +
                     $"of type '{value?.GetType()}' " +
-                    $"to type '{_type}'" +
+                    $"to type '{Type}'" +
                     $"for return from function '{Name}'",
                     exc);
             }

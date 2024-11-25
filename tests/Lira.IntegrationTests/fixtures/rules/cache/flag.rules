@@ -1,13 +1,13 @@
 -------------------- declare
 
-$response:json = 
+$response:json =
 {
   "status": ""
 }
 
 -------------------- rule
 
-POST /cache/flag/{{:id int }}
+POST /cache/flag/{{ >> $$id int }}
 
 ## the first request has a header
 ~ headers
@@ -19,13 +19,13 @@ Request-Id: reject_scenario
 200
 
 ~ body
-{{ 
+{{
     $response
         .replace("status", "pending")
 }}
 
 ----- action
-cache.setFlag("reject_scenario_" + value("id"))
+cache.setFlag("reject_scenario_" + $$id)
 
 
 -------------------- rule
@@ -40,7 +40,7 @@ GET /cache/flag/{{ cache.contains("reject_scenario_" + value) }}
 200
 
 ~ body
-{{ 
+{{
     $response
         .replace("status", "reject")
 }}

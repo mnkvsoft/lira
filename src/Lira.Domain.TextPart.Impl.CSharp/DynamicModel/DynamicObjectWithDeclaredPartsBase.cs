@@ -1,7 +1,5 @@
 // ReSharper disable UnusedMember.Global
 
-using System.Text;
-
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
 public class DynamicObjectWithDeclaredPartsBase : DynamicObjectBase

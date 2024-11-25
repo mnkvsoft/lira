@@ -13,6 +13,7 @@ using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.TextPart.Types;
 using Lira.Domain.DataModel;
+using Microsoft.Extensions.Primitives;
 
 // ReSharper disable RedundantExplicitArrayCreation
 
@@ -59,7 +60,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     }
 
     public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(
-        IDeclaredPartsProvider declaredPartsProvider, string code)
+        IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
 
@@ -83,7 +84,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    public CreateFunctionResult<ITransformFunction> TryCreateTransformFunction(string code)
+    public CreateFunctionResult<ITransformFunction> TryCreateTransformFunction(CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
 
@@ -91,7 +92,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         string className = GetClassName(prefix, code);
         var customAssemblies = GetCustomAssemblies();
 
-        var (withoutUsings, usings) = ExtractUsings(code);
+        var (withoutUsings, usings) = ExtractUsings(code.ToString());
 
         string classToCompile = ClassCodeCreator.CreateTransformFunction(
             className,
@@ -112,14 +113,15 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    public CreateFunctionResult<IMatchFunctionTyped> TryCreateMatchFunction(IReadOnlyList code)
+    public CreateFunctionResult<IMatchFunctionTyped> TryCreateMatchFunction(IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
 
         string prefix = "MatchFunction";
         string className = GetClassName(prefix, code);
         var customAssemblies = GetCustomAssemblies();
-        var (withoutUsings, usings) = ExtractUsings(code);
+
+        var (withoutUsings, usings) = ExtractUsingsAndReplaceVars(code, declaredPartsProvider);
 
         string classToCompile = ClassCodeCreator.CreateMatchFunction(
             className,
@@ -141,14 +143,14 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    public CreateFunctionResult<IRequestMatcher> TryCreateRequestMatcher(string code)
+    public CreateFunctionResult<IRequestMatcher> TryCreateRequestMatcher(IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
 
         string prefix = "RequestMatcher";
         string className = GetClassName(prefix, code);
         var customAssemblies = GetCustomAssemblies();
-        var (withoutUsings, usings) = ExtractUsings(code);
+        var (withoutUsings, usings) = ExtractUsingsAndReplaceVars(code, declaredPartsProvider);
         string classToCompile = ClassCodeCreator.CreateRequestMatcher(
             className,
             GetMethodBody(new Code(ForCompile: withoutUsings, Source: code)),
@@ -162,14 +164,14 @@ class FunctionFactory : IFunctionFactoryCSharp
             classToCompile,
             className,
             customAssemblies.PeImages,
-            new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider));
+            new DynamicObjectWithDeclaredPartsBase.Dependencies(new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider), declaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
         return result;
     }
 
-    public CreateFunctionResult<IAction> TryCreateAction(IDeclaredPartsProvider declaredPartsProvider, string code)
+    public CreateFunctionResult<IAction> TryCreateAction(IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
 
@@ -200,7 +202,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     {
         var compileResult = _compiler.Compile(
             new CompileUnit(
-                new[] { classToCompile },
+                [classToCompile],
                 AssemblyName: GetAssemblyName(assemblyPrefixName + className),
                 new UsageAssemblies(
                     AssembliesLocations: GetAssembliesLocations(),
@@ -218,7 +220,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         return new CreateFunctionResult<TFunction>.Success(function);
     }
 
-    private IReadOnlyCollection<string>? _assembliesLocations = null;
+    private IReadOnlyCollection<string>? _assembliesLocations;
     private IReadOnlyCollection<string> GetAssembliesLocations()
     {
         if (_assembliesLocations != null)
@@ -241,7 +243,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    private IReadOnlyCollection<string>? _dllLocations = null;
+    private IReadOnlyCollection<string>? _dllLocations;
     private IReadOnlyCollection<string> GetDllFilesLocations()
     {
         if (_dllLocations != null)
@@ -317,26 +319,34 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    const string ContextParameterName = "__ctxt";
+    const string ContextParameterName = "__ctx";
 
     private static string CreateGeneratingFunctionClassCode(
         string className,
         IReadOnlyCollection<Assembly> customAssemblies,
         IDeclaredPartsProvider declaredPartsProvider,
-        string code)
+        CodeBlock code)
     {
         const string repeatFunctionName = "repeat";
 
-        var (withoutUsings, usings) = ExtractUsings(code);
-
-        withoutUsings = withoutUsings.StartsWith(repeatFunctionName)
-            ? ReplaceVariableNamesForRepeat(withoutUsings, declaredPartsProvider).Replace(repeatFunctionName, "await " + repeatFunctionName)
-            : ReplaceVariableNames(withoutUsings, declaredPartsProvider, ContextParameterName);
+        var sourceCode = code.ToString();
+        string toCompile;
+        IReadOnlyCollection<string> usings;
+        if (sourceCode.StartsWith(repeatFunctionName))
+        {
+            toCompile = ReplaceVariableNamesForRepeat(code)
+                .Replace(repeatFunctionName, "await " + repeatFunctionName);
+            usings = Array.Empty<string>();
+        }
+        else
+        {
+            (toCompile, usings) = ExtractUsingsAndReplaceVars(code, declaredPartsProvider);
+        }
 
         string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
             className,
             GetMethodBody(new Code(
-                ForCompile: withoutUsings,
+                ForCompile: toCompile,
                 Source: code)),
             ContextParameterName,
             ReservedVariable.Req,
@@ -348,18 +358,69 @@ class FunctionFactory : IFunctionFactoryCSharp
         return classToCompile;
     }
 
+    private static string ReplaceVariableNamesForRepeat(CodeBlock code)
+    {
+        var sbCodeWithLiraItems = new StringBuilder();
+
+        foreach (var token in code.Tokens)
+        {
+            if (token is CodeToken.OtherCode otherCode)
+            {
+                sbCodeWithLiraItems.Append(otherCode.Code);
+            }
+            else if(token is CodeToken.ReadItem readItem)
+            {
+                sbCodeWithLiraItems.Append($"GetDeclaredPart(\"{readItem.ItemName}\")");
+            }
+            else
+            {
+                throw new Exception($"Unexpected token type: {token.GetType()}");
+            }
+
+        }
+
+        return sbCodeWithLiraItems.ToString();
+    }
+
+    private static string ReplaceVariableNames(CodeBlock code, IDeclaredPartsProvider declaredPartsProvider)
+    {
+        var sbCodeWithLiraItems = new StringBuilder();
+
+        foreach (var token in code.Tokens)
+        {
+            if (token is CodeToken.OtherCode otherCode)
+            {
+                sbCodeWithLiraItems.Append(otherCode.Code);
+            }
+            else if(token is CodeToken.ReadItem readItem)
+            {
+                var type = declaredPartsProvider.GetPartType(readItem.ItemName);
+
+                sbCodeWithLiraItems.Append($"({(type == null ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
+                                           $"\"{readItem.ItemName}\", {ContextParameterName})))");
+            }
+            else
+            {
+                throw new Exception($"Unexpected token type: {token.GetType()}");
+            }
+
+        }
+
+        return sbCodeWithLiraItems.ToString();
+    }
+
     private static string CreateActionClassCode(
         string className,
         IReadOnlyCollection<Assembly> customAssemblies,
         IDeclaredPartsProvider declaredPartsProvider,
-        string code)
+        CodeBlock code)
     {
-        var (withoutUsings, usings) = ExtractUsings(code);
+        var (withoutUsings, usings) = ExtractUsingsAndReplaceVars(code, declaredPartsProvider);
 
         string classToCompile = ClassCodeCreator.CreateAction(
             className,
             WrapToTryCatch(new Code(
-                ForCompile: ReplaceVariableNames(withoutUsings, declaredPartsProvider, ContextParameterName) + ";",
+                ForCompile: withoutUsings + ";",
                 Source: code)),
             ContextParameterName,
             ReservedVariable.Req,
@@ -388,12 +449,18 @@ class FunctionFactory : IFunctionFactoryCSharp
             .ToArray();
     }
 
-    private static (string Code, IReadOnlyCollection<string> Usings) ExtractUsings(string code)
+    private static (string Code, IReadOnlyCollection<string> Usings) ExtractUsingsAndReplaceVars(CodeBlock code, IDeclaredPartsProvider declaredPartsProvider)
     {
-        StringBuilder newCode = new();
+        var codeWithVariables = ReplaceVariableNames(code, declaredPartsProvider);
+        return ExtractUsings(codeWithVariables);
+    }
+
+    private static (string Code, IReadOnlyCollection<string> Usings) ExtractUsings(string codeWithVariables)
+    {
+        var newCode = new StringBuilder();
         var usings = new List<string>();
 
-        foreach (var line in code.Split(Constants.NewLine))
+        foreach (var line in codeWithVariables.Split(Constants.NewLine))
         {
             if (line.StartsWith("@using"))
             {
@@ -407,7 +474,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         return (newCode.ToString(), usings);
     }
 
-    record Code(string ForCompile, string Source);
+    record Code(string ForCompile, CodeBlock Source);
 
     private static string GetMethodBody(Code code)
     {
@@ -432,7 +499,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private static string WrapToTryCatch(Code code)
     {
-        string escapedCode = code.Source
+        string escapedCode = code.Source.ToString()
             .Replace("\\", "\\\\")
             .Replace("\"", "\\\"")
             .Replace("\r\n", "\" + nl + \"")
@@ -451,28 +518,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             }";
     }
 
-    private static string ReplaceVariableNames(string code, IDeclaredPartsProvider declaredPartsProvider,
-        string requestParameterName)
-    {
-        foreach (var name in declaredPartsProvider.GetAllNamesDeclared())
-        {
-            code = code.Replace(name,
-                $"(await GetDeclaredPart(" +
-                $"\"{name}\", {requestParameterName}))");
-        }
-
-        return code;
-    }
-
-    private static string ReplaceVariableNamesForRepeat(string code, IDeclaredPartsProvider declaredPartsProvider)
-    {
-        foreach (var name in declaredPartsProvider.GetAllNamesDeclared())
-        {
-            code = code.Replace(name, $"GetDeclaredPart(\"{name}\")");
-        }
-
-        return code;
-    }
+    private static string GetClassName(string prefix, CodeBlock code) => GetClassName(prefix, code.ToString());
 
     private static string GetClassName(string prefix, params string[] codes)
     {

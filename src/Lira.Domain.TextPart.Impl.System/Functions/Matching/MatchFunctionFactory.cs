@@ -45,7 +45,7 @@ internal class MatchFunctionFactory
             return false;
 
         if (function is not IMatchFunctionTyped matchPrettyFunction)
-            throw new Exception($"Function {functionType} not implemented {nameof(IMatchFunctionSystem)}");
+            throw new Exception($"Function {functionType} not implemented {nameof(IMatchFunctionTyped)}");
 
         function.SetArgumentIfNeed(argument);
 
@@ -64,7 +64,7 @@ internal class MatchFunctionFactory
     private static IReadOnlyCollection<Type> GetMatchFunctionTypes()
     {
         var result = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => t.IsAssignableTo(typeof(IMatchFunctionSystem)) && !t.IsAbstract).ToArray();
+            .Where(t => t.IsAssignableTo(typeof(IMatchFunctionTyped)) && !t.IsAbstract).ToArray();
         return result;
     }
 }

@@ -33,6 +33,6 @@ record PatternParts : IReadOnlyList<PatternPart>
 
     public override string ToString()
     {
-        return string.Join("", _parts.Select(x => x.ToString()));
+        return string.Concat(_parts.Select(x => x.ToString()));
     }
 }

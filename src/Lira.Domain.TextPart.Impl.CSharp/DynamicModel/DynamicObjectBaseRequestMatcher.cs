@@ -6,9 +6,9 @@ using Lira.Domain.Matching.Request;
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
 // ReSharper disable once UnusedType.Global
-public abstract class DynamicObjectBaseRequestMatcher : DynamicObjectBaseMatch, IRequestMatcher
+public abstract class DynamicObjectBaseRequestMatcher : DynamicObjectWithDeclaredPartsBase, IRequestMatcher
 {
-    protected DynamicObjectBaseRequestMatcher(DependenciesBase dependencies) : base(dependencies)
+    protected DynamicObjectBaseRequestMatcher(Dependencies dependencies) : base(dependencies)
     {
         //\$\$[a-zA-Z0-9\._]+\s+=(?=[^=])
     }

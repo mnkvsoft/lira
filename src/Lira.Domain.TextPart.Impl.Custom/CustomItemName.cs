@@ -33,6 +33,7 @@ public readonly struct CustomItemName : IEquatable<CustomItemName>
     }
 
     public static bool IsAllowedCharInName(char c) => char.IsLetter(c) || char.IsDigit(c) || c == '_' || c == '.';
+    public static bool IsAllowedFirstCharInName(char c) => char.IsLetter(c) || char.IsDigit(c) || c == '_';
 
     public bool Equals(CustomItemName other)
     {

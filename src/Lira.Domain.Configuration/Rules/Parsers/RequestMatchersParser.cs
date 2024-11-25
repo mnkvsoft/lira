@@ -2,8 +2,8 @@ using System.Web;
 using Lira.Domain.Matching.Request;
 using Lira.Domain.Matching.Request.Matchers;
 using Lira.Common.Extensions;
-using Lira.Domain.Configuration.Extensions;
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
+using Lira.Domain.Configuration.Rules.Parsers.Utils;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
@@ -106,7 +106,9 @@ class RequestMatchersParser
 
     private IRequestMatcher CreateCustomRequestMatcher(string code, ParsingContext context)
     {
-        var matcher = _functionFactoryCSharp.TryCreateRequestMatcher(code);
+        var codeBlock = CodeParser.Parse(code);
+        CodeTokenUtils.HandlerTokenWithAccessToItem(code, context, codeBlock.Tokens);
+        var matcher = _functionFactoryCSharp.TryCreateRequestMatcher(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return matcher.GetFunctionOrThrow(code, context);
     }
 
@@ -292,26 +294,11 @@ class RequestMatchersParser
         if (context.CustomDicts.TryGetCustomSetFunction(invoke, out var customSetFunction))
             return customSetFunction;
 
-        var codeTokens = CodeParser.Parse(invoke);
+        var codeBlock = CodeParser.Parse(invoke);
 
-        foreach (var codeToken in codeTokens)
-        {
-            if (codeToken is CodeToken.ReadItem readItem)
-            {
-                 if(!context.DeclaredItems.Exists(readItem.ItemName))
-                     throw new Exception($"Unknown declaration '{readItem.ItemName}'");
-            }
-            else if (codeToken is CodeToken.WriteItem writeItem)
-            {
-                if(writeItem.ItemName.StartsWith(Consts.ControlChars.FunctionPrefix))
-                    throw new Exception($"Function '{writeItem.ItemName}' cannot be assigned a value. Code: '{invoke}'");
+        CodeTokenUtils.HandlerTokenWithAccessToItem(invoke, context, codeBlock.Tokens);
 
-                var variableName = writeItem.ItemName.TrimStart(Consts.ControlChars.VariablePrefix);
-                context.DeclaredItems.Variables.Add(new RuntimeVariable(new CustomItemName(variableName), type: null));
-            }
-        }
-
-        var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(codeTokens);
+        var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 
@@ -327,7 +314,7 @@ class RequestMatchersParser
 
             var matchFunction = CreateMatchFunction(invoke, context);
 
-            var variable = new RuntimeVariable(new CustomItemName(name), type ?? matchFunction.ValueType);
+            var variable = new RuntimeVariable(new CustomItemName(name.TrimStart(Consts.ControlChars.VariablePrefix)), type ?? matchFunction.ValueType);
             context.DeclaredItems.Variables.Add(variable);
             return new MatchFunctionWithSaveVariable(matchFunction, variable);
         }

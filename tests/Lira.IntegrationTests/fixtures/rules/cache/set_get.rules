@@ -1,10 +1,10 @@
 -------------------- rule
 
-GET /cache/set_get/{{:id int }}?comment={{ any }}
+GET /cache/set_get/{{ >> $$id int }}?comment={{ any }}
 
 ----- declare
 
-$$response.body = 
+$$response.body =
 {
     "comment": "{{ req.query: comment }}"
 }
@@ -15,13 +15,13 @@ $$response.body =
 {{ $$response.body }}
 
 ----- action
-cache.set("cache_" + value("id"), $$response.body, "2 second")
+cache.set("cache_" + $$id, $$response.body, "2 second")
 
 -------------------- rule
 
-GET /cache/set_get/{{:id cache.contains("cache_" + value) }}?comment={{ any }}
+GET /cache/set_get/{{ >> $$id cache.contains("cache_" + value) }}?comment={{ any }}
 
 ----- response
 
 ~ body
-{{ cache.get("cache_" + value("id")) }}
+{{ cache.get("cache_" + $$id) }}

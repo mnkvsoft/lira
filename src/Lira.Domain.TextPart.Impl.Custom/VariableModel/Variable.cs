@@ -10,12 +10,12 @@ public abstract record Variable : IUniqueSetItem, IObjectTextPart
     public string Name => _name.Value;
     public string EntityName => "variable";
 
-    private readonly ReturnType? _type;
+    public readonly ReturnType? Type;
 
     protected Variable(CustomItemName name, ReturnType? type)
     {
         _name = name;
-        _type = type;
+        Type = type;
     }
 
     private static readonly object NullValue = new();
@@ -28,36 +28,42 @@ public abstract record Variable : IUniqueSetItem, IObjectTextPart
         if (values.TryGetValue(_name, out var value))
             return ReferenceEquals(value, NullValue) ? null : value;
 
-        var initValue = await GetInitiatedValue(ctx);
-        SetValue(ctx, initValue);
+        var initValue = GetValueTyped(await GetInitiatedValue(ctx));
+        SetValueInternal(ctx, initValue);
         return initValue;
     }
 
     public void SetValue(RuleExecutingContext ctx, dynamic? value)
     {
-        dynamic? valueToSave = value;
+        SetValueInternal(ctx, GetValueTyped(value));
+    }
 
-        if (_type != null)
-        {
-            if (!TypedValueCreator.TryCreate(_type, value, out dynamic? valueTyped, out Exception exc))
-            {
-                throw new Exception(
-                    $"Can't cast value '{value}' " +
-                    $"of type '{value?.GetType()}' " +
-                    $"to type '{_type}'" +
-                    $"for write to variable '{Name}'",
-                    exc);
-            }
-
-            valueToSave = valueTyped;
-        }
-
+    private void SetValueInternal(RuleExecutingContext ctx, dynamic valueToSave)
+    {
         var values = GetVariableValues(ctx);
 
         if (valueToSave == null)
             values[_name] = NullValue;
         else
             values[_name] = valueToSave;
+    }
+
+    private dynamic? GetValueTyped(dynamic? value)
+    {
+        if (Type == null)
+            return value;
+
+        if (!TypedValueCreator.TryCreate(Type, value, out dynamic? valueTyped, out Exception exc))
+        {
+            throw new Exception(
+                $"Can't cast value '{value}' " +
+                $"of type '{value?.GetType()}' " +
+                $"to type '{Type}'" +
+                $"for write to variable '{Name}'",
+                exc);
+        }
+
+        return valueTyped;
     }
 
     private static Dictionary<CustomItemName, dynamic?> GetVariableValues(RuleExecutingContext ctx)

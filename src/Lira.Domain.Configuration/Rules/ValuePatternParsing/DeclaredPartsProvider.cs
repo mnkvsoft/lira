@@ -1,6 +1,7 @@
 ﻿using Lira.Domain.Configuration.Extensions;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
+using Lira.Common.Extensions;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -15,11 +16,17 @@ class DeclaredPartsProvider : IDeclaredPartsProvider
 
     public IObjectTextPart Get(string name) => _items.Get(name);
 
-    public IReadOnlyCollection<string> GetAllNamesDeclared()
+    public ReturnType? GetPartType(string name)
     {
-        return _items.Variables
-                .Select(v => Consts.ControlChars.VariablePrefix + v.Name)
-                .Union(_items.Functions.Select(f => Consts.ControlChars.FunctionPrefix + f.Name))
-                .ToArray();
+        var variable = _items.Variables
+            .FirstOrDefault(v => v.Name == name.TrimStart(Consts.ControlChars.VariablePrefix));
+
+        if (variable != null)
+            return variable.Type;
+
+        var function = _items.Functions
+            .FirstOrDefault(v => v.Name == name.TrimStart(Consts.ControlChars.FunctionPrefix));
+
+        return function?.Type;
     }
 }

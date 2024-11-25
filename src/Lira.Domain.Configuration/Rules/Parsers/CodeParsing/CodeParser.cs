@@ -1,11 +1,12 @@
 using System.Text;
+using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.Custom;
 
 namespace Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 
 public static class CodeParser
 {
-    public static IReadOnlyCollection<CodeToken> Parse(string code)
+    public static CodeBlock Parse(string code)
     {
         var tokens = new List<CodeToken>();
         bool enterVariableName = false;
@@ -79,7 +80,7 @@ public static class CodeParser
                         sbOtherCode.Append(iterator.Current);
                     }
 
-                    if (CustomItemName.IsAllowedCharInName(iterator.Current))
+                    if (CustomItemName.IsAllowedFirstCharInName(iterator.Current))
                     {
                         enterVariableName = true;
                         sbAccessToVariable.Append(iterator.Current);
@@ -107,7 +108,7 @@ public static class CodeParser
         else
             tokens.Add(new CodeToken.OtherCode(sbOtherCode.ToString()));
 
-        return tokens;
+        return new CodeBlock(tokens);
 
         void HandleEqualsOperator()
         {

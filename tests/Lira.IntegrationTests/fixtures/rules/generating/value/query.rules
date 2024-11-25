@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/value/query?phone=7{{:only_phone int }}
+GET /generating/value/query?phone=7{{ >> $$only_phone     int }}
 
 ----- response
 
@@ -8,4 +8,4 @@ GET /generating/value/query?phone=7{{:only_phone int }}
 200
 
 ~ body
-{{ value: only_phone }}
+{{ $$only_phone }}

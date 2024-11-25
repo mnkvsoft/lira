@@ -16,12 +16,11 @@ GET /bag/chain/{{
 }}
 
 ~ body
-{{ jpath: $.amount }} >> {{:amount float }}
+{{ jpath: $.amount }} >> {{ >> $$amount float }}
 
 ----- action
 
-var amount = decimal.Parse(value("amount"));
-int code = bag.balance >= amount ? 200 : 400;
+int code = bag.balance >= $$amount ? 200 : 400;
 
 ## save for use in Response section
 bag.code = code;

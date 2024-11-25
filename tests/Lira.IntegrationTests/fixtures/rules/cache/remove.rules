@@ -1,19 +1,19 @@
 --------------------------------------- rule
 
-POST /cache/set/{{:key any }}
+POST /cache/set/{{ >> $$key any }}
 
 ----- action
 
-cache.set(value("key"), req.body.all())
+cache.set($$key, req.body.all())
 
 --------------------------------------- rule
 
-GET /cache/value/{{:key cache.contains(value) }}
+GET /cache/value/{{ >> $$key cache.contains(value) }}
 
 ----- response
 
 ~ body
-{{ cache.get(value("key")) }}
+{{ cache.get($$key) }}
 
 --------------------------------------- rule
 
@@ -26,8 +26,8 @@ GET /cache/value/{{ !cache.contains(value) }}
 
 --------------------------------------- rule
 
-POST /cache/remove/{{:key any }}
+POST /cache/remove/{{ >> $$key any }}
 
 ----- action
 
-cache.remove(value("key"))
+cache.remove($$key)

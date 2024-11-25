@@ -60,7 +60,7 @@ public class Tests
     {
         var tokens = CodeParser.Parse(code);
 
-        var result = string.Join("", tokens);
+        var result = string.Join("", tokens.Tokens);
         Assert.That(result, Is.EqualTo(expected));
     }
 }

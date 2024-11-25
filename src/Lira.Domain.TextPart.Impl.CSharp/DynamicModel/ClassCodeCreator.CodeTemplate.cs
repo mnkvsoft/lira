@@ -58,11 +58,6 @@ public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
                 cnt = Random.Shared.Next(3, 9);
             return Repeat([context], part, separator, cnt);
         }
-
-        string? value(string name)
-        {
-            return [context].GetValue(name);
-        }
     }
 }";
 
@@ -85,8 +80,10 @@ public sealed class [className] : ITransformFunction
             "using Lira.Domain.Matching.Request;" + Nl +
             @"
 
-public sealed class [className] : DynamicObjectBaseMatch, IMatchFunction
+public sealed class [className] : DynamicObjectBaseMatch, IMatchFunctionTyped
 {
+    public ReturnType? ValueType => null;
+
     public [className](DependenciesBase dependencies) : base(dependencies)
     {
     }
@@ -109,7 +106,7 @@ public sealed class [className] : DynamicObjectBaseMatch, IMatchFunction
 
 public sealed class [className] : DynamicObjectBaseRequestMatcher
 {
-    public [className](DependenciesBase dependencies) : base(dependencies)
+    public [className](Dependencies dependencies) : base(dependencies)
     {
     }
 
@@ -119,11 +116,6 @@ public sealed class [className] : DynamicObjectBaseRequestMatcher
         dynamic bag = new Bag(__ctx, readOnly: false);
 
         [code]
-
-        string? value(string name)
-        {
-            return __ctx.GetValue(name);
-        }
     }
 }
 ";
@@ -146,11 +138,6 @@ public sealed class [className] : DynamicObjectBaseAction, IAction
         dynamic bag = new Bag([context], readOnly: false);
 
         [code]
-
-        string? value(string name)
-        {
-            return [context].GetValue(name);
-        }
     }
 }
 ";

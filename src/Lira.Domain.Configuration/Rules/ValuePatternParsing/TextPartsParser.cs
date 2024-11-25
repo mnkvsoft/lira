@@ -1,6 +1,7 @@
 using System.Text;
 using Lira.Common.Exceptions;
 using Lira.Common.Extensions;
+using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.Custom;
@@ -72,7 +73,7 @@ class TextPartsParser : ITextPartsParser
         {
             var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
                 new DeclaredPartsProvider(context.DeclaredItems),
-                value);
+                CodeParser.Parse(value));
 
            var function = createFunctionResult.GetFunctionOrThrow(value, context);
             pipeline = new TransformPipeline(function);
@@ -98,7 +99,7 @@ class TextPartsParser : ITextPartsParser
         if (_functionFactorySystem.TryCreateTransformFunction(invoke, out var transformFunction))
             return transformFunction;
 
-        var createFunctionResult = _functionFactoryCSharp.TryCreateTransformFunction(invoke);
+        var createFunctionResult = _functionFactoryCSharp.TryCreateTransformFunction(CodeParser.Parse(invoke));
 
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
@@ -142,7 +143,7 @@ class TextPartsParser : ITextPartsParser
 
         var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
             new DeclaredPartsProvider(declaredItems),
-            rawText);
+            CodeParser.Parse(rawText));
 
         return createFunctionResult.GetFunctionOrThrow(rawText, context);
 

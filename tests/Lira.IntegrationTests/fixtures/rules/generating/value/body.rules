@@ -3,7 +3,7 @@
 GET /generating/value/body
 
 ~ body
-{{ jpath: $.phone }} >> 7{{:clean_pnone any }}
+{{ jpath: $.phone }} >> 7{{ >> $$clean_pnone any }}
 
 ----- response
 
@@ -11,4 +11,4 @@ GET /generating/value/body
 200
 
 ~ body
-{{ value: clean_pnone }}
+{{ $$clean_pnone }}

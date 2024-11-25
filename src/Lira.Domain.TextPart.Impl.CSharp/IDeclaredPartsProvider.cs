@@ -4,5 +4,5 @@ public interface IDeclaredPartsProvider
 {
     IObjectTextPart Get(string name);
 
-    IReadOnlyCollection<string> GetAllNamesDeclared();
+    ReturnType? GetPartType(string name);
 }
