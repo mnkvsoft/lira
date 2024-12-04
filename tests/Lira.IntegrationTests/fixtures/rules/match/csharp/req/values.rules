@@ -1,7 +1,7 @@
 
 -------------------- rule
 
-POST /match/sharp/req/values/{{ >> $$account regex:^[0-9]{20}$ }}
+POST /match/sharp/req/values/{{ >> $$account:date   regex:^[0-9]{20}$ }}
 
 ~ body
 {{ jpath: $.amount }} >> {{ >> $$amount float }}
@@ -10,7 +10,7 @@ POST /match/sharp/req/values/{{ >> $$account regex:^[0-9]{20}$ }}
 
 ## the account balance is encoded in its number
 
-decimal balance = decimal.Parse($$account[^4..]);
+decimal balance = decimal.Parse($$account.ToString()[^4..]);
 bool enoughMoney = balance >= $$amount;
 
 return enoughMoney;

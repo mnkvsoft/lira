@@ -30,4 +30,8 @@
     <ProjectReference Include="..\Lira.FileSectionFormat\Lira.FileSectionFormat.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Lira.Domain.Configuration.UnitTests" />
+  </ItemGroup>
+
 </Project>

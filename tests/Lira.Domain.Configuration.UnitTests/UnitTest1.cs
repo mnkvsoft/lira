@@ -1,4 +1,3 @@
-using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 
 namespace Lira.Domain.Configuration.UnitTests;
@@ -25,6 +24,7 @@ public class Tests
         "$$\"\"\"some string\"\"\"",
         "[:c $$\"\"\"some string\"\"\"]")]
 
+
     // read function
     [TestCase(
         "int a = $read.from.variable;",
@@ -41,6 +41,9 @@ public class Tests
     [TestCase(
         "if($read.from.variable == a)",
         "[:c if(][:r $read.from.variable][:c == a)]")]
+    [TestCase(
+        "jpath: $.amount",
+        "[:c jpath: $.amount]")]
 
     // write
 

@@ -107,7 +107,7 @@ class RequestMatchersParser
     private IRequestMatcher CreateCustomRequestMatcher(string code, ParsingContext context)
     {
         var codeBlock = CodeParser.Parse(code);
-        CodeTokenUtils.HandlerTokenWithAccessToItem(code, context, codeBlock.Tokens);
+        CodeTokenUtils.HandleTokenWithAccessToItem(code, context, codeBlock.Tokens);
         var matcher = _functionFactoryCSharp.TryCreateRequestMatcher(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return matcher.GetFunctionOrThrow(code, context);
     }
@@ -296,7 +296,7 @@ class RequestMatchersParser
 
         var codeBlock = CodeParser.Parse(invoke);
 
-        CodeTokenUtils.HandlerTokenWithAccessToItem(invoke, context, codeBlock.Tokens);
+        CodeTokenUtils.HandleTokenWithAccessToItem(invoke, context, codeBlock.Tokens);
 
         var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);

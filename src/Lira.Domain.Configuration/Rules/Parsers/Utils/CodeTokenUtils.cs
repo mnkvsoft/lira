@@ -9,7 +9,7 @@ namespace Lira.Domain.Configuration.Rules.Parsers.Utils;
 
 internal static class CodeTokenUtils
 {
-    public static void HandlerTokenWithAccessToItem(string invoke, ParsingContext context, IReadOnlyCollection<CodeToken> codeTokens)
+    public static void HandleTokenWithAccessToItem(string invoke, ParsingContext context, IReadOnlyCollection<CodeToken> codeTokens)
     {
         foreach (var codeToken in codeTokens)
         {

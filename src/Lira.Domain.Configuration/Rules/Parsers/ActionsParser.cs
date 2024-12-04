@@ -69,7 +69,7 @@ class ActionsParser
             var code = GetActionCode(section);
             var codeBlock = CodeParser.Parse(code);
 
-            CodeTokenUtils.HandlerTokenWithAccessToItem(code, parsingContext, codeBlock.Tokens);
+            CodeTokenUtils.HandleTokenWithAccessToItem(code, parsingContext, codeBlock.Tokens);
 
             var res = _functionFactoryCSharp.TryCreateAction(new DeclaredPartsProvider(parsingContext.DeclaredItems), codeBlock);
             action = res.GetFunctionOrThrow(code, parsingContext);

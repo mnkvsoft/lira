@@ -4,7 +4,7 @@ using Lira.Domain.TextPart.Impl.Custom;
 
 namespace Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 
-public static class CodeParser
+static class CodeParser
 {
     public static CodeBlock Parse(string code)
     {
