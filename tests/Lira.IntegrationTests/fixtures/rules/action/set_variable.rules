@@ -4,7 +4,7 @@ GET /action/set_variable
 
 ----- action
 
-bag.key =
+$$body =
 """
 {
     "message": "json from action"
@@ -14,4 +14,4 @@ bag.key =
 ----- response
 
 ~ body
-{{ bag.key }}
+{{ $$body }}

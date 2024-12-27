@@ -20,7 +20,7 @@ GET /variables/chain/{{
 
 ----- action
 
-int code = bag.balance >= $$amount ? 200 : 400;
+int code = $$balance >= $$amount ? 200 : 400;
 
 ## save for use in Response section
 $$code = code;

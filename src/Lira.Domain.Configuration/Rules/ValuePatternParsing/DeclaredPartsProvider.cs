@@ -29,4 +29,12 @@ class DeclaredPartsProvider : IDeclaredPartsProvider
 
         return function?.Type;
     }
+
+    public void SetVariable(string name, RuleExecutingContext context, dynamic value)
+    {
+        var variable = _items.Variables
+            .Single(v => v.Name == name.TrimStart(Consts.ControlChars.VariablePrefix));
+
+        variable.SetValue(context, value);
+    }
 }

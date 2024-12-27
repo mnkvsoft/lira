@@ -8,12 +8,10 @@ using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Configuration;
 using Lira.Domain.Actions;
-using Lira.Domain.Matching.Request;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.TextPart.Types;
 using Lira.Domain.DataModel;
-using Microsoft.Extensions.Primitives;
 
 // ReSharper disable RedundantExplicitArrayCreation
 
@@ -76,8 +74,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             classToCompile,
             className,
             customAssemblies.PeImages,
-            new DynamicObjectWithDeclaredPartsBase.Dependencies(
-                new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider), declaredPartsProvider));
+            CreateDependenciesBase(declaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -136,7 +133,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             classToCompile,
             className,
             customAssemblies.PeImages,
-            new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider));
+            CreateDependenciesBase(declaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -164,7 +161,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             classToCompile,
             className,
             customAssemblies.PeImages,
-            new DynamicObjectWithDeclaredPartsBase.Dependencies(new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider), declaredPartsProvider));
+            CreateDependenciesBase(declaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -186,7 +183,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             classToCompile,
             className,
             customAssemblies.PeImages,
-            new DynamicObjectWithDeclaredPartsBase.Dependencies(CreateDependenciesBase(), declaredPartsProvider));
+            CreateDependenciesBase(declaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -399,6 +396,10 @@ class FunctionFactory : IFunctionFactoryCSharp
                 sbCodeWithLiraItems.Append($"({(type == null ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
                                            $"\"{readItem.ItemName}\", {ContextParameterName})))");
             }
+            else if (token is CodeToken.WriteItem writeItem)
+            {
+                sbCodeWithLiraItems.Append($"""__variablesWriter["{writeItem.ItemName}"]""");
+            }
             else
             {
                 throw new Exception($"Unexpected token type: {token.GetType()}");
@@ -544,8 +545,8 @@ class FunctionFactory : IFunctionFactoryCSharp
                              .Count(x => x.GetName().Name?.StartsWith(AssemblyPrefix) == true));
     }
 
-    private DynamicObjectBase.DependenciesBase CreateDependenciesBase()
+    private DynamicObjectBase.DependenciesBase CreateDependenciesBase(IDeclaredPartsProvider declaredPartsProvider)
     {
-        return new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider);
+        return new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider, declaredPartsProvider);
     }
 }

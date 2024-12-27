@@ -8,9 +8,8 @@ namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 // ReSharper disable once UnusedType.Global
 public abstract class DynamicObjectBaseRequestMatcher : DynamicObjectWithDeclaredPartsBase, IRequestMatcher
 {
-    protected DynamicObjectBaseRequestMatcher(Dependencies dependencies) : base(dependencies)
+    protected DynamicObjectBaseRequestMatcher(DependenciesBase dependencies) : base(dependencies)
     {
-        //\$\$[a-zA-Z0-9\._]+\s+=(?=[^=])
     }
 
     public async Task<RequestMatchResult> IsMatch(RuleExecutingContext ctx)

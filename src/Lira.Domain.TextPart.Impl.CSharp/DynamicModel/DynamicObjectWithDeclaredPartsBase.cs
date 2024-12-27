@@ -4,25 +4,16 @@ namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
 public class DynamicObjectWithDeclaredPartsBase : DynamicObjectBase
 {
-    private readonly IDeclaredPartsProvider _declaredPartsProvider;
-
-    public record Dependencies(
-        DependenciesBase Base,
-        IDeclaredPartsProvider DeclaredPartsProvider);
-
-    protected DynamicObjectWithDeclaredPartsBase(Dependencies dependencies) : base(dependencies.Base)
-    {
-        _declaredPartsProvider = dependencies.DeclaredPartsProvider;
-    }
+    protected DynamicObjectWithDeclaredPartsBase(DependenciesBase dependencies) : base(dependencies){}
 
     protected Task<dynamic?> GetDeclaredPart(string name, RuleExecutingContext context)
     {
-        return _declaredPartsProvider.Get(name).Get(context);
+        return DeclaredPartsProvider.Get(name).Get(context);
     }
 
     protected IObjectTextPart GetDeclaredPart(string name)
     {
-        return _declaredPartsProvider.Get(name);
+        return DeclaredPartsProvider.Get(name);
     }
 
     protected async Task<string> Repeat(RuleExecutingContext context, IObjectTextPart part, string separator, int count)

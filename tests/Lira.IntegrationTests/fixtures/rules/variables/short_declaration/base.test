@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /variables/base/1001
+GET /variables/short_declaration/base/1001
 
 ----- expected
 

@@ -5,7 +5,7 @@ namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
 public abstract class DynamicObjectBaseAction : DynamicObjectWithDeclaredPartsBase
 {
-    protected DynamicObjectBaseAction(Dependencies dependencies) : base(dependencies)
+    protected DynamicObjectBaseAction(DependenciesBase dependencies) : base(dependencies)
     {
     }
 

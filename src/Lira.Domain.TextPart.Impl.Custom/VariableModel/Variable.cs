@@ -21,7 +21,7 @@ public abstract record Variable : CustomItem, IUniqueSetItem, IObjectTextPart
     private static readonly object NullValue = new();
     protected abstract Task<dynamic?> GetInitiatedValue(RuleExecutingContext ctx);
 
-    public async Task<dynamic?> GetValue(RuleExecutingContext ctx)
+    private async Task<dynamic?> GetValue(RuleExecutingContext ctx)
     {
         var values = GetVariableValues(ctx);
 

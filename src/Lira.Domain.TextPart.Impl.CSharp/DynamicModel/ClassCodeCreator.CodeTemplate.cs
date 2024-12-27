@@ -36,14 +36,14 @@ static partial class ClassCodeCreator
             @"
 public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
 {
-    public [className](Dependencies dependencies) : base(dependencies)
+    public [className](DependenciesBase dependencies) : base(dependencies)
     {
     }
 
     public async Task<dynamic?> Get(RuleExecutingContext [context])
     {
         var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
-        dynamic bag = new Bag([context], readOnly: true);
+        var __variablesWriter = GetVariablesWriter([context], readOnly: true);
 
         [code]
 
@@ -91,7 +91,7 @@ public sealed class [className] : DynamicObjectBaseMatch, IMatchFunctionTyped
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
     public async Task<bool> IsMatch(RuleExecutingContext __ctx, string? [input])
     {
-        dynamic bag = new Bag(__ctx, readOnly: false);
+        var __variablesWriter = GetVariablesWriter(__ctx, readOnly: false);
         [code]
     }
 }
@@ -106,14 +106,14 @@ public sealed class [className] : DynamicObjectBaseMatch, IMatchFunctionTyped
 
 public sealed class [className] : DynamicObjectBaseRequestMatcher
 {
-    public [className](Dependencies dependencies) : base(dependencies)
+    public [className](DependenciesBase dependencies) : base(dependencies)
     {
     }
 
     protected override async Task<bool> IsMatchInternal(RuleExecutingContext __ctx)
     {
         var [externalRequestVariableName] = new RequestModel(__ctx.RequestContext.RequestData);
-        dynamic bag = new Bag(__ctx, readOnly: false);
+        var __variablesWriter = GetVariablesWriter(__ctx, readOnly: false);
 
         [code]
     }
@@ -128,14 +128,14 @@ public sealed class [className] : DynamicObjectBaseRequestMatcher
 
 public sealed class [className] : DynamicObjectBaseAction, IAction
 {
-    public [className](Dependencies dependencies) : base(dependencies)
+    public [className](DependenciesBase dependencies) : base(dependencies)
     {
     }
 
     public async Task Execute(RuleExecutingContext [context])
     {
         var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
-        dynamic bag = new Bag([context], readOnly: false);
+        var __variablesWriter = GetVariablesWriter([context], readOnly: false);
 
         [code]
     }

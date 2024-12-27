@@ -9,6 +9,7 @@ public interface IReadOnlyCustomDicts
     bool TryGetCustomSetFunction(string name, [MaybeNullWhen(false)] out CustomSetFunction function);
     IReadOnlyCollection<string> GetRegisteredNames();
 }
+
 public class CustomDicts : IReadOnlyCustomDicts
 {
     private readonly Dictionary<string, CustomSetFunction> _map;

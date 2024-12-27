@@ -115,8 +115,8 @@ internal class RuleFileParser
 
                 ctx.SetDeclaredItems(await GetDeclaredItems(childConditionSections, ctx));
 
-                responseStrategy = await _responseStrategyParser.Parse(conditionSection, ctx);
                 externalCallers = await _actionsParser.Parse(childConditionSections, ctx);
+                responseStrategy = await _responseStrategyParser.Parse(conditionSection, ctx);
 
                 var conditionMatchers = _conditionMatcherParser.Parse(conditionSection);
 
@@ -184,14 +184,17 @@ internal class RuleFileParser
             childSections,
             _actionsParser.GetSectionNames(childSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare, Constants.SectionName.Templates));
 
-        responseStrategy = await _responseStrategyParser.Parse(ruleSection, ctx);
         externalCallers = await _actionsParser.Parse(childSections, ctx);
+        responseStrategy = await _responseStrategyParser.Parse(ruleSection, ctx);
 
-        return new[] { new Rule(
+        return
+        [
+            new Rule(
             ruleName,
             new RequestMatcherSet(requestMatchers),
             new ActionsExecutor(externalCallers, _loggerFactory),
-            responseStrategy)};
+            responseStrategy)
+        ];
     }
 
     private TemplateSet GetTemplates(IReadOnlyCollection<FileSection> childSections, IReadonlyParsingContext parsingContext)

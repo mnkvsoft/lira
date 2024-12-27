@@ -54,7 +54,7 @@ class TextPartsParser : ITextPartsParser
     {
         return patternPart switch
         {
-            PatternPart.Static @static => new[] { new Static(@static.Value) },
+            PatternPart.Static @static => [new Static(@static.Value)],
             PatternPart.Dynamic dynamic => await GetDynamicParts(dynamic, parsingContext),
             _ => throw new UnsupportedInstanceType(patternPart)
         };

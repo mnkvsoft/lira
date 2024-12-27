@@ -8,9 +8,7 @@ GET /variables/short_declaration/base/{{ >> $$amount float }}
 {{
 
  return $$amount > 100
-    : 200
-    ? 400;
+    ? 200
+    : 400;
 
 }}
-200
-###
