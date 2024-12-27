@@ -1,4 +1,3 @@
-using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Common.PrettyParsers;
 using Lira.Domain.Actions;
@@ -67,9 +66,7 @@ class ActionsParser
         else
         {
             var code = GetActionCode(section);
-            var codeBlock = CodeParser.Parse(code);
-
-            CodeTokenUtils.HandleTokenWithAccessToItem(code, parsingContext, codeBlock.Tokens);
+            var codeBlock = CodeTokenUtils.HandleTokenWithAccessToItem(code, parsingContext, CodeParser.Parse(code));
 
             var res = _functionFactoryCSharp.TryCreateAction(new DeclaredPartsProvider(parsingContext.DeclaredItems), codeBlock);
             action = res.GetFunctionOrThrow(code, parsingContext);

@@ -73,7 +73,7 @@ class TextPartsParser : ITextPartsParser
         {
             var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
                 new DeclaredPartsProvider(context.DeclaredItems),
-                CodeParser.Parse(value));
+                new CodeBlock(CodeParser.Parse(value)));
 
            var function = createFunctionResult.GetFunctionOrThrow(value, context);
             pipeline = new TransformPipeline(function);
@@ -91,7 +91,7 @@ class TextPartsParser : ITextPartsParser
             }
         }
 
-        return new[] { pipeline };
+        return [pipeline];
     }
 
     private ITransformFunction CreateTransformFunction(string invoke, ParsingContext context)
@@ -99,7 +99,7 @@ class TextPartsParser : ITextPartsParser
         if (_functionFactorySystem.TryCreateTransformFunction(invoke, out var transformFunction))
             return transformFunction;
 
-        var createFunctionResult = _functionFactoryCSharp.TryCreateTransformFunction(CodeParser.Parse(invoke));
+        var createFunctionResult = _functionFactoryCSharp.TryCreateTransformFunction(new CodeBlock(CodeParser.Parse(invoke)));
 
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
@@ -143,7 +143,7 @@ class TextPartsParser : ITextPartsParser
 
         var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
             new DeclaredPartsProvider(declaredItems),
-            CodeParser.Parse(rawText));
+            new CodeBlock(CodeParser.Parse(rawText)));
 
         return createFunctionResult.GetFunctionOrThrow(rawText, context);
 

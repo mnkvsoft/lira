@@ -1,12 +1,9 @@
-﻿using System.Text.RegularExpressions;
-using ArgValidation;
+﻿using ArgValidation;
 
 namespace Lira.Domain.TextPart.Impl.Custom;
 
 public readonly struct CustomItemName : IEquatable<CustomItemName>
 {
-    public static Regex Regex { get; } = new Regex(@"^[a-zA-Z0-9_\-\.]+$");
-
     public string Value { get; }
 
     public CustomItemName(string value)
@@ -22,7 +19,10 @@ public readonly struct CustomItemName : IEquatable<CustomItemName>
 
     public static bool IsValidName(string value)
     {
-        foreach (char c in value)
+        if (!IsAllowedFirstCharInName(value[0]))
+            return false;
+
+        foreach (char c in value[1..])
         {
             if (IsAllowedCharInName(c))
                 continue;

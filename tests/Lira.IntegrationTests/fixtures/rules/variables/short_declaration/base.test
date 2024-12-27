@@ -1,0 +1,8 @@
+-------------------- case
+
+GET /variables/base/1001
+
+----- expected
+
+~ code
+200

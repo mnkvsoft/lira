@@ -3,11 +3,11 @@ using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
-public abstract record Variable : IUniqueSetItem, IObjectTextPart
+public abstract record Variable : CustomItem, IUniqueSetItem, IObjectTextPart
 {
     private readonly CustomItemName _name;
 
-    public string Name => _name.Value;
+    public override string Name => _name.Value;
     public string EntityName => "variable";
 
     public readonly ReturnType? Type;

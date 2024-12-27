@@ -1,0 +1,20 @@
+-------------------- rule
+
+## POST /variables/using_in_req_block/## response code ##
+
+~ method
+POST
+
+~ req
+
+if(req.path().StartsWith("/variables/using_in_req_block/"))
+{
+    $$code = req.path(2);
+    return true;
+}
+
+return false;
+
+----- response
+~ code
+{{ $$code }}

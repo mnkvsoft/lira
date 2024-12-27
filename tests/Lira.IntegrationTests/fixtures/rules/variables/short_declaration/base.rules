@@ -1,0 +1,16 @@
+-------------------- rule
+
+GET /variables/short_declaration/base/{{ >> $$amount float }}
+
+----- response
+
+~ code
+{{
+
+ return $$amount > 100
+    : 200
+    ? 400;
+
+}}
+200
+###

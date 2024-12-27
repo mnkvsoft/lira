@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /bag/chain/9161119999
+GET /variables/chain/9161119999
 
 ~ body
 {

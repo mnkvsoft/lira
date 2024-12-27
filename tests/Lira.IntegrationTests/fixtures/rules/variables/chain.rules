@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /bag/chain/{{
+GET /variables/chain/{{
 
     ## verify that phone number
     if(!long.TryParse(value, out var phone))
@@ -10,7 +10,7 @@ GET /bag/chain/{{
     var balance = decimal.Parse(value[^4..]);
 
     ## save for use in Action section
-    bag.balance = balance;
+    $$balance = balance;
 
     return true;
 }}
@@ -23,12 +23,12 @@ GET /bag/chain/{{
 int code = bag.balance >= $$amount ? 200 : 400;
 
 ## save for use in Response section
-bag.code = code;
+$$code = code;
 
 ----- response
 
 ~ code
-{{ bag.code }}
+{{ $$code }}
 
 ###
 Response:

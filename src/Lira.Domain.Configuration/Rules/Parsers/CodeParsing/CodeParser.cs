@@ -6,7 +6,7 @@ namespace Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 
 static class CodeParser
 {
-    public static CodeBlock Parse(string code)
+    public static IReadOnlyCollection<CodeToken> Parse(string code)
     {
         var tokens = new List<CodeToken>();
         bool enterVariableName = false;
@@ -108,7 +108,7 @@ static class CodeParser
         else
             tokens.Add(new CodeToken.OtherCode(sbOtherCode.ToString()));
 
-        return new CodeBlock(tokens);
+        return tokens;
 
         void HandleEqualsOperator()
         {

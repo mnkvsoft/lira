@@ -1,6 +1,8 @@
+using Lira.Common.Exceptions;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
+using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
@@ -19,14 +21,19 @@ static class ReadonlyDeclaredItemsExtensions
         throw new Exception($"Unknown declaration '{fullName}'");
     }
 
-    public static bool Exists(this IReadonlyDeclaredItems items, string fullName)
+    public static IEnumerable<CustomItem> Where(this IReadonlyDeclaredItems items, Predicate<CustomItem> predicate)
     {
-        if (fullName.StartsWith(Consts.ControlChars.VariablePrefix))
-            return items.Variables.Any(v => v.Name == fullName.TrimStart(Consts.ControlChars.VariablePrefix));
+        return items.Variables.Cast<CustomItem>().Union(items.Functions).Where(x => predicate(x));
+    }
 
-        if (fullName.StartsWith(Consts.ControlChars.FunctionPrefix))
-            return items.Functions.Any(v => v.Name == fullName.TrimStart(Consts.ControlChars.FunctionPrefix));
+    public static string GetFullName(this CustomItem item)
+    {
+        if (item is Variable)
+            return Consts.ControlChars.VariablePrefix + item.Name;
 
-        throw new Exception($"Unknown declaration '{fullName}'");
+        if (item is Function)
+            return Consts.ControlChars.FunctionPrefix + item.Name;
+
+        throw new UnsupportedInstanceType(item);
     }
 }

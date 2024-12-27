@@ -2,13 +2,13 @@ using Lira.Common;
 
 namespace Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 
-public record Function : IObjectTextPart, IUniqueSetItem
+public record Function : CustomItem,  IObjectTextPart, IUniqueSetItem
 {
     private readonly IReadOnlyCollection<IObjectTextPart> _parts;
     public readonly ReturnType? Type;
 
     private readonly CustomItemName _name;
-    public string Name => _name.Value;
+    public override string Name => _name.Value;
     public string EntityName => "function";
 
     public Function(CustomItemName name, IReadOnlyCollection<IObjectTextPart> parts, ReturnType? type)
