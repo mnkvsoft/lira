@@ -3,7 +3,7 @@
 GET /generating/value/header
 
 ~ headers
-Request-Id: 123_{{ >> $$clean_request_id    any }}
+Request-Id: 123_{{ any >> $$clean_request_id }}
 
 ----- response
 

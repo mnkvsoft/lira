@@ -301,11 +301,15 @@ class RequestMatchersParser
 
     private IMatchFunction CreateMatchFunctionWithSaveVariable(string value, ParsingContext context)
     {
-        var prefix = Consts.ControlChars.WriteToVariablePrefix;
-        if (value.StartsWith(prefix))
+        var (invoke, maybeVariableDeclaration) = value.SplitToTwoPartsFromEnd(Consts.ControlChars.WriteToVariablePrefix).Trim();
+
+        // case: {{ float >> $$amount }}
+        if (maybeVariableDeclaration != null && maybeVariableDeclaration.StartsWith(Consts.ControlChars.VariablePrefix))
         {
-            var (variableNameAndType, invoke) = value.TrimStart(prefix).TrimStart().SplitToTwoPartsRequired(" ").Trim();
-            var (name, typeStr) = variableNameAndType.SplitToTwoParts(Consts.ControlChars.SetType);
+            if (maybeVariableDeclaration.Split(" ").Length > 1)
+                throw new Exception($"Invalid write to variable declaration: {Consts.ControlChars.WriteToVariablePrefix} " + maybeVariableDeclaration);
+
+            var (name, typeStr) = maybeVariableDeclaration.SplitToTwoParts(Consts.ControlChars.SetType);
 
             var type = typeStr == null ? null : ReturnType.Parse(typeStr);
 

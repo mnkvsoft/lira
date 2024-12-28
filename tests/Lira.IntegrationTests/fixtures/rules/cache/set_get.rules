@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /cache/set_get/{{ >> $$id int }}?comment={{ any }}
+GET /cache/set_get/{{ int >> $$id }}?comment={{ any }}
 
 ----- declare
 
@@ -19,7 +19,7 @@ cache.set("cache_" + $$id, $$response.body, "2 second")
 
 -------------------- rule
 
-GET /cache/set_get/{{ >> $$id cache.contains("cache_" + value) }}?comment={{ any }}
+GET /cache/set_get/{{ cache.contains("cache_" + value)  >> $$id }}?comment={{ any }}
 
 ----- response
 

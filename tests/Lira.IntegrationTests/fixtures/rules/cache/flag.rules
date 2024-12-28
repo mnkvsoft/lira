@@ -7,7 +7,7 @@ $response:json =
 
 -------------------- rule
 
-POST /cache/flag/{{ >> $$id int }}
+POST /cache/flag/{{ int >> $$id }}
 
 ## the first request has a header
 ~ headers

@@ -1,9 +1,9 @@
 -------------------- rule
 
-POST /match/sharp/req/values/{{ >> $$account   regex:^[0-9]{20}$ }}
+POST /match/sharp/req/values/{{ regex:^[0-9]{20}$  >> $$account}}
 
 ~ body
-{{ jpath: $.amount }} >> {{ >> $$amount float }}
+{{ jpath: $.amount }} >> {{ float >> $$amount}}
 
 ~ req
 

@@ -1,6 +1,6 @@
 --------------------------------------- rule
 
-POST /cache/set/{{ >> $$key any }}
+POST /cache/set/{{ any >> $$key }}
 
 ----- action
 
@@ -8,7 +8,7 @@ cache.set($$key, req.body.all())
 
 --------------------------------------- rule
 
-GET /cache/value/{{ >> $$key cache.contains(value) }}
+GET /cache/value/{{ cache.contains(value) >> $$key }}
 
 ----- response
 
@@ -26,7 +26,7 @@ GET /cache/value/{{ !cache.contains(value) }}
 
 --------------------------------------- rule
 
-POST /cache/remove/{{ >> $$key any }}
+POST /cache/remove/{{ any >> $$key }}
 
 ----- action
 

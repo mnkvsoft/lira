@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /variables/short_declaration/base/{{ >> $$amount float }}
+GET /variables/short_declaration/base/{{ float >> $$amount }}
 
 ----- response
 

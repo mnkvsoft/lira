@@ -2,7 +2,7 @@
 ###
 --------------------------------------- rule
 
-GET /cache/short/{{ >> $$id int }}
+GET /cache/short/{{ int >> $$id }}
 
 ----- cache
 

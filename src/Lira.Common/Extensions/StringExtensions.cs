@@ -44,6 +44,19 @@ public static class StringExtensions
         return (part1, part2);
     }
 
+    public static (string part1, string? part2) SplitToTwoPartsFromEnd(this string value, string splitter)
+    {
+        var index = value.LastIndexOf(splitter, StringComparison.Ordinal);
+
+        if (index < 0)
+            return (value, null);
+
+        string part1= value.Substring(0, length: index);
+        string part2 = value.Substring(index + splitter.Length);
+
+        return (part1, part2);
+    }
+
     public static (string part1, string? part2) Trim(this (string part1, string? part2) value)
     {
         return (value.part1.Trim(), value.part2?.Trim());

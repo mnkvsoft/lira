@@ -1,6 +1,6 @@
 --------------------------------------- rule
 
-GET /cache/condition/{{ >> $$id int }}
+GET /cache/condition/{{ int >> $$id }}
 
 -------------------- condition
 
