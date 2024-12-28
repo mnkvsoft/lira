@@ -1,0 +1,17 @@
+-------------------- rule
+
+GET /variables/short_declaration/auto_resolve_type
+
+~ body
+{{ form: strParam }}  >> {{ any      >> $$strVar   }}
+{{ form: strParam }}  >> {{ regex:.* >> $$regexVar }}
+{{ form: intParam }}  >> {{ int      >> $$intVar   }}
+{{ form: guidParam }} >> {{ guid     >> $$guidVar  }}
+{{ form: decParam }}  >> {{ float    >> $$decVar   }}
+
+----- response
+{{ $$strVar.GetType() }}
+{{ $$regexVar.GetType() }}
+{{ $$intVar.GetType() }}
+{{ $$guidVar.GetType() }}
+{{ $$decVar.GetType() }}

@@ -9,7 +9,7 @@ POST /match/sharp/req/values/{{ regex:^[0-9]{20}$  >> $$account}}
 
 ## the account balance is encoded in its number
 
-decimal balance = decimal.Parse($$account[^4..]);
+double balance = double.Parse($$account[^4..]);
 bool enoughMoney = balance >= $$amount;
 
 return enoughMoney;

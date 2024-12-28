@@ -1,6 +1,6 @@
 namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create.Date;
 
-internal class DateFuture : FunctionBase, IObjectTextPart
+internal class ДDateFuture : FunctionBase, IObjectTextPart
 {
     public override string Name => "date.future";
 

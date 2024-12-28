@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /variables/short_declaration/typed/1001
+
+----- expected
+
+~ code
+200
+
+~ body
+System.Double

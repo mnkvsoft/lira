@@ -3,7 +3,7 @@ using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
-public abstract record Variable : CustomItem, IUniqueSetItem, IObjectTextPart
+public abstract record Variable : DeclaredItem, IUniqueSetItem, IObjectTextPart
 {
     private readonly CustomItemName _name;
 

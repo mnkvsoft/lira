@@ -7,9 +7,9 @@ public record ReturnType
 {
     public readonly static ReturnType Json = new("json", typeof(Json));
     public readonly static ReturnType String = new("str", typeof(string));
-    public readonly static ReturnType Int = new("int", typeof(Int32));
+    public readonly static ReturnType Int = new("int", typeof(Int64));
     public readonly static ReturnType Guid = new("guid", typeof(Guid));
-    public readonly static ReturnType Decimal = new("dec", typeof(decimal));
+    public readonly static ReturnType Decimal = new("dec", typeof(double));
     public readonly static ReturnType Date = new("date", typeof(DateTime));
 
     private readonly string _value;

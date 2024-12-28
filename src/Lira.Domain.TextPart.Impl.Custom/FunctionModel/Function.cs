@@ -2,7 +2,7 @@ using Lira.Common;
 
 namespace Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 
-public record Function : CustomItem,  IObjectTextPart, IUniqueSetItem
+public record Function : DeclaredItem,  IObjectTextPart, IUniqueSetItem
 {
     private readonly IReadOnlyCollection<IObjectTextPart> _parts;
     public readonly ReturnType? Type;

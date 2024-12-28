@@ -1,9 +1,11 @@
-﻿using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
+﻿using System.Collections;
+using Lira.Domain.TextPart.Impl.Custom;
+using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
-public interface IReadonlyDeclaredItems
+public interface IReadonlyDeclaredItems : IEnumerable<DeclaredItem>
 {
     IReadOnlyCollection<Variable> Variables { get; }
 
@@ -33,5 +35,15 @@ class DeclaredItems : IReadonlyDeclaredItems
     {
         Variables.AddRange(items.Variables);
         Functions.AddRange(items.Functions);
+    }
+
+    public IEnumerator<DeclaredItem> GetEnumerator()
+    {
+        return Variables.Cast<DeclaredItem>().Union(Functions).GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

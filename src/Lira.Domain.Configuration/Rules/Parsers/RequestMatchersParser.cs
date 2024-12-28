@@ -3,7 +3,6 @@ using Lira.Domain.Matching.Request;
 using Lira.Domain.Matching.Request.Matchers;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
-using Lira.Domain.Configuration.Rules.Parsers.Utils;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
@@ -106,7 +105,9 @@ class RequestMatchersParser
 
     private IRequestMatcher CreateCustomRequestMatcher(string code, ParsingContext context)
     {
-        var codeBlock = CodeTokenUtils.HandleTokenWithAccessToItem(code, context, CodeParser.Parse(code));
+        var (codeBlock, newRuntimeVariables) = CodeParser.Parse(code, context.DeclaredItems);
+        context.DeclaredItems.Variables.AddRange(newRuntimeVariables);
+
         var matcher = _functionFactoryCSharp.TryCreateRequestMatcher(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return matcher.GetFunctionOrThrow(code, context);
     }
@@ -293,7 +294,8 @@ class RequestMatchersParser
         if (context.CustomDicts.TryGetCustomSetFunction(invoke, out var customSetFunction))
             return customSetFunction;
 
-        var codeBlock = CodeTokenUtils.HandleTokenWithAccessToItem(invoke, context, CodeParser.Parse(invoke));
+        var (codeBlock, newRuntimeVariables) = CodeParser.Parse(invoke, context.DeclaredItems);
+        context.DeclaredItems.Variables.AddRange(newRuntimeVariables);
 
         var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);

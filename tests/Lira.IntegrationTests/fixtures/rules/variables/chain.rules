@@ -7,7 +7,7 @@ GET /variables/chain/{{
         return false;
 
     ## the account balance is encoded in its number
-    var balance = decimal.Parse(value[^4..]);
+    var balance = double.Parse(value[^4..]);
 
     ## save for use in Action section
     $$balance = balance;

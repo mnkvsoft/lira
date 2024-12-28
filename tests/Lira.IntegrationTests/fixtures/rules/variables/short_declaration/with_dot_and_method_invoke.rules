@@ -1,0 +1,15 @@
+-------------------- rule
+
+POST /variables/short_declaration/with_dot_and_method_invoke/{{ float >> $$amount.path }}
+
+~ body
+{{ jpath: $.amount }} >> {{ float >> $$amount.body }}
+
+----- response
+
+{
+    "amount": {
+        "body": {{ $$amount.body.ToString("0.00") }},
+        "path": {{ $$amount.path.ToString("0.00") }}
+    }
+}

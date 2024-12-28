@@ -50,7 +50,7 @@ class TextPartsParser : ITextPartsParser
         return new ObjectTextParts(parts);
     }
 
-    private async Task<IReadOnlyCollection<IObjectTextPart>> CreateValuePart(PatternPart patternPart, ParsingContext parsingContext)
+    private async Task<IReadOnlyCollection<IObjectTextPart>> CreateValuePart(PatternPart patternPart, IReadonlyParsingContext parsingContext)
     {
         return patternPart switch
         {
@@ -60,7 +60,7 @@ class TextPartsParser : ITextPartsParser
         };
     }
 
-    private async Task<IReadOnlyCollection<IObjectTextPart>> GetDynamicParts(PatternPart.Dynamic dynamicPart, ParsingContext context)
+    private async Task<IReadOnlyCollection<IObjectTextPart>> GetDynamicParts(PatternPart.Dynamic dynamicPart, IReadonlyParsingContext context)
     {
         string value = dynamicPart.Value;
 
@@ -73,7 +73,7 @@ class TextPartsParser : ITextPartsParser
         {
             var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
                 new DeclaredPartsProvider(context.DeclaredItems),
-                new CodeBlock(CodeParser.Parse(value)));
+                GetCodeBlock(context, value));
 
            var function = createFunctionResult.GetFunctionOrThrow(value, context);
             pipeline = new TransformPipeline(function);
@@ -94,17 +94,27 @@ class TextPartsParser : ITextPartsParser
         return [pipeline];
     }
 
-    private ITransformFunction CreateTransformFunction(string invoke, ParsingContext context)
+    private static CodeBlock GetCodeBlock(IReadonlyParsingContext context, string value)
+    {
+        var (codeBlock, newRuntimeVariables) = CodeParser.Parse(value, context.DeclaredItems);
+
+        if (newRuntimeVariables.Count > 0)
+            throw new Exception("Variables cannot be set in generation blocks. Code: " + value);
+
+        return codeBlock;
+    }
+
+    private ITransformFunction CreateTransformFunction(string invoke, IReadonlyParsingContext context)
     {
         if (_functionFactorySystem.TryCreateTransformFunction(invoke, out var transformFunction))
             return transformFunction;
 
-        var createFunctionResult = _functionFactoryCSharp.TryCreateTransformFunction(new CodeBlock(CodeParser.Parse(invoke)));
+        var createFunctionResult = _functionFactoryCSharp.TryCreateTransformFunction(GetCodeBlock(context, invoke));
 
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 
-    private IObjectTextPart CreateStartFunction(string rawText, ParsingContext context)
+    private IObjectTextPart CreateStartFunction(string rawText, IReadonlyParsingContext context)
     {
         var declaredItems = context.DeclaredItems;
 
@@ -143,7 +153,7 @@ class TextPartsParser : ITextPartsParser
 
         var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
             new DeclaredPartsProvider(declaredItems),
-            new CodeBlock(CodeParser.Parse(rawText)));
+            GetCodeBlock(context, rawText));
 
         return createFunctionResult.GetFunctionOrThrow(rawText, context);
 
@@ -154,7 +164,7 @@ class TextPartsParser : ITextPartsParser
     }
 
     private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadParts(
-        ParsingContext context, string invoke)
+        IReadonlyParsingContext context, string invoke)
     {
         var (wasRead, parts) = await TryReadPartsFromFile(context, invoke);
 
@@ -186,7 +196,7 @@ class TextPartsParser : ITextPartsParser
     }
 
     private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadPartsFromFile(
-        ParsingContext context, string invoke)
+        IReadonlyParsingContext context, string invoke)
     {
         if (!invoke.StartsWith("read.file:"))
             return (false, null);

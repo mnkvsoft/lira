@@ -3,7 +3,7 @@ using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
 
-internal class Long : WithRangeArgumentFunction<long>, IObjectTextPart
+internal class Int : WithRangeArgumentFunction<long>, IObjectTextPart
 {
     public override string Name => "int";
 

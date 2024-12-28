@@ -21,12 +21,12 @@ static class ReadonlyDeclaredItemsExtensions
         throw new Exception($"Unknown declaration '{fullName}'");
     }
 
-    public static IEnumerable<CustomItem> Where(this IReadonlyDeclaredItems items, Predicate<CustomItem> predicate)
+    public static IEnumerable<DeclaredItem> Where(this IReadonlyDeclaredItems items, Predicate<DeclaredItem> predicate)
     {
-        return items.Variables.Cast<CustomItem>().Union(items.Functions).Where(x => predicate(x));
+        return items.Variables.Cast<DeclaredItem>().Union(items.Functions).Where(x => predicate(x));
     }
 
-    public static string GetFullName(this CustomItem item)
+    public static string GetFullName(this DeclaredItem item)
     {
         if (item is Variable)
             return Consts.ControlChars.VariablePrefix + item.Name;

@@ -10,15 +10,20 @@ namespace Lira.Domain.Configuration.Rules.Parsers.Utils;
 
 internal static class CodeTokenUtils
 {
-    public static CodeBlock HandleTokenWithAccessToItem(string invoke, ParsingContext context, IReadOnlyCollection<CodeToken> codeTokens)
+    public static (CodeBlock, IReadOnlyCollection<RuntimeVariable>) HandleTokensWithAccessToItem(string invoke, IReadonlyParsingContext context, IReadOnlyCollection<CodeToken> codeTokens)
     {
         var result = new List<CodeToken>(codeTokens.Count * 2);
+
+        var onlyNewVariables = new List<RuntimeVariable>();
+
+        var withNewVariables = new List<DeclaredItem>();
+        withNewVariables.AddRange(context.DeclaredItems);
 
         foreach (var codeToken in codeTokens)
         {
             if (codeToken is CodeToken.ReadItem readItem)
             {
-                var names = context.DeclaredItems
+                var names = withNewVariables
                     .Where(item => readItem.ItemName.StartsWith(item.GetFullName()))
                     .Select(item => item.GetFullName());
 
@@ -49,7 +54,12 @@ internal static class CodeTokenUtils
                 if (writeItem.ItemName.StartsWith(Consts.ControlChars.VariablePrefix))
                 {
                     var variableName = writeItem.ItemName.TrimStart(Consts.ControlChars.VariablePrefix);
-                    context.DeclaredItems.Variables.Add(new RuntimeVariable(new CustomItemName(variableName), type: null));
+
+                    var variable = new RuntimeVariable(new CustomItemName(variableName), type: null);
+
+                    onlyNewVariables.Add(variable);
+                    withNewVariables.Add(variable);
+
                     result.Add(writeItem);
                 }
                 else
@@ -67,6 +77,6 @@ internal static class CodeTokenUtils
             }
         }
 
-        return new CodeBlock(result);
+        return (new CodeBlock(result), onlyNewVariables);
     }
 }

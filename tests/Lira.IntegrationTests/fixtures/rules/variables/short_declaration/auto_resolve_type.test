@@ -1,0 +1,18 @@
+-------------------- case
+
+GET /variables/short_declaration/auto_resolve_type
+
+~ body
+strParam=a&intParam=1&guidParam=F9DA9924-4514-42CE-80A9-8E9ABDEF4508&decParam=10.1
+
+----- expected
+
+~ code
+200
+
+~ body
+System.String
+System.String
+System.Int64
+System.Guid
+System.Double
