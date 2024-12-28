@@ -1,0 +1,17 @@
+-------------------- rule
+
+GET /variables/short_declaration/manual_set_type_alias
+
+~ body
+{{ form: guidParam }}  >> {{ any  >> $$strVar:str   }}
+{{ form: intParam  }}  >> {{ int  >> $$decVar:dec   }}
+{{ form: guidParam }}  >> {{ any  >> $$guidVar:guid }}
+{{ form: intParam  }}  >> {{ any  >> $$intVar:int   }}
+
+----- response
+{{ $$strVar.GetType() }}
+{{ $$decVar.GetType() }}
+{{ $$guidVar.GetType() }}
+{{ $$intVar.GetType() }}
+
+

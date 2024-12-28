@@ -1,0 +1,19 @@
+-------------------- case
+
+GET /variables/short_declaration/manual_set_type_alias
+
+~ body
+intParam=1&guidParam=F9DA9924-4514-42CE-80A9-8E9ABDEF4508
+
+----- expected
+
+~ code
+200
+
+~ body
+System.String
+System.Double
+System.Guid
+System.Int64
+
+
