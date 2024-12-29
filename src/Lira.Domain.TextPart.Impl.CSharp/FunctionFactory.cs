@@ -12,6 +12,7 @@ using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.TextPart.Types;
 using Lira.Domain.DataModel;
+using Lira.Domain.TextPart.Impl.CSharp.ExternalLibsLoading;
 
 // ReSharper disable RedundantExplicitArrayCreation
 
@@ -23,7 +24,6 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private readonly ILogger _logger;
     private readonly string _path;
-    private readonly string _libsPath;
 
     private readonly AssemblyLoadContext _context = new(name: null, isCollectible: true);
     private readonly int _revision;
@@ -36,6 +36,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly Compiler _compiler;
     private readonly Cache _cache;
     private readonly IRangesProvider _rangesProvider;
+    private readonly ExternalLibsProvider _externalLibsProvider;
 
     public FunctionFactory(
         IConfiguration configuration,
@@ -44,17 +45,18 @@ class FunctionFactory : IFunctionFactoryCSharp
         Compiler compiler,
         CompilationStatistic compilationStatistic,
         Cache cache,
-        IRangesProvider rangesProvider)
+        IRangesProvider rangesProvider,
+        ExternalLibsProvider externalLibsProvider)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _path = configuration.GetRulesPath();
-        _libsPath = configuration.GetLibsPath() ?? _path;
         _revision = ++_revisionCounter;
         _unLoader = unLoader;
         _compiler = compiler;
         _compilationStatistic = compilationStatistic;
         _cache = cache;
         _rangesProvider = rangesProvider;
+        _externalLibsProvider = externalLibsProvider;
     }
 
     public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(
@@ -233,22 +235,10 @@ class FunctionFactory : IFunctionFactoryCSharp
             GetType().Assembly.Location
         };
 
-        var dllFiles = GetDllFilesLocations();
+        var dllFiles = _externalLibsProvider.GetDllFilesLocations().Result;
         result.AddRange(dllFiles);
 
         _assembliesLocations = result;
-        return result;
-    }
-
-    private IReadOnlyCollection<string>? _dllLocations;
-    private IReadOnlyCollection<string> GetDllFilesLocations()
-    {
-        if (_dllLocations != null)
-            return _dllLocations;
-
-        var result = new List<string>();
-        result.AddRange(Directory.GetFiles(_libsPath, "*.dll", SearchOption.AllDirectories));
-        _dllLocations = result;
         return result;
     }
 
@@ -283,11 +273,12 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         var result = new List<CustomAssembly>();
 
+        var externalLibs = _externalLibsProvider.GetDllFilesLocations().Result;
         var compileResult = _compiler.Compile(
             new CompileUnit(
                 codes,
                 GetAssemblyName(GetClassName("CustomType", codes)),
-                UsageAssemblies: new UsageAssemblies(Runtime: Array.Empty<PeImage>(), AssembliesLocations: GetDllFilesLocations())));
+                UsageAssemblies: new UsageAssemblies(Runtime: Array.Empty<PeImage>(), AssembliesLocations: externalLibs)));
 
         var nl = Constants.NewLine;
 

@@ -20,4 +20,5 @@ public static class ConfigurationExtensions
     }
 
     public static string? GetLibsPath(this IConfiguration configuration) => configuration.GetValue<string>("LibsPath");
+    public static string? GetNugetConfigPath(this IConfiguration configuration) => configuration.GetValue<string>("NugetConfigPath");
 }

@@ -8,7 +8,7 @@ namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
 
 class PeImagesCache : IDisposable
 {
-    private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "lira", "pe_images");
+    private static readonly string TempPath = Paths.GetTempSubPath("pe_images");
 
     private bool _wasInit;
     private readonly Dictionary<Hash, PeImageCacheEntry> _hashToEntryMap = new();
