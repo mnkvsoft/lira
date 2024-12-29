@@ -104,7 +104,7 @@ POST /payment
 example: manual_payment
 
 ~ body
-jpath: $.amount >> {{ float: [0.01 - 10.00] }}
+jpath: $.amount >> {{ dec: [0.01 - 10.00] }}
 
 ----- response
 
@@ -124,7 +124,7 @@ POST /payment
 example: manual_payment
 
 ~ body
-jpath: $.amount >> {{ float: [10.01 - 20.00] }}
+jpath: $.amount >> {{ dec: [10.01 - 20.00] }}
 
 ----- response
 
@@ -144,7 +144,7 @@ POST /payment
 example: manual_payment
 
 ~ body
-jpath: $.amount >> {{ float: [20.01 - 30.00] }}
+jpath: $.amount >> {{ dec: [20.01 - 30.00] }}
 
 ----- response
 
@@ -242,7 +242,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ float: [0.01 - 10.00] }}
+jpath: $.amount >> {{ dec: [0.01 - 10.00] }}
 
 ----- response
 
@@ -265,7 +265,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ float: [30.01 - 40.00] }}
+jpath: $.amount >> {{ dec: [30.01 - 40.00] }}
 
 ----- response
 
@@ -288,7 +288,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ float: [40.01 - 50.00] }}
+jpath: $.amount >> {{ dec: [40.01 - 50.00] }}
 
 ----- response
 
@@ -311,7 +311,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ float: [10.01 - 20.00] }}
+jpath: $.amount >> {{ dec: [10.01 - 20.00] }}
 
 ----- response
 
@@ -334,7 +334,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ float: [20.01 - 30.00] }}
+jpath: $.amount >> {{ dec: [20.01 - 30.00] }}
 
 ----- response
 
@@ -499,7 +499,7 @@ curl --location --request POST 'http://localhost/payment/reversal/1448743' \
 ```
 {
     "payment.amount": {
-      "type": "float",
+      "type": "dec",
       "start": "0.01",
       "capacity": "10",
       "unit": 0.01,
@@ -534,7 +534,7 @@ curl --location --request POST 'http://localhost/payment/reversal/1448743' \
 - `start` - начало интервала
 - `capacity` - емкость одного диапазона
 - `ranges` - названия диапазов внутри интервала
-- `unit` - единица округления выдаваемых значений. Настройка характерна только для типа `float`
+- `unit` - единица округления выдаваемых значений. Настройка характерна только для типа `dec`
 - `mode` - режим получения следующего значения для диапазона.
 В режиме `seq` значения для каждого диапазона извлекаются последовательно и не 
 повторяются. Настройка характерна для типа `int`
@@ -801,7 +801,7 @@ curl --location --request POST 'http://localhost/payment/reversal/1000001' \
 ```
 {
     "short.payment.amount": {
-      "type": "float",
+      "type": "dec",
       "ranges": [
         "success",
         "pending",
@@ -1043,7 +1043,7 @@ curl --location 'http://localhost/sys/range/val/short.payment.amount/success/5'
 
 
 
-## float
+## dec
 
 Для данного типа существуют следующие способы генерации диапазонов:
 - по заданному интервалу значений. В этом случае указывается узел `interval`.
@@ -1062,7 +1062,7 @@ curl --location 'http://localhost/sys/range/val/short.payment.amount/success/5'
 ```
 {
   "<имя_интервала>": {
-    "type": "float",
+    "type": "dec",
     ["unit": "<единица_округления>",]
     [
       ["interval": "<интервал>",] | 
@@ -1098,7 +1098,7 @@ curl --location 'http://localhost/sys/range/val/short.payment.amount/success/5'
 ```
 {
   "amount": {
-    "type": "float",
+    "type": "dec",
     "unit": 0.001,
     "interval": "1 - 100",
     "ranges": [
@@ -1113,7 +1113,7 @@ curl --location 'http://localhost/sys/range/val/short.payment.amount/success/5'
 ```
 {
   "amount": {
-    "type": "float",
+    "type": "dec",
     "unit": 0.01,
     "start": "0.01",
     "capacity": "1k",
@@ -1130,7 +1130,7 @@ curl --location 'http://localhost/sys/range/val/short.payment.amount/success/5'
 ```
 {
   "amount": {
-    "type": "float",
+    "type": "dec",
     "unit": 0.01,
     "interval": "1 - 1_000_000",
     "ranges": [
@@ -1146,7 +1146,7 @@ curl --location 'http://localhost/sys/range/val/short.payment.amount/success/5'
 ```
 {
   "amount": {
-    "type": "float",
+    "type": "dec",
     "ranges": [
       "first",
       "second",

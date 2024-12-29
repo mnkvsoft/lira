@@ -11,7 +11,7 @@ A simple and very functional mock server
 
 - syntax highlighting of rules in `VS Code`
 
-- use of data ranges of different types (`int`, `float`, `guid`, `hex string`) to provide variable behavior
+- use of data ranges of different types (`int`, `dec`, `guid`, `hex string`) to provide variable behavior
 
 - the ability to describe different behavior of a method depending on the call number or time elapsed since the first call
 
@@ -431,7 +431,7 @@ Request-Time: {{ now >> format: H:mm:ss }}
 {
     "id": {{ int }},
     "status": "{{ random: paid, pending, cancelled }}",
-    "amount": {{ float }},
+    "amount": {{ dec }},
     "transaction_id": "{{ guid }}",
     "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
     "customer": "{{ str }}"
@@ -538,7 +538,7 @@ example: extract.value.system
 ~ body
 {
     "phone": {{ value: phone }},
-    "balance": {{ float }}
+    "balance": {{ dec }}
 }
 ```
 Request
@@ -822,7 +822,7 @@ File `global.ranges.json`
 ```json
 {
     "amount": {
-      "type": "float",
+      "type": "dec",
       "ranges": [
         "ok",
         "reject"
@@ -940,7 +940,7 @@ Let's change the file [global.ranges.json](docs/examples/quick_start/global.rang
 ```json
 {
     "amount": {
-      "type": "float",
+      "type": "dec",
       "ranges": [
         "ok",
         "reject",
@@ -1282,7 +1282,7 @@ or declare it at the global level and use it in any rule
 ```
 -------------------- declare
 
-$amount = {{ float: [1 - 100] }}
+$amount = {{ dec: [1 - 100] }}
 
 -------------------- rule
 
@@ -1406,7 +1406,7 @@ $template.order =
 {
     "id": {{ int }},
     "status": "paid",
-    "amount": {{ float }},
+    "amount": {{ dec }},
     "transaction_id": "{{ guid }}",
     "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
     "customer": "{{ str }}"
@@ -1549,7 +1549,7 @@ example: dic.match
 ~ body
 {
     "release_date": "{{ date }}"
-    "engine_capacity": {{ float: [0.5 - 10] }}
+    "engine_capacity": {{ dec: [0.5 - 10] }}
 }
 ```
 Request
@@ -1583,7 +1583,7 @@ $order =
 {
     "id": {{ int }},
     "status": "{{ random: paid, pending, cancelled }}",
-    "amount": {{ float }},
+    "amount": {{ dec }},
     "transaction_id": "{{ guid }}",
     "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}"
 }
@@ -1648,7 +1648,7 @@ $template.order:json =
 {
     "id": {{ int }},
     "status": "paid",
-    "amount": {{ float }},
+    "amount": {{ dec }},
     "transaction_id": "{{ guid }}",
     "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
     "customer": "{{ str }}"
@@ -1847,7 +1847,7 @@ example: extract.value.charp
         var phone = value("phone");
         return phone;
     }}
-    "balance": {{ float }}
+    "balance": {{ dec }}
 }
 ```
 Request
@@ -2685,7 +2685,7 @@ GET /get_type
 
 ~ body
 {{ guid >> value.GetType() }}
-{{ float >> value.GetType() }}
+{{ dec >> value.GetType() }}
 {{ date >> value.GetType() }}
 {{ int >> value.GetType() }}
 ```

@@ -8,14 +8,14 @@ class RangesLoader
 {
     private readonly GuidParser _guidParser;
     private readonly IntParser _intParser;
-    private readonly FloatParser _floatParser;
+    private readonly DecParser _decParser;
     private readonly HexParser _hexParser;
 
-    public RangesLoader(GuidParser guidParser, IntParser intParser, FloatParser floatParser, HexParser hexParser)
+    public RangesLoader(GuidParser guidParser, IntParser intParser, DecParser decParser, HexParser hexParser)
     {
         _guidParser = guidParser;
         _intParser = intParser;
-        _floatParser = floatParser;
+        _decParser = decParser;
         _hexParser = hexParser;
     }
 
@@ -59,7 +59,7 @@ class RangesLoader
             var name = new DataName(data.Key);
             if (data.Value.Ranges.Length == 0)
                 throw new Exception($"Data '{name}' not contains ranges");
-            
+
             try
             {
                 result.Add(CreateData(name, data.Value));
@@ -81,12 +81,12 @@ class RangesLoader
                 return _guidParser.Parse(name, dataOptionsDto);
             case "int":
                 return _intParser.Parse(name, dataOptionsDto);
-            case "float":
-                return _floatParser.Parse(name, dataOptionsDto);
+            case "dec":
+                return _decParser.Parse(name, dataOptionsDto);
             case "hex":
                 return _hexParser.Parse(name, dataOptionsDto);
             default:
-                throw new Exception("Type not defined for data. Known types: guid, int, float");
+                throw new Exception("Type not defined for data. Known types: guid, int, dec");
         }
     }
 }

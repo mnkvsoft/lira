@@ -3,7 +3,7 @@
 POST /match/sharp/req/values/{{ regex:^[0-9]{20}$  >> $$account}}
 
 ~ body
-{{ jpath: $.amount }} >> {{ float >> $$amount}}
+{{ jpath: $.amount }} >> {{ dec >> $$amount}}
 
 ~ req
 

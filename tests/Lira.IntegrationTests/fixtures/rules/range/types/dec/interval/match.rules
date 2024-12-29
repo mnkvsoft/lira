@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /range/types/dec/interval/match/{{ range: dec_interval/first }}
+
+----- response
+
+~ code
+200
+
+~ body
+first
+
+
+-------------------- rule
+
+GET /range/types/dec/interval/match/{{ range: dec_interval/second }}
+
+----- response
+
+~ code
+200
+
+~ body
+second
+
+
+-------------------- rule
+
+GET /range/types/dec/interval/match/{{ range: dec_interval/third }}
+
+----- response
+
+~ code
+200
+
+~ body
+third

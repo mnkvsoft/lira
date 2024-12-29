@@ -1,0 +1,65 @@
+-------------------- case
+
+GET /range/types/dec/default/match/0
+
+----- expected
+
+~ code
+404
+
+-------------------- case
+
+GET /range/types/dec/default/match/0.01
+
+----- expected
+
+~ code
+200
+
+~ body
+first
+
+-------------------- case
+
+GET /range/types/dec/default/match/500000
+
+----- expected
+
+~ code
+200
+
+~ body
+first
+
+-------------------- case
+
+GET /range/types/dec/default/match/500000.01
+
+----- expected
+
+~ code
+200
+
+~ body
+second
+
+-------------------- case
+
+GET /range/types/dec/default/match/1000000
+
+----- expected
+
+~ code
+200
+
+~ body
+second
+
+-------------------- case
+
+GET /range/types/dec/default/match/1000000.01
+
+----- expected
+
+~ code
+404

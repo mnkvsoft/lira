@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /range/types/dec/capacity/match/{{ range: dec_length/first }}
+
+----- response
+
+~ code
+200
+
+~ body
+first
+
+
+-------------------- rule
+
+GET /range/types/dec/capacity/match/{{ range: dec_length/second }}
+
+----- response
+
+~ code
+200
+
+~ body
+second
+
+
+-------------------- rule
+
+GET /range/types/dec/capacity/match/{{ range: dec_length/third }}
+
+----- response
+
+~ code
+200
+
+~ body
+third

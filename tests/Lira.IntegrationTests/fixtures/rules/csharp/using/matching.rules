@@ -10,7 +10,7 @@ POST /csharp/using/matching/{{
 
 }}?amount={{
 
-    ## check that the amount is float
+    ## check that the amount is decimal
     @using System.Text.RegularExpressions;
 
     var regex = new Regex("[0-9]*\\.?[0-9]*");

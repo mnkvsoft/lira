@@ -16,7 +16,7 @@ GET /variables/chain/{{
 }}
 
 ~ body
-{{ jpath: $.amount }} >> {{ float >> $$amount }}
+{{ jpath: $.amount }} >> {{ dec >> $$amount }}
 
 ----- action
 

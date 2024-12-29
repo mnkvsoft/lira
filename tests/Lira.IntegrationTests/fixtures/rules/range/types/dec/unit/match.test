@@ -1,0 +1,89 @@
+-------------------- case
+
+GET /range/types/dec/unit/match/0.00099
+
+----- expected
+
+~ code
+404
+
+-------------------- case
+
+GET /range/types/dec/unit/match/0.001
+
+----- expected
+
+~ code
+200
+
+~ body
+first
+
+-------------------- case
+
+GET /range/types/dec/unit/match/0.5
+
+----- expected
+
+~ code
+200
+
+~ body
+first
+
+-------------------- case
+
+GET /range/types/dec/unit/match/0.501
+
+----- expected
+
+~ code
+200
+
+~ body
+second
+
+-------------------- case
+
+GET /range/types/dec/unit/match/1
+
+----- expected
+
+~ code
+200
+
+~ body
+second
+
+-------------------- case
+
+GET /range/types/dec/unit/match/1.001
+
+----- expected
+
+~ code
+200
+
+~ body
+third
+
+-------------------- case
+
+GET /range/types/dec/unit/match/1.5
+
+----- expected
+
+~ code
+200
+
+~ body
+third
+
+-------------------- case
+
+GET /range/types/dec/unit/match/1.500001
+
+----- expected
+
+~ code
+404

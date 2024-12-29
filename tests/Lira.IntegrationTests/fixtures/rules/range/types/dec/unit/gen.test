@@ -1,0 +1,32 @@
+-------------------- rule
+
+GET /range/types/dec/unit/gen/first
+
+----- expected
+
+~ code
+200
+
+## todo: need implementation body check
+
+-------------------- rule
+
+GET /range/types/dec/unit/gen/second
+
+----- expected
+
+~ code
+200
+
+## todo: need implementation body check
+
+-------------------- rule
+
+GET /range/types/dec/unit/gen/third
+
+----- expected
+
+~ code
+200
+
+## todo: need implementation body check

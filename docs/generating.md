@@ -427,12 +427,12 @@ int[: <интервал>]
 
 
 
-## float
+## dec
 Возвращает случайное число с 2 знаками после запятой
 
 #### Синтаксис
 ```
-float[: <интервал>]
+dec[: <интервал>]
 ```
 
 Если интервал не указан, то по умолчанию используется `0.01 - 10000`.
@@ -601,7 +601,7 @@ $order.template =
 {
     "id": {{ int }},
     "status": "paid",
-    "amount": {{ float }},
+    "amount": {{ dec }},
     "transaction_id": "{{ guid }}",
     "created_at": "{{ date }}",
     "customer": "{{ str }}"
@@ -674,7 +674,7 @@ $order.template:json =
 {
     "id": {{ int }},
     "status": "paid",
-    "amount": {{ float }},
+    "amount": {{ dec }},
     "transaction_id": "{{ guid }}",
     "created_at": "{{ date }}",
     "customer": "{{ str }}"
@@ -889,7 +889,7 @@ example: guide/declare_layers/rule
 
 ----- declare
 
-$amount = {{ float: [100 - 10000] }}
+$amount = {{ dec: [100 - 10000] }}
 $$id = {{ seq }}
 
 ----- response
@@ -939,7 +939,7 @@ curl --location 'http://localhost/order' \
 ```
 -------------------- declare
 
-$amount = {{ float: [100 - 10000] }}
+$amount = {{ dec: [100 - 10000] }}
 $$id = {{ seq }}
 $template = 
 {

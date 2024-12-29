@@ -1,12 +1,13 @@
 {
-  "amount": {
+  "dec_capacity": {
     "type": "dec",
     "start": "1.01",
-    "unit": 0.01,
+    "unit": 0.001,
     "capacity": "10",
     "ranges": [
-      "ok",
-      "reject"
+      "first",
+      "second",
+      "third"
     ]
   }
 }

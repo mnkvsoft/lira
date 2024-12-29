@@ -1,0 +1,12 @@
+{
+  "dec_unit": {
+    "type": "dec",
+    "interval": "0.001 - 1.5",
+    "unit": 0.001,
+    "ranges": [
+      "first",
+      "second",
+      "third"
+    ]
+  }
+}

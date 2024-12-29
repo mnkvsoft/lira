@@ -38,7 +38,7 @@ public static class ServiceCollectionExtensions
 
             .AddSingleton<GuidParser>()
             .AddSingleton<IntParser>()
-            .AddSingleton<FloatParser>()
+            .AddSingleton<DecParser>()
             .AddSingleton<HexParser>()
 
             .AddSingleton<ConfigurationReader>()

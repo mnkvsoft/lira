@@ -305,7 +305,7 @@ class RequestMatchersParser
     {
         var (invoke, maybeVariableDeclaration) = value.SplitToTwoPartsFromEnd(Consts.ControlChars.WriteToVariablePrefix).Trim();
 
-        // case: {{ float >> $$amount }}
+        // case: {{ dec >> $$amount }}
         if (maybeVariableDeclaration != null && maybeVariableDeclaration.StartsWith(Consts.ControlChars.VariablePrefix))
         {
             if (maybeVariableDeclaration.Split(" ").Length > 1)

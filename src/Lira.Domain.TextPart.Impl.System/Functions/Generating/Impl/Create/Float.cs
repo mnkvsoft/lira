@@ -3,9 +3,9 @@ using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
 
-internal class Float : WithRangeArgumentFunction<decimal>, IObjectTextPart
+internal class Dec : WithRangeArgumentFunction<decimal>, IObjectTextPart
 {
-    public override string Name => "float";
+    public override string Name => "dec";
     public override bool ArgumentIsRequired => false;
 
     private Interval<decimal> _interval = new(0.01m, 10_000);

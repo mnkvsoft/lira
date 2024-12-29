@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /range/types/dec/unit/gen/first
+
+----- response
+
+~ code
+200
+
+~ body
+{{ range: dec_unit/first }}
+
+
+-------------------- rule
+
+GET /range/types/dec/unit/gen/second
+
+----- response
+
+~ code
+200
+
+~ body
+{{ range: dec_unit/second }}
+
+
+-------------------- rule
+
+GET /range/types/dec/unit/gen/third
+
+----- response
+
+~ code
+200
+
+~ body
+{{ range: dec_unit/third }}

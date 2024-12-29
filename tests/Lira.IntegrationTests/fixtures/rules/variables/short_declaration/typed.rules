@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /variables/short_declaration/typed/{{ float >> $$amount:dec }}
+GET /variables/short_declaration/typed/{{ dec >> $$amount:dec }}
 
 ----- response
 {{ $$amount.GetType() }}

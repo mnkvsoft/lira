@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /variables/short_declaration/with_dot/{{ float >> $$amount.path }}
+GET /variables/short_declaration/with_dot/{{ dec >> $$amount.path }}
 
 ----- response
 {{ $$amount.path }}

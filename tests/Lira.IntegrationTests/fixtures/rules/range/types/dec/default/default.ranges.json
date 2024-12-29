@@ -1,0 +1,9 @@
+{
+  "dec_default": {
+    "type": "dec",
+    "ranges": [
+      "first",
+      "second"
+    ]
+  }
+}

@@ -1,9 +1,9 @@
 -------------------- rule
 
-POST /variables/short_declaration/with_dot_and_method_invoke/{{ float >> $$amount.path }}
+POST /variables/short_declaration/with_dot_and_method_invoke/{{ dec >> $$amount.path }}
 
 ~ body
-{{ jpath: $.amount }} >> {{ float >> $$amount.body }}
+{{ jpath: $.amount }} >> {{ dec >> $$amount.body }}
 
 ----- response
 

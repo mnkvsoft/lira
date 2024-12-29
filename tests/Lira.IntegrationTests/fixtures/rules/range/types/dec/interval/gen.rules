@@ -1,0 +1,37 @@
+-------------------- rule
+
+GET /range/types/dec/interval/gen/first
+
+----- response
+
+~ code
+200
+
+~ body
+{{ range: dec_interval/first }}
+
+
+-------------------- rule
+
+GET /range/types/dec/interval/gen/second
+
+----- response
+
+~ code
+200
+
+~ body
+{{ range: dec_interval/second }}
+
+
+-------------------- rule
+
+GET /range/types/dec/interval/gen/third
+
+----- response
+
+~ code
+200
+
+~ body
+{{ range: dec_interval/third }}

@@ -1,0 +1,24 @@
+-------------------- rule
+
+GET /range/types/dec/default/gen/first
+
+----- response
+
+~ code
+200
+
+~ body
+{{ range: dec_default/first }}
+
+
+-------------------- rule
+
+GET /range/types/dec/default/gen/second
+
+----- response
+
+~ code
+200
+
+~ body
+{{ range: dec_default/second }}

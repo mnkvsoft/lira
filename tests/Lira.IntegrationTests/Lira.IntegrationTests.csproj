@@ -907,9 +907,6 @@
     <None Update="fixtures\rules\generating\csharp\global_method.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\_draft\float.data.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="fixtures\rules\data\guid\default\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -970,19 +967,19 @@
     <None Update="fixtures\rules\data\guid\capacity\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\default\gen.test">
+    <None Update="fixtures\rules\range\types\dec\default\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\default\match.test">
+    <None Update="fixtures\rules\range\types\dec\default\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\default\gen.rules">
+    <None Update="fixtures\rules\range\types\dec\default\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\default\default.ranges.json">
+    <None Update="fixtures\rules\range\types\dec\default\default.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\default\match.rules">
+    <None Update="fixtures\rules\range\types\dec\default\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\range\types\guid\capacity\capacity.ranges.json">
@@ -1075,34 +1072,34 @@
     <None Update="fixtures\rules\range\types\int\mode\random\random.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\interval\interval.ranges.json">
+    <None Update="fixtures\rules\range\types\dec\interval\interval.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\interval\gen.rules">
+    <None Update="fixtures\rules\range\types\dec\interval\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\interval\gen.test">
+    <None Update="fixtures\rules\range\types\dec\interval\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\interval\match.rules">
+    <None Update="fixtures\rules\range\types\dec\interval\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\interval\match.test">
+    <None Update="fixtures\rules\range\types\dec\interval\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\unit\unit.ranges.json">
+    <None Update="fixtures\rules\range\types\dec\unit\unit.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\unit\gen.rules">
+    <None Update="fixtures\rules\range\types\dec\unit\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\unit\gen.test">
+    <None Update="fixtures\rules\range\types\dec\unit\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\unit\match.rules">
+    <None Update="fixtures\rules\range\types\dec\unit\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\unit\match.test">
+    <None Update="fixtures\rules\range\types\dec\unit\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\range\types\guid\format\format.ranges.json">
@@ -1219,19 +1216,19 @@
     <None Update="fixtures\rules\generating\types\json\variable\replace.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\length\length.ranges.json">
+    <None Update="fixtures\rules\range\types\dec\length\length.ranges.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\length\gen.rules">
+    <None Update="fixtures\rules\range\types\dec\length\gen.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\length\gen.test">
+    <None Update="fixtures\rules\range\types\dec\length\gen.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\length\match.rules">
+    <None Update="fixtures\rules\range\types\dec\length\match.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\range\types\float\length\match.test">
+    <None Update="fixtures\rules\range\types\dec\length\match.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\match\csharp\short\path.rules">
@@ -1331,6 +1328,10 @@
     <Content Include="fixtures\rules\third_party_libs\StringUtils.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="fixtures\_draft\" />
   </ItemGroup>
 
 </Project>
