@@ -29,6 +29,10 @@ internal class ExternalLibsProvider
     private readonly string _libsPath;
     private readonly string _nugetConfigPath;
     private readonly string _rulesPath;
+    private readonly ISettings _settings;
+    private readonly AvailableRepositories _repositories;
+    private readonly SourceCacheContext _cache;
+    private readonly NuGetFramework _currentFramework;
 
     public ExternalLibsProvider(IConfiguration configuration, ILogger<ExternalLibsProvider> logger)
     {
@@ -37,6 +41,14 @@ internal class ExternalLibsProvider
         _rulesPath = configuration.GetRulesPath();
         _libsPath = configuration.GetLibsPath() ?? _rulesPath;
         _nugetConfigPath = configuration.GetNugetConfigPath() ?? _rulesPath;
+
+        // Load machine and user settings
+        _settings = Settings.LoadDefaultSettings(null);
+        _repositories = GetSourceRepositories(_settings);
+        LogNugetInfo(_settings, _repositories);
+
+        _cache = new SourceCacheContext();
+        _currentFramework = GetCurrentFramework();
     }
 
     private IReadOnlyCollection<string>? _dllLocations;
@@ -82,20 +94,13 @@ internal class ExternalLibsProvider
         }
         else
         {
-            // Load machine and user settings
-            var settings = Settings.LoadDefaultSettings(null);
-
-            var repositories = GetSourceRepositories(settings);
-
-            LogNugetInfo(settings, repositories);
-
-            var cache = new SourceCacheContext();
-            var packageIdentities = await GetPackagesWithDependencies(packagesIdentities, repositories, cache, ct);
+            var packageIdentities = await GetPackagesWithDependencies(packagesIdentities, ct);
 
             foreach (var packageIdentity in packageIdentities)
             {
-                var globalPackagesFolder = SettingsUtility.GetGlobalPackagesFolder(settings);
-                using var packageReader = await GetPackageReader(globalPackagesFolder, repositories, packageIdentity, cache, settings, ct);
+                var globalPackagesFolder = SettingsUtility.GetGlobalPackagesFolder(_settings);
+                using var packageReader = await GetPackageReader(globalPackagesFolder, packageIdentity, ct);
+
                 var supportedFrameworks = await packageReader.GetSupportedFrameworksAsync(ct);
 
                 var selectedPackage = supportedFrameworks
@@ -143,10 +148,7 @@ internal class ExternalLibsProvider
 
     private async Task<PackageReaderBase> GetPackageReader(
         string globalPackagesFolder,
-        AvailableRepositories repositories,
         PackageIdentity packageIdentity,
-        SourceCacheContext cache,
-        ISettings settings,
         CancellationToken ct)
     {
         var package = GlobalPackagesFolderUtility.GetPackage(packageIdentity, globalPackagesFolder);
@@ -154,7 +156,7 @@ internal class ExternalLibsProvider
             return package.PackageReader;
 
         using var packageStream = new MemoryStream();
-        var (source, resource) = await repositories.TryInvoke(async r =>
+        var (source, resource) = await _repositories.TryInvoke(async r =>
         {
             var res = await r.GetResourceAsync<FindPackageByIdResource>(ct);
             return (r.PackageSource.Source, res);
@@ -165,7 +167,7 @@ internal class ExternalLibsProvider
             packageIdentity.Id,
             packageIdentity.Version,
             packageStream,
-            cache,
+            _cache,
             _nugetLogger,
             ct);
 
@@ -178,7 +180,7 @@ internal class ExternalLibsProvider
             packageStream,
             globalPackagesFolder,
             parentId: Guid.Empty,
-            ClientPolicyContext.GetClientPolicy(settings, _nugetLogger),
+            ClientPolicyContext.GetClientPolicy(_settings, _nugetLogger),
             _nugetLogger,
             ct);
 
@@ -190,11 +192,9 @@ internal class ExternalLibsProvider
 
     private async Task<HashSet<PackageIdentity>> GetPackagesWithDependencies(
         IReadOnlySet<PackageIdentity> packagesIdentities,
-        AvailableRepositories repositories,
-        SourceCacheContext cache,
         CancellationToken ct)
     {
-        var allNeedPackages = await GetAllPackagesWithDependencies(packagesIdentities, repositories, cache, ct);
+        var allNeedPackages = await GetAllPackagesWithDependencies(packagesIdentities, ct);
 
         var packageIdentities = new HashSet<PackageIdentity>();
 
@@ -208,7 +208,7 @@ internal class ExternalLibsProvider
                 packagesConfig: [],
                 preferredVersions: [],
                 availablePackages: allNeedPackages,
-                repositories.Select(r => r.PackageSource),
+                _repositories.Select(r => r.PackageSource),
                 _nugetLogger);
 
             var resolver = new PackageResolver();
@@ -276,8 +276,6 @@ internal class ExternalLibsProvider
 
     async Task<IReadOnlySet<SourcePackageDependencyInfo>> GetAllPackagesWithDependencies(
         IReadOnlyCollection<PackageIdentity> packagesIdentities,
-        AvailableRepositories repositories,
-        SourceCacheContext cache,
         CancellationToken ct)
     {
         var result = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
@@ -286,9 +284,6 @@ internal class ExternalLibsProvider
         {
             await ListAllPackageDependenciesRecursive(
                 packageIdentity,
-                repositories,
-                cache,
-                _nugetLogger,
                 result,
                 ct);
         }
@@ -296,19 +291,16 @@ internal class ExternalLibsProvider
         return result;
     }
 
-    static async Task ListAllPackageDependenciesRecursive(
+    async Task ListAllPackageDependenciesRecursive(
         PackageIdentity package,
-        AvailableRepositories repositories,
-        SourceCacheContext cache,
-        NuGet.Common.ILogger logger,
         HashSet<SourcePackageDependencyInfo> dependencies,
         CancellationToken ct)
     {
         if (dependencies.Contains(package))
             return;
 
-        var dependencyInfoResource = await repositories.TryInvoke(r => r.GetResourceAsync<DependencyInfoResource>(ct));
-        var dependencyInfo = await dependencyInfoResource.ResolvePackage(package, GetCurrentFramework(), cache, logger, ct);
+        var dependencyInfoResource = await _repositories.TryInvoke(r => r.GetResourceAsync<DependencyInfoResource>(ct));
+        var dependencyInfo = await dependencyInfoResource.ResolvePackage(package, _currentFramework, _cache, _nugetLogger, ct);
 
         if (dependencyInfo == null)
             return;
@@ -319,9 +311,6 @@ internal class ExternalLibsProvider
             {
                 await ListAllPackageDependenciesRecursive(
                     new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion),
-                    repositories,
-                    cache,
-                    logger,
                     dependencies,
                     ct);
             }
