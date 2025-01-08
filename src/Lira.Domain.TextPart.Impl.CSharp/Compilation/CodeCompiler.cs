@@ -28,7 +28,9 @@ static class CodeCompiler
         return new CompileResult.Success(new PeImage(bytes));
     }
 
-    private static CSharpCompilation CreateCompilation(IReadOnlyCollection<string> codes, UsageAssemblies? usageAssemblies,
+    private static CSharpCompilation CreateCompilation(
+        IReadOnlyCollection<string> codes,
+        UsageAssemblies? usageAssemblies,
         string? assemblyName)
     {
         var syntaxTrees = codes.Select(code => CSharpSyntaxTree.ParseText(code));

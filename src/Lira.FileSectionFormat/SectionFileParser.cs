@@ -104,16 +104,16 @@ public static class SectionFileParser
             var sectionBlocksLines = new List<string>();
             var childSectionsBlocksLines = new List<string>();
 
-            bool childBlockFinded = false;
+            bool childBlockFound = false;
             foreach (var line in withoutNameLines)
             {
-                if (childBlockFinded)
+                if (childBlockFound)
                 {
                     childSectionsBlocksLines.Add(line);
                 }
                 else if (IsSection(line))
                 {
-                    childBlockFinded = true;
+                    childBlockFound = true;
                     childSectionsBlocksLines.Add(line);
                 }
                 else

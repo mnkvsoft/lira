@@ -1,3 +1,4 @@
 {
-    "Newtonsoft.Json": "13.0.3"
+  "Npgsql": "9.0.2",
+  "ArgValidation": "1.10.0"
 }
