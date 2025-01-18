@@ -1,10 +1,8 @@
-using System.Collections;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Text.Json;
-using ArgValidation;
 using Lira.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -16,6 +14,7 @@ using NuGet.Packaging.Core;
 using NuGet.Packaging.Signing;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
+using NuGet.Protocol.VisualStudio;
 using NuGet.Resolver;
 using NuGet.Versioning;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -44,7 +43,7 @@ internal class ExternalLibsProvider
 
         // Load machine and user settings
         _settings = Settings.LoadDefaultSettings(null);
-        _repositories = GetSourceRepositories(_settings);
+        _repositories = GetSourceRepositories(_settings, _logger);
         LogNugetInfo(_settings, _repositories);
 
         _cache = new SourceCacheContext();
@@ -99,7 +98,7 @@ internal class ExternalLibsProvider
             foreach (var packageIdentity in packageIdentities)
             {
                 var globalPackagesFolder = SettingsUtility.GetGlobalPackagesFolder(_settings);
-                using var packageReader = await GetPackageReader(globalPackagesFolder, packageIdentity, ct);
+                using var packageReader = await _repositories.GetPackageReader(packageIdentity, ct);
 
                 var supportedFrameworks = await packageReader.GetSupportedFrameworksAsync(ct);
 
@@ -223,15 +222,22 @@ internal class ExternalLibsProvider
         return packageIdentities;
     }
 
-    private AvailableRepositories GetSourceRepositories(ISettings settings)
+    private static AvailableRepositories GetSourceRepositories(ISettings settings, ILogger logger)
     {
+        var globalPackagesFolder = SettingsUtility.GetGlobalPackagesFolder(settings);
+
         var repositories = new List<SourceRepository>();
+
+        var a = new SourceRepository(new PackageSource(globalPackagesFolder, "global folder"), Repository.Provider.GetVisualStudio());
+        repositories.Add(a);
+
+
         foreach (var source in SettingsUtility.GetEnabledSources(settings))
         {
             repositories.Add(GetRepository(source));
         }
 
-        return new AvailableRepositories(repositories, _logger);
+        return new AvailableRepositories(repositories, logger);
 
         static SourceRepository GetRepository(PackageSource source)
         {
@@ -329,47 +335,5 @@ internal class ExternalLibsProvider
         );
     }
 
-    class AvailableRepositories : IEnumerable<SourceRepository>
-    {
-        private readonly IReadOnlyCollection<SourceRepository> _repositories;
-        private readonly ILogger _logger;
 
-        public AvailableRepositories(IReadOnlyCollection<SourceRepository> repositories, ILogger logger)
-        {
-            Arg.NotEmpty(repositories, nameof(repositories));
-
-            _repositories = repositories;
-            _logger = logger;
-        }
-
-        public T TryInvoke<T>(Func<SourceRepository, T> func)
-        {
-            Exception? lastException = null;
-
-            foreach (SourceRepository repository in _repositories)
-            {
-                try
-                {
-                    return func(repository);
-                }
-                catch (Exception e)
-                {
-                    lastException = e;
-                    _logger.LogInformation($"An error occured while retrieving the resource from repository {repository}");
-                }
-            }
-
-            throw lastException!;
-        }
-
-        public IEnumerator<SourceRepository> GetEnumerator()
-        {
-            return _repositories.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-    }
 }
