@@ -9,7 +9,7 @@ using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.VisualStudio;
 
-namespace Lira.Domain.TextPart.Impl.CSharp.ExternalLibsLoading;
+namespace Lira.Domain.TextPart.Impl.CSharp.ExternalLibsLoading.Nuget;
 
 class AvailableRepositories : IEnumerable<SourceRepository>
 {

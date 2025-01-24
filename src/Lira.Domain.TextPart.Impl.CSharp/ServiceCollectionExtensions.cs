@@ -2,6 +2,7 @@
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.TextPart.Impl.CSharp.ExternalLibsLoading;
+using Lira.Domain.TextPart.Impl.CSharp.ExternalLibsLoading.Nuget;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
@@ -15,7 +16,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<PeImagesCache>()
             .AddSingleton<PeImagesCache.State>()
             .AddSingleton<DynamicAssembliesUnloader>()
-            .AddSingleton<ExternalLibsProvider>()
+            .AddSingleton<NugetLibsProvider>()
+            .AddSingleton<ExtLibsProvider>()
             .AddSingleton<Cache>();
     }
 }

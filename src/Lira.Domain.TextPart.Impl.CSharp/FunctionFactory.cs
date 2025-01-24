@@ -36,7 +36,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly Compiler _compiler;
     private readonly Cache _cache;
     private readonly IRangesProvider _rangesProvider;
-    private readonly ExternalLibsProvider _externalLibsProvider;
+    private readonly ExtLibsProvider _extLibsProvider;
 
     public FunctionFactory(
         IConfiguration configuration,
@@ -46,7 +46,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         CompilationStatistic compilationStatistic,
         Cache cache,
         IRangesProvider rangesProvider,
-        ExternalLibsProvider externalLibsProvider)
+        ExtLibsProvider extLibsProvider)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _path = configuration.GetRulesPath();
@@ -56,22 +56,22 @@ class FunctionFactory : IFunctionFactoryCSharp
         _compilationStatistic = compilationStatistic;
         _cache = cache;
         _rangesProvider = rangesProvider;
-        _externalLibsProvider = externalLibsProvider;
+        _extLibsProvider = extLibsProvider;
     }
 
-    public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(
+    public async Task<CreateFunctionResult<IObjectTextPart>> TryCreateGeneratingFunction(
         IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
 
         string prefix = "GeneratingFunction";
-        var customAssemblies = GetCustomAssemblies();
+        var customAssemblies = await GetCustomAssemblies();
         var className = GetClassName(prefix, code);
 
         var classToCompile =
             CreateGeneratingFunctionClassCode(className, customAssemblies.Loaded, declaredPartsProvider, code);
 
-        var result = CreateFunctionResult<IObjectTextPart>(
+        var result = await CreateFunctionResult<IObjectTextPart>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,
@@ -83,13 +83,13 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    public CreateFunctionResult<ITransformFunction> TryCreateTransformFunction(CodeBlock code)
+    public async Task<CreateFunctionResult<ITransformFunction>> TryCreateTransformFunction(CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
 
         string prefix = "TransformFunction";
         string className = GetClassName(prefix, code);
-        var customAssemblies = GetCustomAssemblies();
+        var customAssemblies = await GetCustomAssemblies();
 
         var (withoutUsings, usings) = ExtractUsings(code.ToString());
 
@@ -101,7 +101,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             GetNamespaces(customAssemblies.Loaded),
             GetUsingStatic(customAssemblies.Loaded));
 
-        var result = CreateFunctionResult<ITransformFunction>(
+        var result = await CreateFunctionResult<ITransformFunction>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,
@@ -112,13 +112,14 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    public CreateFunctionResult<IMatchFunctionTyped> TryCreateMatchFunction(IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
+    public async Task<CreateFunctionResult<IMatchFunctionTyped>> TryCreateMatchFunction(
+        IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
 
         string prefix = "MatchFunction";
         string className = GetClassName(prefix, code);
-        var customAssemblies = GetCustomAssemblies();
+        var customAssemblies = await GetCustomAssemblies();
 
         var (withoutUsings, usings) = ExtractUsingsAndReplaceVars(code, declaredPartsProvider);
 
@@ -130,7 +131,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             GetNamespaces(customAssemblies.Loaded),
             GetUsingStatic(customAssemblies.Loaded));
 
-        var result = CreateFunctionResult<IMatchFunctionTyped>(
+        var result = await CreateFunctionResult<IMatchFunctionTyped>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,
@@ -142,13 +143,14 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    public CreateFunctionResult<IRequestMatcher> TryCreateRequestMatcher(IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
+    public async Task<CreateFunctionResult<IRequestMatcher>> TryCreateRequestMatcher(
+        IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
 
         string prefix = "RequestMatcher";
         string className = GetClassName(prefix, code);
-        var customAssemblies = GetCustomAssemblies();
+        var customAssemblies = await GetCustomAssemblies();
         var (withoutUsings, usings) = ExtractUsingsAndReplaceVars(code, declaredPartsProvider);
         string classToCompile = ClassCodeCreator.CreateRequestMatcher(
             className,
@@ -158,7 +160,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             GetNamespaces(customAssemblies.Loaded),
             GetUsingStatic(customAssemblies.Loaded));
 
-        var result = CreateFunctionResult<IRequestMatcher>(
+        var result = await CreateFunctionResult<IRequestMatcher>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,
@@ -170,17 +172,18 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    public CreateFunctionResult<IAction> TryCreateAction(IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
+    public async Task<CreateFunctionResult<IAction>> TryCreateAction(IDeclaredPartsProvider declaredPartsProvider,
+        CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
 
         string prefix = "Action";
         string className = GetClassName(prefix, code);
-        var customAssemblies = GetCustomAssemblies();
+        var customAssemblies = await GetCustomAssemblies();
 
         string classToCompile = CreateActionClassCode(className, customAssemblies.Loaded, declaredPartsProvider, code);
 
-        var result = CreateFunctionResult<IAction>(
+        var result = await CreateFunctionResult<IAction>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,
@@ -192,7 +195,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    private CreateFunctionResult<TFunction> CreateFunctionResult<TFunction>(
+    private async Task<CreateFunctionResult<TFunction>> CreateFunctionResult<TFunction>(
         string assemblyPrefixName,
         string classToCompile,
         string className,
@@ -204,7 +207,7 @@ class FunctionFactory : IFunctionFactoryCSharp
                 [classToCompile],
                 AssemblyName: GetAssemblyName(assemblyPrefixName + className),
                 new UsageAssemblies(
-                    AssembliesLocations: GetAssembliesLocations(),
+                    AssembliesLocations: await GetAssembliesLocations(),
                     Runtime: peImages)));
 
         if (compileResult is CompileResult.Fault fault)
@@ -220,7 +223,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     }
 
     private IReadOnlyCollection<string>? _assembliesLocations;
-    private IReadOnlyCollection<string> GetAssembliesLocations()
+    private async Task<IReadOnlyCollection<string>> GetAssembliesLocations()
     {
         if (_assembliesLocations != null)
             return _assembliesLocations;
@@ -235,7 +238,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             GetType().Assembly.Location
         };
 
-        var dllFiles = _externalLibsProvider.GetDllFilesLocations().Result;
+        var dllFiles = await _extLibsProvider.GetLibsFiles();
         result.AddRange(dllFiles);
 
         _assembliesLocations = result;
@@ -248,12 +251,12 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private IReadOnlyCollection<PeImage> _customPeImageAssemblies = null!;
 
-    private (IReadOnlyCollection<Assembly> Loaded, IReadOnlyCollection<PeImage> PeImages) GetCustomAssemblies()
+    private async Task<(IReadOnlyCollection<Assembly> Loaded, IReadOnlyCollection<PeImage> PeImages)> GetCustomAssemblies()
     {
         if (_customAssembliesWasInit)
             return (_customLoadedAssemblies, _customPeImageAssemblies);
 
-        var customAssemblies = GetCustomAssemblies(_path);
+        var customAssemblies = await GetCustomAssemblies(_path);
         _customAssembliesWasInit = true;
 
         _customLoadedAssemblies = customAssemblies.Select(x => x.LoadedAssembly).ToArray();
@@ -262,7 +265,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         return (_customLoadedAssemblies, _customPeImageAssemblies);
     }
 
-    private IReadOnlyCollection<CustomAssembly> GetCustomAssemblies(string path)
+    private async Task<IReadOnlyCollection<CustomAssembly>> GetCustomAssemblies(string path)
     {
         var csharpFiles = Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories);
 
@@ -273,7 +276,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         var result = new List<CustomAssembly>();
 
-        var externalLibs = _externalLibsProvider.GetDllFilesLocations().Result;
+        var externalLibs = await _extLibsProvider.GetLibsFiles();
         var compileResult = _compiler.Compile(
             new CompileUnit(
                 codes,
