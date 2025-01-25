@@ -25,8 +25,8 @@ internal class ExtLibsProvider
 
         _logger.LogDebug(
             $"Loaded libs.\n" +
-            $"Directly:\n{string.Join("\n", libs.Select(l => " - " + l))}\n" +
-            $"Nuget:\n{string.Join("\n", nugetLibs.Select(l => " - " + l))}");
+            $"Nuget:\n{string.Join("\n", nugetLibs.Select(l => " - " + l))}\n" +
+            $"Directly:{ (libs.Length == 0 ? " none" : "\n" + string.Join("\n", libs.Select(l => " - " + l)))}");
 
         return libs.Union(nugetLibs).ToArray();
     }

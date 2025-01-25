@@ -94,9 +94,6 @@ internal class NugetLibsProvider
 
         var packageIdentities = await GetPackagesWithDependencies(packagesIdentities, ct);
 
-        _logger.LogInformation("Nuget libs:\n" +
-                               string.Join("\n", packageIdentities.Select(package => $"\t - {package}")));
-
         var result = new List<string>();
         foreach (var packageIdentity in packageIdentities)
         {
@@ -125,7 +122,7 @@ internal class NugetLibsProvider
         }
 
         _logger.LogInformation("Nuget libs:\n" +
-                               string.Join("\n", packageIdentities.Select(package => $"\t - {package}")));
+                               string.Join("\n", packageIdentities.Select(package => $" - {package}")));
 
         _packagesConfigToLibsCache.Add(packagesContent, result.ToArray());
 
