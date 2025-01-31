@@ -6,9 +6,9 @@ using static Consts.ExecutedBlock;
 
 internal static class PatternParser
 {
-    public static PatternParts Parse(IReadOnlyCollection<string> patterns) 
+    public static PatternParts Parse(IReadOnlyCollection<string> patterns)
         => Parse(string.Join('\n', patterns));
-    
+
     public static PatternParts Parse(string pattern)
     {
         var parts = new List<PatternPart>();
@@ -71,9 +71,9 @@ internal static class PatternParser
 
         if(sb.Length > 0)
             parts.Add(new PatternPart.Static(sb.ToString()));
-        
+
         return new PatternParts(parts);
     }
-    
-    
+
+
 }

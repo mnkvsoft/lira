@@ -6,29 +6,26 @@ GET /third_party_libs/in_rule
 
 {
     "rrn": "{{
-        ## namespace from third party lib
-        @using ArgValidation;
+                ## namespaces from third party lib
+                @using System.IdentityModel.Tokens.Jwt;
 
-        return digits(10);
+                @using Microsoft.IdentityModel.Tokens;
+                @using System.Security.Claims;
+                @using System.Security.Cryptography;
 
-        string digits(int length)
-        {
-            Arg.Validate(length, nameof(length))
-                .MoreThan(1);
+                var claims = new List<Claim>
+                {
+                    new("phone", "9161112233"),
+                };
 
-            char[] digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '8'];
+                var key = new SymmetricSecurityKey(RandomNumberGenerator.GetBytes(64));
+                var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+                var token = new JwtSecurityToken(
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddDays(1),
+                    signingCredentials: cred);
 
-            var sb = new StringBuilder();
-            for (int i = 0; i < length; i++)
-            {
-                var digit = digits[Random.Shared.Next(0, digits.Length)];
-                sb.Append(digit);
-            }
-
-            // return static value for test validation
-            // return sb.ToString();
-            return "1122334455";
-        }
-
+                var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+                return jwt;
     }}"
 }

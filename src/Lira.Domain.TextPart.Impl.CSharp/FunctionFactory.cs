@@ -27,6 +27,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private readonly AssemblyLoadContext _context = new(name: null, isCollectible: true);
     private readonly int _revision;
+    private readonly Dictionary<Hash, Assembly> _loadedAssembliesHashes = new();
 
     private const string AssemblyPrefix = "__dynamic";
     private string GetAssemblyName(string name) => $"{AssemblyPrefix}_{_revision}_{name}";
@@ -62,6 +63,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     public async Task<CreateFunctionResult<IObjectTextPart>> TryCreateGeneratingFunction(
         IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
     {
+        var a = code.ToString();
         var sw = Stopwatch.StartNew();
 
         string prefix = "GeneratingFunction";
@@ -202,18 +204,33 @@ class FunctionFactory : IFunctionFactoryCSharp
         IReadOnlyCollection<PeImage> peImages,
         params object[] dependencies)
     {
+        var assemblyName = GetAssemblyName(assemblyPrefixName + className);
+        var assembliesLocations = await GetAssembliesLocations();
+
+        var sb = new StringBuilder();
+        sb.AppendLine(classToCompile);
+        sb.AppendLine(assemblyName);
+        foreach (var assemblyLocation in assembliesLocations)
+        {
+            sb.AppendLine(assemblyLocation);
+        }
+        sb.AppendLine(Sha1.Create(peImages.Single().Bytes).ToString());
+        var a = sb.ToString();
+
         var compileResult = _compiler.Compile(
             new CompileUnit(
                 [classToCompile],
-                AssemblyName: GetAssemblyName(assemblyPrefixName + className),
+                AssemblyName: assemblyName,
                 new UsageAssemblies(
-                    AssembliesLocations: await GetAssembliesLocations(),
+                    AssembliesLocations: assembliesLocations,
                     Runtime: peImages)));
 
         if (compileResult is CompileResult.Fault fault)
             return new CreateFunctionResult<TFunction>.Failed(fault.Message, classToCompile);
 
         var peImage = ((CompileResult.Success)compileResult).PeImage;
+        var str = Sha1.Create(peImage.Bytes).ToString();
+
         var classAssembly = Load(peImage);
 
         var type = classAssembly.GetTypes().Single(t => t.Name == className);
@@ -290,6 +307,7 @@ class FunctionFactory : IFunctionFactoryCSharp
                                 csharpFiles.JoinWithNewLine());
 
         var peImage = ((CompileResult.Success)compileResult).PeImage;
+
         var assembly = Load(peImage);
         result.Add(new CustomAssembly(assembly, peImage));
 
@@ -303,11 +321,24 @@ class FunctionFactory : IFunctionFactoryCSharp
         using var stream = new MemoryStream();
         stream.Write(peImage.Bytes);
         stream.Position = 0;
-        var result = _context.LoadFromStream(stream);
 
-        _compilationStatistic.AddLoadAssemblyTime(sw.Elapsed);
+        var hash = peImage.Hash;
+        if (_loadedAssembliesHashes.TryGetValue(hash, out var assembly))
+            return assembly;
 
-        return result;
+        try
+        {
+            var result = _context.LoadFromStream(stream);
+
+            _compilationStatistic.AddLoadAssemblyTime(sw.Elapsed);
+            _loadedAssembliesHashes.Add(hash, result);
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
     }
 
     const string ContextParameterName = "__ctx";
@@ -457,9 +488,10 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         foreach (var line in codeWithVariables.Split(Constants.NewLine))
         {
-            if (line.StartsWith("@using"))
+            var trimmed = line.TrimStart(" ").TrimStart("\t");
+            if (trimmed.StartsWith("@using"))
             {
-                usings.Add(line[1..]);
+                usings.Add(trimmed[1..]);
             }
             else
             {

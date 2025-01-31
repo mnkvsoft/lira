@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Lira.Common;
-using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
 
@@ -72,7 +71,7 @@ class PeImagesCache : IDisposable
         {
             string strHash = Path.GetFileName(filePath);
             var hash = Hash.Parse(strHash);
-            var peImage = new PeImage(File.ReadAllBytes(filePath));
+            var peImage = new PeImage(hash, File.ReadAllBytes(filePath));
             _hashToEntryMap.Add(hash, new PeImageCacheEntry(peImage));
         }
 

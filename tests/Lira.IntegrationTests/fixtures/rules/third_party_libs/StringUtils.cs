@@ -1,29 +1,31 @@
 using System;
 using System.Text;
+using System.Collections.Generic;
 
 // namespace from third party lib
-using ArgValidation;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace utils;
 
 public static class stringUtils
 {
-    private static char[] _digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '8'];
-
     public static string digits(int length)
     {
-        Arg.Validate(length, nameof(length))
-            .MoreThan(1);
-
-        var sb = new StringBuilder();
-        for (int i = 0; i < length; i++)
+        var claims = new List<Claim>
         {
-            var digit = _digits[Random.Shared.Next(0, _digits.Length)];
-            sb.Append(digit);
-        }
+            new("phone", "9161112233"),
+        };
 
-        // return static value for test validation
-        // return sb.ToString();
-        return "1122334455";
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("key"));
+        var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.UtcNow.AddDays(1),
+            signingCredentials: cred);
+
+        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+        return jwt;
     }
 }

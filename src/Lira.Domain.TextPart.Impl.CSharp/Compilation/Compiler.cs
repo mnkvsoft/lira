@@ -3,14 +3,6 @@ using Lira.Common;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
 
-abstract record CompileResult
-{
-    public record Success(PeImage PeImage) : CompileResult;
-    public record Fault(string Message) : CompileResult;
-}
-
-record CompileUnit(IReadOnlyCollection<string> Codes, string AssemblyName, UsageAssemblies? UsageAssemblies);
-
 class Compiler
 {
     private readonly CompilationStatistic _compilationStatistic;
@@ -26,12 +18,12 @@ class Compiler
     {
         var sw = Stopwatch.StartNew();
 
-        var hash = GetHash(compileUnit);
+        var hash = compileUnit.GetHash();
 
         if (_peImagesCache.TryGet(hash, out var peImage))
             return new CompileResult.Success(peImage);
 
-        var compileResult = CodeCompiler.Compile(compileUnit.Codes, compileUnit.AssemblyName, compileUnit.UsageAssemblies);
+        var compileResult = CodeCompiler.Compile(compileUnit);
 
         if (compileResult is CompileResult.Success success)
         {
@@ -41,34 +33,4 @@ class Compiler
 
         return compileResult;
     }
-
-    private Hash GetHash(CompileUnit compileUnit)
-    {
-        using var memoryStream = new MemoryStream();
-        using var sw = new StreamWriter(memoryStream);
-
-        sw.Write(string.Concat(compileUnit.Codes));
-
-        var usageAssemblies = compileUnit.UsageAssemblies;
-        if (usageAssemblies != null)
-        {
-            foreach (var peImage in usageAssemblies.Runtime)
-            {
-                sw.Write(GetHash(peImage));
-            }
-
-            foreach (var location in usageAssemblies.AssembliesLocations)
-            {
-                sw.Write(location);
-            }
-        }
-
-        sw.Flush();
-        memoryStream.Seek(0, SeekOrigin.Begin);
-
-        var hash = Sha1.Create(memoryStream);
-        return hash;
-    }
-
-    private static Hash GetHash(PeImage image) => Sha1.Create(image.Bytes);
 }

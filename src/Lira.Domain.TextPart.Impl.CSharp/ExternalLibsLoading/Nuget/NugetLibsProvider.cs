@@ -99,10 +99,10 @@ internal class NugetLibsProvider
         {
             using var packageReader = await _repositories.GetPackageReader(packageIdentity, ct);
 
-            var supportedFrameworks = await packageReader.GetSupportedFrameworksAsync(ct);
+            var supportedFrameworks = (await packageReader.GetSupportedFrameworksAsync(ct)).ToArray();
 
             var selectedPackage = supportedFrameworks
-                .Where(x => x.Framework == ".NETCoreApp")
+                .Where(x => x.Framework == ".NETCoreApp" && x.Version <= Version.Parse("8.9.9.9"))
                 .OrderBy(x => x.Version)
                 .LastOrDefault();
 
