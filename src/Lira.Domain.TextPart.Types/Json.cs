@@ -21,9 +21,6 @@ public class Json
 
     public Json replace(string path, object newValue)
     {
-        if(newValue is string str)
-            return new Json(ReplacePath(Value, path, str.Typed()));
-
         return new Json(ReplacePath(Value, path, newValue));
     }
 

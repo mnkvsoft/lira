@@ -11,6 +11,7 @@ public record ReturnType
     public readonly static ReturnType Guid = new("guid", typeof(Guid));
     public readonly static ReturnType Decimal = new("dec", typeof(double));
     public readonly static ReturnType Date = new("date", typeof(DateTime));
+    public readonly static ReturnType Bool = new("bool", typeof(bool));
 
     private readonly string _value;
     public readonly Type DotnetType;
@@ -31,6 +32,12 @@ public record ReturnType
     public static bool TryParse(string value, [MaybeNullWhen(false)]out ReturnType type)
     {
         type = null;
+
+        if (value == "bool")
+        {
+            type = Bool;
+            return true;
+        }
 
         if (value == "json")
         {

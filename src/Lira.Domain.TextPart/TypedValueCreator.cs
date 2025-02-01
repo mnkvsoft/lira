@@ -27,6 +27,9 @@ public static class TypedValueCreator
         if (type == ReturnType.Decimal)
             return TryCreateDecimal(value, out result);
 
+        if (type == ReturnType.Bool)
+            return TryCreateBool(value, out result);
+
         throw new ArgumentOutOfRangeException(nameof(type), type, null);
     }
 
@@ -159,6 +162,28 @@ public static class TypedValueCreator
         return false;
     }
 
+    private static bool TryCreateBool(dynamic? value, [MaybeNullWhen(false)] out dynamic result)
+    {
+        result = null;
+
+        if (value is null)
+            return false;
+
+        if (value is bool)
+        {
+            result = value;
+            return true;
+        }
+
+        if (bool.TryParse(value.ToString(), out bool b))
+        {
+            result = b;
+            return true;
+        }
+
+        return false;
+    }
+
     private static bool TryCreateJson(dynamic? value, [MaybeNullWhen(false)] out dynamic result, out Exception? exception)
     {
         result = null;
@@ -186,10 +211,5 @@ public static class TypedValueCreator
             exception = e;
             return false;
         }
-
-        // string GetMessage(dynamic? o)
-        // {
-        //     return $"Value in {_declaredName} cannot be convert to json. Value: {o?.ToString()}";
-        // }
     }
 }
