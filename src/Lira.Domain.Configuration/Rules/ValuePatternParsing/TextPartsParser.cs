@@ -47,7 +47,8 @@ class TextPartsParser : ITextPartsParser
             parts.AddRange(await CreateValuePart(patternPart, parsingContext.ToImpl()));
         }
 
-        return new ObjectTextParts(parts);
+        bool isString = patternParts.Count == 0 || patternParts.Count > 1 || patternParts[0] is PatternPart.Static;
+        return new ObjectTextParts(parts, isString);
     }
 
     private async Task<IReadOnlyCollection<IObjectTextPart>> CreateValuePart(PatternPart patternPart, IReadonlyParsingContext parsingContext)

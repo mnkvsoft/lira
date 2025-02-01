@@ -1,0 +1,13 @@
+-------------------- case
+
+GET /generating/types/json/extension
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "name": "John McAllister"
+}

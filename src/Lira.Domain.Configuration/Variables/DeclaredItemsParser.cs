@@ -33,6 +33,8 @@ class DeclaredItemsParser(ITextPartsParser textPartsParser)
 
             if (typeStr != null)
                 type = ReturnType.Parse(typeStr);
+            else if (parts.IsString)
+                type = ReturnType.String;
 
             if (name.StartsWith(Consts.ControlChars.VariablePrefix))
             {

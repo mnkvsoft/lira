@@ -1,0 +1,22 @@
+-------------------- rule
+
+GET /generating/types/json/extension
+
+----- declare
+
+$person =
+{
+    "name" : "Mason Power"
+}
+
+----- response
+
+~ code
+200
+
+~ body
+{{
+     $person
+        .json()
+        .replace("$.name", "John McAllister")
+}}
