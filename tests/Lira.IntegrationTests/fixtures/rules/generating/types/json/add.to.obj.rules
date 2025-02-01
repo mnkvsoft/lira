@@ -1,0 +1,26 @@
+-------------------- rule
+
+GET /generating/types/json/add/to/obj
+
+----- declare
+
+$json_var:json =
+{
+    "persons": [
+        {
+            "name": "Mason Power"
+        }
+    ]
+}
+
+----- response
+
+~ code
+200
+
+~ body
+{{
+     $json_var
+        .add("$.persons[0]", "age", 37)
+        .add("$.persons[0]", "hobby", "['sport', 'fishing']")
+}}

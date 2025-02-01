@@ -1,0 +1,22 @@
+-------------------- case
+
+GET /generating/types/json/add/to/obj
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "persons": [
+    {
+      "name": "Mason Power",
+      "age": 37,
+      "hobby": [
+        "sport",
+        "fishing"
+      ]
+    }
+  ]
+}

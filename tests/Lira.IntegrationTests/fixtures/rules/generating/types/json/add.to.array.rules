@@ -1,0 +1,40 @@
+-------------------- rule
+
+GET /generating/types/json/add/to/array
+
+----- declare
+
+$json_var:json =
+{
+    "arrayObj" : [
+        {
+            "name": "name1"
+        }
+    ],
+    "arrayStr" : ["str1"],
+    "arrayNumber" : [1],
+    "arrayEmpty": []
+}
+
+----- response
+
+~ code
+200
+
+~ body
+{{
+     $json_var
+        .add("$.arrayObj", "{ 'name': 'name2' }")
+        .add("$.arrayObj", new { name = "name3" })
+        .add("$.arrayStr", "str2")
+        .add("$.arrayStr", "1")
+        .add("$.arrayNumber", 1)
+        .add("$.arrayNumber", 1.33)
+
+        .add("$.arrayEmpty",
+            1.33,
+            "str",
+            "{ 'prop': 'value' }",
+            new { prop = "value"}
+        )
+}}

@@ -1,5 +1,6 @@
 ﻿using Lira.Common.Extensions;
 using Newtonsoft.Json.Linq;
+
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
 
@@ -21,25 +22,10 @@ public class Json
 
     public Json replace(string path, object newValue)
     {
-        return new Json(ReplacePath(Value, path, newValue));
-    }
+        if (string.IsNullOrWhiteSpace(path))
+            throw new ArgumentNullException(nameof(path) + " is empty");
 
-    public Json add(string name, object value)
-    {
-        return new Json(AddToRoot(Value, name, value));
-    }
-
-    public override string ToString()
-    {
-        return Value.ToString().Replace("\r\n", "\n");
-    }
-
-    private static JObject ReplacePath(JObject root, string path, object newValue)
-    {
-        if (root == null || path == null)
-            throw new ArgumentNullException();
-
-        JObject rootCopy = (JObject)root.DeepClone();
+        JObject rootCopy = (JObject)Value.DeepClone();
         foreach (var currentToken in rootCopy.SelectTokens(path))
         {
             if (currentToken == rootCopy)
@@ -48,32 +34,77 @@ public class Json
             }
             else
             {
-                JToken newToken = GetNewToken(currentToken, newValue);
+                JToken newToken = GetNewToken(newValue);
                 currentToken.Replace(newToken);
             }
         }
 
-        return rootCopy;
+        return new Json(rootCopy);
     }
 
-    private static JToken GetNewToken(JToken currentToken, object newValue)
+    public Json add(string path, params object[] values)
     {
-        if (currentToken is JValue)
-            return JToken.FromObject(newValue);
+        if (string.IsNullOrWhiteSpace(path))
+            throw new ArgumentNullException(nameof(path) + " is empty");
 
-        if(newValue is string str)
-            return JToken.Parse(str.Trim());
+        JObject rootCopy = (JObject)Value.DeepClone();
+        var tokens = rootCopy.SelectTokens(path).ToArray();
 
-        if(newValue is Json json)
+        if (tokens.Length > 1)
+            throw new Exception(
+                $"Failed to add new element to array. Path must be return one element only. Path: {path}. Selected elements: {string.Join(", ", tokens.Select(x => x.Path))}");
+
+        var token = tokens.Single();
+
+        if (token is JArray array)
+        {
+            foreach (var value in values)
+            {
+                array.Add(GetNewToken(value));
+            }
+        }
+
+        if (token is JObject obj)
+        {
+            if (values.Length > 2)
+            {
+                throw new Exception(
+                    $"Failed to add a new field to an object. It is not possible to add more than one element to an object. Path: {path}. Values: {string.Join(", ", values.Skip(1))}");
+            }
+
+            if (values.Length < 2)
+            {
+                throw new Exception(
+                    $"Failed to add a new field to an object. Required to specify a value for a new object field. Path: {path}");
+            }
+
+            object nameObj = values[0];
+            var name = nameObj as string ??
+                       throw new Exception(
+                           $"Failed to add a new field to an object. The new field name must be a string. Current type: {nameObj.GetType()}");
+            var value = values[1];
+
+            obj.Add(name, GetNewToken(value));
+        }
+
+        return new Json(rootCopy);
+    }
+
+    private static JToken GetNewToken(object newValue)
+    {
+        if (newValue is Json json)
             return json.Value;
+
+        if (newValue is string str && (str.StartsWith('{') || str.StartsWith('[')))
+        {
+            return JToken.Parse(str.Trim());
+        }
 
         return JToken.FromObject(newValue);
     }
 
-    private static JObject AddToRoot(JObject root, string name, object value)
+    public override string ToString()
     {
-        JObject rootCopy = (JObject)root.DeepClone();
-        rootCopy.Add(name, JToken.FromObject(value));
-        return rootCopy;
+        return Value.ToString().Replace("\r\n", "\n");
     }
 }
