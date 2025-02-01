@@ -1827,14 +1827,14 @@ Response
 }
 ```
 
-#### Extractiong dynamically matched data in blocks in C#
+#### Extraction dynamically matched data in blocks in C#
 
 [extract.value.charp.rules](docs/examples/quick_start/extract.value.charp.rules)
 
 ```
 -------------------- rule
 
-GET /balance/7{{:phone int }}
+GET /balance/7{{ int >> $$phone }}
 
 ~ headers
 example: extract.value.charp
@@ -1843,10 +1843,7 @@ example: extract.value.charp
 
 ~ body
 {
-    "phone": {{ 
-        var phone = value("phone");
-        return phone;
-    }}
+    "phone": {{ $$phone }}
     "balance": {{ dec }}
 }
 ```
@@ -2201,7 +2198,7 @@ File.WriteAllText(filePath, $body);
 
 -------------------- rule
 
-GET /order/{{:id File.Exists($"/tmp/{value}.dat") ### if file exists ### }}
+GET /order/{{ File.Exists($"/tmp/{value}.dat") ### if file exists ### >> $$id }}
 
 ~ headers
 example: action
@@ -2209,7 +2206,7 @@ example: action
 ----- declare
 
 ## write json body from file
-$body:json = {{ File.ReadAllText($"/tmp/{value("id")}.dat") }}
+$body:json = {{ File.ReadAllText($"/tmp/{$$id}.dat") }}
 
 ----- response
 
@@ -2299,7 +2296,7 @@ changing the value of the 'status' field to 'paid'
 ###
 -------------------- rule
 
-GET /order/{{:id cache.contains("cache_example_" + value) }}
+GET /order/{{ cache.contains("cache_example_" + value) >> $$id }}
 
 ~ headers
 example: cache
@@ -2308,7 +2305,7 @@ example: cache
 
 ~ body
 {{ 
-    cache.get("cache_example_" + value("id"))
+    cache.get("cache_example_" + $$id)
             .replace("$.status", "paid")
 }}
 
@@ -2318,7 +2315,7 @@ we delete the data from the cache
 ###
 -------------------- rule
 
-POST /order/cancel/{{:id cache.contains("cache_example_" + value) }}
+POST /order/cancel/{{ cache.contains("cache_example_" + value) >> $$id }}
 
 ~ headers
 example: cache
@@ -2329,7 +2326,7 @@ example: cache
 
 ----- action
 
-cache.remove("cache_example_" + value("id"))
+cache.remove("cache_example_" + $$id)
 
 
 ###
@@ -2339,7 +2336,7 @@ then we issue an appropriate response
 ###
 -------------------- rule
 
-GET /order/{{:id !cache.contains("cache_example_" + value) }}
+GET /order/{{ !cache.contains("cache_example_" + value) }}
 
 ~ headers
 example: cache
@@ -2452,12 +2449,14 @@ and increment the counter
 ###
 -------------------- rule
 
-GET /order/{{:id 
+GET /order/{{
 
     string key = "cache_example_" + value;
 
     if(!cache.contains(key))
         return false;
+
+    $$id = value;
 
     var state = cache.get(key);
     return state.Counter >= 1 && state.Counter <= 3;
@@ -2471,14 +2470,14 @@ example: cache.medium
 
 ~ body
 {{ 
-    cache.get("cache_example_" + value("id"))
+    cache.get("cache_example_" + $$id)
             .Order
             .replace("$.status", "pending")
 }}
 
 ----- action
 
-var state = cache.get("cache_example_" + value("id"));
+var state = cache.get("cache_example_" + $$id);
 state.Counter++;
 
 
@@ -2490,12 +2489,14 @@ and do not increment the counter
 ###
 -------------------- rule
 
-GET /order/{{:id 
+GET /order/{{
 
 string key = "cache_example_" + value;
 
 if(!cache.contains(key))
     return false;
+
+$$id = value;
 
 var state = cache.get(key);
 return state.Counter > 3;
@@ -2509,7 +2510,7 @@ example: cache.medium
 
 ~ body
 {{ 
-    cache.get("cache_example_" + value("id"))
+    cache.get("cache_example_" + $$id)
             .Order
             .replace("$.status", "paid")
 }}
