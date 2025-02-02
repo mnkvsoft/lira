@@ -8,7 +8,7 @@ public static class Extensions
 {
     public static Json json(this string str)
     {
-        return new Json(str);
+        return Json.Parse(str);
     }
 
     public static ExpandoObject obj(this object initialObj)

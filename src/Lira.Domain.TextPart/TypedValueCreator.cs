@@ -203,7 +203,7 @@ public static class TypedValueCreator
 
         try
         {
-            result = new Json(json);
+            result = Json.Parse(json);
             return true;
         }
         catch (Exception e)

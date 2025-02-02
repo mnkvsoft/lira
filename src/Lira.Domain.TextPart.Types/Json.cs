@@ -11,9 +11,9 @@ public class Json : DynamicObject
 {
     public JObject JObject { get; }
 
-    public Json(string value)
+    public new static Json Parse(string value)
     {
-        JObject = JObject.Parse(value);
+        return new Json(JObject.Parse(value));
     }
 
     private Json(JObject jObject)

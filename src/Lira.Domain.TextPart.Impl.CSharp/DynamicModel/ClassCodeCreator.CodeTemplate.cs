@@ -24,9 +24,8 @@ static partial class ClassCodeCreator
             "using Lira.Domain.TextPart.Impl.CSharp;" + Nl + Nl +
 
             "[namespaces]" + Nl + Nl +
-            "[usings]" + Nl + Nl +
+            "[usings]" + Nl;
 
-            "using static Lira.Domain.TextPart.Impl.CSharp.Functions.JsonUtils;" + Nl;
 
         private const string Namespace = "namespace __DynamicGenerated;";
 

@@ -12,6 +12,7 @@ using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.TextPart.Types;
 using Lira.Domain.DataModel;
+using Newtonsoft.Json.Linq;
 
 // ReSharper disable RedundantExplicitArrayCreation
 
@@ -229,6 +230,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             typeof(IRangesProvider).Assembly.Location,
             typeof(Constants).Assembly.Location,
             typeof(Json).Assembly.Location,
+            typeof(JObject).Assembly.Location,
             typeof(RequestData).Assembly.Location,
             GetType().Assembly.Location
         };
