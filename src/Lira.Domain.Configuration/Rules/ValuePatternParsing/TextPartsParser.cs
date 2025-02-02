@@ -4,8 +4,6 @@ using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
-using Lira.Domain.TextPart.Impl.Custom;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 using Lira.Domain.TextPart.Impl.System;
 using Microsoft.Extensions.Logging;
 
@@ -119,13 +117,6 @@ class TextPartsParser : ITextPartsParser
     {
         var declaredItems = context.DeclaredItems;
 
-        if (ContainsOnlyVariable(rawText))
-        {
-            var varName = rawText.TrimStart(Consts.ControlChars.VariablePrefix);
-            var variable = declaredItems.Variables.GetOrThrow(varName);
-            return variable;
-        }
-
         var declaredFunction = declaredItems.Functions.FirstOrDefault(x => x.Name == rawText.TrimStart(Consts.ControlChars.FunctionPrefix));
         context.CustomDicts.TryGetCustomSetFunction(rawText, out var customSetFunction);
 
@@ -157,11 +148,6 @@ class TextPartsParser : ITextPartsParser
             GetCodeBlock(context, rawText));
 
         return createFunctionResult.GetFunctionOrThrow(rawText, context);
-
-        bool ContainsOnlyVariable(string s)
-        {
-            return s.StartsWith(Consts.ControlChars.VariablePrefix) && CustomItemName.IsValidName(s.TrimStart(Consts.ControlChars.VariablePrefix));
-        }
     }
 
     private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadParts(

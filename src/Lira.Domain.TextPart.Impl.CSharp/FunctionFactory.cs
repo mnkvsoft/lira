@@ -393,7 +393,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             {
                 var type = declaredPartsProvider.GetPartType(readItem.ItemName);
 
-                sbCodeWithLiraItems.Append($"({(type == null ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
+                sbCodeWithLiraItems.Append($"({(type == null || !type.NeedTyped ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
                                            $"\"{readItem.ItemName}\", {ContextParameterName})))");
             }
             else if (token is CodeToken.WriteItem writeItem)

@@ -1,0 +1,16 @@
+-------------------- rule
+
+GET /generating/types/json/read/value
+
+----- declare
+
+$$person:json =
+{
+    "name" : "Mason Power",
+    "age" : 37
+}
+
+----- response
+
+name: {{ $$person.name }}
+age: {{ $$person.age }}

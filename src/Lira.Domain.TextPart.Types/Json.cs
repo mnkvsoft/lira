@@ -1,4 +1,5 @@
-﻿using Lira.Common.Extensions;
+﻿using System.Dynamic;
+using Lira.Common.Exceptions;
 using Newtonsoft.Json.Linq;
 
 // ReSharper disable InconsistentNaming
@@ -6,18 +7,18 @@ using Newtonsoft.Json.Linq;
 
 namespace Lira.Domain.TextPart.Types;
 
-public class Json
+public class Json : DynamicObject
 {
-    private JObject Value { get; }
+    public JObject JObject { get; }
 
     public Json(string value)
     {
-        Value = JObject.Parse(value);
+        JObject = JObject.Parse(value);
     }
 
-    private Json(JObject value)
+    private Json(JObject jObject)
     {
-        Value = value;
+        JObject = jObject;
     }
 
     public Json replace(string path, object newValue)
@@ -25,7 +26,7 @@ public class Json
         if (string.IsNullOrWhiteSpace(path))
             throw new ArgumentNullException(nameof(path) + " is empty");
 
-        JObject rootCopy = (JObject)Value.DeepClone();
+        JObject rootCopy = (JObject)JObject.DeepClone();
         foreach (var currentToken in rootCopy.SelectTokens(path))
         {
             if (currentToken == rootCopy)
@@ -47,7 +48,7 @@ public class Json
         if (string.IsNullOrWhiteSpace(path))
             throw new ArgumentNullException(nameof(path) + " is empty");
 
-        JObject rootCopy = (JObject)Value.DeepClone();
+        JObject rootCopy = (JObject)JObject.DeepClone();
         var tokens = rootCopy.SelectTokens(path).ToArray();
 
         if (tokens.Length > 1)
@@ -90,10 +91,31 @@ public class Json
         return new Json(rootCopy);
     }
 
+    public override bool TryGetMember(GetMemberBinder binder, out object? result)
+    {
+        result = true;
+        var name = binder.Name;
+        if (string.IsNullOrEmpty(name))
+            throw new Exception("Name is empty");
+
+        var token = JObject.GetValue(name);
+
+        if (token == null)
+            throw new Exception($"Field '{name}' not found");
+
+        if (token is JValue value)
+        {
+            result = value.Value;
+            return true;
+        }
+
+        throw new UnsupportedInstanceType(result);
+    }
+
     private static JToken GetNewToken(object newValue)
     {
         if (newValue is Json json)
-            return json.Value;
+            return json.JObject;
 
         if (newValue is string str && (str.StartsWith('{') || str.StartsWith('[')))
         {
@@ -105,6 +127,6 @@ public class Json
 
     public override string ToString()
     {
-        return Value.ToString().Replace("\r\n", "\n");
+        return JObject.ToString().Replace("\r\n", "\n");
     }
 }

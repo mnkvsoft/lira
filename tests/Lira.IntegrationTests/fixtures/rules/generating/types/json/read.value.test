@@ -1,0 +1,12 @@
+-------------------- case
+
+GET /generating/types/json/read/value
+
+----- expected
+
+~ code
+200
+
+~ body
+name: Mason Power
+age: 37
