@@ -9,16 +9,21 @@ namespace Lira.Domain.TextPart.Types;
 
 public class Json : DynamicObject
 {
-    public JObject JObject { get; }
+    private JObject _jObject;
 
-    public new static Json Parse(string value)
+    public static Json Parse(string value)
     {
         return new Json(JObject.Parse(value));
     }
 
     private Json(JObject jObject)
     {
-        JObject = jObject;
+        _jObject = jObject;
+    }
+
+    public Json copy()
+    {
+        return new Json((JObject)_jObject.DeepClone());
     }
 
     public Json replace(string path, object newValue)
@@ -26,12 +31,11 @@ public class Json : DynamicObject
         if (string.IsNullOrWhiteSpace(path))
             throw new ArgumentNullException(nameof(path) + " is empty");
 
-        JObject rootCopy = (JObject)JObject.DeepClone();
-        foreach (var currentToken in rootCopy.SelectTokens(path))
+        foreach (var currentToken in _jObject.SelectTokens(path))
         {
-            if (currentToken == rootCopy)
+            if (currentToken == _jObject)
             {
-                rootCopy = JObject.FromObject(newValue);
+                _jObject = JObject.FromObject(newValue);
             }
             else
             {
@@ -40,7 +44,7 @@ public class Json : DynamicObject
             }
         }
 
-        return new Json(rootCopy);
+        return this;
     }
 
     public Json add(string path, params object[] values)
@@ -48,8 +52,7 @@ public class Json : DynamicObject
         if (string.IsNullOrWhiteSpace(path))
             throw new ArgumentNullException(nameof(path) + " is empty");
 
-        JObject rootCopy = (JObject)JObject.DeepClone();
-        var tokens = rootCopy.SelectTokens(path).ToArray();
+        var tokens = _jObject.SelectTokens(path).ToArray();
 
         if (tokens.Length > 1)
             throw new Exception(
@@ -88,7 +91,7 @@ public class Json : DynamicObject
             obj.Add(name, GetNewToken(value));
         }
 
-        return new Json(rootCopy);
+        return this;
     }
 
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
@@ -98,7 +101,7 @@ public class Json : DynamicObject
         if (string.IsNullOrEmpty(name))
             throw new Exception("Name is empty");
 
-        var token = JObject.GetValue(name);
+        var token = _jObject.GetValue(name);
 
         if (token == null)
             throw new Exception($"Field '{name}' not found");
@@ -115,7 +118,7 @@ public class Json : DynamicObject
     private static JToken GetNewToken(object newValue)
     {
         if (newValue is Json json)
-            return json.JObject;
+            return json._jObject;
 
         if (newValue is string str && (str.StartsWith('{') || str.StartsWith('[')))
         {
@@ -127,6 +130,6 @@ public class Json : DynamicObject
 
     public override string ToString()
     {
-        return JObject.ToString().Replace("\r\n", "\n");
+        return _jObject.ToString().Replace("\r\n", "\n");
     }
 }

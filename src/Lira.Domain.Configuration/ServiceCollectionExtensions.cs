@@ -38,6 +38,7 @@ public static class ServiceCollectionExtensions
 
             .AddSingleton<GuidParser>()
             .AddSingleton<IntParser>()
+            .AddSingleton<PanParser>()
             .AddSingleton<DecParser>()
             .AddSingleton<HexParser>()
 

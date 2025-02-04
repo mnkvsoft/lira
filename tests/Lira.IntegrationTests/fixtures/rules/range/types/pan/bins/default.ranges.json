@@ -1,0 +1,10 @@
+{
+  "pan_bins": {
+    "type": "pan",
+    "bins": [456789, 556712, 2234567],
+    "ranges": [
+      "first",
+      "second"
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+-------------------- rule
+
+GET /range/types/pan/bins/match/{{ range: pan_bins/first }}
+
+----- response
+
+~ code
+200
+
+~ body
+first
+
+
+-------------------- rule
+
+GET /range/types/pan/bins/match/{{ range: pan_bins/second }}
+
+----- response
+
+~ code
+200
+
+~ body
+second

@@ -10,13 +10,15 @@ class RangesLoader
     private readonly IntParser _intParser;
     private readonly DecParser _decParser;
     private readonly HexParser _hexParser;
+    private readonly PanParser _panParser;
 
-    public RangesLoader(GuidParser guidParser, IntParser intParser, DecParser decParser, HexParser hexParser)
+    public RangesLoader(GuidParser guidParser, IntParser intParser, DecParser decParser, HexParser hexParser, PanParser panParser)
     {
         _guidParser = guidParser;
         _intParser = intParser;
         _decParser = decParser;
         _hexParser = hexParser;
+        _panParser = panParser;
     }
 
     public async Task<Dictionary<DataName, Data>> Load(string path)
@@ -85,6 +87,8 @@ class RangesLoader
                 return _decParser.Parse(name, dataOptionsDto);
             case "hex":
                 return _hexParser.Parse(name, dataOptionsDto);
+            case "pan":
+                return _panParser.Parse(name, dataOptionsDto);
             default:
                 throw new Exception("Type not defined for data. Known types: guid, int, dec");
         }

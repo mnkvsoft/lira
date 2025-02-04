@@ -1,0 +1,24 @@
+-------------------- rule
+
+GET /range/types/pan/default/match/{{ range: pan_default/first }}
+
+----- response
+
+~ code
+200
+
+~ body
+first
+
+
+-------------------- rule
+
+GET /range/types/pan/default/match/{{ range: pan_default/second }}
+
+----- response
+
+~ code
+200
+
+~ body
+second
