@@ -7,7 +7,6 @@ public class ActionsExecutor
     private readonly IReadOnlyCollection<Delayed<IAction>> _actions;
     private readonly ILogger _logger;
 
-
     public ActionsExecutor(IReadOnlyCollection<Delayed<IAction>> actions, ILoggerFactory loggerFactory)
     {
         _actions = actions;
@@ -16,11 +15,11 @@ public class ActionsExecutor
 
     private async Task TryCall(Delayed<IAction> action, RuleExecutingContext context)
     {
-        if (action.DelayGenerator != null)
+        if (action.GetDelay != null)
         {
             _ = Task.Run(async () =>
             {
-                await Task.Delay(await action.DelayGenerator.Generate(context));
+                await Task.Delay(await action.GetDelay(context));
                 try
                 {
                     await action.Value.Execute(context);

@@ -2,7 +2,6 @@ using Lira.Common.Extensions;
 using Lira.Domain.Actions;
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
-using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;
@@ -13,13 +12,13 @@ class ActionsParser
 {
     private readonly IEnumerable<ISystemActionRegistrator> _externalCallerRegistrators;
     private readonly IFunctionFactoryCSharp _functionFactoryCSharp;
-    private readonly GeneratingHttpDataParser _httpDataParser;
+    private readonly DelayGeneratorParser _delayGeneratorParser;
 
-    public ActionsParser(IEnumerable<ISystemActionRegistrator> externalCallerRegistrators, IFunctionFactoryCSharp functionFactoryCSharp, GeneratingHttpDataParser httpDataParser)
+    public ActionsParser(IEnumerable<ISystemActionRegistrator> externalCallerRegistrators, IFunctionFactoryCSharp functionFactoryCSharp, DelayGeneratorParser delayGeneratorParser)
     {
         _externalCallerRegistrators = externalCallerRegistrators;
         _functionFactoryCSharp = functionFactoryCSharp;
-        _httpDataParser = httpDataParser;
+        _delayGeneratorParser = delayGeneratorParser;
     }
 
     public IReadOnlySet<string> GetSectionNames(IReadOnlyCollection<FileSection> sections)
@@ -42,18 +41,9 @@ class ActionsParser
                 continue;
 
             var action = await GetAction(parsingContext, section);
+            var getDelay = await _delayGeneratorParser.Parse(section, parsingContext);
 
-            DelayGenerator? delayGenerator = null;
-            var delayBlock = section.GetBlockOrNull(Constants.BlockName.Common.Delay);
-
-            if (delayBlock != null)
-            {
-                var delayStr = delayBlock.GetSingleLine();
-                var textParts = await _httpDataParser.ParseText(delayStr, parsingContext);
-                delayGenerator = new DelayGenerator(textParts.WrapToTextParts());
-            }
-
-            result.Add(new Delayed<IAction>(action, delayGenerator));
+            result.Add(new Delayed<IAction>(action, getDelay));
         }
 
         return result;
