@@ -1,3 +1,4 @@
+- hide dynamic class details on exception
 - json() extension for object
 - remove method for json type
 - dynamic block in ~ delay block
