@@ -1,11 +1,16 @@
-﻿namespace Lira.Domain;
+﻿using Lira.Common.PrettyParsers;
+using Lira.Domain.Generating;
 
-public record Delayed<T>(T Value, TimeSpan? Delay)
+namespace Lira.Domain;
+
+public record Delayed<T>(T Value, DelayGenerator? DelayGenerator);
+
+public record DelayGenerator(TextParts Parts)
 {
-    public async Task ExecuteWithDelayIfNeed(Func<T, Task> execute)
+    public async Task<TimeSpan> Generate(RuleExecutingContext context)
     {
-        if (Delay != null)
-            await Task.Delay(Delay.Value);
-        await execute(Value);
+        string delayStr = await Parts.Generate(context);
+        var delay = PrettyTimespanParser.Parse(delayStr);
+        return delay;
     }
 }

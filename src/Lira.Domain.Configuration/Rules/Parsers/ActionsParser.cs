@@ -1,9 +1,8 @@
 using Lira.Common.Extensions;
-using Lira.Common.PrettyParsers;
 using Lira.Domain.Actions;
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
-using Lira.Domain.Configuration.Rules.Parsers.Utils;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;
@@ -14,11 +13,13 @@ class ActionsParser
 {
     private readonly IEnumerable<ISystemActionRegistrator> _externalCallerRegistrators;
     private readonly IFunctionFactoryCSharp _functionFactoryCSharp;
+    private readonly GeneratingHttpDataParser _httpDataParser;
 
-    public ActionsParser(IEnumerable<ISystemActionRegistrator> externalCallerRegistrators, IFunctionFactoryCSharp functionFactoryCSharp)
+    public ActionsParser(IEnumerable<ISystemActionRegistrator> externalCallerRegistrators, IFunctionFactoryCSharp functionFactoryCSharp, GeneratingHttpDataParser httpDataParser)
     {
         _externalCallerRegistrators = externalCallerRegistrators;
         _functionFactoryCSharp = functionFactoryCSharp;
+        _httpDataParser = httpDataParser;
     }
 
     public IReadOnlySet<string> GetSectionNames(IReadOnlyCollection<FileSection> sections)
@@ -42,13 +43,17 @@ class ActionsParser
 
             var action = await GetAction(parsingContext, section);
 
-            TimeSpan? delay = null;
-            var delayStr = section.GetStringValueFromBlockOrEmpty(Constants.BlockName.Common.Delay);
+            DelayGenerator? delayGenerator = null;
+            var delayBlock = section.GetBlockOrNull(Constants.BlockName.Common.Delay);
 
-            if (!string.IsNullOrWhiteSpace(delayStr))
-                delay = PrettyTimespanParser.Parse(delayStr);
+            if (delayBlock != null)
+            {
+                var delayStr = delayBlock.GetSingleLine();
+                var textParts = await _httpDataParser.ParseText(delayStr, parsingContext);
+                delayGenerator = new DelayGenerator(textParts.WrapToTextParts());
+            }
 
-            result.Add(new Delayed<IAction>(action, delay));
+            result.Add(new Delayed<IAction>(action, delayGenerator));
         }
 
         return result;

@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /delay/response/dynamic
+
+----- response
+
+~ delay
+{{ int: 1000-1100 }} ms
+
+~ code
+200

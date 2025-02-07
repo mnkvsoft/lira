@@ -1,7 +1,13 @@
-- verify request
+- remove method for json type
+- dynamic block in ~ delay block
 - describe file section format
 - RequestStatisticStorage ttl to config
 - rules inheritance
-- repeat function
-- cache response
-- id for matching value
+
+
+ bugs:
+ - Uri not accessible in dynamic block
+ - access to cache-object no accessible in ~ req block
+
+check:
+- transform json array from request to response

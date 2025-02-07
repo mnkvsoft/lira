@@ -1,5 +1,4 @@
-﻿using Lira.Common.PrettyParsers;
-using Lira.Domain.Generating.Writers;
+﻿using Lira.Domain.Generating.Writers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Generating;
 using Lira.Domain.TextPart;
@@ -24,7 +23,7 @@ class ResponseStrategyParser
         if (responseSection == null)
         {
             return new ResponseStrategy.Normal(
-                Delay: null,
+                DelayGenerator: null,
                 StaticHttCodeGenerator.Code200,
                 BodyGenerator: null,
                 HeadersGenerator: null);
@@ -39,7 +38,7 @@ class ResponseStrategyParser
                     throw new Exception("No response section found");
 
                 return new ResponseStrategy.Normal(
-                    Delay: null,
+                    DelayGenerator: null,
                     new StaticHttCodeGenerator(strCode.ToHttpCode()),
                     BodyGenerator: null,
                     HeadersGenerator: null);
@@ -48,7 +47,7 @@ class ResponseStrategyParser
             if(responseSection.LinesWithoutBlock.Count == 1 && int.TryParse(responseSection.GetSingleLine(), out var code))
             {
                 return new ResponseStrategy.Normal(
-                    Delay: null,
+                    DelayGenerator: null,
                     new StaticHttCodeGenerator(code),
                     BodyGenerator: null,
                     HeadersGenerator: null);
@@ -58,13 +57,13 @@ class ResponseStrategyParser
             var parts = await _httpDataParser.ParseText(text, parsingContext);
 
             return new ResponseStrategy.Normal(
-                Delay: null,
+                DelayGenerator: null,
                 StaticHttCodeGenerator.Code200,
                 new BodyGenerator(parts.WrapToTextParts()),
                 HeadersGenerator: null);
         }
 
-        var delay = GetDelay(responseSection);
+        var delayGenerator = await GetDelayGenerator(responseSection, parsingContext);
         if (responseSection.ExistBlock(Constants.BlockName.Response.Abort))
         {
             var blocks = responseSection.GetBlocks(
@@ -82,17 +81,17 @@ class ResponseStrategyParser
                                     $"but there are: {string.Join(", ", blocks.Select(b => b.Name))}");
             }
 
-            return new ResponseStrategy.Abort(delay);
+            return new ResponseStrategy.Abort(delayGenerator);
         }
 
         return new ResponseStrategy.Normal(
-            delay,
+            delayGenerator,
             await GetHttpCodeGenerator(responseSection, parsingContext),
             await GetBodyGenerator(responseSection, parsingContext),
             await GetHeadersGenerator(responseSection, parsingContext));
     }
 
-    private static TimeSpan? GetDelay(FileSection responseSection)
+    private async Task<DelayGenerator?> GetDelayGenerator(FileSection responseSection, IReadonlyParsingContext parsingContext)
     {
         responseSection.AssertContainsOnlyKnownBlocks(BlockNameHelper.GetBlockNames<Constants.BlockName.Response>());
 
@@ -102,9 +101,8 @@ class ResponseStrategyParser
             return null;
 
         var delayStr = block.GetSingleLine();
-        var delay = PrettyTimespanParser.Parse(delayStr);
-
-        return delay;
+        var textParts = await _httpDataParser.ParseText(delayStr, parsingContext);
+        return new DelayGenerator(textParts.WrapToTextParts());
     }
 
     private async Task<IHttCodeGenerator> GetHttpCodeGenerator(FileSection responseSection, ParsingContext parsingContext)

@@ -16,11 +16,11 @@ public class ActionsExecutor
 
     private async Task TryCall(Delayed<IAction> action, RuleExecutingContext context)
     {
-        if (action.Delay != null)
+        if (action.DelayGenerator != null)
         {
             _ = Task.Run(async () =>
             {
-                await Task.Delay(action.Delay.Value);
+                await Task.Delay(await action.DelayGenerator.Generate(context));
                 try
                 {
                     await action.Value.Execute(context);
@@ -33,7 +33,7 @@ public class ActionsExecutor
         }
         else
         {
-            await action.Value.Execute(context);    
+            await action.Value.Execute(context);
         }
     }
 

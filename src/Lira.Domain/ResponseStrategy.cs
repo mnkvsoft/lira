@@ -4,19 +4,19 @@ using Microsoft.AspNetCore.Http;
 
 namespace Lira.Domain;
 
-public abstract record ResponseStrategy(TimeSpan? Delay)
+public abstract record ResponseStrategy(DelayGenerator? DelayGenerator)
 {
     public async Task Execute(HttpContextData httpContextData)
     {
-        if (Delay != null)
-            await Task.Delay(Delay.Value);
+        if (DelayGenerator != null)
+            await Task.Delay(await DelayGenerator.Generate(httpContextData.RuleExecutingContext));
 
         await ExecuteInternal(httpContextData);
     }
 
     protected abstract Task ExecuteInternal(HttpContextData httpContextData);
 
-    public record Normal(TimeSpan? Delay, IHttCodeGenerator CodeGenerator, BodyGenerator? BodyGenerator, HeadersGenerator? HeadersGenerator) : ResponseStrategy(Delay)
+    public record Normal(DelayGenerator? DelayGenerator, IHttCodeGenerator CodeGenerator, BodyGenerator? BodyGenerator, HeadersGenerator? HeadersGenerator) : ResponseStrategy(DelayGenerator)
     {
         protected override async Task ExecuteInternal(HttpContextData httpContextData)
         {
@@ -43,7 +43,7 @@ public abstract record ResponseStrategy(TimeSpan? Delay)
         }
     }
 
-    public record Abort(TimeSpan? Delay) : ResponseStrategy(Delay)
+    public record Abort(DelayGenerator? DelayGenerator) : ResponseStrategy(DelayGenerator)
     {
         protected override Task ExecuteInternal(HttpContextData httpContextData)
         {
