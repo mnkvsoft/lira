@@ -1,6 +1,6 @@
 -------------------- case
 
-POST /match/sharp/req/values/11112222333344445555
+POST /match/sharp/req/read_to_variable/11112222333344445555
 
 ~ body
 {

@@ -99,10 +99,10 @@
     <None Update="fixtures\rules\match\csharp\req\access_to_all_request_data.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\match\csharp\req\values.rules">
+    <None Update="fixtures\rules\match\csharp\req\read_to_variable.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\match\csharp\req\values.test">
+    <None Update="fixtures\rules\match\csharp\req\read_to_variable.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\csharp\using\generation.rules">
@@ -310,6 +310,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\delay\response.dynamic.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\csharp\req\cache.read.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\match\csharp\req\cache.read.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
