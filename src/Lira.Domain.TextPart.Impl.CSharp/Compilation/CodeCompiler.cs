@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Emit;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
@@ -31,13 +32,70 @@ static class CodeCompiler
     private static CSharpCompilation CreateCompilation(IReadOnlyCollection<string> codes, UsageAssemblies? usageAssemblies,
         string? assemblyName)
     {
-        var syntaxTrees = codes.Select(code => CSharpSyntaxTree.ParseText(code));
+        var syntaxTrees = codes.Select(code => CSharpSyntaxTree.ParseText(code)).ToArray();
 
         var compilation = CSharpCompilation.Create(
             assemblyName,
             syntaxTrees: syntaxTrees,
             references: GetReferences(usageAssemblies),
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        var semanticModel = compilation.GetSemanticModel(syntaxTrees.First(), true);
+
+        var varResult = syntaxTrees.First().GetRoot()
+            .DescendantNodes()
+            .OfType<MethodDeclarationSyntax>()
+            .SelectMany(x => x.DescendantNodes().OfType<LocalDeclarationStatementSyntax>())
+            .FirstOrDefault(x => x.ToString().Contains("var __result"));
+
+        if (varResult != null)
+        {
+            var symbolInfo = semanticModel.GetSymbolInfo(varResult.Declaration.Type);
+            var typeSymbol = symbolInfo.Symbol; // the type symbol for the variable..
+        }
+
+        // foreach (var member in members)
+        // {
+        //     var property = member as PropertyDeclarationSyntax;
+        //     if (property != null)
+        //         Console.WriteLine("Property: " + property.Identifier);
+        //     var method = member as MethodDeclarationSyntax;
+        //     if (method != null)
+        //     {
+        //         var variableDeclarations = method
+        //             .DescendantNodes()
+        //             .OfType<LocalDeclarationStatementSyntax>();
+        //
+        //         foreach (var variableDeclaration in variableDeclarations)
+        //         {
+        //             var symbolInfo = semanticModel.GetSymbolInfo(variableDeclaration.Declaration.Type);
+        //             var typeSymbol = symbolInfo.Symbol; // the type symbol for the variable..
+        //         }
+        //
+        //         var meth4 = method.DescendantNodes().ToArray();
+        //         var meth = method.DescendantNodes()
+        //             .OfType<LocalDeclarationStatementSyntax>()
+        //             // .FirstOrDefault(x => x.ToString().StartsWith("var __result"));
+        //             .FirstOrDefault(x => x.ToString().StartsWith("var __result"));
+        //
+        //
+        //         var meth2 = method.DescendantNodes()
+        //             // .OfType<LocalDeclarationStatementSyntax>()
+        //             // .FirstOrDefault(x => x.ToString().StartsWith("var __result"));
+        //             .FirstOrDefault(x => x.ToString().Contains("return"));
+        //
+        //
+        //         if (meth != null)
+        //         {
+        //             string? typeName = semanticModel.GetTypeInfo(meth).Type?.Name ?? "none:(";
+        //             // var typeInfo = semanticModel.GetTypeInfo(meth2);
+        //             //
+        //             // var symbolInfo =
+        //             //     semanticModel.GetSymbolInfo(meth2);
+        //         }
+        //
+        //     }
+        // }
 
         return compilation;
     }

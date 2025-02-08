@@ -28,8 +28,8 @@ class Compiler
 
         var hash = GetHash(compileUnit);
 
-        if (_peImagesCache.TryGet(hash, out var peImage))
-            return new CompileResult.Success(peImage);
+        // if (_peImagesCache.TryGet(hash, out var peImage))
+        //     return new CompileResult.Success(peImage);
 
         var compileResult = CodeCompiler.Compile(compileUnit.Codes, compileUnit.AssemblyName, compileUnit.UsageAssemblies);
 
