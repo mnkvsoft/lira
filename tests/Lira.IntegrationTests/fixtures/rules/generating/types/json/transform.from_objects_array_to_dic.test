@@ -1,0 +1,16 @@
+-------------------- case
+
+GET /generating/types/json/transform/from_objects_array_to_dic
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "dic": {
+    "1": 11.3,
+    "2": 56.7
+  }
+}

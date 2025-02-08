@@ -83,9 +83,23 @@ public class Json : DynamicObject
             }
 
             object nameObj = values[0];
-            var name = nameObj as string ??
-                       throw new Exception(
-                           $"Failed to add a new field to an object. The new field name must be a string. Current type: {nameObj.GetType()}");
+
+            string name;
+
+            if (nameObj is JValue jValue)
+            {
+                name = jValue.Value?.ToString()
+                       ?? throw new Exception($"Failed to add a new field to an object. The new field name must be not null");
+            }
+            else if (nameObj is string stringValue)
+            {
+                name = stringValue;
+            }
+            else
+            {
+                throw new Exception(
+                    $"Failed to add a new field to an object. The new field name must be a string. Current type: {nameObj.GetType()}");
+            }
             var value = values[1];
 
             obj.Add(name, GetNewToken(value));
@@ -112,7 +126,19 @@ public class Json : DynamicObject
             return true;
         }
 
-        throw new UnsupportedInstanceType(result);
+        if (token is JObject obj)
+        {
+            result = obj;
+            return true;
+        }
+
+        if (token is JArray array)
+        {
+            result = array;
+            return true;
+        }
+
+        throw new Exception($"Unknown token type for '{name}': " + token);
     }
 
     private static JToken GetNewToken(object newValue)

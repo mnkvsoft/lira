@@ -1,0 +1,46 @@
+-------------------- rule
+
+GET /generating/types/json/transform/from_objects_array_to_other_array
+
+----- declare
+
+$$req:json =
+{
+    "operations": [
+        {
+            "id": 1,
+            "date": "2025-02-08",
+            "amount": 11.3
+        },
+        {
+            "id": 2,
+            "date": "2025-02-06",
+            "amount": 56.7
+        }
+    ]
+}
+
+$new_operation:json =
+{
+    "identifier": "",
+    "sum": ""
+}
+
+$$res:json =
+{
+    "new_operations": []
+}
+
+----- response
+{{
+    foreach(var operation in $$req.operations)
+    {
+        var op = $new_operation
+                    .replace("$.identifier", operation.id.ToString())
+                    .replace("$.sum", operation.amount);
+
+        $$res.add("$.new_operations", op);
+    }
+
+    return $$res;
+}}
