@@ -39,15 +39,6 @@ class RequestMatchersParser
 
         foreach (var block in ruleSection.Blocks)
         {
-            if (block.Name == Constants.BlockName.Rule.Path)
-            {
-                var path = block.GetSingleLine();
-                var requestMatcher = CreatePathRequestMatcher(PatternParser.Parse(path), context);
-
-                builder.Add(requestMatcher);
-                continue;
-            }
-
             builder.Add(CreateRequestMatcher(block, context));
         }
 

@@ -7,27 +7,27 @@ public class Rule
 {
     public string Name { get; }
 
-    private readonly RequestMatcherSet _requestMatcherSet;
+    private readonly IReadOnlyCollection<IRequestMatcher> _matchers;
     private readonly ActionsExecutor _actionsExecutor;
     private readonly ResponseStrategy _responseStrategy;
 
     public Rule(
         string name,
-        RequestMatcherSet matchers,
+        IReadOnlyCollection<IRequestMatcher> matchers,
         ActionsExecutor actionsExecutor,
         ResponseStrategy responseStrategy)
     {
-        _requestMatcherSet = matchers;
 
         Name = name;
         _actionsExecutor = actionsExecutor;
         _responseStrategy = responseStrategy;
+        _matchers = matchers;
     }
 
     public async Task<IRuleExecutor?> GetExecutor(RequestContext context)
     {
         var ruleExecutingContext = new RuleExecutingContext(context);
-        var matchResult = await _requestMatcherSet.IsMatch(ruleExecutingContext);
+        var matchResult = await IsMatch(ruleExecutingContext);
 
         if (matchResult is RuleMatchResult.Matched matched)
             return new RuleExecutor(ruleExecutingContext, this, matched.Weight); ;
@@ -41,6 +41,22 @@ public class Rule
 
         await _actionsExecutor.Execute(httpContextData.RuleExecutingContext);
         await _responseStrategy.Execute(httpContextData);
+    }
+
+    private async Task<RuleMatchResult> IsMatch(RuleExecutingContext context)
+    {
+        var matcheds = new List<Matched>();
+
+        foreach (var matcher in _matchers)
+        {
+            var matchResult = await matcher.IsMatch(context);
+            if (matchResult is not Matched matched)
+                return RuleMatchResult.NotMatched.Instance;
+
+            matcheds.Add(matched);
+        }
+
+        return new RuleMatchResult.Matched(new RuleMatchWeight(matcheds));
     }
 
     record RuleExecutor(RuleExecutingContext RuleExecutingContext, Rule Rule, IRuleMatchWeight Weight) : IRuleExecutor

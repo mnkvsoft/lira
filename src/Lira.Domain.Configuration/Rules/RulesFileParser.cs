@@ -126,7 +126,7 @@ internal class RuleFileParser
 
                 rules.Add(new Rule(
                     ruleName + $". Condition no. {i + 1}",
-                    new RequestMatcherSet(matchers),
+                    matchers,
                     new ActionsExecutor(externalCallers, _loggerFactory),
                     responseStrategy));
             }
@@ -191,7 +191,7 @@ internal class RuleFileParser
         [
             new Rule(
             ruleName,
-            new RequestMatcherSet(requestMatchers),
+            requestMatchers,
             new ActionsExecutor(externalCallers, _loggerFactory),
             responseStrategy)
         ];
