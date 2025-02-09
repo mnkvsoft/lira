@@ -6,7 +6,7 @@ using System.Globalization;
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
 // ReSharper disable once UnusedType.Global
-public abstract class DynamicObjectBaseMatch : DynamicObjectBase
+public abstract class DynamicObjectBaseMatch : DynamicObjectWithDeclaredPartsBase
 {
     protected DynamicObjectBaseMatch(DependenciesBase dependencies) : base(dependencies)
     {

@@ -7,11 +7,11 @@ using Microsoft.Extensions.Logging;
 using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Configuration;
-using Lira.Domain.Actions;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.TextPart.Types;
 using Lira.Domain.DataModel;
+using Lira.Domain.Handling.Actions;
 using Newtonsoft.Json.Linq;
 
 // ReSharper disable RedundantExplicitArrayCreation
@@ -210,7 +210,16 @@ class FunctionFactory : IFunctionFactoryCSharp
             return new CreateFunctionResult<TFunction>.Failed(fault.Message, classToCompile);
 
         var peImage = ((CompileResult.Success)compileResult).PeImage;
-        var classAssembly = Load(peImage);
+
+        Assembly classAssembly;
+        try
+        {
+            classAssembly = Load(peImage);
+        }
+        catch (FileLoadException e)
+        {
+            throw new Exception("Unable to load assembly: " + classToCompile, e);
+        }
 
         var type = classAssembly.GetTypes().Single(t => t.Name == className);
         var function = (TFunction)Activator.CreateInstance(type, dependencies)!;
@@ -311,6 +320,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         using var stream = new MemoryStream();
         stream.Write(peImage.Bytes);
         stream.Position = 0;
+
         var result = _context.LoadFromStream(stream);
 
         _compilationStatistic.AddLoadAssemblyTime(sw.Elapsed);

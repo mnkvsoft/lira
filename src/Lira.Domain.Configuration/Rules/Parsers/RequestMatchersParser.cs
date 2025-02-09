@@ -80,13 +80,13 @@ class RequestMatchersParser
             case Constants.BlockName.Rule.Method:
                 return CreateMethodRequestMather(block.GetSingleLine());
             case Constants.BlockName.Rule.Query:
-                return CreateQueryStringMatcher(PatternParser.Parse(block.GetSingleLine()), context);
+                return CreateQueryStringMatcher(PatternParser.Parse(block.GetLinesAsString()), context);
             case Constants.BlockName.Rule.Headers:
                 return CreateHeadersRequestMatcher(block, context);
             case Constants.BlockName.Rule.Body:
                 return CreateBodyRequestMatcher(block, context);
             case Constants.BlockName.Rule.Path:
-                return CreatePathRequestMatcher(PatternParser.Parse(block.GetSingleLine()), context);
+                return CreatePathRequestMatcher(PatternParser.Parse(block.GetLinesAsString()), context);
             case Constants.BlockName.Rule.Request:
                 return CreateCustomRequestMatcher(block.GetLinesAsString(), context);
             default:
@@ -97,7 +97,7 @@ class RequestMatchersParser
     private IRequestMatcher CreateCustomRequestMatcher(string code, ParsingContext context)
     {
         var (codeBlock, newRuntimeVariables) = CodeParser.Parse(code, context.DeclaredItems);
-        context.DeclaredItems.Variables.AddRange(newRuntimeVariables);
+        context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
         var matcher = _functionFactoryCSharp.TryCreateRequestMatcher(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return matcher.GetFunctionOrThrow(code, context);
@@ -128,7 +128,7 @@ class RequestMatchersParser
         return new PathRequestMatcher(patterns);
     }
 
-    private QueryStringRequestMatcher CreateQueryStringMatcher(PatternParts queryParts, ParsingContext context)
+    private QueryStringRequestMatcher  CreateQueryStringMatcher(PatternParts queryParts, ParsingContext context)
     {
         var keysWithValueRaw = queryParts.Split("&");
         var patterns = new Dictionary<string, TextPatternPart>();
@@ -286,7 +286,7 @@ class RequestMatchersParser
             return customSetFunction;
 
         var (codeBlock, newRuntimeVariables) = CodeParser.Parse(invoke, context.DeclaredItems);
-        context.DeclaredItems.Variables.AddRange(newRuntimeVariables);
+        context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
         var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);

@@ -1,5 +1,5 @@
-﻿using Lira.Domain.Actions;
-using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+﻿using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+using Lira.Domain.Handling.Actions;
 using Lira.FileSectionFormat;
 
 namespace Lira.Domain.Configuration.Rules;

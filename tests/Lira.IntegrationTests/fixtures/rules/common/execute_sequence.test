@@ -1,0 +1,32 @@
+## not cached
+-------------------- case
+
+POST /common/execute_sequence/key?a=1
+
+~ headers
+Id: 1
+
+~ body
+1
+
+----- expected
+
+~ code
+200
+
+~ body
+1>2>3>4>5>6>7
+
+
+## cached
+-------------------- case
+
+GET /common/utils/cache/key
+
+----- expected
+
+~ code
+200
+
+~ body
+1>2>3>4>5>6>7>8

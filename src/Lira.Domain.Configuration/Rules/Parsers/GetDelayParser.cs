@@ -1,13 +1,13 @@
 using Lira.Common.PrettyParsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
-using Lira.Domain.Generating;
+using Lira.Domain.Handling.Generating;
 using Lira.Domain.TextPart;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;
 
 namespace Lira.Domain.Configuration.Rules.Parsers;
 
-class DelayGeneratorParser(ITextPartsParser partsParser)
+class GetDelayParser(ITextPartsParser partsParser)
 {
     public async Task<GetDelay?> Parse(FileSection responseSection, IReadonlyParsingContext parsingContext)
     {

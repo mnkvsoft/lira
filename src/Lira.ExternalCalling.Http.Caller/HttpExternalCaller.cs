@@ -1,7 +1,7 @@
 using System.Text;
 using Lira.Domain;
-using Lira.Domain.Actions;
-using Lira.Domain.Generating;
+using Lira.Domain.Handling.Actions;
+using Lira.Domain.Handling.Generating;
 
 namespace Lira.ExternalCalling.Http.Caller;
 
