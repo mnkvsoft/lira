@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Lira.Domain.Generating;
+namespace Lira.Domain.Handling.Generating;
 
 public class TextParts : IReadOnlyCollection<ITextPart>
 {

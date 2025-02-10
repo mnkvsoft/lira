@@ -336,6 +336,12 @@
     <None Update="fixtures\rules\generating\types\json\transform.from_objects_array_to_other_array.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\common\execute_sequence.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\common\execute_sequence.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

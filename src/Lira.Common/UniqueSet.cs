@@ -7,7 +7,7 @@ public interface IUniqueSetItem
     string Name { get; }
     string EntityName { get; }
 }
-    
+
 public abstract class UniqueSet<T> : IReadOnlyCollection<T> where T : IUniqueSetItem
 {
     private readonly HashSet<T> _set = new();
@@ -25,6 +25,15 @@ public abstract class UniqueSet<T> : IReadOnlyCollection<T> where T : IUniqueSet
     {
         if (_set.TryGetValue(item, out _))
             throw new InvalidOperationException($"{item.EntityName} '{item.Name}' already declared");
+        _set.Add(item);
+    }
+
+    protected void TryAdd(T item)
+    {
+        if (_set.TryGetValue(item, out _))
+        {
+            return;
+        }
         _set.Add(item);
     }
 

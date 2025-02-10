@@ -1,4 +1,4 @@
-using Lira.Domain.Generating;
+using Lira.Domain.Handling.Generating;
 
 namespace Lira.Domain.TextPart;
 

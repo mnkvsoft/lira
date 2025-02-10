@@ -12,7 +12,7 @@ public static class FileBlockExtensions
             throw new InvalidOperationException($"Block '{block.Name}' not contais lines");
 
         if (lines.Count > 1)
-            throw new InvalidOperationException($"Block '{block.Name}' contais more than one lines. Lines: " + string.Join(", ", lines.Select(l => $"'{l}'")));
+            throw new InvalidOperationException($"Block '{block.Name}' contains more than one lines. Lines: " + string.Join(", ", lines.Select(l => $"'{l}'")));
 
         return lines[0];
     }

@@ -1,6 +1,6 @@
 using ArgValidation;
 
-namespace Lira.Domain.Generating.Writers;
+namespace Lira.Domain.Handling.Generating.Writers;
 
 public class HeadersGenerator
 {

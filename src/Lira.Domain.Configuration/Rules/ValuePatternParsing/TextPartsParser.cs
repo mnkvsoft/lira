@@ -49,7 +49,7 @@ class TextPartsParser : ITextPartsParser
         return new ObjectTextParts(parts, isString);
     }
 
-    private async Task<IReadOnlyCollection<IObjectTextPart>> CreateValuePart(PatternPart patternPart, IReadonlyParsingContext parsingContext)
+    private async Task<IReadOnlyCollection<IObjectTextPart>> CreateValuePart(PatternPart patternPart, ParsingContext parsingContext)
     {
         return patternPart switch
         {
@@ -59,7 +59,7 @@ class TextPartsParser : ITextPartsParser
         };
     }
 
-    private async Task<IReadOnlyCollection<IObjectTextPart>> GetDynamicParts(PatternPart.Dynamic dynamicPart, IReadonlyParsingContext context)
+    private async Task<IReadOnlyCollection<IObjectTextPart>> GetDynamicParts(PatternPart.Dynamic dynamicPart, ParsingContext context)
     {
         string value = dynamicPart.Value;
 
@@ -93,17 +93,15 @@ class TextPartsParser : ITextPartsParser
         return [pipeline];
     }
 
-    private static CodeBlock GetCodeBlock(IReadonlyParsingContext context, string value)
+    private static CodeBlock GetCodeBlock(ParsingContext parsingContext, string value)
     {
-        var (codeBlock, newRuntimeVariables) = CodeParser.Parse(value, context.DeclaredItems);
-
-        if (newRuntimeVariables.Count > 0)
-            throw new Exception("Variables cannot be set in generation blocks. Code: " + value);
+        var (codeBlock, newRuntimeVariables) = CodeParser.Parse(value, parsingContext.DeclaredItems);
+        parsingContext.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
         return codeBlock;
     }
 
-    private ITransformFunction CreateTransformFunction(string invoke, IReadonlyParsingContext context)
+    private ITransformFunction CreateTransformFunction(string invoke, ParsingContext context)
     {
         if (_functionFactorySystem.TryCreateTransformFunction(invoke, out var transformFunction))
             return transformFunction;
@@ -113,7 +111,7 @@ class TextPartsParser : ITextPartsParser
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 
-    private IObjectTextPart CreateStartFunction(string rawText, IReadonlyParsingContext context)
+    private IObjectTextPart CreateStartFunction(string rawText, ParsingContext context)
     {
         var declaredItems = context.DeclaredItems;
 

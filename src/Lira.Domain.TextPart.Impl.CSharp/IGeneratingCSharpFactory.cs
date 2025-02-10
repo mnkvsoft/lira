@@ -1,6 +1,6 @@
 // ReSharper disable RedundantExplicitArrayCreation
 
-using Lira.Domain.Actions;
+using Lira.Domain.Handling.Actions;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 

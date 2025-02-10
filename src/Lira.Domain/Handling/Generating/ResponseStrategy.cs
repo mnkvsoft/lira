@@ -1,24 +1,15 @@
-using Lira.Domain.Generating;
-using Lira.Domain.Generating.Writers;
+using Lira.Domain.Handling.Generating.Writers;
 using Microsoft.AspNetCore.Http;
 
-namespace Lira.Domain;
+namespace Lira.Domain.Handling.Generating;
 
-public abstract record ResponseStrategy(GetDelay? GetDelay)
+public abstract record ResponseGenerationHandler : IHandler
 {
-    public async Task Execute(HttpContextData httpContextData)
+    public abstract Task Handle(HttpContextData httpContextData);
+
+    public record Normal(IHttCodeGenerator CodeGenerator, BodyGenerator? BodyGenerator, HeadersGenerator? HeadersGenerator) : ResponseGenerationHandler
     {
-        if (GetDelay != null)
-            await Task.Delay(await GetDelay(httpContextData.RuleExecutingContext));
-
-        await ExecuteInternal(httpContextData);
-    }
-
-    protected abstract Task ExecuteInternal(HttpContextData httpContextData);
-
-    public record Normal(GetDelay? GetDelay, IHttCodeGenerator CodeGenerator, BodyGenerator? BodyGenerator, HeadersGenerator? HeadersGenerator) : ResponseStrategy(GetDelay)
-    {
-        protected override async Task ExecuteInternal(HttpContextData httpContextData)
+        public override async Task Handle(HttpContextData httpContextData)
         {
             var context = httpContextData.RuleExecutingContext;
             var response = httpContextData.Response;
@@ -43,9 +34,9 @@ public abstract record ResponseStrategy(GetDelay? GetDelay)
         }
     }
 
-    public record Abort(GetDelay? GetDelay) : ResponseStrategy(GetDelay)
+    public record Abort : ResponseGenerationHandler
     {
-        protected override Task ExecuteInternal(HttpContextData httpContextData)
+        public override Task Handle(HttpContextData httpContextData)
         {
             httpContextData.Response.HttpContext.Abort();
             return Task.CompletedTask;
