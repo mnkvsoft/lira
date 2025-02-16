@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<CompilationStatistic>()
             .AddScoped<PeImagesCache>()
             .AddSingleton<PeImagesCache.State>()
+            .AddSingleton<FunctionFactory.State>()
             .AddSingleton<DynamicAssembliesUnloader>()
             .AddSingleton<NugetLibsProvider>()
             .AddSingleton<ExtLibsProvider>()

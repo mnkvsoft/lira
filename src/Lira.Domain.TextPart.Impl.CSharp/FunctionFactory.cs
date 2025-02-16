@@ -20,7 +20,13 @@ namespace Lira.Domain.TextPart.Impl.CSharp;
 
 class FunctionFactory : IFunctionFactoryCSharp
 {
-    private static int _revisionCounter;
+    public class State
+    {
+        // cannot be stored in a static variable,
+        // because in tests several FunctionFactory are created in parallel
+        // and because of this caching does not work correctly
+        public int RevisionCounter { get; set; }
+    }
 
     private readonly ILogger _logger;
     private readonly string _path;
@@ -47,11 +53,13 @@ class FunctionFactory : IFunctionFactoryCSharp
         CompilationStatistic compilationStatistic,
         Cache cache,
         IRangesProvider rangesProvider,
-        ExtLibsProvider extLibsProvider)
+        ExtLibsProvider extLibsProvider,
+        State state)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _path = configuration.GetRulesPath();
-        _revision = ++_revisionCounter;
+
+        _revision = ++state.RevisionCounter;
         _unLoader = unLoader;
         _compiler = compiler;
         _compilationStatistic = compilationStatistic;
@@ -63,7 +71,6 @@ class FunctionFactory : IFunctionFactoryCSharp
     public async Task<CreateFunctionResult<IObjectTextPart>> TryCreateGeneratingFunction(
         IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
     {
-        var a = code.ToString();
         var sw = Stopwatch.StartNew();
 
         string prefix = "GeneratingFunction";
@@ -207,16 +214,6 @@ class FunctionFactory : IFunctionFactoryCSharp
         var assemblyName = GetAssemblyName(assemblyPrefixName + className);
         var assembliesLocations = await GetAssembliesLocations();
 
-        var sb = new StringBuilder();
-        sb.AppendLine(classToCompile);
-        sb.AppendLine(assemblyName);
-        foreach (var assemblyLocation in assembliesLocations)
-        {
-            sb.AppendLine(assemblyLocation);
-        }
-        sb.AppendLine(Sha1.Create(peImages.Single().Bytes).ToString());
-        var a = sb.ToString();
-
         var compileResult = _compiler.Compile(
             new CompileUnit(
                 [classToCompile],
@@ -229,7 +226,6 @@ class FunctionFactory : IFunctionFactoryCSharp
             return new CreateFunctionResult<TFunction>.Failed(fault.Message, classToCompile);
 
         var peImage = ((CompileResult.Success)compileResult).PeImage;
-        var str = Sha1.Create(peImage.Bytes).ToString();
 
         var classAssembly = Load(peImage);
 
@@ -240,6 +236,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     }
 
     private IReadOnlyCollection<string>? _assembliesLocations;
+
     private async Task<IReadOnlyCollection<string>> GetAssembliesLocations()
     {
         if (_assembliesLocations != null)
@@ -268,7 +265,8 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private IReadOnlyCollection<PeImage> _customPeImageAssemblies = null!;
 
-    private async Task<(IReadOnlyCollection<Assembly> Loaded, IReadOnlyCollection<PeImage> PeImages)> GetCustomAssemblies()
+    private async Task<(IReadOnlyCollection<Assembly> Loaded, IReadOnlyCollection<PeImage> PeImages)>
+        GetCustomAssemblies()
     {
         if (_customAssembliesWasInit)
             return (_customLoadedAssemblies, _customPeImageAssemblies);
@@ -298,7 +296,8 @@ class FunctionFactory : IFunctionFactoryCSharp
             new CompileUnit(
                 codes,
                 GetAssemblyName(GetClassName("CustomType", codes)),
-                UsageAssemblies: new UsageAssemblies(Runtime: Array.Empty<PeImage>(), AssembliesLocations: externalLibs)));
+                UsageAssemblies: new UsageAssemblies(Runtime: Array.Empty<PeImage>(),
+                    AssembliesLocations: externalLibs)));
 
         var nl = Constants.NewLine;
 
@@ -326,19 +325,12 @@ class FunctionFactory : IFunctionFactoryCSharp
         if (_loadedAssembliesHashes.TryGetValue(hash, out var assembly))
             return assembly;
 
-        try
-        {
-            var result = _context.LoadFromStream(stream);
+        var result = _context.LoadFromStream(stream);
 
-            _compilationStatistic.AddLoadAssemblyTime(sw.Elapsed);
-            _loadedAssembliesHashes.Add(hash, result);
+        _compilationStatistic.AddLoadAssemblyTime(sw.Elapsed);
+        _loadedAssembliesHashes.Add(hash, result);
 
-            return result;
-        }
-        catch (Exception e)
-        {
-            throw;
-        }
+        return result;
     }
 
     const string ContextParameterName = "__ctx";
@@ -390,7 +382,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             {
                 sbCodeWithLiraItems.Append(otherCode.Code);
             }
-            else if(token is CodeToken.ReadItem readItem)
+            else if (token is CodeToken.ReadItem readItem)
             {
                 sbCodeWithLiraItems.Append($"GetDeclaredPart(\"{readItem.ItemName}\")");
             }
@@ -398,7 +390,6 @@ class FunctionFactory : IFunctionFactoryCSharp
             {
                 throw new Exception($"Unexpected token type: {token.GetType()}");
             }
-
         }
 
         return sbCodeWithLiraItems.ToString();
@@ -414,12 +405,13 @@ class FunctionFactory : IFunctionFactoryCSharp
             {
                 sbCodeWithLiraItems.Append(otherCode.Code);
             }
-            else if(token is CodeToken.ReadItem readItem)
+            else if (token is CodeToken.ReadItem readItem)
             {
                 var type = declaredPartsProvider.GetPartType(readItem.ItemName);
 
-                sbCodeWithLiraItems.Append($"({(type == null ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
-                                           $"\"{readItem.ItemName}\", {ContextParameterName})))");
+                sbCodeWithLiraItems.Append(
+                    $"({(type == null ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
+                    $"\"{readItem.ItemName}\", {ContextParameterName})))");
             }
             else if (token is CodeToken.WriteItem writeItem)
             {
@@ -429,7 +421,6 @@ class FunctionFactory : IFunctionFactoryCSharp
             {
                 throw new Exception($"Unexpected token type: {token.GetType()}");
             }
-
         }
 
         return sbCodeWithLiraItems.ToString();
@@ -475,7 +466,8 @@ class FunctionFactory : IFunctionFactoryCSharp
             .ToArray();
     }
 
-    private static (string Code, IReadOnlyCollection<string> Usings) ExtractUsingsAndReplaceVars(CodeBlock code, IDeclaredPartsProvider declaredPartsProvider)
+    private static (string Code, IReadOnlyCollection<string> Usings) ExtractUsingsAndReplaceVars(CodeBlock code,
+        IDeclaredPartsProvider declaredPartsProvider)
     {
         var codeWithVariables = ReplaceVariableNames(code, declaredPartsProvider);
         return ExtractUsings(codeWithVariables);
@@ -498,6 +490,7 @@ class FunctionFactory : IFunctionFactoryCSharp
                 newCode.Append((newCode.Length > 0 ? Constants.NewLine : "") + line);
             }
         }
+
         return (newCode.ToString(), usings);
     }
 
