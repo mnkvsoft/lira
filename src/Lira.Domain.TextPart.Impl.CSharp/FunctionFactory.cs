@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;
@@ -214,12 +215,14 @@ class FunctionFactory : IFunctionFactoryCSharp
         var assemblyName = GetAssemblyName(assemblyPrefixName + className);
         var assembliesLocations = await GetAssembliesLocations();
 
+
+
         var compileResult = _compiler.Compile(
             new CompileUnit(
-                [classToCompile],
                 AssemblyName: assemblyName,
-                new UsageAssemblies(
-                    AssembliesLocations: assembliesLocations,
+                [classToCompile],
+                new References(
+                    AssembliesLocations: assembliesLocations.AddRange(SystemAssemblies.Locations),
                     Runtime: peImages)));
 
         if (compileResult is CompileResult.Fault fault)
@@ -235,9 +238,9 @@ class FunctionFactory : IFunctionFactoryCSharp
         return new CreateFunctionResult<TFunction>.Success(function);
     }
 
-    private IReadOnlyCollection<string>? _assembliesLocations;
+    private IImmutableList<string>? _assembliesLocations;
 
-    private async Task<IReadOnlyCollection<string>> GetAssembliesLocations()
+    private async Task<IImmutableList<string>> GetAssembliesLocations()
     {
         if (_assembliesLocations != null)
             return _assembliesLocations;
@@ -255,8 +258,8 @@ class FunctionFactory : IFunctionFactoryCSharp
         var dllFiles = await _extLibsProvider.GetLibsFiles();
         result.AddRange(dllFiles);
 
-        _assembliesLocations = result;
-        return result;
+        _assembliesLocations = result.ToImmutableArray();
+        return _assembliesLocations;
     }
 
     private bool _customAssembliesWasInit;
@@ -287,17 +290,18 @@ class FunctionFactory : IFunctionFactoryCSharp
         if (csharpFiles.Length == 0)
             return Array.Empty<CustomAssembly>();
 
-        var codes = csharpFiles.Select(File.ReadAllText).ToArray();
+        var codes = await Task.WhenAll(csharpFiles.Select(async x => await File.ReadAllTextAsync(x)));
 
         var result = new List<CustomAssembly>();
 
         var externalLibs = await _extLibsProvider.GetLibsFiles();
         var compileResult = _compiler.Compile(
             new CompileUnit(
-                codes,
                 GetAssemblyName(GetClassName("CustomType", codes)),
-                UsageAssemblies: new UsageAssemblies(Runtime: Array.Empty<PeImage>(),
-                    AssembliesLocations: externalLibs)));
+                codes.ToImmutableArray(),
+                new References(
+                    Runtime: Array.Empty<PeImage>(),
+                    AssembliesLocations: externalLibs.AddRange(SystemAssemblies.Locations))));
 
         var nl = Constants.NewLine;
 
@@ -318,12 +322,12 @@ class FunctionFactory : IFunctionFactoryCSharp
         var sw = Stopwatch.StartNew();
 
         using var stream = new MemoryStream();
-        stream.Write(peImage.Bytes);
+        stream.Write(peImage.Bytes.Value);
         stream.Position = 0;
 
         var hash = peImage.Hash;
         if (_loadedAssembliesHashes.TryGetValue(hash, out var assembly))
-            return assembly;
+             return assembly;
 
         var result = _context.LoadFromStream(stream);
 
@@ -553,7 +557,8 @@ class FunctionFactory : IFunctionFactoryCSharp
                          $"Revision: {_revision}" + nl +
                          $"Total time: {(int)stat.TotalTime.TotalMilliseconds} ms. " + nl +
                          $"Assembly load time: {(int)stat.TotalLoadAssemblyTime.TotalMilliseconds} ms. " + nl +
-                         $"Count load assemblies: {stat.CountLoadAssemblies}. " + nl +
+                         $"Count load assemblies: {stat.CountLoadAssemblies}." + nl +
+                         $"Count functions: {stat.CountFunctionsTotal} (compile: {stat.CountFunctionsCompiled}, cache: {stat.CountFunctionsTotalFromCache})." + nl +
                          $"Compilation time: {(int)stat.TotalCompilationTime.TotalMilliseconds} ms. " + nl);
 
         _unLoader.UnloadUnused(new DynamicAssembliesContext(_revision, _context));

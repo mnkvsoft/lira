@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using Lira.Common;
+using Lira.Common.Exceptions;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
@@ -24,18 +26,32 @@ class Compiler
 
         var hash = GetHash(compileUnit);
 
+        _compilationStatistic.AddFunctionTotal();
         if (_peImagesCache.TryGet(hash, out var peImage))
-            return new CompileResult.Success(peImage);
-
-        var compileResult = CodeCompiler.Compile(compileUnit);
-
-        if (compileResult is CompileResult.Success success)
         {
-            _peImagesCache.Add(hash, success.PeImage);
-            _compilationStatistic.AddCompilationTime(sw.Elapsed);
+            _compilationStatistic.AddFunctionFromCache();
+            return new CompileResult.Success(peImage);
         }
 
-        return compileResult;
+        var compileResult = CodeCompiler.Compile(
+            compileUnit.AssemblyName,
+            GetMetadataReferences(compileUnit.References),
+            compileUnit.Codes);
+
+        if (compileResult is CodeCompiler.Result.Success success)
+        {
+            var image = new PeImage(hash, success.PeBytes);
+            _peImagesCache.Add(image);
+            _compilationStatistic.AddCompilationTime(sw.Elapsed);
+            return new CompileResult.Success(image);
+        }
+
+        if (compileResult is CodeCompiler.Result.Fault fail)
+        {
+            return new CompileResult.Fault(fail.Message);
+        }
+
+        throw new UnsupportedInstanceType(compileResult);
     }
 
     private Hash GetHash(CompileUnit compileUnit)
@@ -55,27 +71,21 @@ class Compiler
             sw.Write(code);
         }
 
-        sb.AppendLine("Codes:");
-        sb.AppendJoin("\n\n", compileUnit.Codes);
+        sb.AppendLine("Codes: " + Sha1.Create(string.Concat(compileUnit.Codes)));
 
-        var usageAssemblies = compileUnit.UsageAssemblies;
-        if (usageAssemblies != null)
+        var usageAssemblies = compileUnit.References;
+        foreach (var peImage in usageAssemblies.Runtime)
         {
-            foreach (var peImage in usageAssemblies.Runtime)
-            {
-                sw.Write(Sha1.Create(peImage.Bytes));
-
-                sb.AppendLine("Runtime: " + Sha1.Create(peImage.Bytes));
-            }
-
-            foreach (var location in usageAssemblies.AssembliesLocations)
-            {
-                sw.Write(location);
-            }
-
-            sb.AppendLine("AssembliesLocations: " + Sha1.Create(string.Concat(usageAssemblies.AssembliesLocations)));
+            sw.Write(peImage.Hash);
+            sb.AppendLine("Runtimes: " + peImage.Hash);
         }
 
+        foreach (var location in usageAssemblies.AssembliesLocations)
+        {
+            sw.Write(location);
+        }
+
+        sb.AppendLine("AssembliesLocations: " + Sha1.Create(string.Concat(usageAssemblies.AssembliesLocations)));
 
         sw.Flush();
         memoryStream.Seek(0, SeekOrigin.Begin);
@@ -87,5 +97,15 @@ class Compiler
         _logger.LogTrace(sb.ToString());
 
         return hash;
+    }
+
+    private static IReadOnlyCollection<MetadataReference> GetMetadataReferences(References references)
+    {
+        var result = new List<MetadataReference>();
+
+        result.AddRange(references.AssembliesLocations.Select(dllPath => MetadataReference.CreateFromFile(dllPath)));
+        result.AddRange(references.Runtime.Select(peImage => MetadataReference.CreateFromImage(peImage.Bytes.Value)));
+
+        return result;
     }
 }

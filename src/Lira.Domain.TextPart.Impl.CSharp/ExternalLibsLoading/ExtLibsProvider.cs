@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Lira.Configuration;
 using Lira.Domain.TextPart.Impl.CSharp.ExternalLibsLoading.Nuget;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +19,7 @@ internal class ExtLibsProvider
         _libsPath = configuration.GetLibsPath() ?? configuration.GetRulesPath();
     }
 
-    public async Task<IReadOnlyCollection<string>> GetLibsFiles(CancellationToken ct = default)
+    public async Task<IImmutableList<string>> GetLibsFiles(CancellationToken ct = default)
     {
         var libs = Directory.GetFiles(_libsPath, "*.dll", SearchOption.AllDirectories);
         var nugetLibs = await _nugetLibsProvider.GetLibsFiles(ct);
@@ -28,6 +29,6 @@ internal class ExtLibsProvider
             $"Nuget:\n{string.Join("\n", nugetLibs.Select(l => " - " + l))}\n" +
             $"Directly:{ (libs.Length == 0 ? " none" : "\n" + string.Join("\n", libs.Select(l => " - " + l)))}");
 
-        return libs.Union(nugetLibs).ToArray();
+        return libs.Union(nugetLibs).ToImmutableArray();
     }
 }

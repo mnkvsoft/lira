@@ -7,9 +7,13 @@ class CompilationStatistic
     public TimeSpan TotalTime { get; private set; } = TimeSpan.Zero;
 
     public int CountLoadAssemblies { get; private set; }
+    public int CountFunctionsCompiled { get; private set; }
+    public int CountFunctionsTotalFromCache { get; private set; }
+    public int CountFunctionsTotal { get; private set; }
 
     public void AddCompilationTime(TimeSpan elapsed)
     {
+        CountFunctionsCompiled++;
         TotalCompilationTime = TotalCompilationTime.Add(elapsed);
     }
 
@@ -22,5 +26,15 @@ class CompilationStatistic
     {
         CountLoadAssemblies++;
         TotalLoadAssemblyTime = TotalLoadAssemblyTime.Add(elapsed);
+    }
+
+    public void AddFunctionFromCache()
+    {
+        CountFunctionsTotalFromCache++;
+    }
+
+    public void AddFunctionTotal()
+    {
+        CountFunctionsTotal++;
     }
 }
