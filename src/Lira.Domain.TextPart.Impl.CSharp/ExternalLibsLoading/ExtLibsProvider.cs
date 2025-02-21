@@ -24,9 +24,10 @@ internal class ExtLibsProvider
         var libs = Directory.GetFiles(_libsPath, "*.dll", SearchOption.AllDirectories);
         var nugetLibs = await _nugetLibsProvider.GetLibsFiles(ct);
 
+        var nl = Environment.NewLine;
         _logger.LogDebug(
-            $"Loaded libs.\n" +
-            $"Nuget:\n{string.Join("\n", nugetLibs.Select(l => " - " + l))}\n" +
+            $"Loaded libs:" + nl + nl +
+            $"Nuget:" + nl + $"{string.Join(nl, nugetLibs.Select(l => " - " + l))}" + nl + nl +
             $"Directly:{ (libs.Length == 0 ? " none" : "\n" + string.Join("\n", libs.Select(l => " - " + l)))}");
 
         return libs.Union(nugetLibs).ToImmutableArray();

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
+using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Resolver;
@@ -92,37 +93,47 @@ internal class NugetLibsProvider
         if (packagesIdentities.Count == 0)
             return empty;
 
-        var packageIdentities = await GetPackagesWithDependencies(packagesIdentities, ct);
+        var packageIdentities = (await GetPackagesWithDependencies(packagesIdentities, ct))
+            .Where(identity => identity.Id != "Microsoft.NETCore.Platforms" && identity.Id != "NETStandard.Library")
+            .ToArray();
 
         var result = new List<string>();
+
         foreach (var packageIdentity in packageIdentities)
         {
-            using var packageReader = await _repositories.GetPackageReader(packageIdentity, ct);
+            using PackageReaderBase packageReader = await _repositories.GetPackageReader(packageIdentity, ct);
 
             var supportedFrameworks = (await packageReader.GetSupportedFrameworksAsync(ct)).ToArray();
 
-            var selectedPackage = supportedFrameworks
+            var selectedFramework = supportedFrameworks
                 .Where(x => x.Framework == ".NETCoreApp" && x.Version <= Version.Parse("8.9.9.9"))
                 .OrderBy(x => x.Version)
                 .LastOrDefault();
 
-            if (selectedPackage == null)
+            if (selectedFramework == null)
+            {
                 throw new Exception(
-                    $"Unable to find compatible package for {packageIdentity.Id} {packageIdentity.Version}");
+                    $"Unable to find compatible package for {packageIdentity.Id} {packageIdentity.Version} " +
+                    $"by conditions: framework == .NETCoreApp and version <= 8.9.9.9." + Environment.NewLine +
+                    $"Supported frameworks: " + string.Join(", ", supportedFrameworks.Select(x => x.Framework + " " + x.Version)));
+            }
 
             var nuspecFile = await packageReader.GetNuspecFileAsync(ct);
             var packageDirectory = Path.GetDirectoryName(nuspecFile) ??
                                    throw new Exception($"Unable to find directory for {nuspecFile}");
-            var path = Path.Combine(
-                packageDirectory,
-                "lib",
-                selectedPackage.GetShortFolderName());
 
-            result.AddRange(Directory.GetFiles(path, "*.dll"));
+            var libItems = (await packageReader.GetLibItemsAsync(ct));
+            var libPath = libItems.Single(x => x.TargetFramework == selectedFramework);
+
+            var dllPaths = libPath.Items
+                .Where(x => x.EndsWith(".dll"))
+                .Select(dllPath => Path.Combine(packageDirectory, dllPath));
+
+            result.AddRange(dllPaths);
         }
 
-        _logger.LogInformation("Nuget libs:\n" +
-                               string.Join("\n", packageIdentities.Select(package => $" - {package}")));
+        _logger.LogDebug("Nuget packages with dependencies:" + Environment.NewLine +
+                               string.Join(Environment.NewLine, packageIdentities.Select(package => $" - {package}")));
 
         _packagesConfigToLibsCache.Add(packagesContent, result.ToArray());
 
@@ -132,7 +143,7 @@ internal class NugetLibsProvider
     private void LogNugetInfo(ISettings settings, AvailableRepositories repositories)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("Nuget configuration.");
+        sb.AppendLine("Nuget configuration:");
         sb.AppendLine();
         sb.AppendLine("Configs:");
 
@@ -152,7 +163,7 @@ internal class NugetLibsProvider
         sb.AppendLine("Global package folder:");
         sb.AppendLine(SettingsUtility.GetGlobalPackagesFolder(settings));
 
-        _logger.LogInformation(sb.ToString());
+        _logger.LogDebug(sb.ToString());
     }
 
     private async Task<HashSet<PackageIdentity>> GetPackagesWithDependencies(

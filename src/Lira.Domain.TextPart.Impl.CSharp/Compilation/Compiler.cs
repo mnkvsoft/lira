@@ -56,9 +56,10 @@ class Compiler
 
     private Hash GetHash(CompileUnit compileUnit)
     {
-        var sb = new StringBuilder();
+        var sb = new StringBuilder("Compile unit:");
 
-        sb.AppendLine("---------- Compile Unit ----------");
+        sb.AppendLine();
+        sb.AppendLine();
 
         using var memoryStream = new MemoryStream();
         using var sw = new StreamWriter(memoryStream);
@@ -93,7 +94,6 @@ class Compiler
         var hash = Sha1.Create(memoryStream);
 
         sb.AppendLine("Result: " + hash);
-        sb.AppendLine("-------- end Compile Unit --------");
         _logger.LogTrace(sb.ToString());
 
         return hash;
