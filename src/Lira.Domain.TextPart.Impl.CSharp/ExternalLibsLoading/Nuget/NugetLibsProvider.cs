@@ -105,16 +105,16 @@ internal class NugetLibsProvider
 
             var supportedFrameworks = (await packageReader.GetSupportedFrameworksAsync(ct)).ToArray();
 
-            var selectedFramework = supportedFrameworks
-                .Where(x => x.Framework == ".NETCoreApp" && x.Version <= Version.Parse("8.9.9.9"))
-                .OrderBy(x => x.Version)
-                .LastOrDefault();
+            var selectedFramework = NuGetFrameworkUtility.GetNearest(
+                supportedFrameworks,
+                _currentFramework,
+                framework => framework);
 
             if (selectedFramework == null)
             {
                 throw new Exception(
-                    $"Unable to find compatible package for {packageIdentity.Id} {packageIdentity.Version} " +
-                    $"by conditions: framework == .NETCoreApp and version <= 8.9.9.9." + Environment.NewLine +
+                    $"Unable to find compatible package for {packageIdentity.Id} {packageIdentity.Version}." + Environment.NewLine +
+                    $"Current framework: {_currentFramework}." + Environment.NewLine +
                     $"Supported frameworks: " + string.Join(", ", supportedFrameworks.Select(x => x.Framework + " " + x.Version)));
             }
 

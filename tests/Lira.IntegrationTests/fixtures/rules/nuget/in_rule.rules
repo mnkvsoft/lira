@@ -1,12 +1,12 @@
 -------------------- rule
 
-GET /third_party_libs/in_rule
+GET /nuget/in_rule
 
 ----- response
 
 {
-    "rrn": "{{
-                ## namespaces from third party lib
+    "token": "{{
+                ## classes from the System.IdentityModel.Tokens.Jwt package are used
                 @using System.IdentityModel.Tokens.Jwt;
 
                 @using Microsoft.IdentityModel.Tokens;
@@ -18,11 +18,15 @@ GET /third_party_libs/in_rule
                     new("phone", "9161112233"),
                 };
 
-                var key = new SymmetricSecurityKey(RandomNumberGenerator.GetBytes(64));
+                var secretPhrase = "super secret phrase";
+                using var sha512 = SHA512.Create();
+                byte[] keyBytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(secretPhrase));
+
+                var key = new SymmetricSecurityKey(keyBytes);
                 var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
                 var token = new JwtSecurityToken(
                     claims: claims,
-                    expires: DateTime.UtcNow.AddDays(1),
+                    expires: DateTime.Parse("2025-03-06"),
                     signingCredentials: cred);
 
                 var jwt = new JwtSecurityTokenHandler().WriteToken(token);

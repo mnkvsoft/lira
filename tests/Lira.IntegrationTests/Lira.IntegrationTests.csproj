@@ -228,6 +228,26 @@
     <None Update="fixtures\rules\packages.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\nuget\in_rule.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\nuget\separate_cs_file.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\nuget\in_rule.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\nuget\separate_cs_file.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Remove="fixtures\rules\nuget\jwt.cs" />
+    <None Include="fixtures\rules\nuget\jwt.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Remove="fixtures\rules\csharp\using\stringUtils.cs" />
+    <None Include="fixtures\rules\csharp\using\stringUtils.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -1322,17 +1342,6 @@
     <None Update="fixtures\rules\generating\repeat\count.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="fixtures\rules\external_libs\StringUtils.cs" />
-    <Content Include="fixtures\rules\third_party_libs\StringUtils.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Compile Remove="fixtures\rules\third_party_libs\StringUtils.cs" />
-    <Content Include="fixtures\rules\third_party_libs\StringUtils.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
