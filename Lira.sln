@@ -80,6 +80,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lira.Domain.TextPart.Impl.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lira.Domain.Configuration.UnitTests", "tests\Lira.Domain.Configuration.UnitTests\Lira.Domain.Configuration.UnitTests.csproj", "{E48CDBD6-D043-4F4A-823C-A8C21B25B305}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "design_solutions", "design_solutions", "{6C5C52DC-65A7-486A-8E1F-F88529A37254}"
+	ProjectSection(SolutionItems) = preProject
+		design_solutions\external_libs.md = design_solutions\external_libs.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

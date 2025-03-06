@@ -70,7 +70,7 @@ class TextPartsParser : ITextPartsParser
         TransformPipeline pipeline;
         if (value.Contains("return"))
         {
-            var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
+            var createFunctionResult = await _functionFactoryCSharp.TryCreateGeneratingFunction(
                 new DeclaredPartsProvider(context.DeclaredItems),
                 GetCodeBlock(context, value));
 
@@ -81,12 +81,12 @@ class TextPartsParser : ITextPartsParser
         {
             var pipelineItemsRaw = value.Split(Consts.ControlChars.PipelineSplitter);
 
-            pipeline = new TransformPipeline(CreateStartFunction(pipelineItemsRaw[0].Trim(), context));
+            pipeline = new TransformPipeline(await CreateStartFunction(pipelineItemsRaw[0].Trim(), context));
 
             for (int i = 1; i < pipelineItemsRaw.Length; i++)
             {
                 var invoke = pipelineItemsRaw[i].Trim();
-                pipeline.Add(CreateTransformFunction(invoke, context));
+                pipeline.Add(await CreateTransformFunction(invoke, context));
             }
         }
 
@@ -101,17 +101,17 @@ class TextPartsParser : ITextPartsParser
         return codeBlock;
     }
 
-    private ITransformFunction CreateTransformFunction(string invoke, ParsingContext context)
+    private async Task<ITransformFunction> CreateTransformFunction(string invoke, ParsingContext context)
     {
         if (_functionFactorySystem.TryCreateTransformFunction(invoke, out var transformFunction))
             return transformFunction;
 
-        var createFunctionResult = _functionFactoryCSharp.TryCreateTransformFunction(GetCodeBlock(context, invoke));
+        var createFunctionResult = await _functionFactoryCSharp.TryCreateTransformFunction(GetCodeBlock(context, invoke));
 
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 
-    private IObjectTextPart CreateStartFunction(string rawText, ParsingContext context)
+    private async Task<IObjectTextPart> CreateStartFunction(string rawText, ParsingContext context)
     {
         var declaredItems = context.DeclaredItems;
 
@@ -141,7 +141,7 @@ class TextPartsParser : ITextPartsParser
         if (customSetFunction != null)
             return customSetFunction;
 
-        var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
+        var createFunctionResult = await _functionFactoryCSharp.TryCreateGeneratingFunction(
             new DeclaredPartsProvider(declaredItems),
             GetCodeBlock(context, rawText));
 

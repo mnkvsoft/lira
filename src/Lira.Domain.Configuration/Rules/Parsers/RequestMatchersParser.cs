@@ -28,24 +28,24 @@ class RequestMatchersParser
         _functionFactoryCSharp = functionFactoryCSharp;
     }
 
-    public IReadOnlyCollection<IRequestMatcher> Parse(FileSection ruleSection, ParsingContext context)
+    public async Task<IReadOnlyCollection<IRequestMatcher>> Parse(FileSection ruleSection, ParsingContext context)
     {
         var builder = new RequestMatchersBuilder();
 
-        var matchers = GetMethodAndPathMatchersFromShortEntry(ruleSection, context);
+        var matchers = await GetMethodAndPathMatchersFromShortEntry(ruleSection, context);
         builder.AddRange(matchers);
 
         ruleSection.AssertContainsOnlyKnownBlocks(BlockNameHelper.GetBlockNames<Constants.BlockName.Rule>());
 
         foreach (var block in ruleSection.Blocks)
         {
-            builder.Add(CreateRequestMatcher(block, context));
+            builder.Add(await CreateRequestMatcher(block, context));
         }
 
         return builder.Matchers;
     }
 
-    private IReadOnlyCollection<IRequestMatcher> GetMethodAndPathMatchersFromShortEntry(
+    private async Task<IReadOnlyCollection<IRequestMatcher>> GetMethodAndPathMatchersFromShortEntry(
         FileSection ruleSection,
         ParsingContext context)
     {
@@ -64,42 +64,42 @@ class RequestMatchersParser
 
         result.Add(CreateMethodRequestMather(method.SingleStaticValueToString()));
 
-        var pathMatcher = CreatePathRequestMatcher(path, context);
+        var pathMatcher = await CreatePathRequestMatcher(path, context);
         result.Add(pathMatcher);
 
         if (query != null)
-            result.Add(CreateQueryStringMatcher(query, context));
+            result.Add(await CreateQueryStringMatcher(query, context));
 
         return result;
     }
 
-    private IRequestMatcher CreateRequestMatcher(FileBlock block, ParsingContext context)
+    private async Task<IRequestMatcher> CreateRequestMatcher(FileBlock block, ParsingContext context)
     {
         switch (block.Name)
         {
             case Constants.BlockName.Rule.Method:
                 return CreateMethodRequestMather(block.GetSingleLine());
             case Constants.BlockName.Rule.Query:
-                return CreateQueryStringMatcher(PatternParser.Parse(block.GetLinesAsString()), context);
+                return await CreateQueryStringMatcher(PatternParser.Parse(block.GetLinesAsString()), context);
             case Constants.BlockName.Rule.Headers:
-                return CreateHeadersRequestMatcher(block, context);
+                return await CreateHeadersRequestMatcher(block, context);
             case Constants.BlockName.Rule.Body:
-                return CreateBodyRequestMatcher(block, context);
+                return await CreateBodyRequestMatcher(block, context);
             case Constants.BlockName.Rule.Path:
-                return CreatePathRequestMatcher(PatternParser.Parse(block.GetLinesAsString()), context);
+                return await CreatePathRequestMatcher(PatternParser.Parse(block.GetLinesAsString()), context);
             case Constants.BlockName.Rule.Request:
-                return CreateCustomRequestMatcher(block.GetLinesAsString(), context);
+                return await CreateCustomRequestMatcher(block.GetLinesAsString(), context);
             default:
                 throw new Exception($"Unknown block '{block.Name}' in 'rule' section");
         }
     }
 
-    private IRequestMatcher CreateCustomRequestMatcher(string code, ParsingContext context)
+    private async Task<IRequestMatcher> CreateCustomRequestMatcher(string code, ParsingContext context)
     {
         var (codeBlock, newRuntimeVariables) = CodeParser.Parse(code, context.DeclaredItems);
         context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
-        var matcher = _functionFactoryCSharp.TryCreateRequestMatcher(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
+        var matcher = await _functionFactoryCSharp.TryCreateRequestMatcher(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return matcher.GetFunctionOrThrow(code, context);
     }
 
@@ -108,7 +108,7 @@ class RequestMatchersParser
         return new MethodRequestMatcher(method.ToHttpMethod());
     }
 
-    private PathRequestMatcher CreatePathRequestMatcher(PatternParts pathParts, ParsingContext context)
+    private async Task<PathRequestMatcher> CreatePathRequestMatcher(PatternParts pathParts, ParsingContext context)
     {
         if (pathParts.Count == 0)
             throw new Exception("An error occurred while creating PathRequestMatcher. Path is empty");
@@ -122,13 +122,13 @@ class RequestMatchersParser
 
         foreach (var segment in segments)
         {
-            patterns.Add(CreateValuePattern(segment, context));
+            patterns.Add(await CreateValuePattern(segment, context));
         }
 
         return new PathRequestMatcher(patterns);
     }
 
-    private QueryStringRequestMatcher  CreateQueryStringMatcher(PatternParts queryParts, ParsingContext context)
+    private async Task<QueryStringRequestMatcher> CreateQueryStringMatcher(PatternParts queryParts, ParsingContext context)
     {
         var keysWithValueRaw = queryParts.Split("&");
         var patterns = new Dictionary<string, TextPatternPart>();
@@ -140,13 +140,13 @@ class RequestMatchersParser
                 p => p is PatternPart.Static,
                 p => new PatternPart.Static(HttpUtility.UrlDecode(((PatternPart.Static)p).Value)));
 
-            patterns.Add(key.SingleStaticValueToString(), CreateValuePattern(value, context));
+            patterns.Add(key.SingleStaticValueToString(), await CreateValuePattern(value, context));
         }
 
         return new QueryStringRequestMatcher(patterns);
     }
 
-    private HeadersRequestMatcher CreateHeadersRequestMatcher(FileBlock block, ParsingContext context)
+    private async Task<HeadersRequestMatcher> CreateHeadersRequestMatcher(FileBlock block, ParsingContext context)
     {
         var headers = new Dictionary<string, TextPatternPart>();
         var patterns = PatternParser.Parse(block.Lines);
@@ -156,13 +156,13 @@ class RequestMatchersParser
         {
             var (headerName, headerPattern) = line.SplitToTwoPartsRequired(Consts.ControlChars.HeaderSplitter).Trim();
 
-            headers.Add(headerName.SingleStaticValueToString(), CreateValuePattern(headerPattern, context));
+            headers.Add(headerName.SingleStaticValueToString(), await CreateValuePattern(headerPattern, context));
         }
 
         return new HeadersRequestMatcher(headers);
     }
 
-    private IRequestMatcher CreateBodyRequestMatcher(FileBlock block, ParsingContext context)
+    private async Task<IRequestMatcher> CreateBodyRequestMatcher(FileBlock block, ParsingContext context)
     {
         var patterns = new List<KeyValuePair<IBodyExtractFunction, TextPatternPart>>();
 
@@ -180,7 +180,7 @@ class RequestMatchersParser
 
                 patterns.Add(
                     new KeyValuePair<IBodyExtractFunction, TextPatternPart>(function,
-                        CreateValuePattern(line, context)));
+                        await CreateValuePattern(line, context)));
                 continue;
             }
 
@@ -198,13 +198,13 @@ class RequestMatchersParser
                 throw new Exception($"System function '{extractFunctionInvokeStr}' not found");
 
             patterns.Add(new KeyValuePair<IBodyExtractFunction, TextPatternPart>(bodyExtractFunction,
-                CreateValuePattern(pattern, context)));
+                await CreateValuePattern(pattern, context)));
         }
 
         return new BodyRequestMatcher(patterns);
     }
 
-    private TextPatternPart CreateValuePattern(
+    private async Task<TextPatternPart> CreateValuePattern(
         PatternParts? parts,
         ParsingContext context)
     {
@@ -218,7 +218,7 @@ class RequestMatchersParser
 
             if (parts[0] is PatternPart.Dynamic dyn)
             {
-                return new TextPatternPart.Dynamic(Start: null, End: null, CreateMatchFunctionWithSaveVariable(dyn.Value, context));
+                return new TextPatternPart.Dynamic(Start: null, End: null, await CreateMatchFunctionWithSaveVariable(dyn.Value, context));
             }
         }
 
@@ -237,7 +237,7 @@ class RequestMatchersParser
                 return new TextPatternPart.Dynamic(
                     Start: @static.Value,
                     End: null,
-                    CreateMatchFunctionWithSaveVariable(dyn.Value, context));
+                    await CreateMatchFunctionWithSaveVariable(dyn.Value, context));
             }
 
             if (parts[0] is PatternPart.Static dynamic)
@@ -245,7 +245,7 @@ class RequestMatchersParser
                 return new TextPatternPart.Dynamic(
                     Start: null,
                     End: ((PatternPart.Static)parts[1]).Value,
-                    CreateMatchFunctionWithSaveVariable(dynamic.Value, context));
+                    await CreateMatchFunctionWithSaveVariable(dynamic.Value, context));
             }
         }
 
@@ -263,20 +263,20 @@ class RequestMatchersParser
             return new TextPatternPart.Dynamic(
                 start.Value,
                 end.Value,
-                CreateMatchFunctionWithSaveVariable(@dynamic.Value, context));
+                await CreateMatchFunctionWithSaveVariable(@dynamic.Value, context));
         }
 
         throw new Exception($"'{parts}' contains more than 3 block static or dynamic");
     }
 
-    private IMatchFunctionTyped CreateMatchFunction(string invoke, ParsingContext context)
+    private async Task<IMatchFunctionTyped> CreateMatchFunction(string invoke, ParsingContext context)
     {
         if (invoke.StartsWith(Consts.ControlChars.TemplatePrefix))
         {
             var templateName = invoke.TrimStart(Consts.ControlChars.TemplatePrefix);
 
             var template = context.Templates.GetOrThrow(templateName);
-            return CreateMatchFunction(template.Value, context);
+            return await CreateMatchFunction(template.Value, context);
         }
 
         if (_functionFactorySystem.TryCreateMatchFunction(invoke, out var function))
@@ -288,11 +288,11 @@ class RequestMatchersParser
         var (codeBlock, newRuntimeVariables) = CodeParser.Parse(invoke, context.DeclaredItems);
         context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
-        var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
+        var createFunctionResult = await _functionFactoryCSharp.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 
-    private IMatchFunction CreateMatchFunctionWithSaveVariable(string value, ParsingContext context)
+    private async Task<IMatchFunction> CreateMatchFunctionWithSaveVariable(string value, ParsingContext context)
     {
         var (invoke, maybeVariableDeclaration) = value.SplitToTwoPartsFromEnd(Consts.ControlChars.WriteToVariablePrefix).Trim();
 
@@ -306,14 +306,14 @@ class RequestMatchersParser
 
             var type = typeStr == null ? null : ReturnType.Parse(typeStr);
 
-            var matchFunction = CreateMatchFunction(invoke, context);
+            var matchFunction = await CreateMatchFunction(invoke, context);
 
             var variable = new RuntimeVariable(new CustomItemName(name.TrimStart(Consts.ControlChars.VariablePrefix)), type ?? matchFunction.ValueType);
             context.DeclaredItems.Variables.Add(variable);
             return new MatchFunctionWithSaveVariable(matchFunction, variable);
         }
 
-        return CreateMatchFunction(value, context);
+        return await CreateMatchFunction(value, context);
     }
 
     private class RequestMatchersBuilder

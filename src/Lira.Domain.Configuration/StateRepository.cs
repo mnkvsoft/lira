@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Lira.Common;
 using Microsoft.Extensions.Logging;
 using Lira.Common.Extensions;
 
@@ -12,7 +13,7 @@ public interface IStateRepository
 
 class StateRepository(ILogger<StateRepository> logger) : IStateRepository
 {
-    private static readonly string StatesPath = Path.Combine(Path.GetTempPath(), "lira", "states");
+    private static readonly string StatesPath = Paths.GetTempSubPath("states");
 
     public async Task UpdateStates(IReadOnlyDictionary<string, string> states)
     {

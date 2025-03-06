@@ -1,9 +1,6 @@
 using System;
 using System.Text;
 
-// namespace from third party lib
-using ArgValidation;
-
 namespace utils;
 
 public static class stringUtils
@@ -12,9 +9,6 @@ public static class stringUtils
 
     public static string digits(int length)
     {
-        Arg.Validate(length, nameof(length))
-            .MoreThan(1);
-
         var sb = new StringBuilder();
         for (int i = 0; i < length; i++)
         {

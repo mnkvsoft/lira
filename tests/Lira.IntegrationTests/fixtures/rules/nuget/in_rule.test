@@ -1,0 +1,13 @@
+-------------------- case
+
+GET /nuget/in_rule
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "token": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjkxNjExMTIyMzMiLCJleHAiOjE3NDEyMDg0MDB9.rjZcqTYCrOxqnRZP3De9U19QjhmB7h-hd_qKDS_6E9WMVvJzgWan-JpUlGwFOPSX0U_Xa3ycmzLoly6Qh006bw"
+}

@@ -1,0 +1,9 @@
+-------------------- rule
+
+GET /nuget/separate_cs_file
+
+----- response
+
+{
+    "token": "{{ utils.jwtUtils.getJwt(phone: "79161112233") }}"
+}

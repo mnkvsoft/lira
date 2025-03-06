@@ -1,0 +1,13 @@
+-------------------- case
+
+GET /nuget/separate_cs_file
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "token": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6Ijc5MTYxMTEyMjMzIiwiZXhwIjoxNzQxMjA4NDAwfQ.OAnkBIDMJFDh6uEXT7ifg2P0gxk982nm1QiC8BCIGWrLhUeH7Q4uaFmvA-aa2BhudbEH-m00Djq56Gu0ohQROQ"
+}

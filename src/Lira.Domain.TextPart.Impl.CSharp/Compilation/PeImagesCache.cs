@@ -2,13 +2,12 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Lira.Common;
-using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
 
 class PeImagesCache : IDisposable
 {
-    private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "lira", "pe_images");
+    private static readonly string TempPath = Paths.GetTempSubPath("pe_images");
 
     private bool _wasInit;
     private readonly Dictionary<Hash, PeImageCacheEntry> _hashToEntryMap = new();
@@ -46,13 +45,13 @@ class PeImagesCache : IDisposable
         return false;
     }
 
-    public void Add(Hash hash, PeImage peImage)
+    public void Add(PeImage peImage)
     {
-        if (_hashToEntryMap.ContainsKey(hash))
+        if (_hashToEntryMap.ContainsKey(peImage.Hash))
             return;
 
         _hashToEntryMap.Add(
-            hash,
+            peImage.Hash,
             new PeImageCacheEntry(peImage) { IsNew = true });
     }
 
@@ -72,7 +71,7 @@ class PeImagesCache : IDisposable
         {
             string strHash = Path.GetFileName(filePath);
             var hash = Hash.Parse(strHash);
-            var peImage = new PeImage(File.ReadAllBytes(filePath));
+            var peImage = new PeImage(hash, new PeBytes(File.ReadAllBytes(filePath)));
             _hashToEntryMap.Add(hash, new PeImageCacheEntry(peImage));
         }
 
@@ -99,7 +98,7 @@ class PeImagesCache : IDisposable
 
                 if (entry.IsNew)
                 {
-                    IgnoreIoExceptionForTests(() => File.WriteAllBytes(filePath, entry.PeImage.Bytes));
+                    IgnoreIoExceptionForTests(() => File.WriteAllBytes(filePath, entry.PeImage.Bytes.Value));
                     continue;
                 }
 

@@ -69,7 +69,7 @@ internal class RuleFileParser
             throw new Exception("Rule section is empty");
 
         var ctx = new ParsingContext(parsingContext);
-        var requestMatchers = _requestMatchersParser.Parse(ruleSection, ctx);
+        var requestMatchers = await _requestMatchersParser.Parse(ruleSection, ctx);
 
         var templates = GetTemplates(childSections, parsingContext);
         ctx.SetTemplates(templates);
