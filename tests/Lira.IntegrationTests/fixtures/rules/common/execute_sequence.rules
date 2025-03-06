@@ -1,0 +1,83 @@
+-------------------- rule
+
+~ query
+a={{
+
+$$chain = "1";
+return true;
+
+}}
+
+~ req
+$$chain = $$chain + ">2";
+return true;
+
+~ path
+/common/execute_sequence/{{
+
+$$chain = $$chain + ">3";
+$$cacheKey = value;
+
+return true;
+
+}}
+
+~ headers
+Id: {{
+
+$$chain = $$chain + ">4";
+return true;
+
+}}
+
+~ body
+{{ all }} >> {{
+
+$$chain = $$chain + ">5";
+return true;
+
+}}
+
+----- action
+
+$$chain = $$chain + ">6";
+
+----- response
+
+{{
+
+$$chain = $$chain + ">7";
+return $$chain;
+
+}}
+
+----- action
+
+cache.set($$cacheKey, $$chain + ">8");
+
+
+-------------------- rule
+
+POST /common/utils/cache/{{ any >> $$cacheKey }}
+
+----- action
+
+cache.set($$cacheKey, req.body.all());
+
+----- response
+
+~ code: 200
+
+
+
+-------------------- rule
+
+GET /common/utils/cache/{{ any >> $$cacheKey }}
+
+----- response
+{{
+
+var a = cache.get($$cacheKey);
+return a;
+
+}}

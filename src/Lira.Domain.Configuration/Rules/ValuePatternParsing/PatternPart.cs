@@ -20,8 +20,6 @@ record PatternParts : IReadOnlyList<PatternPart>
     private readonly IReadOnlyList<PatternPart> _parts;
 
     public PatternParts(IReadOnlyList<PatternPart> parts) => _parts = parts;
-    // public PatternParts(IEnumerable<PatternPart> parts) => _parts = new List<PatternPart>(parts);
-    public PatternParts(PatternPart part) => _parts = new []{part};
 
     public IEnumerator<PatternPart> GetEnumerator() => _parts.GetEnumerator();
 

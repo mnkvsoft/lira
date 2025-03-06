@@ -8,12 +8,13 @@ using Microsoft.Extensions.Logging;
 using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Configuration;
-using Lira.Domain.Actions;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.TextPart.Types;
 using Lira.Domain.DataModel;
 using Lira.Domain.TextPart.Impl.CSharp.ExternalLibsLoading;
+using Lira.Domain.Handling.Actions;
+using Newtonsoft.Json.Linq;
 
 // ReSharper disable RedundantExplicitArrayCreation
 
@@ -251,6 +252,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             typeof(IRangesProvider).Assembly.Location,
             typeof(Constants).Assembly.Location,
             typeof(Json).Assembly.Location,
+            typeof(JObject).Assembly.Location,
             typeof(RequestData).Assembly.Location,
             GetType().Assembly.Location
         };
@@ -413,9 +415,8 @@ class FunctionFactory : IFunctionFactoryCSharp
             {
                 var type = declaredPartsProvider.GetPartType(readItem.ItemName);
 
-                sbCodeWithLiraItems.Append(
-                    $"({(type == null ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
-                    $"\"{readItem.ItemName}\", {ContextParameterName})))");
+                sbCodeWithLiraItems.Append($"({(type == null || !type.NeedTyped ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
+                                           $"\"{readItem.ItemName}\", {ContextParameterName})))");
             }
             else if (token is CodeToken.WriteItem writeItem)
             {

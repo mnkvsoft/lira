@@ -1,0 +1,27 @@
+## pan 5 000642 413817956 (642)
+
+-------------------- case
+
+GET /range/types/pan/default/match/5000642413817956
+
+----- expected
+
+~ code
+200
+
+~ body
+first
+
+## pan 5 001260 231746593 (1260)
+
+-------------------- case
+
+GET /range/types/pan/default/match/5001260231746593
+
+----- expected
+
+~ code
+200
+
+~ body
+second

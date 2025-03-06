@@ -1,9 +1,9 @@
 ﻿using Lira.Common.Extensions;
-using Lira.Domain.Actions;
 using Lira.Domain.Configuration;
 using Lira.Domain.Configuration.Rules;
 using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+using Lira.Domain.Handling.Actions;
 using Lira.Domain.TextPart;
 using Lira.ExternalCalling.Http.Caller;
 using Lira.FileSectionFormat;
@@ -20,17 +20,17 @@ class BlockName
 public class HttpSystemActionRegistrator : ISystemActionRegistrator
 {
     public string Name => "call.http";
-    private readonly GeneratingHttpDataParser _generatingHttpDataParser;
+    private readonly HeadersParser _headersParser;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ITextPartsParser _partsParser;
 
 
     public HttpSystemActionRegistrator(
-        GeneratingHttpDataParser generatingHttpDataParser,
+        HeadersParser headersParser,
         IHttpClientFactory httpClientFactory,
         ITextPartsParser partsParser)
     {
-        _generatingHttpDataParser = generatingHttpDataParser;
+        _headersParser = headersParser;
         _httpClientFactory = httpClientFactory;
         _partsParser = partsParser;
     }
@@ -47,7 +47,7 @@ public class HttpSystemActionRegistrator : ISystemActionRegistrator
         var bodyParts = await _partsParser.Parse(bodyRawText, parsingContext);
 
         var headerBlock = section.GetBlockOrNull(BlockName.Headers);
-        var headers = headerBlock == null ? null : await _generatingHttpDataParser.ParseHeaders(headerBlock, parsingContext);
+        var headers = headerBlock == null ? null : await _headersParser.ParseHeaders(headerBlock, parsingContext);
 
         if(headers?.FirstOrDefault(x => x.Name == "Content-Type") == null)
             throw new Exception("Header Content-Type is required");

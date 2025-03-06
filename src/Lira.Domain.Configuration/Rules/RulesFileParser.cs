@@ -1,6 +1,4 @@
-using Microsoft.Extensions.Logging;
 using Lira.Common.Extensions;
-using Lira.Domain.Actions;
 using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Templating;
@@ -11,28 +9,21 @@ namespace Lira.Domain.Configuration.Rules;
 
 internal class RuleFileParser
 {
-    private readonly ILoggerFactory _loggerFactory;
-
     private readonly RequestMatchersParser _requestMatchersParser;
-    private readonly ResponseStrategyParser _responseStrategyParser;
     private readonly ConditionMatcherParser _conditionMatcherParser;
     private readonly FileSectionDeclaredItemsParser _fileSectionDeclaredItemsParser;
-    private readonly ActionsParser _actionsParser;
+    private readonly HandlersParser _handlersParser;
 
     public RuleFileParser(
-        ILoggerFactory loggerFactory,
         RequestMatchersParser requestMatchersParser,
-        ResponseStrategyParser responseStrategyParser,
         ConditionMatcherParser conditionMatcherParser,
         FileSectionDeclaredItemsParser fileSectionDeclaredItemsParser,
-        ActionsParser actionsParser)
+        HandlersParser handlersParser)
     {
-        _loggerFactory = loggerFactory;
         _requestMatchersParser = requestMatchersParser;
-        _responseStrategyParser = responseStrategyParser;
         _conditionMatcherParser = conditionMatcherParser;
         _fileSectionDeclaredItemsParser = fileSectionDeclaredItemsParser;
-        _actionsParser = actionsParser;
+        _handlersParser = handlersParser;
     }
 
     public async Task<IReadOnlyCollection<Rule>> Parse(string ruleFile, IReadonlyParsingContext parsingContext)
@@ -70,7 +61,7 @@ internal class RuleFileParser
     private async Task<IReadOnlyCollection<Rule>> CreateRules(
         string ruleName,
         FileSection ruleSection,
-        IReadonlyParsingContext parsingContext)
+        ParsingContext parsingContext)
     {
         var childSections = ruleSection.ChildSections;
 
@@ -85,9 +76,6 @@ internal class RuleFileParser
 
         var declaredItems = await GetDeclaredItems(childSections, ctx);
         ctx.SetDeclaredItems(declaredItems);
-
-        ResponseStrategy responseStrategy;
-        IReadOnlyCollection<Delayed<IAction>> externalCallers;
 
         bool existsConditionSection = childSections.Any(x => x.Name == Constants.SectionName.Condition);
         bool existsCacheSection = childSections.Any(x => x.Name == Constants.SectionName.Cache);
@@ -111,12 +99,12 @@ internal class RuleFileParser
                 var conditionSection = conditionSections[i];
                 var childConditionSections = conditionSection.ChildSections;
                 AssertContainsOnlySections(
-                    childConditionSections, _actionsParser.GetSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare));
+                    rulesSections: childConditionSections,
+                    expectedSectionName: _handlersParser.GetAllSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare));
 
                 ctx.SetDeclaredItems(await GetDeclaredItems(childConditionSections, ctx));
 
-                externalCallers = await _actionsParser.Parse(childConditionSections, ctx);
-                responseStrategy = await _responseStrategyParser.Parse(conditionSection, ctx);
+                var handlers = await _handlersParser.Parse(childConditionSections, ctx);
 
                 var conditionMatchers = _conditionMatcherParser.Parse(conditionSection);
 
@@ -124,11 +112,12 @@ internal class RuleFileParser
                 matchers.AddRange(requestMatchers);
                 matchers.AddRange(conditionMatchers);
 
-                rules.Add(new Rule(
-                    ruleName + $". Condition no. {i + 1}",
-                    new RequestMatcherSet(matchers),
-                    new ActionsExecutor(externalCallers, _loggerFactory),
-                    responseStrategy));
+                rules.Add(
+                    new Rule(
+                        ruleName + $". Condition no. {i + 1}",
+                        matchers,
+                        handlers)
+                );
             }
 
             return rules;
@@ -182,18 +171,15 @@ internal class RuleFileParser
 
         AssertContainsOnlySections(
             childSections,
-            _actionsParser.GetSectionNames(childSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare, Constants.SectionName.Templates));
+            _handlersParser.GetAllSectionNames(childSections).NewWith(Constants.SectionName.Declare, Constants.SectionName.Templates));
 
-        externalCallers = await _actionsParser.Parse(childSections, ctx);
-        responseStrategy = await _responseStrategyParser.Parse(ruleSection, ctx);
-
+        var handlerss = await _handlersParser.Parse(childSections, ctx);
         return
         [
             new Rule(
             ruleName,
-            new RequestMatcherSet(requestMatchers),
-            new ActionsExecutor(externalCallers, _loggerFactory),
-            responseStrategy)
+            requestMatchers,
+            handlerss)
         ];
     }
 

@@ -44,58 +44,65 @@ public class Rules_Tests : TestBase
         Console.WriteLine("Execute file: " + prettyTestFileName);
         string realTestFilePath = fixturesDirectory + prettyTestFileName;
 
-        var sections = await SectionFileParser.Parse(realTestFilePath);
-
-        foreach (var caseSection in sections)
+        try
         {
-            var delay = caseSection.GetBlockValueOrDefault<TimeSpan>("delay");
+            var sections = await SectionFileParser.Parse(realTestFilePath);
 
-            if (delay != default)
-                await Task.Delay(delay);
-
-            var sw = Stopwatch.StartNew();
-
-            var req = CreateRequest(caseSection);
-
-            var expectedSection = caseSection.GetSingleChildSection("expected");
-            HttpResponseMessage res;
-            try
+            foreach (var caseSection in sections)
             {
-                res = await httpClient.SendAsync(req);
+                var delay = caseSection.GetBlockValueOrDefault<TimeSpan>("delay");
+
+                if (delay != default)
+                    await Task.Delay(delay);
+
+                var sw = Stopwatch.StartNew();
+
+                var req = CreateRequest(caseSection);
+
+                var expectedSection = caseSection.GetSingleChildSection("expected");
+                HttpResponseMessage res;
+                try
+                {
+                    res = await httpClient.SendAsync(req);
+                }
+                catch (Exception e)
+                {
+                    if (e.Message.Contains("The application aborted the request") && expectedSection.ExistBlock("aborted"))
+                        continue;
+                    throw;
+                }
+
+                var wait = caseSection.GetBlockValueOrDefault<TimeSpan>("wait");
+
+                if (wait != default)
+                    await Task.Delay(wait);
+
+                var elapsed = expectedSection.GetBlockValueOrDefault<TimeSpan>("elapsed");
+                if (elapsed != default)
+                    Assert.That(sw.Elapsed, Is.GreaterThan(elapsed));
+
+                int expectedHttpCode = expectedSection.GetBlockValue<int>("code");
+                Assert.That((int)res.StatusCode, Is.EqualTo(expectedHttpCode));
+
+                var bodyBlock = expectedSection.GetBlockOrNull("body");
+
+                if (bodyBlock != null)
+                {
+                    string expectedBody = expectedSection.GetStringValueFromRequiredBlock("body").Replace("<empty>", "");
+
+                    string body = await res.Content.ReadAsStringAsync();
+                    Assert.That(body, Is.EqualTo(expectedBody));
+                }
+
+                AssertValidHeaders(res, expectedSection);
+
+                var httpCallSection = expectedSection.ChildSections.FirstOrDefault(x => x.Name == "action.call.http");
+                AsserCallHttp(httpCallSection, mocks);
             }
-            catch (Exception e)
-            {
-                if (e.Message.Contains("The application aborted the request") && expectedSection.ExistBlock("aborted"))
-                    continue;
-                throw;
-            }
-
-            var wait = caseSection.GetBlockValueOrDefault<TimeSpan>("wait");
-
-            if (wait != default)
-                await Task.Delay(wait);
-
-            var elapsed = expectedSection.GetBlockValueOrDefault<TimeSpan>("elapsed");
-            if (elapsed != default)
-                Assert.That(sw.Elapsed, Is.GreaterThan(elapsed));
-
-            int expectedHttpCode = expectedSection.GetBlockValue<int>("code");
-            Assert.That((int)res.StatusCode, Is.EqualTo(expectedHttpCode));
-
-            var bodyBlock = expectedSection.GetBlockOrNull("body");
-
-            if (bodyBlock != null)
-            {
-                string expectedBody = expectedSection.GetStringValueFromRequiredBlock("body").Replace("<empty>", "");
-
-                string body = await res.Content.ReadAsStringAsync();
-                Assert.That(body, Is.EqualTo(expectedBody));
-            }
-
-            AssertValidHeaders(res, expectedSection);
-
-            var httpCallSection = expectedSection.ChildSections.FirstOrDefault(x => x.Name == "action.call.http");
-            AsserCallHttp(httpCallSection, mocks);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Test {realTestFilePath}:line 1 fault", e);
         }
     }
 

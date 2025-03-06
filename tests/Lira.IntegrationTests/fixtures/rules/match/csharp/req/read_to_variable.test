@@ -1,0 +1,18 @@
+-------------------- case
+
+POST /match/sharp/req/read_to_variable/11112222333344445555
+
+~ body
+{
+    "amount": 200
+}
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "transactionId": 12345
+}

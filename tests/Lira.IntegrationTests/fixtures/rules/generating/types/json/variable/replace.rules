@@ -4,7 +4,7 @@ GET /generating/types/json/variable/replace
 
 ----- declare
 
-$$template:json = 
+$$template:json =
 {
     "status": "pending"
 }
@@ -12,11 +12,11 @@ $$template:json =
 ----- response
 
 ~ body
-{{ 
-    $$template
+{{
+    $$template.copy()
         .replace("$.status", "approved")
-        .replace("$.status", "ok") 
+        .replace("$.status", "ok")
 }}
-{{ 
+{{
     $$template
 }}

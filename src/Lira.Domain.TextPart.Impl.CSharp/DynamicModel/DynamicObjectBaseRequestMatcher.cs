@@ -8,6 +8,8 @@ namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 // ReSharper disable once UnusedType.Global
 public abstract class DynamicObjectBaseRequestMatcher : DynamicObjectWithDeclaredPartsBase, IRequestMatcher
 {
+    protected IReadonlyCache cache => Cache;
+
     protected DynamicObjectBaseRequestMatcher(DependenciesBase dependencies) : base(dependencies)
     {
     }

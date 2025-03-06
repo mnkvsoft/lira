@@ -19,5 +19,5 @@ $json_var =
 ~ body
 {{
      json($json_var)
-        .add("new_field", "new_value")
+        .add("$", "new_field", "new_value")
 }}

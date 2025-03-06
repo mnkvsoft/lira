@@ -8,24 +8,14 @@ $$newId           = {{ echo: 1 }}
 $$createdAt       = {{ echo: 2023-04-23 10:45 }}
 $$callback_server = http://fakeserver:9876
 
------ response
 
-~ code
-200
-
-~ body
-{
-    "id": {{ $$newId }},
-    "createdAt": "{{ $$createdAt }}",
-    "status": "inprocess"
-}
 
 ----- action.call.http
 
 POST {{ $$callback_server }}/api/callback?a={{echo: 1}}
 
-~ delay 
-100 ms
+~ delay
+{{ int: 100 - 200 }} ms
 
 ~ headers
 Content-Type: application/json
@@ -38,3 +28,19 @@ Request-Id: {{ req.header: Request-Id }}
     "createdAt": "{{ $$createdAt }}",
     "status": "success"
 }
+
+
+
+----- response
+
+~ code
+200
+
+~ body
+{
+    "id": {{ $$newId }},
+    "createdAt": "{{ $$createdAt }}",
+    "status": "inprocess"
+}
+
+

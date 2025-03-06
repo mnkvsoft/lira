@@ -1,0 +1,43 @@
+-------------------- case
+
+GET /generating/types/json/add/to/array
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "arrayObj": [
+    {
+      "name": "name1"
+    },
+    {
+      "name": "name2"
+    },
+    {
+      "name": "name3"
+    }
+  ],
+  "arrayStr": [
+    "str1",
+    "str2",
+    "1"
+  ],
+  "arrayNumber": [
+    1,
+    1,
+    1.33
+  ],
+  "arrayEmpty": [
+    1.33,
+    "str",
+    {
+      "prop": "value"
+    },
+    {
+      "prop": "value"
+    }
+  ]
+}

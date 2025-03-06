@@ -1,0 +1,13 @@
+-------------------- case
+
+GET /generating/types/json/replace/number_in_string
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "number_in_string": "12345"
+}

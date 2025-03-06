@@ -39,15 +39,6 @@ class RequestMatchersParser
 
         foreach (var block in ruleSection.Blocks)
         {
-            if (block.Name == Constants.BlockName.Rule.Path)
-            {
-                var path = block.GetSingleLine();
-                var requestMatcher = await CreatePathRequestMatcher(PatternParser.Parse(path), context);
-
-                builder.Add(requestMatcher);
-                continue;
-            }
-
             builder.Add(await CreateRequestMatcher(block, context));
         }
 
@@ -89,13 +80,13 @@ class RequestMatchersParser
             case Constants.BlockName.Rule.Method:
                 return CreateMethodRequestMather(block.GetSingleLine());
             case Constants.BlockName.Rule.Query:
-                return await CreateQueryStringMatcher(PatternParser.Parse(block.GetSingleLine()), context);
+                return await CreateQueryStringMatcher(PatternParser.Parse(block.GetLinesAsString()), context);
             case Constants.BlockName.Rule.Headers:
                 return await CreateHeadersRequestMatcher(block, context);
             case Constants.BlockName.Rule.Body:
                 return await CreateBodyRequestMatcher(block, context);
             case Constants.BlockName.Rule.Path:
-                return await CreatePathRequestMatcher(PatternParser.Parse(block.GetSingleLine()), context);
+                return await CreatePathRequestMatcher(PatternParser.Parse(block.GetLinesAsString()), context);
             case Constants.BlockName.Rule.Request:
                 return await CreateCustomRequestMatcher(block.GetLinesAsString(), context);
             default:
@@ -106,7 +97,7 @@ class RequestMatchersParser
     private async Task<IRequestMatcher> CreateCustomRequestMatcher(string code, ParsingContext context)
     {
         var (codeBlock, newRuntimeVariables) = CodeParser.Parse(code, context.DeclaredItems);
-        context.DeclaredItems.Variables.AddRange(newRuntimeVariables);
+        context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
         var matcher = await _functionFactoryCSharp.TryCreateRequestMatcher(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return matcher.GetFunctionOrThrow(code, context);
@@ -295,7 +286,7 @@ class RequestMatchersParser
             return customSetFunction;
 
         var (codeBlock, newRuntimeVariables) = CodeParser.Parse(invoke, context.DeclaredItems);
-        context.DeclaredItems.Variables.AddRange(newRuntimeVariables);
+        context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
         var createFunctionResult = await _functionFactoryCSharp.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);

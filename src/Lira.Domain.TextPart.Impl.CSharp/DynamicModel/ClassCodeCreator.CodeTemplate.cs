@@ -24,9 +24,8 @@ static partial class ClassCodeCreator
             "using Lira.Domain.TextPart.Impl.CSharp;" + Nl + Nl +
 
             "[namespaces]" + Nl + Nl +
-            "[usings]" + Nl + Nl +
+            "[usings]" + Nl;
 
-            "using static Lira.Domain.TextPart.Impl.CSharp.Functions.JsonUtils;" + Nl;
 
         private const string Namespace = "namespace __DynamicGenerated;";
 
@@ -43,7 +42,7 @@ public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
     public async Task<dynamic?> Get(RuleExecutingContext [context])
     {
         var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
-        var __variablesWriter = GetVariablesWriter([context], readOnly: true);
+        var __variablesWriter = GetVariablesWriter([context], readOnly: false);
 
         [code]
 
@@ -123,7 +122,7 @@ public sealed class [className] : DynamicObjectBaseRequestMatcher
         public readonly static string IAction =
             ImportNamespaces + Nl + Nl +
             Namespace + Nl + Nl +
-            "using Lira.Domain.Actions;" + Nl +
+            "using Lira.Domain.Handling.Actions;" + Nl +
             @"
 
 public sealed class [className] : DynamicObjectBaseAction, IAction

@@ -2,20 +2,15 @@
 
 namespace Lira.Domain.TextPart;
 
-public class ObjectTextParts : IReadOnlyCollection<IObjectTextPart>
+public class ObjectTextParts(IReadOnlyCollection<IObjectTextPart> valueParts, bool isString) : IReadOnlyCollection<IObjectTextPart>
 {
-    private readonly IReadOnlyCollection<IObjectTextPart> _parts;
+    public int Count => valueParts.Count;
+    public bool IsString => isString;
 
-    public ObjectTextParts(IReadOnlyCollection<IObjectTextPart> valueParts)
-    {
-        _parts = valueParts;
-    }
-
-    public int Count => _parts.Count;
 
     public IEnumerator<IObjectTextPart> GetEnumerator()
     {
-        return _parts.GetEnumerator();
+        return valueParts.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()

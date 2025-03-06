@@ -25,9 +25,10 @@ public static class ServiceCollectionExtensions
             .AddTransient<ConditionMatcherParser>()
             .AddTransient<RequestMatchersParser>()
             .AddTransient<FileSectionDeclaredItemsParser>()
-            .AddScoped<ResponseStrategyParser>()
-            .AddScoped<ActionsParser>()
-            .AddScoped<GeneratingHttpDataParser>()
+            .AddScoped<ResponseGenerationHandlerParser>()
+            .AddScoped<HandlersParser>()
+            .AddScoped<HeadersParser>()
+            .AddScoped<GetDelayParser>()
             .AddScoped<DeclaredItemsLoader>()
             .AddScoped<DeclaredItemsParser>()
             .AddScoped<ITextPartsParser, TextPartsParser>()
@@ -38,6 +39,7 @@ public static class ServiceCollectionExtensions
 
             .AddSingleton<GuidParser>()
             .AddSingleton<IntParser>()
+            .AddSingleton<PanParser>()
             .AddSingleton<DecParser>()
             .AddSingleton<HexParser>()
 

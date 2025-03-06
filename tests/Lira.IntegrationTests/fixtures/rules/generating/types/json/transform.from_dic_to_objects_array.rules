@@ -1,0 +1,70 @@
+-------------------- rule
+
+GET /generating/types/json/transform/from_dic_to_objects_array
+
+----- declare
+
+$$req:json =
+{
+    "dic": {
+        "key1": "value1",
+        "key2": "value2"
+    }
+}
+
+$$res:json =
+{
+    "params": []
+}
+
+----- response
+{{
+    foreach(var pair in $$req.dic)
+    {
+        $$res.add("$.params",
+                    "{" +
+                        "'name': '"  + pair.Name + "'," +
+                        "'value': '" + pair.Value + "'" +
+                     "}");
+    }
+
+    return $$res;
+}}
+
+
+-------------------- rule
+
+GET /generating/types/json/transform/array
+
+----- declare
+
+$$req:json =
+{
+    "operations": {
+        {
+            "id": 1,
+            "date": "2025-02-08",
+            "amount": 11.3
+        },
+        {
+            "id": 2,
+            "date": "2025-02-06",
+            "amount": 56.7
+        }
+    }
+}
+
+$$res:json =
+{
+    "dic": {}
+}
+
+----- response
+{{
+    foreach(var operation in $$req.operations)
+    {
+        $$res.add("$.dic", operation.id, operation.amount);
+    }
+
+    return $$res;
+}}

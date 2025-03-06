@@ -1,0 +1,21 @@
+-------------------- case
+
+GET /range/types/pan/default/gen/first
+
+----- expected
+
+~ code
+200
+
+## todo: need implementation body check
+
+-------------------- case
+
+GET /range/types/pan/default/gen/second
+
+----- expected
+
+~ code
+200
+
+## todo: need implementation body check

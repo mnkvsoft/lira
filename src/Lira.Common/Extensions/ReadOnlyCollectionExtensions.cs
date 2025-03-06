@@ -9,7 +9,7 @@ public static class ReadOnlyCollectionExtensions
 
     public static IReadOnlyCollection<T> NewWith<T>(this IReadOnlyCollection<T> items, params T[] newItems)
     {
-        var newCollection = new List<T>(items.Count + 1);
+        var newCollection = new List<T>(items.Count + newItems.Length);
         newCollection.AddRange(items);
         newCollection.AddRange(newItems);
         return newCollection;

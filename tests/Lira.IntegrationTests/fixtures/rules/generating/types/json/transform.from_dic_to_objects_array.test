@@ -1,0 +1,22 @@
+-------------------- case
+
+GET /generating/types/json/transform/from_dic_to_objects_array
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "params": [
+    {
+      "name": "key1",
+      "value": "value1"
+    },
+    {
+      "name": "key2",
+      "value": "value2"
+    }
+  ]
+}

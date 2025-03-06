@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /match/sharp/req/cache/read/Nikolass
+
+----- expected
+
+~ code
+200
+
+~ body
+cache not contains key: Nikolass

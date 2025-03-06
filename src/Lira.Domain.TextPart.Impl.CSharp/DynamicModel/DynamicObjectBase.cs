@@ -1,6 +1,7 @@
 using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.DataModel;
+using Lira.Domain.TextPart.Types;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
@@ -35,5 +36,10 @@ public abstract class DynamicObjectBase
     protected VariablesWriter GetVariablesWriter(RuleExecutingContext context, bool readOnly)
     {
         return new VariablesWriter(context, DeclaredPartsProvider, readOnly);
+    }
+
+    public static Json json(string json)
+    {
+        return Json.Parse(json);
     }
 }

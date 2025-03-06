@@ -1,0 +1,20 @@
+-------------------- rule
+
+GET /generating/types/json/replace/number_in_string
+
+----- declare
+
+$json_var:json =
+{
+    "number_in_string" : ""
+}
+
+----- response
+
+~ code
+200
+
+~ body
+{{
+     $json_var.replace("$.number_in_string", "12345")
+}}

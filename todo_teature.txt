@@ -1,7 +1,14 @@
-- verify request
+- hide dynamic class details on exception
+- json() extension for object
+- remove method for json type
+- dynamic block in ~ delay block
 - describe file section format
 - RequestStatisticStorage ttl to config
 - rules inheritance
-- repeat function
-- cache response
-- id for matching value
+- network latency
+
+ bugs:
+ - Uri not accessible in dynamic block
+
+check:
+- transform json array from request to response

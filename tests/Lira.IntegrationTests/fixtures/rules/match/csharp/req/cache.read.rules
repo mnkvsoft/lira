@@ -1,0 +1,13 @@
+-------------------- rule
+
+GET /match/sharp/req/cache/read/{{ any >> $$key }}
+
+~ req
+
+bool result = !cache.contains($$key);
+return result;
+
+----- response
+
+cache not contains key: {{ $$key }}
+

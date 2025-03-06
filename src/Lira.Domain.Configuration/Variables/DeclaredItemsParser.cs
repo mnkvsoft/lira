@@ -9,17 +9,15 @@ using Lira.Domain.TextPart.Impl.Custom.VariableModel.Impl;
 
 namespace Lira.Domain.Configuration.Variables;
 
-class DeclaredItemsParser
+class DeclaredItemsParser(ITextPartsParser textPartsParser)
 {
-    private readonly ITextPartsParser _textPartsParser;
-
-    public DeclaredItemsParser(ITextPartsParser textPartsParser)
-    {
-        _textPartsParser = textPartsParser;
-    }
+    private readonly ITextPartsParser _textPartsParser = textPartsParser;
 
     public async Task<DeclaredItems> Parse(IReadOnlyCollection<string> lines, IReadonlyParsingContext parsingContext)
     {
+        if (lines.Count == 0)
+            return new DeclaredItems();
+
         var all = new DeclaredItems(parsingContext.DeclaredItems);
         var newContext = new ParsingContext(parsingContext, declaredItems: all);
 
@@ -35,6 +33,8 @@ class DeclaredItemsParser
 
             if (typeStr != null)
                 type = ReturnType.Parse(typeStr);
+            else if (parts.IsString)
+                type = ReturnType.String;
 
             if (name.StartsWith(Consts.ControlChars.VariablePrefix))
             {

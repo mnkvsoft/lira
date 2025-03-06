@@ -65,6 +65,7 @@ class RoutingMiddleware : IMiddleware
 
         var request = new RequestData(req.Method, req.Path, req.QueryString, req.Headers, req.Query, req.Body);
 
+        Stopwatch swTotal = Stopwatch.StartNew();
         Stopwatch sw = Stopwatch.StartNew();
         var executors = await GetRuleExecutors(request);
         var searchMs = sw.GetElapsedDoubleMilliseconds();
@@ -84,7 +85,10 @@ class RoutingMiddleware : IMiddleware
             }
 
             if (_isLoggingEnabled)
-                _logger.LogInformation($"Was usage rule (times. search: {searchMs} ms, exe: {sw.GetElapsedDoubleMilliseconds()} ms. protocol: {context.Request.Protocol}. weight: {executor.Weight}): " + executor.Rule.Name);
+            {
+                _logger.LogInformation($"Was usage rule (time: {swTotal.GetElapsedDoubleMilliseconds()} ms (search: {searchMs} ms, exe: {sw.GetElapsedDoubleMilliseconds()} ms). protocol: {context.Request.Protocol}. weight: {executor.Weight}): " + executor.Rule.Name);
+            }
+
             return;
         }
 

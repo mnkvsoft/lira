@@ -4,8 +4,6 @@ using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
-using Lira.Domain.TextPart.Impl.Custom;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 using Lira.Domain.TextPart.Impl.System;
 using Microsoft.Extensions.Logging;
 
@@ -47,10 +45,11 @@ class TextPartsParser : ITextPartsParser
             parts.AddRange(await CreateValuePart(patternPart, parsingContext.ToImpl()));
         }
 
-        return new ObjectTextParts(parts);
+        bool isString = patternParts.Count == 0 || patternParts.Count > 1 || patternParts[0] is PatternPart.Static;
+        return new ObjectTextParts(parts, isString);
     }
 
-    private async Task<IReadOnlyCollection<IObjectTextPart>> CreateValuePart(PatternPart patternPart, IReadonlyParsingContext parsingContext)
+    private async Task<IReadOnlyCollection<IObjectTextPart>> CreateValuePart(PatternPart patternPart, ParsingContext parsingContext)
     {
         return patternPart switch
         {
@@ -60,7 +59,7 @@ class TextPartsParser : ITextPartsParser
         };
     }
 
-    private async Task<IReadOnlyCollection<IObjectTextPart>> GetDynamicParts(PatternPart.Dynamic dynamicPart, IReadonlyParsingContext context)
+    private async Task<IReadOnlyCollection<IObjectTextPart>> GetDynamicParts(PatternPart.Dynamic dynamicPart, ParsingContext context)
     {
         string value = dynamicPart.Value;
 
@@ -94,17 +93,15 @@ class TextPartsParser : ITextPartsParser
         return [pipeline];
     }
 
-    private static CodeBlock GetCodeBlock(IReadonlyParsingContext context, string value)
+    private static CodeBlock GetCodeBlock(ParsingContext parsingContext, string value)
     {
-        var (codeBlock, newRuntimeVariables) = CodeParser.Parse(value, context.DeclaredItems);
-
-        if (newRuntimeVariables.Count > 0)
-            throw new Exception("Variables cannot be set in generation blocks. Code: " + value);
+        var (codeBlock, newRuntimeVariables) = CodeParser.Parse(value, parsingContext.DeclaredItems);
+        parsingContext.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
         return codeBlock;
     }
 
-    private async Task<ITransformFunction> CreateTransformFunction(string invoke, IReadonlyParsingContext context)
+    private async Task<ITransformFunction> CreateTransformFunction(string invoke, ParsingContext context)
     {
         if (_functionFactorySystem.TryCreateTransformFunction(invoke, out var transformFunction))
             return transformFunction;
@@ -114,16 +111,9 @@ class TextPartsParser : ITextPartsParser
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 
-    private async Task<IObjectTextPart> CreateStartFunction(string rawText, IReadonlyParsingContext context)
+    private async Task<IObjectTextPart> CreateStartFunction(string rawText, ParsingContext context)
     {
         var declaredItems = context.DeclaredItems;
-
-        if (ContainsOnlyVariable(rawText))
-        {
-            var varName = rawText.TrimStart(Consts.ControlChars.VariablePrefix);
-            var variable = declaredItems.Variables.GetOrThrow(varName);
-            return variable;
-        }
 
         var declaredFunction = declaredItems.Functions.FirstOrDefault(x => x.Name == rawText.TrimStart(Consts.ControlChars.FunctionPrefix));
         context.CustomDicts.TryGetCustomSetFunction(rawText, out var customSetFunction);
@@ -156,11 +146,6 @@ class TextPartsParser : ITextPartsParser
             GetCodeBlock(context, rawText));
 
         return createFunctionResult.GetFunctionOrThrow(rawText, context);
-
-        bool ContainsOnlyVariable(string s)
-        {
-            return s.StartsWith(Consts.ControlChars.VariablePrefix) && CustomItemName.IsValidName(s.TrimStart(Consts.ControlChars.VariablePrefix));
-        }
     }
 
     private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadParts(

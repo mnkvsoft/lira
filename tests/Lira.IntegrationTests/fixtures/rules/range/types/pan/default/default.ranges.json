@@ -1,0 +1,9 @@
+{
+  "pan_default": {
+    "type": "pan",
+    "ranges": [
+      "first",
+      "second"
+    ]
+  }
+}

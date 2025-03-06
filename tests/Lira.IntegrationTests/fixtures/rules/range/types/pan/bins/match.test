@@ -1,0 +1,23 @@
+-------------------- case
+
+GET /range/types/pan/bins/match/5567120000374843
+
+----- expected
+
+~ code
+200
+
+~ body
+first
+
+-------------------- case
+
+GET /range/types/pan/bins/match/2234567001860735
+
+----- expected
+
+~ code
+200
+
+~ body
+second

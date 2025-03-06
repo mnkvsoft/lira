@@ -4,6 +4,7 @@ using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel.Impl;
+using Moq;
 
 namespace Lira.Domain.Configuration.UnitTests;
 
@@ -41,6 +42,20 @@ public class Tests
 
         var result = string.Concat(codeBlock.Tokens);
         Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void ReadVariableWithPropertyAccess()
+    {
+        var declaredItems = new DeclaredItems();
+        declaredItems.Variables.Add(new DeclaredVariable(new CustomItemName("person"), [Mock.Of<IObjectTextPart>()], type: null));
+
+        var (codeBlock, _) = CodeParser.Parse(
+            "$$person.name",
+            declaredItems);
+
+        var result = string.Concat(codeBlock.Tokens);
+        Assert.That(result, Is.EqualTo("[:r $$person][:c .name]"));
     }
 
     [TestCase(

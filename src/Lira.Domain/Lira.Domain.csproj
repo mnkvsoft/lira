@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Lira.Common\Lira.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Handling\" />
+  </ItemGroup>
+
 </Project>

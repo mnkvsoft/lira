@@ -1,0 +1,22 @@
+-------------------- case
+
+GET /generating/types/json/transform/from_objects_array_to_other_array
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "new_operations": [
+    {
+      "identifier": "1",
+      "sum": 11.3
+    },
+    {
+      "identifier": "2",
+      "sum": 56.7
+    }
+  ]
+}

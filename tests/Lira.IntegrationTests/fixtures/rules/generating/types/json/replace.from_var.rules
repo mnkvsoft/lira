@@ -13,11 +13,11 @@ $json_var =
     "objectField": {},
 }
 
-$$stringVar = new_value
-$$intVar = 1
-$$boolVar = true
-$$arrayVar = [1,2,3]
-$$objectVar = {"b": "value"}
+$$stringVar    = new_value
+$$intVar:int   = 1
+$$boolVar:bool = true
+$$arrayVar     = [1,2,3]
+$$objectVar    = {"b": "value"}
 
 ----- response
 

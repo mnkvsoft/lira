@@ -1,0 +1,36 @@
+-------------------- rule
+
+GET /generating/types/json/transform/from_objects_array_to_dic
+
+----- declare
+
+$$req:json =
+{
+    "operations": [
+        {
+            "id": 1,
+            "date": "2025-02-08",
+            "amount": 11.3
+        },
+        {
+            "id": 2,
+            "date": "2025-02-06",
+            "amount": 56.7
+        }
+    ]
+}
+
+$$res:json =
+{
+    "dic": {}
+}
+
+----- response
+{{
+    foreach(var operation in $$req.operations)
+    {
+        $$res.add("$.dic", operation.id, operation.amount);
+    }
+
+    return $$res;
+}}
