@@ -13,16 +13,15 @@ internal static class CreateFunctionResultExtensions
 
         var failed = (CreateFunctionResult<T>.Failed)createFunctionResult;
 
-        var nl = Common.Constants.NewLine;
+        var nl = Environment.NewLine;
 
         throw new Exception(
             "Failed create dynamic block:" + nl + nl +
             invoke.WrapBeginEnd() +
             "Attempt compile C# code failed. " + failed.Message  + nl + "Code:" + nl + nl +
             failed.Code.WrapBeginEnd() +
-            "System function, declared function or variable not found." + nl +
             $"Declared functions: {string.Join(", ", context.DeclaredItems.Functions.Select(x => Consts.ControlChars.FunctionPrefix + x.Name))}" + nl +
             $"Declared variables: {string.Join(", ", context.DeclaredItems.Variables.Select(x => Consts.ControlChars.VariablePrefix + x.Name))}" + nl +
-            $"Custom sets: {string.Join(", ", context.CustomDicts.GetRegisteredNames())}");
+            $"Custom dictionaries: {string.Join(", ", context.CustomDicts.GetRegisteredNames())}");
     }
 }

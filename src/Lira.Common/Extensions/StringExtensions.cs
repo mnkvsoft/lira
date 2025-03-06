@@ -64,7 +64,7 @@ public static class StringExtensions
 
     public static string WrapBeginEnd(this string value)
     {
-        var nl = Constants.NewLine;
+        var nl = Environment.NewLine;
         return
             "========== begin ==========" + nl + nl +
             value + nl + nl +
