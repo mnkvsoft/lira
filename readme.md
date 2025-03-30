@@ -11,7 +11,7 @@ A simple and very functional mock server
 
 - syntax highlighting of rules in `VS Code`
 
-- use of data ranges of different types (`int`, `dec`, `guid`, `hex string`) to provide variable behavior
+- use of data ranges of different types (`int`, `float`, `guid`, `hex string`) to provide variable behavior
 
 - the ability to describe different behavior of a method depending on the call number or time elapsed since the first call
 
@@ -60,7 +60,7 @@ Docker installed
 - create a directory `c:/rules` in which the rules for **LIRA** will be located (you can specify any other directory)
 - run the command:
 
-`docker run -p 80:80 -e TZ=Europe/Moscow -v c:/rules:/app/rules mnkvsoft/lira`
+`docker run -p 80:80 -e TZ=Europe/Moscow -v c:/lira/rules:/app/rules mnkvsoft/lira`
 
 You can make sure that the server is running by going to the following address in your browser:
 
@@ -76,7 +76,7 @@ You need to create a text file `hello.rules` with the following content in the `
 ```
 -------------------- rule
 
-GET /hello/{{:person  any  }}
+GET /hello/{{ any >> $$person}}
 
 ----- response
 
@@ -84,7 +84,7 @@ GET /hello/{{:person  any  }}
 200
 
 ~ body
-hello {{ value: person }}!
+hello {{ $$person }}!
 ```
 
 Testing the first rule in the browser by making a request to the resource
@@ -528,7 +528,7 @@ Request-Id: 987
 ```
 -------------------- rule
 
-GET /balance/7{{:phone int }}
+GET /balance/7{{ int >> $$phone }}
 
 ~ headers
 example: extract.value.system
@@ -537,7 +537,7 @@ example: extract.value.system
 
 ~ body
 {
-    "phone": {{ value: phone }},
+    "phone": {{ $$phone }},
     "balance": {{ dec }}
 }
 ```
@@ -1827,7 +1827,7 @@ Response
 }
 ```
 
-#### Extraction dynamically matched data in blocks in C#
+#### Extractiong dynamically matched data in blocks in C#
 
 [extract.value.charp.rules](docs/examples/quick_start/extract.value.charp.rules)
 
@@ -2198,7 +2198,7 @@ File.WriteAllText(filePath, $body);
 
 -------------------- rule
 
-GET /order/{{ File.Exists($"/tmp/{value}.dat") ### if file exists ### >> $$id }}
+GET /order/{{ File.Exists($"/tmp/{value}.dat") ### if file exists ### >> $id }}
 
 ~ headers
 example: action
@@ -2315,7 +2315,7 @@ we delete the data from the cache
 ###
 -------------------- rule
 
-POST /order/cancel/{{ cache.contains("cache_example_" + value) >> $$id }}
+POST /order/cancel/{{cache.contains("cache_example_" + value) >> $$id }}
 
 ~ headers
 example: cache
@@ -2336,7 +2336,7 @@ then we issue an appropriate response
 ###
 -------------------- rule
 
-GET /order/{{ !cache.contains("cache_example_" + value) }}
+GET /order/{{ !cache.contains("cache_example_" + value) >> $$id }}
 
 ~ headers
 example: cache
@@ -2449,16 +2449,16 @@ and increment the counter
 ###
 -------------------- rule
 
-GET /order/{{
+GET /order/{{ 
 
     string key = "cache_example_" + value;
 
     if(!cache.contains(key))
         return false;
 
+    var state = cache.get(key);
     $$id = value;
 
-    var state = cache.get(key);
     return state.Counter >= 1 && state.Counter <= 3;
 
 }}
@@ -2489,16 +2489,15 @@ and do not increment the counter
 ###
 -------------------- rule
 
-GET /order/{{
+GET /order/{{ 
 
 string key = "cache_example_" + value;
 
 if(!cache.contains(key))
     return false;
 
-$$id = value;
-
 var state = cache.get(key);
+$$id = value;
 return state.Counter > 3;
 
 }}

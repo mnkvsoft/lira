@@ -1,6 +1,6 @@
 {
     "short.payment.amount": {
-      "type": "float",
+      "type": "dec",
       "ranges": [
         "success",
         "pending",

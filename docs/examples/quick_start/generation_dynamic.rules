@@ -14,7 +14,7 @@ Request-Time: {{ now >> format: H:mm:ss }}
 {
     "id": {{ int }},
     "status": "{{ random: paid, pending, cancelled }}",
-    "amount": {{ float }},
+    "amount": {{ dec }},
     "transaction_id": "{{ guid }}",
     "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
     "customer": "{{ str }}"

@@ -1,6 +1,6 @@
 {
     "payment.amount": {
-      "type": "float",
+      "type": "dec",
       "start": "0.01",
       "capacity": "10",
       "unit": 0.01,

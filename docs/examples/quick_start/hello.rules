@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /hello/{{:person any }}
+GET /hello/{{ any >> $$person }}
 
 ----- response
 
@@ -8,4 +8,4 @@ GET /hello/{{:person any }}
 200
 
 ~ body
-hello {{ value: person }}!
+hello {{ $$person }}!

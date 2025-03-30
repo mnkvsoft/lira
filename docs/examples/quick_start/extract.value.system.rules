@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /balance/7{{:phone int }}
+GET /balance/7{{ int >> $$phone }}
 
 ~ headers
 example: extract.value.system
@@ -9,6 +9,6 @@ example: extract.value.system
 
 ~ body
 {
-    "phone": {{ value: phone }},
-    "balance": {{ float }}
+    "phone": {{ $$phone }},
+    "balance": {{ dec }}
 }

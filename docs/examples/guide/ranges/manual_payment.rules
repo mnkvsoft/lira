@@ -8,7 +8,7 @@ POST /payment
 example: manual_payment
 
 ~ body
-{{ jpath: $.amount }} >> {{ float: [0.01 - 10.00] }}
+{{ jpath: $.amount }} >> {{ dec: [0.01 - 10.00] }}
 
 ----- response
 
@@ -28,7 +28,7 @@ POST /payment
 example: manual_payment
 
 ~ body
-{{ jpath: $.amount }} >> {{ float: [10.01 - 20.00] }}
+{{ jpath: $.amount }} >> {{ dec: [10.01 - 20.00] }}
 
 ----- response
 
@@ -48,7 +48,7 @@ POST /payment
 example: manual_payment
 
 ~ body
-{{ jpath: $.amount }} >> {{ float: [20.01 - 30.00] }}
+{{ jpath: $.amount }} >> {{ dec: [20.01 - 30.00] }}
 
 ----- response
 

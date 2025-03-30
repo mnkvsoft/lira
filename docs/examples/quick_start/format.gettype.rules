@@ -9,6 +9,6 @@ GET /get_type
 
 ~ body
 {{ guid >> value.GetType() }}
-{{ float >> value.GetType() }}
+{{ dec >> value.GetType() }}
 {{ date >> value.GetType() }}
 {{ int >> value.GetType() }}

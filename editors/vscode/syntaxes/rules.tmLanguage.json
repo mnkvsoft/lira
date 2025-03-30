@@ -68,7 +68,7 @@
 		"methods": {
 			"patterns": [{
 				"name": "entity.name.function.rules",
-				"match": "(regex|jpath|xpath|form|all|int|any|guid|range|echo|seq|req.path|req.query|req.header|req.body.all|req.body.form|req.body.jpath|req.body.xpath|str|read.file|date.utc.past|date.utc.future|date.utc|date.future|date.past|date|now.utc|now|float|name|name.first|name.last|random)( |:)"
+				"match": "(regex|jpath|xpath|form|all|int|any|guid|range|echo|seq|req.path|req.query|req.header|req.body.all|req.body.form|req.body.jpath|req.body.xpath|str|read.file|date.utc.past|date.utc.future|date.utc|date.future|date.past|date|now.utc|now|dec|name|name.first|name.last|random)( |:)"
 			},
 			{
 				"name": "entity.name.function.rules",

@@ -11,7 +11,7 @@ $order.template:json =
 {
     "id": {{ int }},
     "status": "paid",
-    "amount": {{ float }},
+    "amount": {{ dec }},
     "transaction_id": "{{ guid }}",
     "created_at": "{{ date }}",
     "customer": "{{ str }}"

@@ -104,7 +104,7 @@ POST /payment
 example: manual_payment
 
 ~ body
-jpath: $.amount >> {{ dec: [0.01 - 10.00] }}
+{{ jpath: $.amount }} >> {{ dec: [0.01 - 10.00] }}
 
 ----- response
 
@@ -124,7 +124,7 @@ POST /payment
 example: manual_payment
 
 ~ body
-jpath: $.amount >> {{ dec: [10.01 - 20.00] }}
+{{ jpath: $.amount }} >> {{ dec: [10.01 - 20.00] }}
 
 ----- response
 
@@ -144,7 +144,7 @@ POST /payment
 example: manual_payment
 
 ~ body
-jpath: $.amount >> {{ dec: [20.01 - 30.00] }}
+{{ jpath: $.amount }} >> {{ dec: [20.01 - 30.00] }}
 
 ----- response
 
@@ -242,7 +242,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ dec: [0.01 - 10.00] }}
+{{ jpath: $.amount }} >> {{ dec: [0.01 - 10.00] }}
 
 ----- response
 
@@ -265,7 +265,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ dec: [30.01 - 40.00] }}
+{{ jpath: $.amount }} >> {{ dec: [30.01 - 40.00] }}
 
 ----- response
 
@@ -288,7 +288,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ dec: [40.01 - 50.00] }}
+{{ jpath: $.amount }} >> {{ dec: [40.01 - 50.00] }}
 
 ----- response
 
@@ -311,7 +311,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ dec: [10.01 - 20.00] }}
+{{ jpath: $.amount }} >> {{ dec: [10.01 - 20.00] }}
 
 ----- response
 
@@ -334,7 +334,7 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ dec: [20.01 - 30.00] }}
+{{ jpath: $.amount }} >> {{ dec: [20.01 - 30.00] }}
 
 ----- response
 
@@ -534,7 +534,7 @@ curl --location --request POST 'http://localhost/payment/reversal/1448743' \
 - `start` - начало интервала
 - `capacity` - емкость одного диапазона
 - `ranges` - названия диапазов внутри интервала
-- `unit` - единица округления выдаваемых значений. Настройка характерна только для типа `dec`
+- `unit` - единица округления выдаваемых значений. Настройка характерна только для типа `float`
 - `mode` - режим получения следующего значения для диапазона.
 В режиме `seq` значения для каждого диапазона извлекаются последовательно и не 
 повторяются. Настройка характерна для типа `int`
@@ -595,7 +595,7 @@ POST /payment
 example: ranges_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ range: payment.amount/success }}
+{{ jpath: $.amount }} >> {{ range: payment.amount/success }}
 
 ----- response
 
@@ -618,7 +618,7 @@ POST /payment
 example: ranges_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ range: payment.amount/success.reversal.pending }}
+{{ jpath: $.amount }} >> {{ range: payment.amount/success.reversal.pending }}
 
 ----- response
 
@@ -641,7 +641,7 @@ POST /payment
 example: ranges_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ range: payment.amount/success.reversal.reject }}
+{{ jpath: $.amount }} >> {{ range: payment.amount/success.reversal.reject }}
 
 ----- response
 
@@ -664,7 +664,7 @@ POST /payment
 example: ranges_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ range: payment.amount/pending }}
+{{ jpath: $.amount }} >> {{ range: payment.amount/pending }}
 
 ----- response
 
@@ -687,7 +687,7 @@ POST /payment
 example: ranges_payment_with_reversal
 
 ~ body
-jpath: $.amount >> {{ range: payment.amount/pending }}
+{{ jpath: $.amount }} >> {{ range: payment.amount/pending }}
 
 ----- response
 
@@ -1043,7 +1043,7 @@ curl --location 'http://localhost/sys/range/val/short.payment.amount/success/5'
 
 
 
-## dec
+## float
 
 Для данного типа существуют следующие способы генерации диапазонов:
 - по заданному интервалу значений. В этом случае указывается узел `interval`.

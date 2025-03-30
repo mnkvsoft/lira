@@ -42,7 +42,7 @@ changing the value of the 'status' field to 'paid'
 ###
 -------------------- rule
 
-GET /order/{{:id cache.contains("cache_example_" + value) }}
+GET /order/{{ cache.contains("cache_example_" + value) >> $$id }}
 
 ~ headers
 example: cache
@@ -51,7 +51,7 @@ example: cache
 
 ~ body
 {{ 
-    cache.get("cache_example_" + value("id"))
+    cache.get("cache_example_" + $$id)
             .replace("$.status", "paid")
 }}
 
@@ -61,7 +61,7 @@ we delete the data from the cache
 ###
 -------------------- rule
 
-POST /order/cancel/{{:id cache.contains("cache_example_" + value) }}
+POST /order/cancel/{{ cache.contains("cache_example_" + value) >> $$id }}
 
 ~ headers
 example: cache
@@ -72,7 +72,7 @@ example: cache
 
 ----- action
 
-cache.remove("cache_example_" + value("id"))
+cache.remove("cache_example_" + $$id)
 
 
 ###
@@ -82,7 +82,7 @@ then we issue an appropriate response
 ###
 -------------------- rule
 
-GET /order/{{:id !cache.contains("cache_example_" + value) }}
+GET /order/{{ !cache.contains("cache_example_" + value) }}
 
 ~ headers
 example: cache

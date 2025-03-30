@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /balance/7{{:phone int }}
+GET /balance/7{{ int >> $$phone }}
 
 ~ headers
 example: extract.value.csharp
@@ -9,9 +9,6 @@ example: extract.value.csharp
 
 ~ body
 {
-    "phone": {{ 
-        var phone = value("phone");
-        return phone;
-    }},
-    "balance": {{ float }}
+    "phone": {{ $$phone }},
+    "balance": {{ dec }}
 }

@@ -1,6 +1,6 @@
 {
     "amount": {
-      "type": "float",
+      "type": "dec",
       "ranges": [
         "ok",
         "reject",

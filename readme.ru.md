@@ -73,7 +73,7 @@
 ```
 -------------------- rule
 
-GET /hello/{{:person  any  }}
+GET /hello/{{ any >> $$person}}
 
 ----- response
 
@@ -81,7 +81,7 @@ GET /hello/{{:person  any  }}
 200
 
 ~ body
-hello {{ value: person }}!
+hello {{ $$person }}!
 ```
 
 Тестируем первое правило в браузере, выполнив запрос к ресурсу 
@@ -427,7 +427,7 @@ Request-Time: {{ now >> format: H:mm:ss }}
 {
     "id": {{ int }},
     "status": "{{ random: paid, pending, cancelled }}",
-    "amount": {{ float }},
+    "amount": {{ dec }},
     "transaction_id": "{{ guid }}",
     "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
     "customer": "{{ str }}"
@@ -524,7 +524,7 @@ Request-Id: 987
 ```
 -------------------- rule
 
-GET /balance/7{{:phone int }}
+GET /balance/7{{ int >> $$phone }}
 
 ~ headers
 example: extract.value.system
@@ -533,8 +533,8 @@ example: extract.value.system
 
 ~ body
 {
-    "phone": {{ value: phone }},
-    "balance": {{ float }}
+    "phone": {{ $$phone }},
+    "balance": {{ dec }}
 }
 ```
 Запрос
@@ -818,7 +818,7 @@ rule with GUID and header
 ```json
 {
     "amount": {
-      "type": "float",
+      "type": "dec",
       "ranges": [
         "ok",
         "reject"
@@ -938,7 +938,7 @@ curl --location 'http://localhost/payment' \
 ```json
 {
     "amount": {
-      "type": "float",
+      "type": "dec",
       "ranges": [
         "ok",
         "reject",
@@ -1279,7 +1279,7 @@ curl --location --request POST 'http://localhost/payment' \
 ```
 -------------------- declare
 
-$amount = {{ float: [1 - 100] }}
+$amount = {{ dec: [1 - 100] }}
 
 -------------------- rule
 
@@ -1403,7 +1403,7 @@ $template.order =
 {
     "id": {{ int }},
     "status": "paid",
-    "amount": {{ float }},
+    "amount": {{ dec }},
     "transaction_id": "{{ guid }}",
     "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
     "customer": "{{ str }}"
@@ -1546,7 +1546,7 @@ example: dic.match
 ~ body
 {
     "release_date": "{{ date }}"
-    "engine_capacity": {{ float: [0.5 - 10] }}
+    "engine_capacity": {{ dec: [0.5 - 10] }}
 }
 ```
 Запрос
@@ -1580,7 +1580,7 @@ $order =
 {
     "id": {{ int }},
     "status": "{{ random: paid, pending, cancelled }}",
-    "amount": {{ float }},
+    "amount": {{ dec }},
     "transaction_id": "{{ guid }}",
     "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}"
 }
@@ -1649,7 +1649,7 @@ $template.order:json =
 {
     "id": {{ int }},
     "status": "paid",
-    "amount": {{ float }},
+    "amount": {{ dec }},
     "transaction_id": "{{ guid }}",
     "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
     "customer": "{{ str }}"
@@ -1836,7 +1836,7 @@ curl --location 'http://localhost/payment/card' \
 ```
 -------------------- rule
 
-GET /balance/7{{:phone int }}
+GET /balance/7{{ int >> $$phone }}
 
 ~ headers
 example: extract.value.charp
@@ -1846,7 +1846,7 @@ example: extract.value.charp
 ~ body
 {
     "phone": {{ $$phone }}
-    "balance": {{ float }}
+    "balance": {{ dec }}
 }
 ```
 Запрос
@@ -2690,7 +2690,7 @@ GET /get_type
 
 ~ body
 {{ guid >> value.GetType() }}
-{{ float >> value.GetType() }}
+{{ dec >> value.GetType() }}
 {{ date >> value.GetType() }}
 {{ int >> value.GetType() }}
 ```

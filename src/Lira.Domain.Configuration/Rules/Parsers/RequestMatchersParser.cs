@@ -1,3 +1,4 @@
+using System.Text;
 using System.Web;
 using Lira.Domain.Matching.Request;
 using Lira.Domain.Matching.Request.Matchers;
@@ -266,7 +267,14 @@ class RequestMatchersParser
                 await CreateMatchFunctionWithSaveVariable(@dynamic.Value, context));
         }
 
-        throw new Exception($"'{parts}' contains more than 3 block static or dynamic");
+        var sb = new StringBuilder();
+        for (int index = 0; index < parts.Count; index++)
+        {
+             var part = parts[index];
+             sb.AppendLine($"{index} - {part}");
+        }
+
+        throw new Exception($"'{parts}' contains more than 3 block ({parts.Count}) static or dynamic: " + Environment.NewLine + sb);
     }
 
     private async Task<IMatchFunctionTyped> CreateMatchFunction(string invoke, ParsingContext context)

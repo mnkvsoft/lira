@@ -216,8 +216,6 @@ class FunctionFactory : IFunctionFactoryCSharp
         var assemblyName = GetAssemblyName(assemblyPrefixName + className);
         var assembliesLocations = await GetAssembliesLocations();
 
-
-
         var compileResult = _compiler.Compile(
             new CompileUnit(
                 AssemblyName: assemblyName,
@@ -329,7 +327,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         var hash = peImage.Hash;
         if (_loadedAssembliesHashes.TryGetValue(hash, out var assembly))
-             return assembly;
+            return assembly;
 
         var result = _context.LoadFromStream(stream);
 
@@ -415,8 +413,9 @@ class FunctionFactory : IFunctionFactoryCSharp
             {
                 var type = declaredPartsProvider.GetPartType(readItem.ItemName);
 
-                sbCodeWithLiraItems.Append($"({(type == null || !type.NeedTyped ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
-                                           $"\"{readItem.ItemName}\", {ContextParameterName})))");
+                sbCodeWithLiraItems.Append(
+                    $"({(type == null || !type.NeedTyped ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
+                    $"\"{readItem.ItemName}\", {ContextParameterName})))");
             }
             else if (token is CodeToken.WriteItem writeItem)
             {
