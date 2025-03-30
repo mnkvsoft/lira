@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
 
+// make static?
 class Compiler
 {
     private readonly CompilationStatistic _compilationStatistic;

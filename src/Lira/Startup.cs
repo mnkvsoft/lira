@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Lira.Common;
 using Lira.Domain;
 using Lira.Common.Exceptions;
@@ -99,10 +100,10 @@ public class Startup
                 }
                 else
                 {
-                    await WriteRanges(context, new[] { data });
+                    await WriteRanges(context, [data]);
                 }
             });
-            
+
             endpoints.MapGet(
             "/" + sys + "/state",
             async context =>

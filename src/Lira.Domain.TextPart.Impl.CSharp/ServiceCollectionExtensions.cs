@@ -10,7 +10,11 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddFunctionsCSharp(this IServiceCollection sc)
     {
-        return sc.AddScoped<IFunctionFactoryCSharp, FunctionFactory>()
+        return sc
+            .AddScoped<FunctionFactoryCreator>()
+            .AddTransient<FunctionFactory.Dependencies>()
+
+            .AddScoped<IFunctionFactoryCSharp>(provider => provider.GetRequiredService<FunctionFactoryCreator>().Create().Result)
             .AddScoped<Compiler>()
             .AddScoped<CompilationStatistic>()
             .AddScoped<PeImagesCache>()

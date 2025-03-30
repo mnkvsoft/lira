@@ -10,11 +10,8 @@ using Lira.Common.Extensions;
 using Lira.Configuration;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
-using Lira.Domain.TextPart.Types;
 using Lira.Domain.DataModel;
-using Lira.Domain.TextPart.Impl.CSharp.ExternalLibsLoading;
 using Lira.Domain.Handling.Actions;
-using Newtonsoft.Json.Linq;
 
 // ReSharper disable RedundantExplicitArrayCreation
 
@@ -45,29 +42,30 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly Compiler _compiler;
     private readonly Cache _cache;
     private readonly IRangesProvider _rangesProvider;
-    private readonly ExtLibsProvider _extLibsProvider;
+    private readonly IImmutableList<string> _assembliesLocations;
 
-    public FunctionFactory(
-        IConfiguration configuration,
-        ILoggerFactory loggerFactory,
-        DynamicAssembliesUnloader unLoader,
-        Compiler compiler,
-        CompilationStatistic compilationStatistic,
-        Cache cache,
-        IRangesProvider rangesProvider,
-        ExtLibsProvider extLibsProvider,
-        State state)
+    public record Dependencies(
+        IConfiguration Configuration,
+        ILoggerFactory LoggerFactory,
+        DynamicAssembliesUnloader UnLoader,
+        Compiler Compiler,
+        CompilationStatistic CompilationStatistic,
+        Cache Cache,
+        IRangesProvider RangesProvider,
+        State State);
+
+    public FunctionFactory(Dependencies dependencies, IImmutableList<string> assembliesLocations)
     {
-        _logger = loggerFactory.CreateLogger(GetType());
-        _path = configuration.GetRulesPath();
+        _logger = dependencies.LoggerFactory.CreateLogger(GetType());
+        _path = dependencies.Configuration.GetRulesPath();
 
-        _revision = ++state.RevisionCounter;
-        _unLoader = unLoader;
-        _compiler = compiler;
-        _compilationStatistic = compilationStatistic;
-        _cache = cache;
-        _rangesProvider = rangesProvider;
-        _extLibsProvider = extLibsProvider;
+        _revision = ++dependencies.State.RevisionCounter;
+        _unLoader = dependencies.UnLoader;
+        _compiler = dependencies.Compiler;
+        _compilationStatistic = dependencies.CompilationStatistic;
+        _cache = dependencies.Cache;
+        _rangesProvider = dependencies.RangesProvider;
+        _assembliesLocations = assembliesLocations;
     }
 
     public async Task<CreateFunctionResult<IObjectTextPart>> TryCreateGeneratingFunction(
@@ -76,17 +74,17 @@ class FunctionFactory : IFunctionFactoryCSharp
         var sw = Stopwatch.StartNew();
 
         string prefix = "GeneratingFunction";
-        var customAssemblies = await GetCustomAssemblies();
+        var csFilesAssembly = await GetCsFilesAssembly();
         var className = GetClassName(prefix, code);
 
         var classToCompile =
-            CreateGeneratingFunctionClassCode(className, customAssemblies.Loaded, declaredPartsProvider, code);
+            CreateGeneratingFunctionClassCode(className, csFilesAssembly?.Loaded, declaredPartsProvider, code);
 
-        var result = await CreateFunctionResult<IObjectTextPart>(
+        var result = CreateFunctionResult<IObjectTextPart>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,
-            customAssemblies.PeImages,
+            csFilesAssembly?.PeImage,
             CreateDependenciesBase(declaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
@@ -100,7 +98,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         string prefix = "TransformFunction";
         string className = GetClassName(prefix, code);
-        var customAssemblies = await GetCustomAssemblies();
+        var customAssemblies = await GetCsFilesAssembly();
 
         var (withoutUsings, usings) = ExtractUsings(code.ToString());
 
@@ -109,14 +107,14 @@ class FunctionFactory : IFunctionFactoryCSharp
             WrapToTryCatch(new Code(ForCompile: $"return {withoutUsings};", Source: code)),
             ReservedVariable.Value,
             usings,
-            GetNamespaces(customAssemblies.Loaded),
-            GetUsingStatic(customAssemblies.Loaded));
+            GetNamespaces(customAssemblies?.Loaded),
+            GetUsingStatic(customAssemblies?.Loaded));
 
-        var result = await CreateFunctionResult<ITransformFunction>(
+        var result = CreateFunctionResult<ITransformFunction>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,
-            customAssemblies.PeImages);
+            customAssemblies?.PeImage);
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -130,7 +128,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         string prefix = "MatchFunction";
         string className = GetClassName(prefix, code);
-        var customAssemblies = await GetCustomAssemblies();
+        var customAssemblies = await GetCsFilesAssembly();
 
         var (withoutUsings, usings) = ExtractUsingsAndReplaceVars(code, declaredPartsProvider);
 
@@ -139,14 +137,14 @@ class FunctionFactory : IFunctionFactoryCSharp
             GetMethodBody(new Code(ForCompile: withoutUsings, Source: code)),
             ReservedVariable.Value,
             usings,
-            GetNamespaces(customAssemblies.Loaded),
-            GetUsingStatic(customAssemblies.Loaded));
+            GetNamespaces(customAssemblies?.Loaded),
+            GetUsingStatic(customAssemblies?.Loaded));
 
-        var result = await CreateFunctionResult<IMatchFunctionTyped>(
+        var result = CreateFunctionResult<IMatchFunctionTyped>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,
-            customAssemblies.PeImages,
+            customAssemblies?.PeImage,
             CreateDependenciesBase(declaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
@@ -161,21 +159,21 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         string prefix = "RequestMatcher";
         string className = GetClassName(prefix, code);
-        var customAssemblies = await GetCustomAssemblies();
+        var customAssemblies = await GetCsFilesAssembly();
         var (withoutUsings, usings) = ExtractUsingsAndReplaceVars(code, declaredPartsProvider);
         string classToCompile = ClassCodeCreator.CreateRequestMatcher(
             className,
             GetMethodBody(new Code(ForCompile: withoutUsings, Source: code)),
             ReservedVariable.Req,
             usings,
-            GetNamespaces(customAssemblies.Loaded),
-            GetUsingStatic(customAssemblies.Loaded));
+            GetNamespaces(customAssemblies?.Loaded),
+            GetUsingStatic(customAssemblies?.Loaded));
 
-        var result = await CreateFunctionResult<IRequestMatcher>(
+        var result = CreateFunctionResult<IRequestMatcher>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,
-            customAssemblies.PeImages,
+            customAssemblies?.PeImage,
             CreateDependenciesBase(declaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
@@ -190,15 +188,15 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         string prefix = "Action";
         string className = GetClassName(prefix, code);
-        var customAssemblies = await GetCustomAssemblies();
+        var customAssemblies = await GetCsFilesAssembly();
 
-        string classToCompile = CreateActionClassCode(className, customAssemblies.Loaded, declaredPartsProvider, code);
+        string classToCompile = CreateActionClassCode(className, customAssemblies?.Loaded, declaredPartsProvider, code);
 
-        var result = await CreateFunctionResult<IAction>(
+        var result = CreateFunctionResult<IAction>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,
-            customAssemblies.PeImages,
+            customAssemblies?.PeImage,
             CreateDependenciesBase(declaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
@@ -206,23 +204,22 @@ class FunctionFactory : IFunctionFactoryCSharp
         return result;
     }
 
-    private async Task<CreateFunctionResult<TFunction>> CreateFunctionResult<TFunction>(
+    private CreateFunctionResult<TFunction> CreateFunctionResult<TFunction>(
         string assemblyPrefixName,
         string classToCompile,
         string className,
-        IReadOnlyCollection<PeImage> peImages,
+        PeImage? csFilesPeImage,
         params object[] dependencies)
     {
         var assemblyName = GetAssemblyName(assemblyPrefixName + className);
-        var assembliesLocations = await GetAssembliesLocations();
 
         var compileResult = _compiler.Compile(
             new CompileUnit(
                 AssemblyName: assemblyName,
                 [classToCompile],
                 new References(
-                    AssembliesLocations: assembliesLocations.AddRange(SystemAssemblies.Locations),
-                    Runtime: peImages)));
+                    AssembliesLocations: _assembliesLocations,
+                    Runtime: csFilesPeImage != null ? [csFilesPeImage] : Array.Empty<PeImage>())));
 
         if (compileResult is CompileResult.Fault fault)
             return new CreateFunctionResult<TFunction>.Failed(fault.Message, classToCompile);
@@ -237,84 +234,51 @@ class FunctionFactory : IFunctionFactoryCSharp
         return new CreateFunctionResult<TFunction>.Success(function);
     }
 
-    private IImmutableList<string>? _assembliesLocations;
-
-    private async Task<IImmutableList<string>> GetAssembliesLocations()
-    {
-        if (_assembliesLocations != null)
-            return _assembliesLocations;
-
-        var result = new List<string>
-        {
-            typeof(IObjectTextPart).Assembly.Location,
-            typeof(IRangesProvider).Assembly.Location,
-            typeof(Constants).Assembly.Location,
-            typeof(Json).Assembly.Location,
-            typeof(JObject).Assembly.Location,
-            typeof(RequestData).Assembly.Location,
-            GetType().Assembly.Location
-        };
-
-        var dllFiles = await _extLibsProvider.GetLibsFiles();
-        result.AddRange(dllFiles);
-
-        _assembliesLocations = result.ToImmutableArray();
-        return _assembliesLocations;
-    }
-
     private bool _customAssembliesWasInit;
+    private CsFilesAssembly? _csFilesAssembly;
 
-    private IReadOnlyCollection<Assembly> _customLoadedAssemblies = null!;
-
-    private IReadOnlyCollection<PeImage> _customPeImageAssemblies = null!;
-
-    private async Task<(IReadOnlyCollection<Assembly> Loaded, IReadOnlyCollection<PeImage> PeImages)>
-        GetCustomAssemblies()
+    private async Task<CsFilesAssembly?> GetCsFilesAssembly()
     {
         if (_customAssembliesWasInit)
-            return (_customLoadedAssemblies, _customPeImageAssemblies);
+            return _csFilesAssembly;
 
-        var customAssemblies = await GetCustomAssemblies(_path);
+        _csFilesAssembly = await GetCsFilesAssembly(_path);
         _customAssembliesWasInit = true;
 
-        _customLoadedAssemblies = customAssemblies.Select(x => x.LoadedAssembly).ToArray();
-        _customPeImageAssemblies = customAssemblies.Select(x => x.PeImage).ToArray();
-
-        return (_customLoadedAssemblies, _customPeImageAssemblies);
+        return _csFilesAssembly;
     }
 
-    private async Task<IReadOnlyCollection<CustomAssembly>> GetCustomAssemblies(string path)
+    private async Task<CsFilesAssembly?> GetCsFilesAssembly(string path)
     {
         var csharpFiles = Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories);
 
         if (csharpFiles.Length == 0)
-            return Array.Empty<CustomAssembly>();
+            return null;
 
         var codes = await Task.WhenAll(csharpFiles.Select(async x => await File.ReadAllTextAsync(x)));
 
-        var result = new List<CustomAssembly>();
-
-        var externalLibs = await _extLibsProvider.GetLibsFiles();
         var compileResult = _compiler.Compile(
             new CompileUnit(
                 GetAssemblyName(GetClassName("CustomType", codes)),
                 codes.ToImmutableArray(),
                 new References(
                     Runtime: Array.Empty<PeImage>(),
-                    AssembliesLocations: externalLibs.AddRange(SystemAssemblies.Locations))));
+                    AssembliesLocations: _assembliesLocations)));
 
         var nl = Constants.NewLine;
 
         if (compileResult is CompileResult.Fault fault)
-            throw new Exception("An error occurred while compile C# files. " + fault.Message + nl + "Files:" + nl + nl +
+        {
+            throw new Exception("An error occurred while compile C# files. " + fault.Message + nl +
+                                "Files:" + nl + nl +
                                 csharpFiles.JoinWithNewLine());
+        }
 
         var peImage = ((CompileResult.Success)compileResult).PeImage;
 
         var assembly = Load(peImage);
-        result.Add(new CustomAssembly(assembly, peImage));
 
-        return result;
+        return new CsFilesAssembly(assembly, peImage);
     }
 
     private Assembly Load(PeImage peImage)
@@ -341,7 +305,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private static string CreateGeneratingFunctionClassCode(
         string className,
-        IReadOnlyCollection<Assembly> customAssemblies,
+        Assembly? csFilesAssembly,
         IDeclaredPartsProvider declaredPartsProvider,
         CodeBlock code)
     {
@@ -370,8 +334,8 @@ class FunctionFactory : IFunctionFactoryCSharp
             ReservedVariable.Req,
             repeatFunctionName,
             usings,
-            GetNamespaces(customAssemblies),
-            GetUsingStatic(customAssemblies));
+            GetNamespaces(csFilesAssembly),
+            GetUsingStatic(csFilesAssembly));
 
         return classToCompile;
     }
@@ -432,7 +396,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private static string CreateActionClassCode(
         string className,
-        IReadOnlyCollection<Assembly> customAssemblies,
+        Assembly? csFilesAssembly,
         IDeclaredPartsProvider declaredPartsProvider,
         CodeBlock code)
     {
@@ -446,24 +410,30 @@ class FunctionFactory : IFunctionFactoryCSharp
             ContextParameterName,
             ReservedVariable.Req,
             usings,
-            GetNamespaces(customAssemblies),
-            GetUsingStatic(customAssemblies));
+            GetNamespaces(csFilesAssembly),
+            GetUsingStatic(csFilesAssembly));
 
         return classToCompile;
     }
 
-    private static string[] GetNamespaces(IReadOnlyCollection<Assembly> customAssemblies)
+    private static string[] GetNamespaces(Assembly? csFilesAssembly)
     {
-        return customAssemblies.SelectMany(a => a.GetTypes())
+        if(csFilesAssembly == null)
+            return [];
+
+        return csFilesAssembly.GetTypes()
             .Where(x => x.IsVisible && x.Namespace?.StartsWith("_") == true)
             .Select(t => t.Namespace!)
             .Distinct()
             .ToArray();
     }
 
-    private static string[] GetUsingStatic(IReadOnlyCollection<Assembly> customAssemblies)
+    private static string[] GetUsingStatic(Assembly? csFilesAssembly)
     {
-        return customAssemblies.SelectMany(a => a.GetTypes())
+        if(csFilesAssembly == null)
+            return [];
+
+        return csFilesAssembly.GetTypes()
             .Where(x => x.IsVisible && x.Name.StartsWith("_"))
             .Select(t => t.FullName!)
             .Distinct()
