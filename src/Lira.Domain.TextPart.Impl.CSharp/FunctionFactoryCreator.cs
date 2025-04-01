@@ -11,13 +11,16 @@ namespace Lira.Domain.TextPart.Impl.CSharp;
 class FunctionFactoryCreator
 {
     private readonly ExtLibsProvider _extLibsProvider;
-    private readonly FunctionFactory.Dependencies _dependencies;
+    private readonly FunctionFactory.Dependencies _functionFactoryDependencies;
+    private readonly CsFilesCompiler.Dependencies _csFilesCompilerDependencies;
     private FunctionFactory? _factory;
 
-    public FunctionFactoryCreator(FunctionFactory.Dependencies dependencies, ExtLibsProvider extLibsProvider)
+
+    public FunctionFactoryCreator(FunctionFactory.Dependencies functionFactoryFunctionFactoryDependencies, CsFilesCompiler.Dependencies csFilesCompilerDependencies, ExtLibsProvider extLibsProvider)
     {
         _extLibsProvider = extLibsProvider;
-        _dependencies = dependencies;
+        _functionFactoryDependencies = functionFactoryFunctionFactoryDependencies;
+        _csFilesCompilerDependencies = csFilesCompilerDependencies;
     }
 
     public async Task<FunctionFactory> Create()
@@ -42,7 +45,10 @@ class FunctionFactoryCreator
 
         var allLibs = systemLibs.Concat(projectLibs).Concat(externalLibs).ToImmutableList();
 
-        _factory = new FunctionFactory(_dependencies, allLibs);
+        var csFilesCompiler = new CsFilesCompiler(_csFilesCompilerDependencies, allLibs);
+
+        var csFilesAssembly = await csFilesCompiler.GetCsFilesAssembly();
+        _factory = new FunctionFactory(_functionFactoryDependencies, allLibs, csFilesAssembly);
         return _factory;
     }
 }

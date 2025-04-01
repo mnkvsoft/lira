@@ -4,14 +4,14 @@ using Lira.Domain.Handling.Actions;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
-public interface IFunctionFactoryCSharp : IDisposable
+public interface IFunctionFactoryCSharp
 {
-    Task<CreateFunctionResult<IAction>> TryCreateAction(IDeclaredPartsProvider declaredPartsProvider, CodeBlock code);
-    Task<CreateFunctionResult<IObjectTextPart>> TryCreateGeneratingFunction(
+    CreateFunctionResult<IAction> TryCreateAction(IDeclaredPartsProvider declaredPartsProvider, CodeBlock code);
+    CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(
         IDeclaredPartsProvider declaredPartsProvider, CodeBlock code);
-    Task<CreateFunctionResult<ITransformFunction>> TryCreateTransformFunction(CodeBlock code);
-    Task<CreateFunctionResult<IMatchFunctionTyped>> TryCreateMatchFunction(IDeclaredPartsProvider declaredPartsProvider,
+    CreateFunctionResult<ITransformFunction> TryCreateTransformFunction(CodeBlock code);
+    CreateFunctionResult<IMatchFunctionTyped> TryCreateMatchFunction(IDeclaredPartsProvider declaredPartsProvider,
         CodeBlock code);
-    Task<CreateFunctionResult<IRequestMatcher>> TryCreateRequestMatcher(IDeclaredPartsProvider declaredPartsProvider,
+    CreateFunctionResult<IRequestMatcher> TryCreateRequestMatcher(IDeclaredPartsProvider declaredPartsProvider,
         CodeBlock code);
 }

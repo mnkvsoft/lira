@@ -70,7 +70,7 @@ class TextPartsParser : ITextPartsParser
         TransformPipeline pipeline;
         if (value.Contains("return"))
         {
-            var createFunctionResult = await _functionFactoryCSharp.TryCreateGeneratingFunction(
+            var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
                 new DeclaredPartsProvider(context.DeclaredItems),
                 GetCodeBlock(context, value));
 
@@ -106,7 +106,7 @@ class TextPartsParser : ITextPartsParser
         if (_functionFactorySystem.TryCreateTransformFunction(invoke, out var transformFunction))
             return transformFunction;
 
-        var createFunctionResult = await _functionFactoryCSharp.TryCreateTransformFunction(GetCodeBlock(context, invoke));
+        var createFunctionResult = _functionFactoryCSharp.TryCreateTransformFunction(GetCodeBlock(context, invoke));
 
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
@@ -141,7 +141,7 @@ class TextPartsParser : ITextPartsParser
         if (customSetFunction != null)
             return customSetFunction;
 
-        var createFunctionResult = await _functionFactoryCSharp.TryCreateGeneratingFunction(
+        var createFunctionResult = _functionFactoryCSharp.TryCreateGeneratingFunction(
             new DeclaredPartsProvider(declaredItems),
             GetCodeBlock(context, rawText));
 

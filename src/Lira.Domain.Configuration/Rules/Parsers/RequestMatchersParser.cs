@@ -100,7 +100,7 @@ class RequestMatchersParser
         var (codeBlock, newRuntimeVariables) = CodeParser.Parse(code, context.DeclaredItems);
         context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
-        var matcher = await _functionFactoryCSharp.TryCreateRequestMatcher(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
+        var matcher = _functionFactoryCSharp.TryCreateRequestMatcher(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return matcher.GetFunctionOrThrow(code, context);
     }
 
@@ -296,7 +296,7 @@ class RequestMatchersParser
         var (codeBlock, newRuntimeVariables) = CodeParser.Parse(invoke, context.DeclaredItems);
         context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
-        var createFunctionResult = await _functionFactoryCSharp.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
+        var createFunctionResult = _functionFactoryCSharp.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 

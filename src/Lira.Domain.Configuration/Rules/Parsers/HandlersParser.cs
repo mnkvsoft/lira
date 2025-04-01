@@ -88,7 +88,7 @@ class HandlersParser
             var (codeBlock, newRuntimeVariables) = CodeParser.Parse(code, parsingContext.DeclaredItems);
             parsingContext.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
-            var res = await _functionFactoryCSharp.TryCreateAction(new DeclaredPartsProvider(parsingContext.DeclaredItems), codeBlock);
+            var res = _functionFactoryCSharp.TryCreateAction(new DeclaredPartsProvider(parsingContext.DeclaredItems), codeBlock);
             action = res.GetFunctionOrThrow(code, parsingContext);
         }
 

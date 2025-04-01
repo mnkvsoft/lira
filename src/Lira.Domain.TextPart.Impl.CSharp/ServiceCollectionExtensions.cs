@@ -11,15 +11,19 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddFunctionsCSharp(this IServiceCollection sc)
     {
         return sc
-            .AddScoped<FunctionFactoryCreator>()
             .AddTransient<FunctionFactory.Dependencies>()
+            .AddTransient<CsFilesCompiler.Dependencies>()
 
+            .AddScoped<FunctionFactoryCreator>()
             .AddScoped<IFunctionFactoryCSharp>(provider => provider.GetRequiredService<FunctionFactoryCreator>().Create().Result)
             .AddScoped<Compiler>()
             .AddScoped<CompilationStatistic>()
+            .AddScoped<AssembliesLoader>()
             .AddScoped<PeImagesCache>()
+            .AddScoped<Namer>()
+
             .AddSingleton<PeImagesCache.State>()
-            .AddSingleton<FunctionFactory.State>()
+            .AddSingleton<Namer.State>()
             .AddSingleton<DynamicAssembliesUnloader>()
             .AddSingleton<NugetLibsProvider>()
             .AddSingleton<ExtLibsProvider>()
