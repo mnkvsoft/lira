@@ -44,10 +44,18 @@ class AssembliesLoader : IDisposable
         return result;
     }
 
+    public void Load(string path)
+    {
+        var sw = Stopwatch.StartNew();
+
+        _context.LoadFromAssemblyPath(path);
+        _compilationStatistic.AddLoadAssemblyTime(sw.Elapsed);
+    }
+
     public void Dispose()
     {
         var stat = _compilationStatistic;
-        var nl = Constants.NewLine;
+        var nl = Environment.NewLine;
         _logger.LogDebug($"Dynamic csharp compilation statistic: " + nl +
                          $"Revision: {_namer.Revision}" + nl +
                          $"Total time: {(int)stat.TotalTime.TotalMilliseconds} ms. " + nl +

@@ -14,22 +14,26 @@ class FunctionFactoryCreator
     private readonly FunctionFactory.Dependencies _functionFactoryDependencies;
     private readonly CsFilesCompiler.Dependencies _csFilesCompilerDependencies;
     private FunctionFactory? _factory;
+    private readonly AssembliesLoader _assembliesLoader;
 
-
-    public FunctionFactoryCreator(FunctionFactory.Dependencies functionFactoryFunctionFactoryDependencies, CsFilesCompiler.Dependencies csFilesCompilerDependencies, ExtLibsProvider extLibsProvider)
+    public FunctionFactoryCreator(
+        FunctionFactory.Dependencies functionFactoryFunctionFactoryDependencies,
+        CsFilesCompiler.Dependencies csFilesCompilerDependencies,
+        ExtLibsProvider extLibsProvider,
+        AssembliesLoader assembliesLoader)
     {
         _extLibsProvider = extLibsProvider;
+        _assembliesLoader = assembliesLoader;
         _functionFactoryDependencies = functionFactoryFunctionFactoryDependencies;
         _csFilesCompilerDependencies = csFilesCompilerDependencies;
     }
 
     public async Task<FunctionFactory> Create()
     {
-        if(_factory != null)
-           return _factory;
+        if (_factory != null)
+            return _factory;
 
-        var systemLibs = SystemAssemblies.Locations;
-
+        // these assemblies already loaded to app domain
         var projectLibs = new[]
         {
             typeof(IObjectTextPart).Assembly.Location,
@@ -41,7 +45,20 @@ class FunctionFactoryCreator
             GetType().Assembly.Location
         };
 
+        var systemLibs = SystemAssemblies.Locations;
+        foreach (var libLocation in systemLibs)
+        {
+            if (AppDomain.CurrentDomain.GetAssemblies().All(assembly => assembly.Location != libLocation))
+            {
+                _assembliesLoader.Load(libLocation);
+            }
+        }
+
         var externalLibs = await _extLibsProvider.GetLibsFiles();
+        foreach (var libLocation in externalLibs)
+        {
+            _assembliesLoader.Load(libLocation);
+        }
 
         var allLibs = systemLibs.Concat(projectLibs).Concat(externalLibs).ToImmutableList();
 
