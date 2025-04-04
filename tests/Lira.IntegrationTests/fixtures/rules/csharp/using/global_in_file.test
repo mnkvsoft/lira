@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /csharp/using/global_in_file
+
+----- expected
+
+~ code
+200
+
+~ body
+page not found

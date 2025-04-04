@@ -14,8 +14,8 @@ public static class ServiceCollectionExtensions
             .AddTransient<FunctionFactory.Dependencies>()
             .AddTransient<CsFilesCompiler.Dependencies>()
 
-            .AddScoped<FunctionFactoryCreator>()
-            .AddScoped<IFunctionFactoryCSharp>(provider => provider.GetRequiredService<FunctionFactoryCreator>().Create().Result)
+            .AddScoped<IFunctionFactoryCSharpFactory, FunctionFactoryCSharpFactory>()
+            .AddScoped<IFunctionFactoryCSharp>(provider => provider.GetRequiredService<FunctionFactoryCSharpFactory>().Get().Result)
             .AddScoped<Compiler>()
             .AddScoped<CompilationStatistic>()
             .AddScoped<AssembliesLoader>()

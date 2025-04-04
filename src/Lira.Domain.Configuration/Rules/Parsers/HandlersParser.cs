@@ -11,14 +11,14 @@ namespace Lira.Domain.Configuration.Rules.Parsers;
 class HandlersParser
 {
     private readonly IEnumerable<ISystemActionRegistrator> _externalCallerRegistrators;
-    private readonly IFunctionFactoryCSharp _functionFactoryCSharp;
+    private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
     private readonly GetDelayParser _getDelayParser;
     private readonly ResponseGenerationHandlerParser _responseGenerationHandlerParser;
 
-    public HandlersParser(IEnumerable<ISystemActionRegistrator> externalCallerRegistrators, IFunctionFactoryCSharp functionFactoryCSharp, GetDelayParser getDelayParser, ResponseGenerationHandlerParser responseGenerationHandlerParser)
+    public HandlersParser(IEnumerable<ISystemActionRegistrator> externalCallerRegistrators, IFunctionFactoryCSharpFactory functionFactoryCSharpFactory, GetDelayParser getDelayParser, ResponseGenerationHandlerParser responseGenerationHandlerParser)
     {
         _externalCallerRegistrators = externalCallerRegistrators;
-        _functionFactoryCSharp = functionFactoryCSharp;
+        _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
         _getDelayParser = getDelayParser;
         _responseGenerationHandlerParser = responseGenerationHandlerParser;
     }
@@ -88,7 +88,8 @@ class HandlersParser
             var (codeBlock, newRuntimeVariables) = CodeParser.Parse(code, parsingContext.DeclaredItems);
             parsingContext.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
-            var res = _functionFactoryCSharp.TryCreateAction(new DeclaredPartsProvider(parsingContext.DeclaredItems), codeBlock);
+            var functionFactory = await _functionFactoryCSharpFactory.Get();
+            var res = functionFactory.TryCreateAction(new DeclaredPartsProvider(parsingContext.DeclaredItems), codeBlock);
             action = res.GetFunctionOrThrow(code, parsingContext);
         }
 

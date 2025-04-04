@@ -9,6 +9,7 @@ public static class SectionFileParser
     private const int MinSectionBlockCharsLength = 3;
     private const char SectionStartChar = '-';
     private const char BlockStartChar = '~';
+    static readonly string StartSection = new(SectionStartChar, MinSectionBlockCharsLength);
 
     public static async Task<IReadOnlyList<FileSection>> Parse(string ruleFile)
     {
@@ -25,6 +26,12 @@ public static class SectionFileParser
 
         int[] orderedSectionLengths = sectionLengths.OrderByDescending(x => x).ToArray();
         int index = 0;
+
+        if (!IsSection(lines[0]))
+        {
+
+        }
+
         var rootSections = GetSections(orderedSectionLengths, ref index, lines);
         return rootSections;
     }
@@ -66,7 +73,7 @@ public static class SectionFileParser
         }
 
         var firstLine = lines.First();
-        string currentSplitter = new string(SectionStartChar, currentLength);
+        var currentSplitter = new string(SectionStartChar, currentLength);
 
         if (GetStartSectionString(firstLine) != currentSplitter)
             throw new FileBlockFormatException($"First section must be start'{new string(SectionStartChar, currentLength)}'");
@@ -165,7 +172,7 @@ public static class SectionFileParser
 
     private static bool IsSection(string line)
     {
-        return line.StartsWith(new string(SectionStartChar, MinSectionBlockCharsLength));
+        return line.StartsWith(StartSection);
     }
 
     private static bool IsBlock(string cleanLine,

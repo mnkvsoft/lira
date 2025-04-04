@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
-class FunctionFactoryCreator
+class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
 {
     private readonly ExtLibsProvider _extLibsProvider;
     private readonly FunctionFactory.Dependencies _functionFactoryDependencies;
@@ -16,7 +16,7 @@ class FunctionFactoryCreator
     private FunctionFactory? _factory;
     private readonly AssembliesLoader _assembliesLoader;
 
-    public FunctionFactoryCreator(
+    public FunctionFactoryCSharpFactory(
         FunctionFactory.Dependencies functionFactoryFunctionFactoryDependencies,
         CsFilesCompiler.Dependencies csFilesCompilerDependencies,
         ExtLibsProvider extLibsProvider,
@@ -28,7 +28,7 @@ class FunctionFactoryCreator
         _csFilesCompilerDependencies = csFilesCompilerDependencies;
     }
 
-    public async Task<FunctionFactory> Create()
+    public async Task<IFunctionFactoryCSharp> Get()
     {
         if (_factory != null)
             return _factory;
