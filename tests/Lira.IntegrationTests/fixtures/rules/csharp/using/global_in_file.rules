@@ -1,38 +1,24 @@
 @using System.Text.RegularExpressions;
+@using System.IO;
 
 -------------------- rule
 
-POST /csharp/using/matching/{{
+POST /csharp/using/global_in_file/{{
 
     ## check that the value is an account number
 
+    ## using System.Text.RegularExpressions
     var regex = new Regex("\\d{20}");
     return regex.IsMatch(value);
 
-}}?amount={{
-
-    ## check that the amount is decimal
-
-    var regex = new Regex("[0-9]*\\.?[0-9]*");
-    return regex.IsMatch(value);
 }}
 
-~ body
-{{ jpath: $.destination }} >> {{
+----- response
 
-    ## check that the value is an account number
+{{
+    ## using System.IO;
+    if(File.Exists("page"))
+        return await File.ReadAllTextAsync("page");
 
-    var regex = new Regex("\\d{20}");
-    return regex.IsMatch(value);
+    return "page not found";
 }}
-
-~ headers
-Request-Id: {{
-
-    ## check that the value is uuid
-
-    var regex = new Regex("^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$");
-    return regex.IsMatch(value);
-}}
-
------ response: 200
