@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Lira.Common.Extensions;
 
@@ -11,14 +12,34 @@ public static class SectionFileParser
     private const char BlockStartChar = '~';
     static readonly string StartSection = new(SectionStartChar, MinSectionBlockCharsLength);
 
-    public static async Task<IReadOnlyList<FileSection>> Parse(string ruleFile)
+    public static async Task<FileSectionRoot> Parse(string ruleFile)
     {
         string text = await File.ReadAllTextAsync(ruleFile);
         var lines =  TextCleaner.DeleteEmptiesAndComments(text);
 
         if (lines.Count == 0)
-            return Array.Empty<FileSection>();
+            return FileSectionRoot.Empty;
 
+        var linesWithoutSections = new List<string>();
+        if (!IsSection(lines[0]))
+        {
+            foreach (var line in lines)
+            {
+                if (IsSection(line))
+                {
+                    break;
+                }
+
+                linesWithoutSections.Add(line);
+            }
+        }
+
+        var sections = GetSections(lines.Skip(linesWithoutSections.Count).ToArray());
+        return new FileSectionRoot(linesWithoutSections.ToImmutableArray(), sections.ToImmutableList());
+    }
+
+    private static IImmutableList<FileSection> GetSections(IReadOnlyList<string> lines)
+    {
         var sectionLengths = GetSectionLengths(lines);
 
         if (sectionLengths.Count == 0)
@@ -27,13 +48,7 @@ public static class SectionFileParser
         int[] orderedSectionLengths = sectionLengths.OrderByDescending(x => x).ToArray();
         int index = 0;
 
-        if (!IsSection(lines[0]))
-        {
-
-        }
-
-        var rootSections = GetSections(orderedSectionLengths, ref index, lines);
-        return rootSections;
+        return GetSections(orderedSectionLengths, ref index, lines).Select(x=> x.Build()).ToImmutableList();
     }
 
     private static HashSet<int> GetSectionLengths(IReadOnlyList<string> lines)
@@ -52,7 +67,7 @@ public static class SectionFileParser
         return sectionLengths;
     }
 
-    static IReadOnlyList<FileSection> GetSections(
+    private static IReadOnlyList<FileSectionBuilder> GetSections(
         int[] orderedSectionLengths,
         ref int index,
         IReadOnlyList<string> lines)
@@ -96,13 +111,13 @@ public static class SectionFileParser
             }
         }
 
-        var sections = new List<FileSection>();
+        var sections = new List<FileSectionBuilder>();
         foreach (var sectionLines in sectionsLines)
         {
             var nameAndKey = CleanFromSectionPrefix(sectionLines[0]).Split(':');
             string sectionName = nameAndKey[0];
             string? sectionKey = nameAndKey.Length == 1 ? null : nameAndKey[1];
-            var section = new FileSection(sectionName, sectionKey);
+            var section = new FileSectionBuilder(sectionName, sectionKey);
 
             sections.Add(section);
 

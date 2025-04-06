@@ -16,6 +16,9 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
     private FunctionFactory? _factory;
     private readonly AssembliesLoader _assembliesLoader;
 
+    private IReadOnlyList<string>? _usings;
+    private bool _wasInit;
+
     public FunctionFactoryCSharpFactory(
         FunctionFactory.Dependencies functionFactoryFunctionFactoryDependencies,
         CsFilesCompiler.Dependencies csFilesCompilerDependencies,
@@ -28,8 +31,29 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
         _csFilesCompilerDependencies = csFilesCompilerDependencies;
     }
 
+    public void Init(IImmutableList<string> fileLines)
+    {
+        _wasInit = true;
+
+        if(fileLines.Count == 0)
+            return;
+
+        var usings = new List<string>();
+
+        foreach (var maymeUsing in fileLines)
+        {
+            if (maymeUsing.StartsWith("@using "))
+                usings.Add(maymeUsing.TrimStart('@'));
+        }
+
+        _usings = usings;
+    }
+
     public async Task<IFunctionFactoryCSharp> Get()
     {
+        if(!_wasInit)
+            throw new Exception("Factory is not initialized");
+
         if (_factory != null)
             return _factory;
 
@@ -65,7 +89,7 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
         var csFilesCompiler = new CsFilesCompiler(_csFilesCompilerDependencies, allLibs);
 
         var csFilesAssembly = await csFilesCompiler.GetCsFilesAssembly();
-        _factory = new FunctionFactory(_functionFactoryDependencies, allLibs, csFilesAssembly);
+        _factory = new FunctionFactory(_functionFactoryDependencies, allLibs, csFilesAssembly, _usings ?? Array.Empty<string>());
         return _factory;
     }
 }

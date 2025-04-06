@@ -21,6 +21,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly IImmutableList<string> _assembliesLocations;
     private readonly AssembliesLoader _assembliesLoader;
     private readonly CsFilesAssembly? _csFilesAssembly;
+    private readonly IReadOnlyList<string> _globalUsings;
     private readonly Namer _namer;
 
     public record Dependencies(
@@ -32,9 +33,12 @@ class FunctionFactory : IFunctionFactoryCSharp
         IRangesProvider RangesProvider,
         Namer Namer);
 
-    public FunctionFactory(Dependencies dependencies, IImmutableList<string> assembliesLocations, CsFilesAssembly? csFilesAssembly)
+    public FunctionFactory(
+        Dependencies dependencies,
+        IImmutableList<string> assembliesLocations,
+        CsFilesAssembly? csFilesAssembly,
+        IReadOnlyList<string> globalUsings)
     {
-
         _compiler = dependencies.Compiler;
         _compilationStatistic = dependencies.CompilationStatistic;
         _cache = dependencies.Cache;
@@ -44,7 +48,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         _assembliesLocations = assembliesLocations;
         _csFilesAssembly = csFilesAssembly;
-
+        _globalUsings = globalUsings;
     }
 
     public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(
@@ -104,7 +108,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         string prefix = "MatchFunction";
         string className = _namer.GetClassName(prefix, code);
 
-        var (withoutUsings, usings) = ExtractUsingsAndReplaceVars(code, declaredPartsProvider);
+        var (withoutUsings, usings) = PrepareCode(code, declaredPartsProvider);
 
         string classToCompile = ClassCodeCreator.CreateMatchFunction(
             className,
@@ -132,7 +136,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         string prefix = "RequestMatcher";
         string className = _namer.GetClassName(prefix, code);
-        var (withoutUsings, usings) = ExtractUsingsAndReplaceVars(code, declaredPartsProvider);
+        var (withoutUsings, usings) = PrepareCode(code, declaredPartsProvider);
         string classToCompile = ClassCodeCreator.CreateRequestMatcher(
             className,
             GetMethodBody(new Code(ForCompile: withoutUsings, Source: code)),
@@ -222,7 +226,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         }
         else
         {
-            (toCompile, usings) = ExtractUsingsAndReplaceVars(code, declaredPartsProvider);
+            (toCompile, usings) = PrepareCode(code, declaredPartsProvider);
         }
 
         string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
@@ -299,7 +303,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         IDeclaredPartsProvider declaredPartsProvider,
         CodeBlock code)
     {
-        var (withoutUsings, usings) = ExtractUsingsAndReplaceVars(code, declaredPartsProvider);
+        var (withoutUsings, usings) = PrepareCode(code, declaredPartsProvider);
 
         string classToCompile = ClassCodeCreator.CreateAction(
             className,
@@ -339,11 +343,13 @@ class FunctionFactory : IFunctionFactoryCSharp
             .ToArray();
     }
 
-    private static (string Code, IReadOnlyCollection<string> Usings) ExtractUsingsAndReplaceVars(CodeBlock code,
+    private (string Code, IReadOnlyCollection<string> Usings) PrepareCode(
+        CodeBlock code,
         IDeclaredPartsProvider declaredPartsProvider)
     {
         var codeWithVariables = ReplaceVariableNames(code, declaredPartsProvider);
-        return ExtractUsings(codeWithVariables);
+        var (c, usings) = ExtractUsings(codeWithVariables);
+        return (c, usings.Concat(_globalUsings).ToArray());
     }
 
     private static (string Code, IReadOnlyCollection<string> Usings) ExtractUsings(string codeWithVariables)

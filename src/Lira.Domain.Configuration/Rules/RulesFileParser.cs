@@ -1,8 +1,10 @@
+using System.Collections.Immutable;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Templating;
 using Lira.Domain.Configuration.Variables;
+using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.FileSectionFormat;
 
 namespace Lira.Domain.Configuration.Rules;
@@ -13,24 +15,29 @@ internal class RuleFileParser
     private readonly ConditionMatcherParser _conditionMatcherParser;
     private readonly FileSectionDeclaredItemsParser _fileSectionDeclaredItemsParser;
     private readonly HandlersParser _handlersParser;
+    private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
 
     public RuleFileParser(
         RequestMatchersParser requestMatchersParser,
         ConditionMatcherParser conditionMatcherParser,
         FileSectionDeclaredItemsParser fileSectionDeclaredItemsParser,
-        HandlersParser handlersParser)
+        HandlersParser handlersParser, IFunctionFactoryCSharpFactory functionFactoryCSharpFactory)
     {
         _requestMatchersParser = requestMatchersParser;
         _conditionMatcherParser = conditionMatcherParser;
         _fileSectionDeclaredItemsParser = fileSectionDeclaredItemsParser;
         _handlersParser = handlersParser;
+        _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
     }
 
     public async Task<IReadOnlyCollection<Rule>> Parse(string ruleFile, IReadonlyParsingContext parsingContext)
     {
-        var sections = await SectionFileParser.Parse(ruleFile);
+        var sectionsRoot = await SectionFileParser.Parse(ruleFile);
 
+        var sections = sectionsRoot.Sections;
         AssertContainsOnlySections(sections, [Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Templates]);
+
+        _functionFactoryCSharpFactory.Init(sectionsRoot.Lines);
 
         var ctx = new ParsingContext(parsingContext, currentPath: ruleFile.GetDirectory());
 
@@ -207,7 +214,7 @@ internal class RuleFileParser
         return result;
     }
 
-    private static void AssertContainsOnlySections(IReadOnlyList<FileSection> rulesSections,
+    private static void AssertContainsOnlySections(IImmutableList<FileSection> rulesSections,
         IReadOnlyCollection<string> expectedSectionName)
     {
         var unknownSections = rulesSections

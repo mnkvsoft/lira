@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Lira.Domain.Configuration.Templating;
 using Lira.Domain.TextPart.Impl.Custom.CustomDicModel;
 
@@ -23,11 +24,15 @@ class ParsingContext : IParsingContext, IReadonlyParsingContext
     public  DeclaredItems DeclaredItems { get; private set; }
     public string CurrentPath { get; private init; }
     public TemplateSet Templates { get; set; }
+    public ImmutableList<string> GlobalFileLines { get; } // without section
 
-    public ParsingContext(IReadonlyParsingContext context,
+    public ParsingContext(
+        IReadonlyParsingContext context,
+        ImmutableList<string> globalFileLines,
         string? currentPath = null,
         DeclaredItems? declaredItems = null)
     {
+        GlobalFileLines = globalFileLines;
         DeclaredItems = declaredItems ?? new DeclaredItems(context.DeclaredItems);
         Templates = new TemplateSet(context.Templates);
         CustomDicts = new CustomDicts(context.CustomDicts);
@@ -35,18 +40,19 @@ class ParsingContext : IParsingContext, IReadonlyParsingContext
         CurrentPath = currentPath ?? context.CurrentPath;
     }
 
-    public ParsingContext(DeclaredItems declaredItems, TemplateSet templates, CustomDicts customDicts, string rootPath, string currentPath)
+    public ParsingContext(DeclaredItems declaredItems, TemplateSet templates, CustomDicts customDicts, string rootPath, string currentPath, ImmutableList<string> globalFileLines)
     {
         DeclaredItems = declaredItems;
         Templates = templates;
         CustomDicts = customDicts;
         RootPath = rootPath;
         CurrentPath = currentPath;
+        GlobalFileLines = globalFileLines;
     }
 
     public ParsingContext WithCurrentPath(string currentPath)
     {
-        return new ParsingContext(this)
+        return new ParsingContext(this, globalFileLines: ImmutableList<string>.Empty)
         {
             CurrentPath = currentPath
         };

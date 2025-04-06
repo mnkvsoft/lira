@@ -1,17 +1,37 @@
-﻿namespace Lira.FileSectionFormat;
+﻿using System.Collections.Immutable;
 
-public class FileSection
+namespace Lira.FileSectionFormat;
+
+public record FileSection(
+    string Name,
+    string? Key,
+    IImmutableList<string> LinesWithoutBlock,
+    IImmutableList<FileSection> ChildSections,
+    IImmutableSet<FileBlock> Blocks);
+
+
+public class FileSectionBuilder
 {
     public string Name { get; }
     public string? Key { get; }
 
     public List<string> LinesWithoutBlock { get; } = new();
     public HashSet<FileBlock> Blocks { get; } = new();
-    public List<FileSection> ChildSections { get; } = new();
+    public List<FileSectionBuilder> ChildSections { get; } = new();
 
-    public FileSection(string name, string? key)
+    public FileSectionBuilder(string name, string? key)
     {
         Name = name;
         Key = key;
+    }
+
+    public FileSection Build()
+    {
+        return new FileSection(
+            Name,
+            Key,
+            LinesWithoutBlock.ToImmutableList(),
+            ChildSections.Select(x => x.Build()).ToImmutableList(),
+            Blocks.ToImmutableHashSet());
     }
 }
