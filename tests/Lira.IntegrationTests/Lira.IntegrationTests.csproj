@@ -69,9 +69,6 @@
     <None Update="fixtures\rules\match\csharp\custom\body.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\bag\chain.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="fixtures\rules\bag\chain.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -360,6 +357,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\common\execute_sequence.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\csharp\using\global_in_file.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\csharp\using\global_in_file.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

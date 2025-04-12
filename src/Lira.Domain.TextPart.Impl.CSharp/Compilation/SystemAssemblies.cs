@@ -170,7 +170,6 @@ static class SystemAssemblies
         "System.ValueTuple.dll",
         "System.Web.dll",
         "System.Web.HttpUtility.dll",
-        "System.Windows.dll",
         "System.Xml.dll",
         "System.Xml.Linq.dll",
         "System.Xml.ReaderWriter.dll",
@@ -180,6 +179,5 @@ static class SystemAssemblies
         "System.Xml.XmlSerializer.dll",
         "System.Xml.XPath.dll",
         "System.Xml.XPath.XDocument.dll",
-        "WindowsBase.dll"
     ];
 }

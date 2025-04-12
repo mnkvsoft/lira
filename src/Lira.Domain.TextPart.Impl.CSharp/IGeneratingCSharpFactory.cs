@@ -4,14 +4,17 @@ using Lira.Domain.Handling.Actions;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
-public interface IFunctionFactoryCSharp : IDisposable
+public interface IFunctionFactoryCSharpFactory
 {
-    Task<CreateFunctionResult<IAction>> TryCreateAction(IDeclaredPartsProvider declaredPartsProvider, CodeBlock code);
-    Task<CreateFunctionResult<IObjectTextPart>> TryCreateGeneratingFunction(
-        IDeclaredPartsProvider declaredPartsProvider, CodeBlock code);
-    Task<CreateFunctionResult<ITransformFunction>> TryCreateTransformFunction(CodeBlock code);
-    Task<CreateFunctionResult<IMatchFunctionTyped>> TryCreateMatchFunction(IDeclaredPartsProvider declaredPartsProvider,
-        CodeBlock code);
-    Task<CreateFunctionResult<IRequestMatcher>> TryCreateRequestMatcher(IDeclaredPartsProvider declaredPartsProvider,
-        CodeBlock code);
+    FunctionFactoryUsingContext CreateRulesUsingContext(IReadOnlyCollection<string> fileLines);
+    Task<IFunctionFactoryCSharp> Get();
+}
+
+public interface IFunctionFactoryCSharp
+{
+    CreateFunctionResult<IAction> TryCreateAction(FunctionFactoryRuleContext ruleContext, CodeBlock code);
+    CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(FunctionFactoryRuleContext ruleContext, CodeBlock code);
+    CreateFunctionResult<IMatchFunctionTyped> TryCreateMatchFunction(FunctionFactoryRuleContext ruleContext, CodeBlock code);
+    CreateFunctionResult<IRequestMatcher> TryCreateRequestMatcher(FunctionFactoryRuleContext ruleContext, CodeBlock code);
+    CreateFunctionResult<ITransformFunction> TryCreateTransformFunction(CodeBlock code);
 }

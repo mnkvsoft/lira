@@ -19,14 +19,14 @@ namespace Lira.Domain.Configuration.Rules.Parsers;
 class RequestMatchersParser
 {
     private readonly IFunctionFactorySystem _functionFactorySystem;
-    private readonly IFunctionFactoryCSharp _functionFactoryCSharp;
+    private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
 
     public RequestMatchersParser(
         IFunctionFactorySystem functionFactorySystem,
-        IFunctionFactoryCSharp functionFactoryCSharp)
+        IFunctionFactoryCSharpFactory functionFactoryCSharpFactory)
     {
         _functionFactorySystem = functionFactorySystem;
-        _functionFactoryCSharp = functionFactoryCSharp;
+        _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
     }
 
     public async Task<IReadOnlyCollection<IRequestMatcher>> Parse(FileSection ruleSection, ParsingContext context)
@@ -100,7 +100,8 @@ class RequestMatchersParser
         var (codeBlock, newRuntimeVariables) = CodeParser.Parse(code, context.DeclaredItems);
         context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
-        var matcher = await _functionFactoryCSharp.TryCreateRequestMatcher(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
+        var functionFactory = await _functionFactoryCSharpFactory.Get();
+        var matcher = functionFactory.TryCreateRequestMatcher(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(context.DeclaredItems)), codeBlock);
         return matcher.GetFunctionOrThrow(code, context);
     }
 
@@ -296,7 +297,8 @@ class RequestMatchersParser
         var (codeBlock, newRuntimeVariables) = CodeParser.Parse(invoke, context.DeclaredItems);
         context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
-        var createFunctionResult = await _functionFactoryCSharp.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
+        var functionFactory = await _functionFactoryCSharpFactory.Get();
+        var createFunctionResult = functionFactory.TryCreateMatchFunction(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(context.DeclaredItems)), codeBlock);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 

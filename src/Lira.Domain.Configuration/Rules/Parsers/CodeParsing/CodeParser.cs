@@ -11,7 +11,25 @@ namespace Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 
 static class CodeParser
 {
-    public static (CodeBlock, IReadOnlyCollection<RuntimeVariable>) Parse(string code, IReadonlyDeclaredItems declaredItems)
+    public static (CodeBlock, IReadOnlyCollection<RuntimeVariable>) Parse(string code,
+        IReadonlyDeclaredItems declaredItems)
+    {
+        try
+        {
+            return ParseInternal(code, declaredItems);
+        }
+        catch (Exception e)
+        {
+            var nl = Environment.NewLine;
+            throw new Exception(e.Message + nl + "Error parsing code: " + nl +
+                                code.WrapBeginEnd() +
+                                "Declared items: " + nl +
+                                declaredItems,
+                e);
+        }
+    }
+
+    private static (CodeBlock, IReadOnlyCollection<RuntimeVariable>) ParseInternal(string code, IReadonlyDeclaredItems declaredItems)
     {
         var codeTokens = Parse(code);
 

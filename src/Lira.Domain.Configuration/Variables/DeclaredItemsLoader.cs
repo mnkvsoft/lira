@@ -4,15 +4,8 @@ using Lira.FileSectionFormat;
 
 namespace Lira.Domain.Configuration.Variables;
 
-internal class DeclaredItemsLoader
+internal class DeclaredItemsLoader(DeclaredItemsParser parser)
 {
-    private readonly DeclaredItemsParser _parser;
-
-    public DeclaredItemsLoader(DeclaredItemsParser parser)
-    {
-        _parser = parser;
-    }
-
     public async Task<DeclaredItems> Load(IReadonlyParsingContext parsingContext, string path)
     {
         var result = new DeclaredItems();
@@ -23,7 +16,7 @@ internal class DeclaredItemsLoader
             try
             {
                 var lines = TextCleaner.DeleteEmptiesAndComments(await File.ReadAllTextAsync(variableFile));
-                result.Add(await _parser.Parse(lines, newContext.WithCurrentPath(variableFile.GetDirectory())));
+                result.Add(await parser.Parse(lines, newContext.WithCurrentPath(variableFile.GetDirectory())));
             }
             catch (Exception exc)
             {

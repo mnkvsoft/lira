@@ -46,9 +46,9 @@ public class Rules_Tests : TestBase
 
         try
         {
-            var sections = await SectionFileParser.Parse(realTestFilePath);
+            var sectionsRoot = await SectionFileParser.Parse(realTestFilePath);
 
-            foreach (var caseSection in sections)
+            foreach (var caseSection in sectionsRoot.Sections)
             {
                 var delay = caseSection.GetBlockValueOrDefault<TimeSpan>("delay");
 
