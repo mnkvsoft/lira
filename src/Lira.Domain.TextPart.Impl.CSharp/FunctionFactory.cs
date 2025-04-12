@@ -52,7 +52,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     }
 
     public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(
-        IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
+        FunctionFactoryRuleContext ruleContext, CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
 
@@ -60,13 +60,13 @@ class FunctionFactory : IFunctionFactoryCSharp
         var className = _namer.GetClassName(prefix, code);
 
         var classToCompile =
-            CreateGeneratingFunctionClassCode(className, declaredPartsProvider, code);
+            CreateGeneratingFunctionClassCode(className, ruleContext, code);
 
         var result = CreateFunctionResult<IObjectTextPart>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,
-            CreateDependenciesBase(declaredPartsProvider));
+            CreateDependenciesBase(ruleContext.DeclaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -101,14 +101,14 @@ class FunctionFactory : IFunctionFactoryCSharp
     }
 
     public CreateFunctionResult<IMatchFunctionTyped> TryCreateMatchFunction(
-        IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
+        FunctionFactoryRuleContext ruleContext, CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
 
         string prefix = "MatchFunction";
         string className = _namer.GetClassName(prefix, code);
 
-        var (withoutUsings, usings) = PrepareCode(code, declaredPartsProvider);
+        var (withoutUsings, usings) = PrepareCode(code, ruleContext);
 
         string classToCompile = ClassCodeCreator.CreateMatchFunction(
             className,
@@ -122,7 +122,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             assemblyPrefixName: prefix,
             classToCompile,
             className,
-            CreateDependenciesBase(declaredPartsProvider));
+            CreateDependenciesBase(ruleContext.DeclaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -130,13 +130,13 @@ class FunctionFactory : IFunctionFactoryCSharp
     }
 
     public CreateFunctionResult<IRequestMatcher> TryCreateRequestMatcher(
-        IDeclaredPartsProvider declaredPartsProvider, CodeBlock code)
+        FunctionFactoryRuleContext ruleContext, CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
 
         string prefix = "RequestMatcher";
         string className = _namer.GetClassName(prefix, code);
-        var (withoutUsings, usings) = PrepareCode(code, declaredPartsProvider);
+        var (withoutUsings, usings) = PrepareCode(code, ruleContext);
         string classToCompile = ClassCodeCreator.CreateRequestMatcher(
             className,
             GetMethodBody(new Code(ForCompile: withoutUsings, Source: code)),
@@ -149,14 +149,15 @@ class FunctionFactory : IFunctionFactoryCSharp
             assemblyPrefixName: prefix,
             classToCompile,
             className,
-            CreateDependenciesBase(declaredPartsProvider));
+            CreateDependenciesBase(ruleContext.DeclaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
         return result;
     }
 
-    public CreateFunctionResult<IAction> TryCreateAction(IDeclaredPartsProvider declaredPartsProvider,
+    public CreateFunctionResult<IAction> TryCreateAction(
+        FunctionFactoryRuleContext ruleContext,
         CodeBlock code)
     {
         var sw = Stopwatch.StartNew();
@@ -164,13 +165,13 @@ class FunctionFactory : IFunctionFactoryCSharp
         string prefix = "Action";
         string className = _namer.GetClassName(prefix, code);
 
-        string classToCompile = CreateActionClassCode(className, declaredPartsProvider, code);
+        string classToCompile = CreateActionClassCode(className, ruleContext, code);
 
         var result = CreateFunctionResult<IAction>(
             assemblyPrefixName: prefix,
             classToCompile,
             className,
-            CreateDependenciesBase(declaredPartsProvider));
+            CreateDependenciesBase(ruleContext.DeclaredPartsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -210,7 +211,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private string CreateGeneratingFunctionClassCode(
         string className,
-        IDeclaredPartsProvider declaredPartsProvider,
+        FunctionFactoryRuleContext ruleContext,
         CodeBlock code)
     {
         const string repeatFunctionName = "repeat";
@@ -226,7 +227,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         }
         else
         {
-            (toCompile, usings) = PrepareCode(code, declaredPartsProvider);
+            (toCompile, usings) = PrepareCode(code, ruleContext);
         }
 
         string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
@@ -300,10 +301,10 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private string CreateActionClassCode(
         string className,
-        IDeclaredPartsProvider declaredPartsProvider,
+        FunctionFactoryRuleContext ruleContext,
         CodeBlock code)
     {
-        var (withoutUsings, usings) = PrepareCode(code, declaredPartsProvider);
+        var (withoutUsings, usings) = PrepareCode(code, ruleContext);
 
         string classToCompile = ClassCodeCreator.CreateAction(
             className,
@@ -345,11 +346,11 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private (string Code, IReadOnlyCollection<string> Usings) PrepareCode(
         CodeBlock code,
-        IDeclaredPartsProvider declaredPartsProvider)
+        FunctionFactoryRuleContext ruleContext)
     {
-        var codeWithVariables = ReplaceVariableNames(code, declaredPartsProvider);
+        var codeWithVariables = ReplaceVariableNames(code, ruleContext.DeclaredPartsProvider);
         var (c, usings) = ExtractUsings(codeWithVariables);
-        return (c, usings.Concat(_globalUsings).ToArray());
+        return (c, usings.Concat(_globalUsings).Concat(ruleContext.UsingContext.FileUsings).ToArray());
     }
 
     private static (string Code, IReadOnlyCollection<string> Usings) ExtractUsings(string codeWithVariables)

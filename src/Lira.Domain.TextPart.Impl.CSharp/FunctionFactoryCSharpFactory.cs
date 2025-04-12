@@ -16,7 +16,6 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
     private FunctionFactory? _factory;
     private readonly AssembliesLoader _assembliesLoader;
 
-    private IReadOnlyList<string>? _usings;
     private bool _wasInit;
 
     public FunctionFactoryCSharpFactory(
@@ -31,22 +30,22 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
         _csFilesCompilerDependencies = csFilesCompilerDependencies;
     }
 
-    public void Init(IImmutableList<string> fileLines)
+    public FunctionFactoryUsingContext CreateRulesUsingContext(IReadOnlyCollection<string> fileLines)
     {
         _wasInit = true;
 
         if(fileLines.Count == 0)
-            return;
+            return FunctionFactoryUsingContext.Empty;
 
         var usings = new List<string>();
 
-        foreach (var maymeUsing in fileLines)
+        foreach (var mayeUsing in fileLines)
         {
-            if (maymeUsing.StartsWith("@using "))
-                usings.Add(maymeUsing.TrimStart('@'));
+            if (mayeUsing.StartsWith("@using "))
+                usings.Add(mayeUsing.TrimStart('@'));
         }
 
-        _usings = usings;
+        return new FunctionFactoryUsingContext(usings);
     }
 
     public async Task<IFunctionFactoryCSharp> Get()
@@ -89,7 +88,9 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
         var csFilesCompiler = new CsFilesCompiler(_csFilesCompilerDependencies, allLibs);
 
         var csFilesAssembly = await csFilesCompiler.GetCsFilesAssembly();
-        _factory = new FunctionFactory(_functionFactoryDependencies, allLibs, csFilesAssembly, _usings ?? Array.Empty<string>());
+
+        // todo: init global usings
+        _factory = new FunctionFactory(_functionFactoryDependencies, allLibs, csFilesAssembly, globalUsings: Array.Empty<string>());
         return _factory;
     }
 }
