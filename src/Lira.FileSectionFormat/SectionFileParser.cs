@@ -48,7 +48,7 @@ public static class SectionFileParser
         int[] orderedSectionLengths = sectionLengths.OrderByDescending(x => x).ToArray();
         int index = 0;
 
-        return GetSections(orderedSectionLengths, ref index, lines).Select(x=> x.Build()).ToImmutableList();
+        return GetSections(orderedSectionLengths, ref index, lines).Select(x => x.Build()).ToImmutableList();
     }
 
     private static HashSet<int> GetSectionLengths(IReadOnlyList<string> lines)

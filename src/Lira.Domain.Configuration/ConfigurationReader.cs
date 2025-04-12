@@ -8,6 +8,7 @@ using Lira.Domain.Configuration.Variables;
 using System.Diagnostics;
 using Lira.Common.State;
 using Lira.Domain.Configuration.CustomSets;
+using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.System;
 
 namespace Lira.Domain.Configuration;
@@ -27,6 +28,7 @@ class ConfigurationReader(
 
         var context = new ParsingContext(
             new DeclaredItems(),
+            FunctionFactoryUsingContext.Empty,
             templates,
             customDicts,
             rootPath: path,

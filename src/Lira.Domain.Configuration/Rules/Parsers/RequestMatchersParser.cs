@@ -101,7 +101,7 @@ class RequestMatchersParser
         context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
         var functionFactory = await _functionFactoryCSharpFactory.Get();
-        var matcher = functionFactory.TryCreateRequestMatcher(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
+        var matcher = functionFactory.TryCreateRequestMatcher(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(context.DeclaredItems)), codeBlock);
         return matcher.GetFunctionOrThrow(code, context);
     }
 
@@ -298,7 +298,7 @@ class RequestMatchersParser
         context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
         var functionFactory = await _functionFactoryCSharpFactory.Get();
-        var createFunctionResult = functionFactory.TryCreateMatchFunction(new DeclaredPartsProvider(context.DeclaredItems), codeBlock);
+        var createFunctionResult = functionFactory.TryCreateMatchFunction(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(context.DeclaredItems)), codeBlock);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 

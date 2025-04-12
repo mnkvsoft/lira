@@ -3,7 +3,7 @@
 
 -------------------- rule
 
-POST /csharp/using/global_in_file/{{
+GET /csharp/using/global_in_file/{{
 
     ## check that the value is an account number
 

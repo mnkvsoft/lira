@@ -37,9 +37,10 @@ internal class RuleFileParser
         var sections = sectionsRoot.Sections;
         AssertContainsOnlySections(sections, [Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Templates]);
 
-        _functionFactoryCSharpFactory.Init(sectionsRoot.Lines);
+        var usingContext = _functionFactoryCSharpFactory.CreateRulesUsingContext(sectionsRoot.Lines);
 
-        var ctx = new ParsingContext(parsingContext, currentPath: ruleFile.GetDirectory());
+        // var ctx = new ParsingContext(parsingContext, cSharpUsingContext: usingContext, currentPath: ruleFile.GetDirectory());
+        var ctx = new ParsingContext(parsingContext, cSharpUsingContext: usingContext, currentPath: ruleFile.GetDirectory());
 
         var templates = GetTemplates(sections, ctx);
         ctx.SetTemplates(templates);

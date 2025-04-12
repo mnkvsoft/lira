@@ -46,4 +46,13 @@ class DeclaredItems : IReadonlyDeclaredItems
     {
         return GetEnumerator();
     }
+
+    public override string ToString()
+    {
+        var nl = Environment.NewLine;
+        return
+            $"Declared functions: {string.Join(", ", Functions.Select(x => Consts.ControlChars.FunctionPrefix + x.Name))}" +
+            nl +
+            $"Declared variables: {string.Join(", ", Variables.Select(x => Consts.ControlChars.VariablePrefix + x.Name))}";
+    }
 }

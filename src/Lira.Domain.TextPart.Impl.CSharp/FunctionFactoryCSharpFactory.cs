@@ -16,8 +16,6 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
     private FunctionFactory? _factory;
     private readonly AssembliesLoader _assembliesLoader;
 
-    private bool _wasInit;
-
     public FunctionFactoryCSharpFactory(
         FunctionFactory.Dependencies functionFactoryFunctionFactoryDependencies,
         CsFilesCompiler.Dependencies csFilesCompilerDependencies,
@@ -32,8 +30,6 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
 
     public FunctionFactoryUsingContext CreateRulesUsingContext(IReadOnlyCollection<string> fileLines)
     {
-        _wasInit = true;
-
         if(fileLines.Count == 0)
             return FunctionFactoryUsingContext.Empty;
 
@@ -50,9 +46,6 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
 
     public async Task<IFunctionFactoryCSharp> Get()
     {
-        if(!_wasInit)
-            throw new Exception("Factory is not initialized");
-
         if (_factory != null)
             return _factory;
 

@@ -20,8 +20,7 @@ internal static class CreateFunctionResultExtensions
             invoke.WrapBeginEnd() +
             "Attempt compile C# code failed. " + failed.Message  + nl + "Code:" + nl + nl +
             failed.Code.WrapBeginEnd() +
-            $"Declared functions: {string.Join(", ", context.DeclaredItems.Functions.Select(x => Consts.ControlChars.FunctionPrefix + x.Name))}" + nl +
-            $"Declared variables: {string.Join(", ", context.DeclaredItems.Variables.Select(x => Consts.ControlChars.VariablePrefix + x.Name))}" + nl +
-            $"Custom dictionaries: {string.Join(", ", context.CustomDicts.GetRegisteredNames())}");
+            "Context: " + nl +
+            context);
     }
 }

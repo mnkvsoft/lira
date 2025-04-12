@@ -7,7 +7,7 @@ public record FileSection(
     string? Key,
     IImmutableList<string> LinesWithoutBlock,
     IImmutableList<FileSection> ChildSections,
-    IImmutableSet<FileBlock> Blocks);
+    IReadOnlySet<FileBlock> Blocks);
 
 
 public class FileSectionBuilder
@@ -32,6 +32,6 @@ public class FileSectionBuilder
             Key,
             LinesWithoutBlock.ToImmutableList(),
             ChildSections.Select(x => x.Build()).ToImmutableList(),
-            Blocks.ToImmutableHashSet());
+            Blocks);
     }
 }

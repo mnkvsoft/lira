@@ -1,6 +1,6 @@
 -------------------- rule
 
-POST /match/sharp/req/read_to_variable/{{ regex:^[0-9]{20}$  >> $$account}}
+POST /match/sharp/req/read_to_variable/{{ regex:^[0-9]{20}$ >> $$account}}
 
 ~ body
 {{ jpath: $.amount }} >> {{ dec >> $$amount}}
