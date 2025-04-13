@@ -1,0 +1,8 @@
+-------------------- rule
+
+GET /csharp/using/global_for_rules
+
+----- response
+
+## namespaces in globalUtils was added from GlobalUsingsRules.cs
+{{ pan.next() }}

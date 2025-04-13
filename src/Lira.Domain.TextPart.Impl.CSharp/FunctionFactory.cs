@@ -21,11 +21,10 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly IImmutableList<string> _assembliesLocations;
     private readonly AssembliesLoader _assembliesLoader;
     private readonly CsFilesAssembly? _csFilesAssembly;
-    private readonly IReadOnlyList<string> _globalUsings;
     private readonly Namer _namer;
+    private readonly string? _globalUsingFileContent;
 
     public record Dependencies(
-
         AssembliesLoader AssembliesLoader,
         Compiler Compiler,
         CompilationStatistic CompilationStatistic,
@@ -33,11 +32,10 @@ class FunctionFactory : IFunctionFactoryCSharp
         IRangesProvider RangesProvider,
         Namer Namer);
 
-    public FunctionFactory(
-        Dependencies dependencies,
+    public FunctionFactory(Dependencies dependencies,
         IImmutableList<string> assembliesLocations,
         CsFilesAssembly? csFilesAssembly,
-        IReadOnlyList<string> globalUsings)
+        string? globalUsingFileContent)
     {
         _compiler = dependencies.Compiler;
         _compilationStatistic = dependencies.CompilationStatistic;
@@ -45,10 +43,10 @@ class FunctionFactory : IFunctionFactoryCSharp
         _rangesProvider = dependencies.RangesProvider;
         _assembliesLoader = dependencies.AssembliesLoader;
         _namer = dependencies.Namer;
+        _globalUsingFileContent = globalUsingFileContent;
 
         _assembliesLocations = assembliesLocations;
         _csFilesAssembly = csFilesAssembly;
-        _globalUsings = globalUsings;
     }
 
     public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(
@@ -186,10 +184,15 @@ class FunctionFactory : IFunctionFactoryCSharp
     {
         var assemblyName = _namer.GetAssemblyName(assemblyPrefixName + className);
 
+        var classesToCompiles = new List<string>(2) { classToCompile };
+
+        if(_globalUsingFileContent != null)
+            classesToCompiles.Add(_globalUsingFileContent);
+
         var compileResult = _compiler.Compile(
             new CompileUnit(
                 AssemblyName: assemblyName,
-                [classToCompile],
+                classesToCompiles.ToImmutableArray(),
                 new References(
                     AssembliesLocations: _assembliesLocations,
                     Runtime: _csFilesAssembly != null ? [_csFilesAssembly.PeImage] : Array.Empty<PeImage>())));
@@ -350,7 +353,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     {
         var codeWithVariables = ReplaceVariableNames(code, ruleContext.DeclaredPartsProvider);
         var (c, usings) = ExtractUsings(codeWithVariables);
-        return (c, usings.Concat(_globalUsings).Concat(ruleContext.UsingContext.FileUsings).ToArray());
+        return (c, usings.Concat(ruleContext.UsingContext.FileUsings).ToArray());
     }
 
     private static (string Code, IReadOnlyCollection<string> Usings) ExtractUsings(string codeWithVariables)

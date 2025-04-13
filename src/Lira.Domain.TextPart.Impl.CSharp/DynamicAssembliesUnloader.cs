@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
-internal class DynamicAssembliesUnloader
+internal class DynamicAssembliesUnloader : IDisposable
 {
     private readonly ILogger _logger;
     private readonly Queue<DynamicAssembliesContext> _toUnload = new();
@@ -18,7 +18,12 @@ internal class DynamicAssembliesUnloader
     {
         _toUnload.Enqueue(currentContext);
 
-        while (_toUnload.Count > 1)
+        Unload();
+    }
+
+    private void Unload()
+    {
+        while (_toUnload.Count != 0)
         {
             var (revision, contextToUnload) = _toUnload.Peek();
             try
@@ -33,7 +38,12 @@ internal class DynamicAssembliesUnloader
                 break;
             }
         }
-        
+
         GC.Collect();
+    }
+
+    public void Dispose()
+    {
+        Unload();
     }
 }

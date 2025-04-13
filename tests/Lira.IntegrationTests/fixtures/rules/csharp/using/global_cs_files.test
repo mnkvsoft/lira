@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /csharp/using/global_cs_files
+
+----- expected
+
+~ code
+200
+
+~ body
+1122334455

@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /csharp/using/global_for_rules
+
+----- expected
+
+~ code
+200
+
+~ body
+4444555566667777

@@ -238,13 +238,22 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Remove="fixtures\rules\nuget\jwt.cs" />
+    <None Include="fixtures\rules\csharp\using\cs\GlobalUsings.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="fixtures\rules\csharp\using\cs\GlobalUsingsRules.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="fixtures\rules\csharp\using\cs\pan.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="fixtures\rules\csharp\using\cs\stringUtils.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="fixtures\rules\nuget\jwt.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Remove="fixtures\rules\csharp\using\stringUtils.cs" />
-    <None Include="fixtures\rules\csharp\using\stringUtils.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="fixtures\rules\generating\types\json\number_in_string.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -363,6 +372,19 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\csharp\using\global_in_file.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Remove="fixtures\rules\GlobalUsings.cs" />
+    <None Update="fixtures\rules\csharp\using\global_cs_files.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\csharp\using\global_cs_files.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\csharp\using\global_for_rules.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\csharp\using\global_for_rules.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

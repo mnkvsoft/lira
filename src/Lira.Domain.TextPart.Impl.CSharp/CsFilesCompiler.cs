@@ -24,7 +24,7 @@ class CsFilesCompiler
 
     public CsFilesCompiler(Dependencies dependencies, IImmutableList<string> assembliesLocations)
     {
-        _compiler =dependencies.Compiler;
+        _compiler = dependencies.Compiler;
         _assembliesLoader = dependencies.AssembliesLoader;
         _namer = dependencies.Namer;
         _path = dependencies.Configuration.GetRulesPath();
@@ -34,7 +34,9 @@ class CsFilesCompiler
 
     public async Task<CsFilesAssembly?> GetCsFilesAssembly()
     {
-        var csharpFiles = Directory.GetFiles(_path, "*.cs", SearchOption.AllDirectories);
+        var csharpFiles = Directory.GetFiles(_path, "*.cs", SearchOption.AllDirectories)
+            .Where(x => x != Consts.GlobalUsingsRulesFileName)
+            .ToArray();
 
         if (csharpFiles.Length == 0)
             return null;

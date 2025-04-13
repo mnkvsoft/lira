@@ -1,9 +1,11 @@
 using System.Collections.Immutable;
 using Lira.Common;
+using Lira.Configuration;
 using Lira.Domain.DataModel;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.ExternalLibsLoading;
 using Lira.Domain.TextPart.Types;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
@@ -15,8 +17,10 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
     private readonly CsFilesCompiler.Dependencies _csFilesCompilerDependencies;
     private FunctionFactory? _factory;
     private readonly AssembliesLoader _assembliesLoader;
+    private readonly string _rulesPath;
 
     public FunctionFactoryCSharpFactory(
+        IConfiguration configuration,
         FunctionFactory.Dependencies functionFactoryFunctionFactoryDependencies,
         CsFilesCompiler.Dependencies csFilesCompilerDependencies,
         ExtLibsProvider extLibsProvider,
@@ -26,6 +30,7 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
         _assembliesLoader = assembliesLoader;
         _functionFactoryDependencies = functionFactoryFunctionFactoryDependencies;
         _csFilesCompilerDependencies = csFilesCompilerDependencies;
+        _rulesPath = configuration.GetRulesPath();
     }
 
     public FunctionFactoryUsingContext CreateRulesUsingContext(IReadOnlyCollection<string> fileLines)
@@ -83,7 +88,21 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
         var csFilesAssembly = await csFilesCompiler.GetCsFilesAssembly();
 
         // todo: init global usings
-        _factory = new FunctionFactory(_functionFactoryDependencies, allLibs, csFilesAssembly, globalUsings: Array.Empty<string>());
+        _factory = new FunctionFactory(_functionFactoryDependencies, allLibs, csFilesAssembly, await GetGlobalUsingFileContent());
         return _factory;
+    }
+
+    async Task<string?> GetGlobalUsingFileContent()
+    {
+        var files = Directory.GetFiles(_rulesPath, Consts.GlobalUsingsRulesFileName, SearchOption.AllDirectories);
+
+        if(files.Length == 0)
+            return null;
+
+        if(files.Length > 1)
+            throw new Exception($"More than one global using files {Consts.GlobalUsingsRulesFileName} are not supported");
+
+        var result = await File.ReadAllTextAsync(files.Single());
+        return result;
     }
 }

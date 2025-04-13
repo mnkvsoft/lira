@@ -1,14 +1,12 @@
+- global usings
+- local variables in functions
+- inline repeat block
+- type inference for dynamic block
 - hide dynamic class details on exception
 - json() extension for object
 - remove method for json type
 - dynamic block in ~ delay block
 - describe file section format
 - RequestStatisticStorage ttl to config
-- rules inheritance
 - network latency
-
- bugs:
- - Uri not accessible in dynamic block
-
-check:
-- transform json array from request to response
+- rules index
