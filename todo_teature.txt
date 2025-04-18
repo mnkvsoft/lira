@@ -1,6 +1,9 @@
 - global usings
+- line structure for conditions
+- key for conditions
 - local variables in functions
 - inline repeat block
+- cache section
 - type inference for dynamic block
 - hide dynamic class details on exception
 - json() extension for object
