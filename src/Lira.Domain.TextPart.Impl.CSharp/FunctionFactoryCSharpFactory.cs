@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Reflection;
 using Lira.Common;
 using Lira.Configuration;
 using Lira.Domain.DataModel;
@@ -67,9 +68,11 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
         };
 
         var systemLibs = SystemAssemblies.Locations;
+
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToHashSet();
         foreach (var libLocation in systemLibs)
         {
-            if (AppDomain.CurrentDomain.GetAssemblies().All(assembly => assembly.Location != libLocation))
+            if (assemblies.All(assembly => assembly.Location != libLocation))
             {
                 _assembliesLoader.Load(libLocation);
             }
@@ -87,7 +90,6 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
 
         var csFilesAssembly = await csFilesCompiler.GetCsFilesAssembly();
 
-        // todo: init global usings
         _factory = new FunctionFactory(_functionFactoryDependencies, allLibs, csFilesAssembly, await GetGlobalUsingFileContent());
         return _factory;
     }
