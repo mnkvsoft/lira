@@ -1,6 +1,6 @@
 -------------------- declare
 
-$response:json =
+@response:json =
 {
   "status": ""
 }
@@ -20,7 +20,7 @@ Request-Id: reject_scenario
 
 ~ body
 {{
-    $response
+    @response
         .replace("status", "pending")
 }}
 
@@ -42,6 +42,6 @@ GET /cache/flag/{{ cache.contains("reject_scenario_" + value) }}
 
 ~ body
 {{
-    $response
+    @response
         .replace("status", "reject")
 }}

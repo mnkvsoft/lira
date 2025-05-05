@@ -7,7 +7,7 @@ example: guide/custom_functions/template
 
 ----- declare
 
-$order.template = 
+@order.template = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -22,8 +22,8 @@ $order.template =
 ~ body
 {
     "orders": [
-        {{ $order.template }},
-        {{ $order.template }},
-        {{ $order.template }}
+        {{ @order.template }},
+        {{ @order.template }},
+        {{ @order.template }}
     ]
 }

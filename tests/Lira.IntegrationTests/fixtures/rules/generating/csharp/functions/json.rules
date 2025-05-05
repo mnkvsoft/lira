@@ -6,7 +6,7 @@ GET /generating/csharp/functions/json
 
 ----- declare
 
-$json_var =
+@json_var =
 {
     "field1" : "value"
 }
@@ -18,5 +18,5 @@ $json_var =
 
 ~ body
 {{
-     json($json_var).GetType()
+     json(@json_var).GetType()
 }}

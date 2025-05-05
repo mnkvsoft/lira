@@ -4,7 +4,7 @@ GET /generating/declare/function/fullname
 
 ----- declare
 
-$hi = hello!
+@hi = hello!
 
 ----- response
 
@@ -12,4 +12,4 @@ $hi = hello!
 200
 
 ~ body
-{{ $hi }}
+{{ @hi }}

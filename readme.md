@@ -1235,7 +1235,7 @@ example: custom_function
 
 ----- declare
 
-$payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
+@payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
 
 ----- response
 
@@ -1244,7 +1244,7 @@ $payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
 
 ~ body
 {
-    "created_at": "{{ $payment.now }}"
+    "created_at": "{{ @payment.now }}"
     
     ## the '#' symbol can be omitted when calling a function
     ## "created_at": "{{ payment.now }}"
@@ -1402,7 +1402,7 @@ This can be used to create response templates
 ```
 -------------------- declare
 
-$template.order = 
+@template.order = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -1579,7 +1579,7 @@ example: repeat_block
 
 ----- declare
 
-$order = 
+@order = 
 {
     "id": {{ int }},
     "status": "{{ random: paid, pending, cancelled }}",
@@ -1594,7 +1594,7 @@ $order =
 ~ body
 {
     "orders": [
-        {{ repeat($order, separator: ",", count: 3) }}    
+        {{ repeat(@order, separator: ",", count: 3) }}    
     ]
 }
 ```
@@ -1638,13 +1638,13 @@ Response
 Often in json response templates (which are simply functions that generate some values) you need to change some of the data and leave the rest unchanged. This is done by explicitly defining the function's return type as `json`. The block in which the function is used is a block of `C#` code, which will be discussed below.
 
 :triangular_flag_on_post: When calling functions in C# blocks
-The `$` character used in function declarations cannot be omitted
+The `@` character used in function declarations cannot be omitted
 
 [change_json.rules](docs/examples/quick_start/change_json.rules)
 ```
 -------------------- declare
 
-$template.order:json = 
+@template.order:json = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -1668,7 +1668,7 @@ example: change_json
 
 ~ body
 {{ 
-    $template.order
+    @template.order
         .replace("$.status", "pending")
         .replace("$.customer", "vasily pupkin")
 }}
@@ -1687,7 +1687,7 @@ example: change_json
 
 ~ body
 {{ 
-    $template.order
+    @template.order
         .replace("$.status", "refunded")
         .replace("$.customer", "nikolas john")
 }}
@@ -2009,7 +2009,7 @@ example: charp.class.sign
 
 ----- declare
 
-$response = 
+@response = 
 {
     "id" : {{ int }},
     "created_at": "{{ now }}",
@@ -2023,8 +2023,8 @@ $response =
 
 ~ body
 {{
-    json($response)
-        .add("sign", SignatureCalculator.Get($response, "very_secret_key"))
+    json(@response)
+        .add("sign", SignatureCalculator.Get(@response, "very_secret_key"))
 }}
 ```
 Request
@@ -2173,7 +2173,7 @@ example: action
 
 $$id = {{ seq }}
 
-$body = 
+@body = 
 {
     "id": {{ $$id }},
     "created_at": "{{ now.utc }}",
@@ -2183,7 +2183,7 @@ $body =
 ----- response
 
 ~ body
-{{ $body }}
+{{ @body }}
 
 ----- action
 
@@ -2193,12 +2193,12 @@ $body =
 string filePath = "/tmp/" + $$id + ".dat";
 
 ## write file
-File.WriteAllText(filePath, $body);
+File.WriteAllText(filePath, @body);
 
 
 -------------------- rule
 
-GET /order/{{ File.Exists($"/tmp/{value}.dat") ### if file exists ### >> $id }}
+GET /order/{{ File.Exists($"/tmp/{value}.dat") ### if file exists ### >> $$id }}
 
 ~ headers
 example: action
@@ -2206,13 +2206,13 @@ example: action
 ----- declare
 
 ## write json body from file
-$body:json = {{ File.ReadAllText($"/tmp/{$$id}.dat") }}
+@body:json = {{ File.ReadAllText($"/tmp/{$$id}.dat") }}
 
 ----- response
 
 ~ body
 {{ 
-    $body.replace("$.status", "processing")
+    @body.replace("$.status", "processing")
 }}
 ```
 

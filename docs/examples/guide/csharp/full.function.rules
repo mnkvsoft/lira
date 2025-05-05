@@ -6,7 +6,7 @@ GET /order
 example: guide/charp/full.function
 
 ----- declare
-$name = 
+@name = 
 {{
      var firstNames = new []{"Vasily", "Nikolas", "Ivan", "John"};
         var lastNames = new []{"Pupkin", "Stallone", "Norris", "Ivanov"};
@@ -21,5 +21,5 @@ $name =
 
 ~ body
 {
-    "customer": "{{ $name }}"
+    "customer": "{{ @name }}"
 }

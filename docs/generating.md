@@ -505,8 +505,8 @@ range: <имя_диапазона>/<диапазон>
 [Подробнее о блоках кода на языке C#](#блоки-кода-на-языке-c)
 - переопределения системных функций
 
-Пользовательские функции декларируются в блоке `declare` с успользованием суффикса `$`.
-При вызове пользовательской функции символ `$` может быть опущен.
+Пользовательские функции декларируются в блоке `declare` с успользованием префикса `@`.
+При вызове пользовательской функции символ `@` может быть опущен.
 
 В именах можно использовать символ `.`
 
@@ -524,17 +524,17 @@ Request-Id: {{ any }}
 
 ----- declare
 
-$req.id = {{ req.header: Request-Id }}
+@req.id = {{ req.header: Request-Id }}
 
 ----- response
 
 ~ headers
-Request-Id: {{ $req.id }}
+Request-Id: {{ @req.id }}
 
 ~ body
 {
     "id": {{ seq }},
-    "request_id": {{ $req.id }}
+    "request_id": {{ @req.id }}
 }
 ```
 
@@ -556,7 +556,7 @@ Request-Id: 12345
 
 
 
-При вызове пользовательских функций символ `$` может быть опущен.
+При вызове пользовательских функций символ `@` может быть опущен.
 
 В этом случае правило будет выглядеть следующим образом:
 
@@ -571,7 +571,7 @@ Request-Id: {{ any }}
 
 ----- declare
 
-$req.id = {{ req.header: Request-Id }}
+@req.id = {{ req.header: Request-Id }}
 
 ----- response
 
@@ -597,7 +597,7 @@ example: guide/custom_functions/template
 
 ----- declare
 
-$order.template = 
+@order.template = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -612,9 +612,9 @@ $order.template =
 ~ body
 {
     "orders": [
-        {{ $order.template }},
-        {{ $order.template }},
-        {{ $order.template }}
+        {{ @order.template }},
+        {{ @order.template }},
+        {{ @order.template }}
     ]
 }
 ```
@@ -670,7 +670,7 @@ example: guide/custom_functions/template.json
 
 ----- declare
 
-$order.template:json = 
+@order.template:json = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -686,17 +686,17 @@ $order.template:json =
 {
     "orders": [
         {{ 
-            $order.template
+            @order.template
                 .replace("$.status", "ok")
                 .replace("$.customer", "vasily pupkin")
         }},
         {{ 
-            $order.template
+            @order.template
                 .replace("$.status", "pending")
                 .replace("$.customer", "john silver")
         }},
         {{ 
-            $order.template
+            @order.template
                 .replace("$.status", "declined")
         }}
     ]
@@ -704,7 +704,7 @@ $order.template:json =
 ```
 :triangular_flag_on_post: Блок, в котором используется функция `replace()` является
 блоком `C#` - кода, который будет рассмотрен ниже. При вызовах функций в C# - блоках
-символ `$` используемый при объявлении функций не может быть опущен
+символ `@` используемый при объявлении функций не может быть опущен
 
 
 Запрос
@@ -889,7 +889,7 @@ example: guide/declare_layers/rule
 
 ----- declare
 
-$amount = {{ dec: [100 - 10000] }}
+@amount = {{ dec: [100 - 10000] }}
 $$id = {{ seq }}
 
 ----- response
@@ -900,11 +900,11 @@ $$id = {{ seq }}
     "items":[
         {
             "parent_transaction_id": {{ $$id }},
-            "amount": {{ $amount }}
+            "amount": {{ @amount }}
         },
         {
             "parent_transaction_id": {{ $$id }},
-            "amount": {{ $amount }}
+            "amount": {{ @amount }}
         }
     ]
 }
@@ -939,19 +939,19 @@ curl --location 'http://localhost/order' \
 ```
 -------------------- declare
 
-$amount = {{ dec: [100 - 10000] }}
+@amount = {{ dec: [100 - 10000] }}
 $$id = {{ seq }}
-$template = 
+@template = 
 {
     "id": {{ $$id }}
     "items":[
         {
             "parent_id": {{ $$id }},
-            "amount": {{ $amount }}
+            "amount": {{ @amount }}
         },
         {
             "parent_id": {{ $$id }},
-            "amount": {{ $amount }}
+            "amount": {{ @amount }}
         }
     ]
 }
@@ -966,7 +966,7 @@ example: guide/declare_layers/file
 ----- response
 
 ~ body
-{{ $template }}
+{{ @template }}
 
 -------------------- rule
 
@@ -978,7 +978,7 @@ example: guide/declare_layers/file
 ----- response
 
 ~ body
-{{ $template }}
+{{ @template }}
 ```
 Запрос для 1 правила
 ```
@@ -1181,7 +1181,7 @@ GET /order
 example: guide/charp/full.function
 
 ----- declare
-$name = 
+@name = 
 {{
      var firstNames = new []{"Vasily", "Nikolas", "Ivan", "John"};
         var lastNames = new []{"Pupkin", "Stallone", "Norris", "Ivanov"};
@@ -1196,7 +1196,7 @@ $name =
 
 ~ body
 {
-    "customer": "{{ $name }}"
+    "customer": "{{ @name }}"
 }
 ```
 Запрос

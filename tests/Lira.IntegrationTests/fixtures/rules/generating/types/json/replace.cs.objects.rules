@@ -4,7 +4,7 @@ GET /generating/types/json/replace/cs/objects
 
 ----- declare
 
-$json_var =
+@json_var =
 {
     "arrayField": [],
     "objectField": {},
@@ -17,7 +17,7 @@ $json_var =
 
 ~ body
 {{
-     json($json_var)
+     json(@json_var)
         .replace("$.arrayField", new []{1,2,3})
         .replace("$.objectField", new{b = "value"})
 }}

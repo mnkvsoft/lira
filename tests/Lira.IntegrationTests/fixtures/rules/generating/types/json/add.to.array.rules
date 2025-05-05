@@ -4,7 +4,7 @@ GET /generating/types/json/add/to/array
 
 ----- declare
 
-$json_var:json =
+@json_var:json =
 {
     "arrayObj" : [
         {
@@ -23,7 +23,7 @@ $json_var:json =
 
 ~ body
 {{
-     $json_var
+     @json_var
         .add("$.arrayObj", "{ 'name': 'name2' }")
         .add("$.arrayObj", new { name = "name3" })
         .add("$.arrayStr", "str2")
