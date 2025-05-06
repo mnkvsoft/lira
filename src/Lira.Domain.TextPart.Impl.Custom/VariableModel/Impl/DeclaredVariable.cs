@@ -4,7 +4,7 @@ public record DeclaredVariable : Variable
 {
     private readonly IReadOnlyCollection<IObjectTextPart> _parts;
 
-    public DeclaredVariable(CustomItemName name, IReadOnlyCollection<IObjectTextPart> parts, ReturnType? type) : base(name, type)
+    public DeclaredVariable(CustomItemName name, IReadOnlyCollection<IObjectTextPart> parts, ReturnType? valueType) : base(name, valueType)
     {
         _parts = parts;
     }

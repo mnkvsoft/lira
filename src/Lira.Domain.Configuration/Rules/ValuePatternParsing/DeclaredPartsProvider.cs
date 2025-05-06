@@ -22,12 +22,12 @@ class DeclaredPartsProvider : IDeclaredPartsProvider
             .FirstOrDefault(v => v.Name == name.TrimStart(Consts.ControlChars.VariablePrefix));
 
         if (variable != null)
-            return variable.Type;
+            return variable.ReturnType;
 
         var function = _items.Functions
             .FirstOrDefault(v => v.Name == name.TrimStart(Consts.ControlChars.FunctionPrefix));
 
-        return function?.Type;
+        return function?.ReturnType;
     }
 
     public void SetVariable(string name, RuleExecutingContext context, dynamic value)

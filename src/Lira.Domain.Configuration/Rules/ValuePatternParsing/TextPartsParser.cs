@@ -4,6 +4,9 @@ using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
+using Lira.Domain.TextPart.Impl.Custom;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.Impl;
 using Lira.Domain.TextPart.Impl.System;
 using Microsoft.Extensions.Logging;
 
@@ -16,9 +19,10 @@ public interface ITextPartsParser
 
 class TextPartsParser : ITextPartsParser
 {
-    private record Static(object Value) : IObjectTextPart
+    private record Static(string Value) : IObjectTextPart
     {
         public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(Value);
+        public ReturnType ReturnType => ReturnType.String;
     }
 
     private readonly IFunctionFactorySystem _functionFactorySystem;
@@ -82,7 +86,24 @@ class TextPartsParser : ITextPartsParser
         {
             var pipelineItemsRaw = value.Split(Consts.ControlChars.PipelineSplitter);
 
-            pipeline = new TransformPipeline(await CreateStartFunction(pipelineItemsRaw[0].Trim(), context));
+            var startFunction = await CreateStartFunction(pipelineItemsRaw[0].Trim(), context);
+            pipeline = new TransformPipeline(startFunction);
+
+            if (pipelineItemsRaw.Length == 2)
+            {
+                var maybeVariableDeclaration = pipelineItemsRaw[1].Trim();
+
+                // case: {{ guid >> $$id }}
+                if (maybeVariableDeclaration.StartsWith(Consts.ControlChars.VariablePrefix))
+                {
+                    if (maybeVariableDeclaration.Split(" ").Length > 1)
+                        throw new Exception($"Invalid write to variable declaration: {Consts.ControlChars.WriteToVariablePrefix} " + maybeVariableDeclaration);
+
+                    var variable = new RuntimeVariable(new CustomItemName(maybeVariableDeclaration.TrimStart(Consts.ControlChars.VariablePrefix)), startFunction.ReturnType);
+                    context.DeclaredItems.Variables.Add(variable);
+                    return [new ObjectTextPartWithSaveVariable(startFunction, variable)];
+                }
+            }
 
             for (int i = 1; i < pipelineItemsRaw.Length; i++)
             {

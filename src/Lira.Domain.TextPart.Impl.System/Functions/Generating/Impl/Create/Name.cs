@@ -8,4 +8,6 @@ internal class Name_ : FunctionBase, IObjectTextPart
     {
         return Task.FromResult<dynamic?>(NameFirst.Next() + " " + NameLast.Next());
     }
+
+    public ReturnType ReturnType => ReturnType.String;
 }

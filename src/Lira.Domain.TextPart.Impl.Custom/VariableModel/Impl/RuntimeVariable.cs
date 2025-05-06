@@ -2,7 +2,7 @@ namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.Impl;
 
 public record RuntimeVariable : Variable
 {
-    public RuntimeVariable(CustomItemName name, ReturnType? type) : base(name, type)
+    public RuntimeVariable(CustomItemName name, ReturnType? valueType) : base(name, valueType)
     {
     }
 

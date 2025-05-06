@@ -34,7 +34,7 @@ public class Tests
     public void ReadVariable(string code, string expected)
     {
         var declaredItems = new DeclaredItems();
-        declaredItems.Variables.Add(new RuntimeVariable(new CustomItemName("read.from.variable"), type: null));
+        declaredItems.Variables.Add(new RuntimeVariable(new CustomItemName("read.from.variable"), valueType: null));
 
         var (codeBlock, _) = CodeParser.Parse(
             code,
@@ -48,7 +48,7 @@ public class Tests
     public void ReadVariableWithPropertyAccess()
     {
         var declaredItems = new DeclaredItems();
-        declaredItems.Variables.Add(new DeclaredVariable(new CustomItemName("person"), [Mock.Of<IObjectTextPart>()], type: null));
+        declaredItems.Variables.Add(new DeclaredVariable(new CustomItemName("person"), [Mock.Of<IObjectTextPart>()], valueType: null));
 
         var (codeBlock, _) = CodeParser.Parse(
             "$$person.name",
@@ -81,7 +81,7 @@ public class Tests
     {
         var declaredItems = new DeclaredItems();
         declaredItems.Functions.Add(new Function(new CustomItemName("read.from.function"),
-            Array.Empty<IObjectTextPart>(), type: null));
+            Array.Empty<IObjectTextPart>(), valueType: null));
 
         var (codeBlock, _) = CodeParser.Parse(
             code,

@@ -9,5 +9,5 @@ GET /nuget/separate_cs_file
 
 ~ body
 {
-    "token": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6Ijc5MTYxMTEyMjMzIiwiZXhwIjoxNzQxMjA4NDAwfQ.OAnkBIDMJFDh6uEXT7ifg2P0gxk982nm1QiC8BCIGWrLhUeH7Q4uaFmvA-aa2BhudbEH-m00Djq56Gu0ohQROQ"
+    "token": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6Ijc5MTYxMTEyMjMzIiwiZXhwIjoxNzQxMjE5MjAwfQ.w-0rc093prEPdUjIepYI3KcAtYKFISn5a-x-S9v47kq0tNF5Gwl_3MW-A_yTL4mnT_Pz03ivcAdRXmjQBZk92w"
 }

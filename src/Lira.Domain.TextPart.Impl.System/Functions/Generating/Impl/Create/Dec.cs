@@ -11,6 +11,7 @@ internal class Dec : WithRangeArgumentFunction<decimal>, IObjectTextPart
     private Interval<decimal> _interval = new(0.01m, 10_000);
 
     public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(Math.Round(Random.Shared.NextDecimal(_interval), 2));
+    public ReturnType ReturnType => ReturnType.Decimal;
 
 
     public override void SetArgument(Interval<decimal> argument)

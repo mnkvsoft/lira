@@ -1,0 +1,22 @@
+-------------------- case
+
+GET /variables/short_declaration/generation
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "created_binding_id": 123,
+    "bindings":[
+        {
+            "binding":{
+                "id": 123
+            }
+        }
+    ]
+}
+
+

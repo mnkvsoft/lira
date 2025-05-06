@@ -77,7 +77,7 @@ static class CodeParser
                 {
                     var variableName = writeItem.ItemName.TrimStart(Consts.ControlChars.VariablePrefix);
 
-                    var variable = new RuntimeVariable(new CustomItemName(variableName), type: null);
+                    var variable = new RuntimeVariable(new CustomItemName(variableName), valueType: null);
 
                     onlyNewVariables.Add(variable);
                     withNewVariables.Add(variable);

@@ -10,12 +10,12 @@ public abstract record Variable : DeclaredItem, IUniqueSetItem, IObjectTextPart
     public override string Name => _name.Value;
     public string EntityName => "variable";
 
-    public readonly ReturnType? Type;
+    public ReturnType? ReturnType { get; }
 
-    protected Variable(CustomItemName name, ReturnType? type)
+    protected Variable(CustomItemName name, ReturnType? valueType)
     {
         _name = name;
-        Type = type;
+        ReturnType = valueType;
     }
 
     private static readonly object NullValue = new();
@@ -50,15 +50,15 @@ public abstract record Variable : DeclaredItem, IUniqueSetItem, IObjectTextPart
 
     private dynamic? GetValueTyped(dynamic? value)
     {
-        if (Type == null)
+        if (ReturnType == null)
             return value;
 
-        if (!TypedValueCreator.TryCreate(Type, value, out dynamic? valueTyped, out Exception exc))
+        if (!TypedValueCreator.TryCreate(ReturnType, value, out dynamic? valueTyped, out Exception exc))
         {
             throw new Exception(
                 $"Can't cast value '{value}' " +
                 $"of type '{value?.GetType()}' " +
-                $"to type '{Type}'" +
+                $"to type '{ReturnType}'" +
                 $"for write to variable '{Name}'",
                 exc);
         }

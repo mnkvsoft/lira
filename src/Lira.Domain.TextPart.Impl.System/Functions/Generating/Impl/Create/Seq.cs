@@ -9,4 +9,5 @@ internal class Seq : FunctionBase, IObjectTextPart
     public override string Name => "seq";
 
     public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(_sequence.Next());
+    public ReturnType ReturnType => ReturnType.Int;
 }

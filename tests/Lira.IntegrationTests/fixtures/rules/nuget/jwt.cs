@@ -26,7 +26,7 @@ public static class jwtUtils
         var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.Parse("2025-03-06"),
+            expires: DateTime.SpecifyKind(new DateTime(2025, 03, 06), DateTimeKind.Utc),
             signingCredentials: cred);
 
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);

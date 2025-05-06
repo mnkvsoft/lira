@@ -3,7 +3,7 @@ namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create.Date
 internal class DatePast : FunctionBase, IObjectTextPart
 {
     public override string Name => "date.past";
-
+    public ReturnType ReturnType => ReturnType.Date;
     public Task<dynamic?> Get(RuleExecutingContext context)
     {
         var now = DateTime.Now;

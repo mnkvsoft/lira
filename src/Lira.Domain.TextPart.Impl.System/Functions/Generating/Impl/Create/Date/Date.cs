@@ -3,6 +3,7 @@ namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create.Date
 internal class Date : FunctionBase, IObjectTextPart
 {
     public override string Name => "date";
+    public ReturnType ReturnType => ReturnType.Date;
 
     public Task<dynamic?> Get(RuleExecutingContext context)
     {

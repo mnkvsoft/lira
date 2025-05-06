@@ -7,6 +7,7 @@ internal class RandomCustom : WithArgumentFunction<string[]>, IObjectTextPart
     public override bool ArgumentIsRequired => true;
 
     public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(_values[Random.Shared.Next(0, _values.Length)]);
+    public ReturnType ReturnType => ReturnType.String;
 
     public override void SetArgument(string[] argument)
     {

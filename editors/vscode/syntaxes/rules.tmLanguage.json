@@ -57,11 +57,19 @@
 		"variables": {
 			"patterns": [{
 				"name": "entity.name.variable.rules",
-				"match": "\\$\\$([a-zA-Z]|\\.)+"
+				"match": "\\$\\$([a-zA-Z]|\\.|_)+"
 			},
 			{
 				"name": "entity.name.variable.rules",
 				"match": "elapsed|attempt|value"
+			},
+			{
+				"name": "entity.name.variable.rules",
+				"match": "`([a-zA-Z]|\\.|_)+"
+			},
+			{
+				"name": "entity.name.variable.rules",
+				"match": "``([a-zA-Z]|\\.|_)+"
 			}
 			]
 		},

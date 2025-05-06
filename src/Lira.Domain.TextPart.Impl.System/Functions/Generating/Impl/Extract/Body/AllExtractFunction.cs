@@ -6,6 +6,7 @@ namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Extract.Bod
 class AllExtractFunction : FunctionBase, IBodyExtractFunction, IObjectTextPart
 {
     public override string Name => "req.body.all";
+    public ReturnType ReturnType => ReturnType.String;
 
     public string? Extract(string? value)
     {

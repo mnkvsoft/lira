@@ -55,7 +55,8 @@ public class CustomSetFunction : IObjectTextPart, IMatchFunctionTyped
     }
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
-    public ReturnType ValueType => ReturnType.String;
+    ReturnType IMatchFunctionTyped.ValueType => ReturnType.String;
+    ReturnType IObjectTextPart.ReturnType => ReturnType.String;
 
     public Task<dynamic?> Get(RuleExecutingContext context)
     {
@@ -69,4 +70,6 @@ public class CustomSetFunction : IObjectTextPart, IMatchFunctionTyped
 
         return Task.FromResult(_hashSet.Contains(value));
     }
+
+    public ReturnType? ValueType { get; }
 }

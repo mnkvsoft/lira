@@ -35,6 +35,8 @@ static partial class ClassCodeCreator
             @"
 public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
 {
+    ReturnType? IObjectTextPart.ReturnType => null;
+
     public [className](DependenciesBase dependencies) : base(dependencies)
     {
     }
@@ -66,6 +68,8 @@ public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
             @"
 public sealed class [className] : ITransformFunction
 {
+    ReturnType? ITransformFunction.ReturnType => null;
+
     public dynamic? Transform(dynamic? [input])
     {
         [code]

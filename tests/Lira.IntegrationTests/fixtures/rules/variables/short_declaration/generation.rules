@@ -1,0 +1,15 @@
+-------------------- rule
+
+GET /variables/short_declaration/generation
+
+----- response
+{
+    "created_binding_id": {{ echo: 123 >> $$bindingId }},
+    "bindings":[
+        {
+            "binding":{
+                "id": {{ $$bindingId }}
+            }
+        }
+    ]
+}

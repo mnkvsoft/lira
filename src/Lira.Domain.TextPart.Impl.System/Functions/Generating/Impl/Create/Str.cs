@@ -10,6 +10,7 @@ internal class Str : WithArgumentFunction<int>, IObjectTextPart
     private int _length = 20;
 
     public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(GetRandomString(_length));
+    public ReturnType ReturnType => ReturnType.String;
 
     public override void SetArgument(int argument)
     {

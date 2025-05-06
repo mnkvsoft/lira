@@ -2,6 +2,8 @@
 
 record UpperFunction : ITransformFunction
 {
+    public ReturnType ReturnType => ReturnType.String;
+
     public dynamic? Transform(dynamic? input)
     {
         object? value = input;
