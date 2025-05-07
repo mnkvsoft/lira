@@ -4,7 +4,7 @@ GET /generating/types/json/replace/from_var
 
 ----- declare
 
-$json_var =
+#json_var =
 {
     "stringField" : "value",
     "intField" : 0,
@@ -26,7 +26,7 @@ $$objectVar    = {"b": "value"}
 
 ~ body
 {{
-     json($json_var)
+     json(#json_var)
         .replace("$.stringField", $$stringVar)
         .replace("$.intField", $$intVar)
         .replace("$.boolField", $$boolVar)

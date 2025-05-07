@@ -59,20 +59,20 @@ public class Tests
     }
 
     [TestCase(
-        "int a = $read.from.function;",
-        "[:c int a = ][:r $read.from.function][:c ;]")]
+        "int a = #read.from.function;",
+        "[:c int a = ][:r #read.from.function][:c ;]")]
     [TestCase(
-        "int a =   $read.from.function;",
-        "[:c int a =   ][:r $read.from.function][:c ;]")]
+        "int a =   #read.from.function;",
+        "[:c int a =   ][:r #read.from.function][:c ;]")]
     [TestCase(
-        "int a   =   $read.from.function;",
-        "[:c int a   =   ][:r $read.from.function][:c ;]")]
+        "int a   =   #read.from.function;",
+        "[:c int a   =   ][:r #read.from.function][:c ;]")]
     [TestCase(
-        "int a   =\n   $read.from.function;",
-        "[:c int a   =\n   ][:r $read.from.function][:c ;]")]
+        "int a   =\n   #read.from.function;",
+        "[:c int a   =\n   ][:r #read.from.function][:c ;]")]
     [TestCase(
-        "if($read.from.function == a)",
-        "[:c if(][:r $read.from.function][:c == a)]")]
+        "if(#read.from.function == a)",
+        "[:c if(][:r #read.from.function][:c == a)]")]
     [TestCase(
         "jpath: $.amount",
         "[:c jpath: $.amount]")]

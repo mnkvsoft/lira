@@ -4,10 +4,11 @@ GET /test
 
 ----- declare
 
-$a:json =
+#a:json =
 {
    "a": "{{ now }}"
 }
+
 ----- response
 
 ~ code

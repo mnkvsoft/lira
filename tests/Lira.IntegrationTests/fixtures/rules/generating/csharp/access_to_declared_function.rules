@@ -4,7 +4,7 @@ GET /generating/csharp/access_to_declared_function
 
 ----- declare
 
-$duration.day = {{ TimeSpan.FromDays(1) }}
+#duration.day = {{ TimeSpan.FromDays(1) }}
 
 ----- response
 
@@ -12,4 +12,4 @@ $duration.day = {{ TimeSpan.FromDays(1) }}
 200
 
 ~ body
-{{ $duration.day + TimeSpan.FromMinutes(1) }}
+{{ #duration.day + TimeSpan.FromMinutes(1) }}

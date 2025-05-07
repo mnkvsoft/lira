@@ -4,7 +4,7 @@ GET /generating/declare/function/extract
 
 ----- declare
 
-$req.id = {{ req.header: Request-Id }}
+#req.id = {{ req.header: Request-Id }}
 
 ----- response
 

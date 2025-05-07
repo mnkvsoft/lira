@@ -4,7 +4,7 @@ GET /generating/types/json/function/replace
 
 ----- declare
 
-$template:json = 
+#template:json = 
 {
     "status": "pending"
 }
@@ -13,10 +13,10 @@ $template:json =
 
 ~ body
 {{ 
-    $template
+    #template
         .replace("$.status", "approved")
         .replace("$.status", "ok") 
 }}
 {{ 
-    $template
+    #template
 }}

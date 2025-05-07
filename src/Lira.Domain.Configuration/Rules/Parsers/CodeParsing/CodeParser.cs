@@ -231,6 +231,33 @@ static class CodeParser
                         sbAccessToVariable.Clear();
                     }
                 }
+                else if (iterator.Current == '#')
+                {
+                    sbAccessToVariable.Append(iterator.Current);
+
+                    iterator.MoveNext();
+                    sbOtherCode.Append(iterator.Current);
+
+                    if (CustomItemName.IsAllowedFirstCharInName(iterator.Current))
+                    {
+                        enterVariableName = true;
+                        sbAccessToVariable.Append(iterator.Current);
+                        if (sbOtherCode.Length > 0)
+                        {
+                            int length = sbOtherCode.Length - sbAccessToVariable.Length;
+                            if (length > 0)
+                            {
+                                tokens.Add(new CodeToken.OtherCode(sbOtherCode.ToString()[..length]));
+                            }
+
+                            sbOtherCode.Clear();
+                        }
+                    }
+                    else
+                    {
+                        sbAccessToVariable.Clear();
+                    }
+                }
             }
         }
 

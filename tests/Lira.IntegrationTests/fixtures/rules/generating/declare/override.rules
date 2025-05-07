@@ -4,7 +4,7 @@ GET /generating/declare/override
 
 ----- declare
 
-$int = {{ 5 }}
+#int = {{ 5 }}
 
 ----- response
 

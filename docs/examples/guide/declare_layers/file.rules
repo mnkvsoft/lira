@@ -1,18 +1,18 @@
 -------------------- declare
 
-$amount = {{ dec: [100 - 10000] }}
+#amount = {{ dec: [100 - 10000] }}
 $$id = {{ seq }}
-$template = 
+#template = 
 {
     "id": {{ $$id }}
     "items":[
         {
             "parent_id": {{ $$id }},
-            "amount": {{ $amount }}
+            "amount": {{ #amount }}
         },
         {
             "parent_id": {{ $$id }},
-            "amount": {{ $amount }}
+            "amount": {{ #amount }}
         }
     ]
 }
@@ -27,7 +27,7 @@ example: guide/declare_layers/file
 ----- response
 
 ~ body
-{{ $template }}
+{{ #template }}
 
 -------------------- rule
 
@@ -39,4 +39,4 @@ example: guide/declare_layers/file
 ----- response
 
 ~ body
-{{ $template }}
+{{ #template }}
