@@ -1,33 +1,21 @@
-﻿using Lira.Domain.Configuration.Extensions;
-using Lira.Domain.TextPart;
+﻿using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
-using Lira.Common.Extensions;
+using Lira.Domain.TextPart.Impl.Custom;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
-class DeclaredPartsProvider(IReadonlyDeclaredItems items) : IDeclaredPartsProvider
+class DeclaredPartsProvider(ISet<DeclaredItem> items) : IDeclaredPartsProvider
 {
-    public IObjectTextPart Get(string name) => items.Get(name);
-
-    public ReturnType? GetPartType(string name)
+    public IObjectTextPart Get(string name)
     {
-        var variable = items.Variables
-            .FirstOrDefault(v => v.Name == name.TrimStart(Consts.ControlChars.RuleVariablePrefix));
 
-        if (variable != null)
-            return variable.ReturnType;
-
-        var function = items.Functions
-            .FirstOrDefault(v => v.Name == name.TrimStart(Consts.ControlChars.FunctionPrefix));
-
-        return function?.ReturnType;
+        return items.SingleOrDefault(x => x.Name == name) ?? throw new Exception($"Unknown declaration '{name}'");
     }
 
     public void SetVariable(string name, RuleExecutingContext context, dynamic value)
     {
-        var variable = items.Variables
-            .Single(v => v.Name == name.TrimStart(Consts.ControlChars.RuleVariablePrefix));
-
+        var variable = items.OfType<Variable>().Single(v => v.Name == name);
         variable.SetValue(context, value);
     }
 }

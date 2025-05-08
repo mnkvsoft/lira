@@ -1,5 +1,7 @@
+using System.Collections.Immutable;
 using Lira.Domain.Configuration.Templating;
 using Lira.Domain.TextPart.Impl.CSharp;
+using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Impl.Custom.CustomDicModel;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
@@ -8,7 +10,7 @@ public interface IParsingContext;
 
 public interface IReadonlyParsingContext
 {
-    IReadonlyDeclaredItems DeclaredItems { get; }
+    IReadOnlySet<DeclaredItem> DeclaredItems { get; }
     IReadOnlyCollection<Template> Templates { get; }
     IReadOnlyCustomDicts CustomDicts { get; }
     string RootPath { get; }
@@ -32,7 +34,7 @@ class ParsingContext : IParsingContext, IReadonlyParsingContext
          FunctionFactoryUsingContext? cSharpUsingContext = null)
      {
          CSharpUsingContext = cSharpUsingContext ?? context.CSharpUsingContext;
-         DeclaredItems = declaredItems ?? new DeclaredItems(context.DeclaredItems);
+         DeclaredItems = declaredItems ?? DeclaredItems.WithoutLocalVariables(context.DeclaredItems);
          Templates = new TemplateSet(context.Templates);
          CustomDicts = new CustomDicts(context.CustomDicts);
          RootPath = context.RootPath;
@@ -64,7 +66,7 @@ class ParsingContext : IParsingContext, IReadonlyParsingContext
 
     IReadOnlyCustomDicts IReadonlyParsingContext.CustomDicts => CustomDicts;
     IReadOnlyCollection<Template> IReadonlyParsingContext.Templates => Templates.ToArray();
-    IReadonlyDeclaredItems IReadonlyParsingContext.DeclaredItems => DeclaredItems;
+    IReadOnlySet<DeclaredItem> IReadonlyParsingContext.DeclaredItems => DeclaredItems.ToImmutableHashSet();
 
     public void SetTemplates(TemplateSet templates)
     {

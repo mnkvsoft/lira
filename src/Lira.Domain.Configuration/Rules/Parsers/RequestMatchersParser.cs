@@ -7,7 +7,6 @@ using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
-using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 using Lira.Domain.TextPart.Impl.System;
@@ -102,7 +101,7 @@ class RequestMatchersParser
         if (localVariables.Count > 0)
             throw new Exception($"Local variables ({string.Join(", ", localVariables.Select(x => x.Name))}) are not supported for matching function");
 
-        context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
+        context.DeclaredItems.TryAddRange(newRuntimeVariables);
 
         var functionFactory = await _functionFactoryCSharpFactory.Get();
         var matcher = functionFactory.TryCreateRequestMatcher(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(context.DeclaredItems)), codeBlock);
@@ -303,7 +302,7 @@ class RequestMatchersParser
         if (localVariables.Count > 0)
             throw new Exception($"Local variables ({string.Join(", ", localVariables.Select(x => x.Name))}) are not supported for matching function");
 
-        context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
+        context.DeclaredItems.TryAddRange(newRuntimeVariables);
 
         var functionFactory = await _functionFactoryCSharpFactory.Get();
         var createFunctionResult = functionFactory.TryCreateMatchFunction(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(context.DeclaredItems)), codeBlock);
@@ -315,7 +314,7 @@ class RequestMatchersParser
         var (invoke, maybeVariableDeclaration) = value.SplitToTwoPartsFromEnd(Consts.ControlChars.WriteToVariablePrefix).Trim();
 
         // case: {{ dec >> $$amount }}
-        if (maybeVariableDeclaration != null && maybeVariableDeclaration.StartsWith(Consts.ControlChars.RuleVariablePrefix))
+        if (maybeVariableDeclaration != null && maybeVariableDeclaration.StartsWith(RuleVariable.Prefix))
         {
             if (maybeVariableDeclaration.Split(" ").Length > 1)
                 throw new Exception($"Invalid write to variable declaration: {Consts.ControlChars.WriteToVariablePrefix} " + maybeVariableDeclaration);
@@ -326,8 +325,8 @@ class RequestMatchersParser
 
             var matchFunction = await CreateMatchFunction(invoke, context);
 
-            var variable = new RuntimeRuleVariable(new CustomItemName(name.TrimStart(Consts.ControlChars.RuleVariablePrefix)), type ?? matchFunction.ValueType);
-            context.DeclaredItems.Variables.Add(variable);
+            var variable = new RuntimeRuleVariable(name, type ?? matchFunction.ValueType);
+            context.DeclaredItems.Add(variable);
             return new MatchFunctionWithSaveVariable(matchFunction, variable);
         }
 

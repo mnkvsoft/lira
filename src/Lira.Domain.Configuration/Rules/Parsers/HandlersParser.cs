@@ -87,8 +87,8 @@ class HandlersParser
             var code = GetActionCode(section);
             var (codeBlock, newRuntimeVariables, newLocalVariables) = CodeParser.Parse(code, parsingContext.DeclaredItems);
 
-            parsingContext.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
-            parsingContext.DeclaredItems.LocalVariables.TryAddLocalVariables(newLocalVariables);
+            parsingContext.DeclaredItems.TryAddRange(newRuntimeVariables);
+            parsingContext.DeclaredItems.TryAddRange(newLocalVariables);
 
             var functionFactory = await _functionFactoryCSharpFactory.Get();
             var res = functionFactory.TryCreateAction(

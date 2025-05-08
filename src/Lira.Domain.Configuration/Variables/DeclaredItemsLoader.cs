@@ -1,6 +1,7 @@
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.FileSectionFormat;
+using NuGet.Packaging;
 
 namespace Lira.Domain.Configuration.Variables;
 
@@ -16,7 +17,7 @@ internal class DeclaredItemsLoader(DeclaredItemsParser parser)
             try
             {
                 var lines = TextCleaner.DeleteEmptiesAndComments(await File.ReadAllTextAsync(variableFile));
-                result.Add(await parser.Parse(lines, newContext.WithCurrentPath(variableFile.GetDirectory())));
+                result.AddRange(await parser.Parse(lines, newContext.WithCurrentPath(variableFile.GetDirectory())));
             }
             catch (Exception exc)
             {

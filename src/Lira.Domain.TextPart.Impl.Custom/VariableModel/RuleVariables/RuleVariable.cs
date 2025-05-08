@@ -1,20 +1,20 @@
-using Lira.Common;
 using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables;
 
-public abstract record RuleVariable : DeclaredItem, IUniqueSetItem, IObjectTextPart, IVariable
+public abstract class RuleVariable : Variable
 {
-    private readonly CustomItemName _name;
+    public const string Prefix = "$$";
 
-    public override string Name => _name.Value;
-    public string EntityName => "variable";
+    public override string Name { get; }
+    public override ReturnType? ReturnType { get; }
 
-    public ReturnType? ReturnType { get; }
-
-    protected RuleVariable(CustomItemName name, ReturnType? valueType)
+    protected RuleVariable(string name, ReturnType? valueType)
     {
-        _name = name;
+        if(!CustomItemName.IsValidName(Prefix, name))
+            throw new ArgumentException("Invalid local variable name: " + name, nameof(name));
+
+        Name = name;
         ReturnType = valueType;
     }
 
@@ -25,7 +25,7 @@ public abstract record RuleVariable : DeclaredItem, IUniqueSetItem, IObjectTextP
     {
         var values = GetVariableValues(ctx);
 
-        if (values.TryGetValue(_name, out var value))
+        if (values.TryGetValue(Name, out var value))
             return ReferenceEquals(value, NullValue) ? null : value;
 
         var initValue = GetValueTyped(await GetInitiatedValue(ctx));
@@ -33,7 +33,7 @@ public abstract record RuleVariable : DeclaredItem, IUniqueSetItem, IObjectTextP
         return initValue;
     }
 
-    public void SetValue(RuleExecutingContext ctx, dynamic? value)
+    public override void SetValue(RuleExecutingContext ctx, dynamic? value)
     {
         SetValueInternal(ctx, GetValueTyped(value));
     }
@@ -43,9 +43,9 @@ public abstract record RuleVariable : DeclaredItem, IUniqueSetItem, IObjectTextP
         var values = GetVariableValues(ctx);
 
         if (valueToSave == null)
-            values[_name] = NullValue;
+            values[Name] = NullValue;
         else
-            values[_name] = valueToSave;
+            values[Name] = valueToSave;
     }
 
     private dynamic? GetValueTyped(dynamic? value)
@@ -66,10 +66,10 @@ public abstract record RuleVariable : DeclaredItem, IUniqueSetItem, IObjectTextP
         return valueTyped;
     }
 
-    private static Dictionary<CustomItemName, dynamic?> GetVariableValues(RuleExecutingContext ctx)
+    private static Dictionary<string, dynamic?> GetVariableValues(RuleExecutingContext ctx)
     {
-        return ctx.Items.GetOrCreate(key: typeof(RuleVariable), () => new Dictionary<CustomItemName, dynamic?>());
+        return ctx.Items.GetOrCreate(key: typeof(RuleVariable), () => new Dictionary<string, dynamic?>());
     }
 
-    Task<dynamic?> IObjectTextPart.Get(RuleExecutingContext context) => GetValue(context);
+    public override Task<dynamic?> Get(RuleExecutingContext context) => GetValue(context);
 }

@@ -1,28 +1,25 @@
 ﻿using ArgValidation;
+// ReSharper disable VirtualMemberCallInConstructor
 
 namespace Lira.Domain.TextPart.Impl.Custom;
 
-public readonly record struct CustomItemName
+public static class CustomItemName
 {
-    public string Value { get; }
-
-    public CustomItemName(string value)
+    public static bool IsValidName(string prefix, string value)
     {
-        Arg.Validate(value, nameof(value))
-            .NotNullOrWhitespace();
+        Arg.NotNullOrEmpty(prefix, nameof(prefix));
 
-        if (!IsValidName(value))
-            throw new ArgumentException($"Variable name must contains only letters or '_','.'. Current: '{value}'");
-
-        Value = value;
+        return !string.IsNullOrWhiteSpace(value) &&
+               value.StartsWith(prefix) &&
+               IsValidName(value[prefix.Length..]);
     }
 
-    private static bool IsValidName(string value)
+    static bool IsValidName(string withoutPrefix)
     {
-        if (!IsAllowedFirstCharInName(value[0]))
+        if (!IsAllowedFirstCharInName(withoutPrefix[0]))
             return false;
 
-        foreach (char c in value[1..])
+        foreach (char c in withoutPrefix[1..])
         {
             if (IsAllowedCharInName(c))
                 continue;
@@ -34,9 +31,4 @@ public readonly record struct CustomItemName
 
     public static bool IsAllowedCharInName(char c) => char.IsLetter(c) || char.IsDigit(c) || c == '_' || c == '.';
     public static bool IsAllowedFirstCharInName(char c) => char.IsLetter(c) || char.IsDigit(c) || c == '_';
-
-    public override string ToString()
-    {
-        return Value;
-    }
 }

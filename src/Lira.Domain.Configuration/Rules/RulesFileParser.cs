@@ -204,12 +204,12 @@ internal class RuleFileParser
 
     private async Task<DeclaredItems> GetDeclaredItems(IReadOnlyCollection<FileSection> childSections, IReadonlyParsingContext parsingContext)
     {
-        var result = new DeclaredItems(parsingContext.DeclaredItems);
+        var result = DeclaredItems.WithoutLocalVariables(parsingContext.DeclaredItems);
 
         var variablesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Declare);
         if (variablesSection != null)
         {
-            result.Add(await _fileSectionDeclaredItemsParser.Parse(variablesSection, parsingContext));
+            result.TryAddRange(await _fileSectionDeclaredItemsParser.Parse(variablesSection, parsingContext));
         }
 
         return result;

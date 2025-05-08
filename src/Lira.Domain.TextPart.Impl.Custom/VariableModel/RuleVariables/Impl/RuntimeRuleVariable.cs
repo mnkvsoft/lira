@@ -1,8 +1,8 @@
 namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 
-public record RuntimeRuleVariable : RuleVariable
+public class RuntimeRuleVariable : RuleVariable
 {
-    public RuntimeRuleVariable(CustomItemName name, ReturnType? valueType) : base(name, valueType)
+    public RuntimeRuleVariable(string name, ReturnType? valueType) : base(name, valueType)
     {
     }
 

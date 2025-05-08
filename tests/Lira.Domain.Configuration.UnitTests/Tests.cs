@@ -1,8 +1,8 @@
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
-using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.LocalVariables;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 using Moq;
 
@@ -31,10 +31,46 @@ public class Tests
     [TestCase(
         "$$\"\"\"some string\"\"\"",
         "[:c $$\"\"\"some string\"\"\"]")]
-    public void ReadVariable(string code, string expected)
+    public void ReadRuleVariable(string code, string expected)
     {
-        var declaredItems = new DeclaredItems();
-        declaredItems.Variables.Add(new RuntimeRuleVariable(new CustomItemName("read.from.variable"), valueType: null));
+        var declaredItems = new DeclaredItems {
+            new RuntimeRuleVariable("$$read.from.variable", valueType: null),
+        };
+
+        var (codeBlock, _, _) = CodeParser.Parse(
+            code,
+            declaredItems);
+
+        var result = string.Concat(codeBlock.Tokens);
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [TestCase(
+        "int a = $read.from.variable;",
+        "[:c int a = ][:r $read.from.variable][:c ;]")]
+    [TestCase(
+        "var a = $read.from.variable.ToString();",
+        "[:c var a = ][:r $read.from.variable][:c .ToString();]")]
+    [TestCase(
+        "int a =   $read.from.variable;",
+        "[:c int a =   ][:r $read.from.variable][:c ;]")]
+    [TestCase(
+        "int a   =   $read.from.variable;",
+        "[:c int a   =   ][:r $read.from.variable][:c ;]")]
+    [TestCase(
+        "int a   =\n   $read.from.variable;",
+        "[:c int a   =\n   ][:r $read.from.variable][:c ;]")]
+    [TestCase(
+        "if($read.from.variable == a)",
+        "[:c if(][:r $read.from.variable][:c == a)]")]
+    [TestCase(
+        "$\"\"\"some string\"\"\"",
+        "[:c $\"\"\"some string\"\"\"]")]
+    public void ReadLocalVariable(string code, string expected)
+    {
+        var declaredItems = new DeclaredItems {
+            new LocalVariable("$read.from.variable", valueType: null)
+        };
 
         var (codeBlock, _, _) = CodeParser.Parse(
             code,
@@ -45,10 +81,9 @@ public class Tests
     }
 
     [Test]
-    public void ReadVariableWithPropertyAccess()
+    public void ReadRuleVariableWithPropertyAccess()
     {
-        var declaredItems = new DeclaredItems();
-        declaredItems.Variables.Add(new DeclaredRuleVariable(new CustomItemName("person"), [Mock.Of<IObjectTextPart>()], valueType: null));
+        var declaredItems = new DeclaredItems { new DeclaredRuleVariable("$$person", [Mock.Of<IObjectTextPart>()], valueType: null) };
 
         var (codeBlock, _, _) = CodeParser.Parse(
             "$$person.name",
@@ -56,6 +91,19 @@ public class Tests
 
         var result = string.Concat(codeBlock.Tokens);
         Assert.That(result, Is.EqualTo("[:r $$person][:c .name]"));
+    }
+
+    [Test]
+    public void ReadLocalVariableWithPropertyAccess()
+    {
+        var declaredItems = new DeclaredItems { new LocalVariable("$person", valueType: null) };
+
+        var (codeBlock, _, _) = CodeParser.Parse(
+            "$person.name",
+            declaredItems);
+
+        var result = string.Concat(codeBlock.Tokens);
+        Assert.That(result, Is.EqualTo("[:r $person][:c .name]"));
     }
 
     [TestCase(
@@ -79,9 +127,11 @@ public class Tests
 
     public void ReadFunction(string code, string expected)
     {
-        var declaredItems = new DeclaredItems();
-        declaredItems.Functions.Add(new Function(new CustomItemName("read.from.function"),
-            Array.Empty<IObjectTextPart>(), valueType: null));
+        var declaredItems = new DeclaredItems
+        {
+            new Function("#read.from.function",
+                Array.Empty<IObjectTextPart>(), valueType: null)
+        };
 
         var (codeBlock, _, _) = CodeParser.Parse(
             code,
@@ -92,17 +142,30 @@ public class Tests
     }
 
     [TestCase(
-        "$$read.from.variable = a;",
-        "[:w $$read.from.variable][:c = a;]")]
+        "$$write.to.variable = a;",
+        "[:w $$write.to.variable][:c = a;]")]
     [TestCase(
-        "$$read.from.variable   = a;",
-        "[:w $$read.from.variable][:c = a;]")]
+        "$$write.to.variable   = a;",
+        "[:w $$write.to.variable][:c = a;]")]
     [TestCase(
-        "$$read.from.variable =   a;",
-        "[:w $$read.from.variable][:c =   a;]")]
+        "$$write.to.variable =   a;",
+        "[:w $$write.to.variable][:c =   a;]")]
     [TestCase(
-        "$$read.from.variable =\n   a;",
-        "[:w $$read.from.variable][:c =\n   a;]")]
+        "$$write.to.variable =\n   a;",
+        "[:w $$write.to.variable][:c =\n   a;]")]
+    // local
+    [TestCase(
+        "$write.to.variable = a;",
+        "[:w $write.to.variable][:c = a;]")]
+    [TestCase(
+        "$write.to.variable   = a;",
+        "[:w $write.to.variable][:c = a;]")]
+    [TestCase(
+        "$write.to.variable =   a;",
+        "[:w $write.to.variable][:c =   a;]")]
+    [TestCase(
+        "$write.to.variable =\n   a;",
+        "[:w $write.to.variable][:c =\n   a;]")]
     public void WriteVariable(string code, string expected)
     {
         var (codeBlock, _, _) = CodeParser.Parse(

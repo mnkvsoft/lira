@@ -3,30 +3,29 @@ using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
-using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 
 namespace Lira.Domain.Configuration.Variables;
 
 class DeclaredItemsParser(ITextPartsParser textPartsParser)
 {
-    private readonly ITextPartsParser _textPartsParser = textPartsParser;
-
     public async Task<DeclaredItems> Parse(IReadOnlyCollection<string> lines, IReadonlyParsingContext parsingContext)
     {
         if (lines.Count == 0)
             return new DeclaredItems();
 
-        var all = new DeclaredItems(parsingContext.DeclaredItems);
+        var all = DeclaredItems.WithoutLocalVariables(parsingContext.DeclaredItems);
         var newContext = new ParsingContext(parsingContext, declaredItems: all);
+
+
 
         var onlyNew = new DeclaredItems();
 
-        foreach (var (nameWithType, pattern) in GetNameToPatternMap(lines, Consts.ControlChars.RuleVariablePrefix,
-                     Consts.ControlChars.FunctionPrefix))
+        foreach (var (nameWithType, pattern) in GetNameToPatternMap(lines, RuleVariable.Prefix, Function.Prefix))
         {
-            ObjectTextParts parts = await _textPartsParser.Parse(pattern, newContext);
+            ObjectTextParts parts = await textPartsParser.Parse(pattern, newContext);
 
             ReturnType? type = null;
             var (name, typeStr) = nameWithType.SplitToTwoParts(Consts.ControlChars.SetType).Trim();
@@ -36,17 +35,18 @@ class DeclaredItemsParser(ITextPartsParser textPartsParser)
             else if (parts.IsString)
                 type = ReturnType.String;
 
-            if (name.StartsWith(Consts.ControlChars.RuleVariablePrefix))
+            if (name.StartsWith(RuleVariable.Prefix))
             {
-                var variable = new DeclaredRuleVariable(new CustomItemName(name.TrimStart(Consts.ControlChars.RuleVariablePrefix)), parts, type);
-                all.Variables.Add(variable);
-                onlyNew.Variables.Add(variable);
+                var variable = new DeclaredRuleVariable(name, parts, type);
+                all.AddOrThrowIfContains(variable);
+                onlyNew.AddOrThrowIfContains(variable);
             }
-            else if (name.StartsWith(Consts.ControlChars.FunctionPrefix))
+            else if (name.StartsWith(Function.Prefix))
             {
-                var function = new Function(new CustomItemName(name.TrimStart(Consts.ControlChars.FunctionPrefix)), parts, type);
-                all.Functions.Add(function);
-                onlyNew.Functions.Add(function);
+                var function = new Function(name, parts, type);
+                all.AddOrThrowIfContains(function);
+                onlyNew.AddOrThrowIfContains(function);
+                bool a = ReferenceEquals(all, newContext.DeclaredItems);
             }
             else
             {

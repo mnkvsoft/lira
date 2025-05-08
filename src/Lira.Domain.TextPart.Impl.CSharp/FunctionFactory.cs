@@ -283,7 +283,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             }
             else if (token is CodeToken.ReadItem readItem)
             {
-                var type = declaredPartsProvider.GetPartType(readItem.ItemName);
+                var type = declaredPartsProvider.Get(readItem.ItemName).ReturnType;
 
                 sbCodeWithLiraItems.Append(
                     $"({(type == null || !type.NeedTyped ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +

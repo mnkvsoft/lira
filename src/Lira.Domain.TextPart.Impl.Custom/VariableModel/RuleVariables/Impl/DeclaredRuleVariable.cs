@@ -1,10 +1,10 @@
 namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 
-public record DeclaredRuleVariable : RuleVariable
+public class DeclaredRuleVariable : RuleVariable
 {
     private readonly IReadOnlyCollection<IObjectTextPart> _parts;
 
-    public DeclaredRuleVariable(CustomItemName name, IReadOnlyCollection<IObjectTextPart> parts, ReturnType? valueType) : base(name, valueType)
+    public DeclaredRuleVariable(string name, IReadOnlyCollection<IObjectTextPart> parts, ReturnType? valueType) : base(name, valueType)
     {
         _parts = parts;
     }

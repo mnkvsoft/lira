@@ -1,22 +1,22 @@
-using Lira.Common;
 using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.LocalVariables;
 
-public record LocalVariable : DeclaredItem, IUniqueSetItem, IObjectTextPart, IVariable
+public class LocalVariable : Variable
 {
+    public const string Prefix = "$";
+
     private static int _counter;
     private readonly int _id;
-    private readonly CustomItemName _name;
+    public override string Name { get; }
+    public override ReturnType? ReturnType { get; }
 
-    public override string Name => _name.Value;
-    public string EntityName => "local variable";
-
-    public ReturnType? ReturnType { get; }
-
-    public LocalVariable(CustomItemName name, ReturnType? valueType)
+    public LocalVariable(string name, ReturnType? valueType)
     {
-        _name = name;
+        if(!CustomItemName.IsValidName(Prefix, name))
+            throw new ArgumentException("Invalid local variable name: " + name, nameof(name));
+
+        Name = name;
         ReturnType = valueType;
         _id = Interlocked.Increment(ref _counter);
     }
@@ -33,7 +33,7 @@ public record LocalVariable : DeclaredItem, IUniqueSetItem, IObjectTextPart, IVa
         throw new InvalidOperationException($"Attempt to read from uninitialized variable '{Name}'");
     }
 
-    public void SetValue(RuleExecutingContext ctx, dynamic? valueToSave)
+    public override void SetValue(RuleExecutingContext ctx, dynamic? valueToSave)
     {
         var values = GetVariableValues(ctx);
 
@@ -66,5 +66,5 @@ public record LocalVariable : DeclaredItem, IUniqueSetItem, IObjectTextPart, IVa
         return ctx.Items.GetOrCreate(key: typeof(LocalVariable), () => new Dictionary<int, dynamic?>());
     }
 
-    Task<dynamic?> IObjectTextPart.Get(RuleExecutingContext context) => GetValue(context);
+    public override Task<dynamic?> Get(RuleExecutingContext context) => GetValue(context);
 }

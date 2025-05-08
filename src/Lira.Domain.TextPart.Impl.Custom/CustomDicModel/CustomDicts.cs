@@ -43,16 +43,9 @@ public class CustomDicts : IReadOnlyCustomDicts
     }
 }
 
-public class CustomSetFunction : IObjectTextPart, IMatchFunctionTyped
+public class CustomSetFunction(IReadOnlyList<string> list) : IObjectTextPart, IMatchFunctionTyped
 {
-    private readonly IReadOnlyList<string> _list;
-    private readonly HashSet<string> _hashSet;
-
-    public CustomSetFunction(IReadOnlyList<string> list)
-    {
-        _list = list;
-        _hashSet = new HashSet<string>(list);
-    }
+    private readonly HashSet<string> _hashSet = new(list);
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
     ReturnType IMatchFunctionTyped.ValueType => ReturnType.String;
@@ -60,7 +53,7 @@ public class CustomSetFunction : IObjectTextPart, IMatchFunctionTyped
 
     public Task<dynamic?> Get(RuleExecutingContext context)
     {
-        return Task.FromResult<dynamic?>(_list.Random());
+        return Task.FromResult<dynamic?>(list.Random());
     }
 
     public Task<bool> IsMatch(RuleExecutingContext context, string? value)
@@ -70,6 +63,4 @@ public class CustomSetFunction : IObjectTextPart, IMatchFunctionTyped
 
         return Task.FromResult(_hashSet.Contains(value));
     }
-
-    public ReturnType? ValueType { get; }
 }

@@ -1,24 +1,25 @@
-using Lira.Common;
-
 namespace Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 
-public record Function : DeclaredItem,  IObjectTextPart, IUniqueSetItem
+public class Function : DeclaredItem
 {
+    public const string Prefix = "#";
+
     private readonly IReadOnlyCollection<IObjectTextPart> _parts;
-    public ReturnType? ReturnType { get; }
+    public override ReturnType? ReturnType { get; }
 
-    private readonly CustomItemName _name;
-    public override string Name => _name.Value;
-    public string EntityName => "function";
+    public override string Name { get; }
 
-    public Function(CustomItemName name, IReadOnlyCollection<IObjectTextPart> parts, ReturnType? valueType)
+    public Function(string name, IReadOnlyCollection<IObjectTextPart> parts, ReturnType? valueType)
     {
+        if(!CustomItemName.IsValidName(Prefix, name))
+            throw new ArgumentException("Invalid function name: " + name, nameof(name));
+
         _parts = parts;
         ReturnType = valueType;
-        _name = name;
+        Name = name;
     }
 
-    public async Task<dynamic?> Get(RuleExecutingContext context)
+    public override async Task<dynamic?> Get(RuleExecutingContext context)
     {
         var value = await _parts.Generate(context);
         dynamic? valueToReturn = value;

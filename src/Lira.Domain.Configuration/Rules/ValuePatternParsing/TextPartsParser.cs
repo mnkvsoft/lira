@@ -3,9 +3,10 @@ using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
-using Lira.Domain.TextPart.Impl.Custom;
+using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel.LocalVariables;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 using Lira.Domain.TextPart.Impl.System;
 using Microsoft.Extensions.Logging;
@@ -57,7 +58,7 @@ class TextPartsParser : ITextPartsParser
         }
 
         var ctx = parsingContext.ToImpl();
-        ctx.DeclaredItems.Variables.TryAddRuntimeVariables(localContext.DeclaredItems.Variables.OfType<RuntimeRuleVariable>());
+        ctx.DeclaredItems.TryAddRange(localContext.DeclaredItems);
 
         bool isString = patternParts.Count == 0 || patternParts.Count > 1 || patternParts[0] is PatternPart.Static;
         return new ObjectTextParts(parts, isString);
@@ -109,42 +110,50 @@ class TextPartsParser : ITextPartsParser
                 var maybeVariableDeclaration = pipelineItemsRaw[1].Trim();
 
                 // case: {{ guid >> $$id }}
-                if (maybeVariableDeclaration.StartsWith(Consts.ControlChars.RuleVariablePrefix))
+                if (maybeVariableDeclaration.StartsWith(RuleVariable.Prefix))
                 {
                     if (maybeVariableDeclaration.Split(" ").Length > 1)
                         throw new Exception(
                             $"Invalid write to variable declaration: {Consts.ControlChars.WriteToVariablePrefix} " +
                             maybeVariableDeclaration);
 
-                    var variable = new RuntimeRuleVariable(
-                        new CustomItemName(maybeVariableDeclaration.TrimStart(Consts.ControlChars.RuleVariablePrefix)),
-                        startFunction.ReturnType);
-                    context.DeclaredItems.Variables.Add(variable);
-                    return [new ObjectTextPartWithSaveVariable(startFunction, variable)];
+                    var existVar = context.DeclaredItems.OfType<Variable>().SingleOrDefault(x => x.Name == maybeVariableDeclaration);
+
+                    if (existVar == null)
+                    {
+                        var variable = new RuntimeRuleVariable(
+                            maybeVariableDeclaration,
+                            startFunction.ReturnType);
+
+                        context.DeclaredItems.Add(variable);
+                        return [new ObjectTextPartWithSaveVariable(startFunction, variable)];
+                    }
+
+                    context.DeclaredItems.Add(existVar);
+                    return [new ObjectTextPartWithSaveVariable(startFunction, existVar)];
                 }
 
                 // case: {{ guid >> $id }}
-                if (maybeVariableDeclaration.StartsWith(Consts.ControlChars.LocalVariablePrefix))
+                if (maybeVariableDeclaration.StartsWith(LocalVariable.Prefix))
                 {
                     if (maybeVariableDeclaration.Split(" ").Length > 1)
                         throw new Exception(
                             $"Invalid write to local variable declaration: {Consts.ControlChars.WriteToVariablePrefix} " +
                             maybeVariableDeclaration);
 
-                    var name = new CustomItemName(maybeVariableDeclaration.TrimStart(Consts.ControlChars.LocalVariablePrefix));
-                    var localVar = context.DeclaredItems.LocalVariables.SingleOrDefault(x => x.Name == name.Value);
+                    var existVar = context.DeclaredItems.OfType<Variable>().SingleOrDefault(x => x.Name == maybeVariableDeclaration);
 
-                    if (localVar == null)
+                    if (existVar == null)
                     {
-                        var variable =
-                            new LocalVariable(
-                                name,
+                        var variable = new LocalVariable(
+                                maybeVariableDeclaration,
                                 startFunction.ReturnType);
-                        context.DeclaredItems.LocalVariables.Add(variable);
+
+                        context.DeclaredItems.Add(variable);
                         return [new ObjectTextPartWithSaveVariable(startFunction, variable)];
                     }
 
-                    return [new ObjectTextPartWithSaveVariable(startFunction, localVar)];
+                    return [new ObjectTextPartWithSaveVariable(startFunction, existVar)];
                 }
             }
 
@@ -162,8 +171,8 @@ class TextPartsParser : ITextPartsParser
     {
         var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(value, context.DeclaredItems);
 
-        context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
-        context.DeclaredItems.LocalVariables.TryAddLocalVariables(localVariables);
+        context.DeclaredItems.TryAddRange(newRuntimeVariables);
+        context.DeclaredItems.TryAddRange(localVariables);
 
         return codeBlock;
     }
@@ -183,9 +192,10 @@ class TextPartsParser : ITextPartsParser
     {
         var declaredItems = context.DeclaredItems;
 
-        var declaredFunction =
-            declaredItems.Functions.FirstOrDefault(x =>
-                x.Name == rawText.TrimStart(Consts.ControlChars.FunctionPrefix));
+        var declaredFunction = declaredItems
+            .OfType<Function>()
+            .SingleOrDefault(x => x.Name == Function.Prefix + rawText);
+
         context.CustomDicts.TryGetCustomSetFunction(rawText, out var customSetFunction);
 
         if (_functionFactorySystem.TryCreateGeneratingFunction(rawText, out var function))
@@ -210,6 +220,12 @@ class TextPartsParser : ITextPartsParser
 
         if (customSetFunction != null)
             return customSetFunction;
+
+        var declaredItem = declaredItems
+            .SingleOrDefault(x => x.Name == rawText);
+
+        if (declaredItem != null)
+            return declaredItem;
 
         var functionFactory = await _functionFactoryCSharpFactory.Get();
         var createFunctionResult = functionFactory.TryCreateGeneratingFunction(
