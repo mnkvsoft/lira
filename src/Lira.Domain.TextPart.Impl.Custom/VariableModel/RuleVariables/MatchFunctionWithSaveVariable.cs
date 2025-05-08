@@ -1,8 +1,8 @@
 using Lira.Domain.Matching.Request;
 
-namespace Lira.Domain.TextPart.Impl.Custom.VariableModel;
+namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables;
 
-public class MatchFunctionWithSaveVariable(IMatchFunctionTyped matchFunction, Variable variable) : IMatchFunction
+public class MatchFunctionWithSaveVariable(IMatchFunctionTyped matchFunction, RuleVariable ruleVariable) : IMatchFunction
 {
     public MatchFunctionRestriction Restriction { get; } = matchFunction.Restriction;
 
@@ -11,7 +11,7 @@ public class MatchFunctionWithSaveVariable(IMatchFunctionTyped matchFunction, Va
         var isMatch = await matchFunction.IsMatch(context, value);
 
         if (isMatch)
-            variable.SetValue(context, value);
+            ruleVariable.SetValue(context, value);
 
         return isMatch;
     }

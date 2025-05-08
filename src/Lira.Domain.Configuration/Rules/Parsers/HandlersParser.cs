@@ -39,7 +39,7 @@ class HandlersParser
 
     private static string GetSectionName(ISystemActionRegistrator registrator) => Constants.SectionName.ActionPrefix + "." + registrator.Name;
 
-    internal async Task<IReadOnlyCollection<Delayed<IHandler>>> Parse(IReadOnlyCollection<FileSection> sections, ParsingContext parsingContext)
+    public async Task<IReadOnlyCollection<Delayed<IHandler>>> Parse(IReadOnlyCollection<FileSection> sections, ParsingContext parsingContext)
     {
         var result = new List<Delayed<IHandler>>();
 
@@ -85,8 +85,10 @@ class HandlersParser
         else
         {
             var code = GetActionCode(section);
-            var (codeBlock, newRuntimeVariables) = CodeParser.Parse(code, parsingContext.DeclaredItems);
+            var (codeBlock, newRuntimeVariables, newLocalVariables) = CodeParser.Parse(code, parsingContext.DeclaredItems);
+
             parsingContext.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
+            parsingContext.DeclaredItems.LocalVariables.TryAddLocalVariables(newLocalVariables);
 
             var functionFactory = await _functionFactoryCSharpFactory.Get();
             var res = functionFactory.TryCreateAction(

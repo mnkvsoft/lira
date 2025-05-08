@@ -1,2 +1,0 @@
-﻿static value
-{{ echo: value from function }}

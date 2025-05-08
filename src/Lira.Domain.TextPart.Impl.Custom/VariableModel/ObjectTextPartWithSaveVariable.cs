@@ -1,6 +1,6 @@
 namespace Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
-public class ObjectTextPartWithSaveVariable(IObjectTextPart objectTextPart, Variable variable) : IObjectTextPart
+public class ObjectTextPartWithSaveVariable(IObjectTextPart objectTextPart, IVariable variable) : IObjectTextPart
 {
     public async Task<dynamic?> Get(RuleExecutingContext context)
     {

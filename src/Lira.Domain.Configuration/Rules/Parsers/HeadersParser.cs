@@ -7,7 +7,7 @@ namespace Lira.Domain.Configuration.Rules.Parsers;
 
 public class HeadersParser(ITextPartsParser textPartsParser)
 {
-    public async Task<IReadOnlyCollection<GeneratingHeader>> ParseHeaders(FileBlock block, IReadonlyParsingContext parsingContext)
+    public async Task<IReadOnlyCollection<GeneratingHeader>> ParseHeaders(FileBlock block, IParsingContext parsingContext)
     {
         var headers = new List<GeneratingHeader>();
         var patterns = PatternParser.Parse(block.Lines);

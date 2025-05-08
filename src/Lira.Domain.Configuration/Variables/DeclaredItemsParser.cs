@@ -5,7 +5,7 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel.Impl;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 
 namespace Lira.Domain.Configuration.Variables;
 
@@ -23,7 +23,7 @@ class DeclaredItemsParser(ITextPartsParser textPartsParser)
 
         var onlyNew = new DeclaredItems();
 
-        foreach (var (nameWithType, pattern) in GetNameToPatternMap(lines, Consts.ControlChars.VariablePrefix,
+        foreach (var (nameWithType, pattern) in GetNameToPatternMap(lines, Consts.ControlChars.RuleVariablePrefix,
                      Consts.ControlChars.FunctionPrefix))
         {
             ObjectTextParts parts = await _textPartsParser.Parse(pattern, newContext);
@@ -36,9 +36,9 @@ class DeclaredItemsParser(ITextPartsParser textPartsParser)
             else if (parts.IsString)
                 type = ReturnType.String;
 
-            if (name.StartsWith(Consts.ControlChars.VariablePrefix))
+            if (name.StartsWith(Consts.ControlChars.RuleVariablePrefix))
             {
-                var variable = new DeclaredVariable(new CustomItemName(name.TrimStart(Consts.ControlChars.VariablePrefix)), parts, type);
+                var variable = new DeclaredRuleVariable(new CustomItemName(name.TrimStart(Consts.ControlChars.RuleVariablePrefix)), parts, type);
                 all.Variables.Add(variable);
                 onlyNew.Variables.Add(variable);
             }

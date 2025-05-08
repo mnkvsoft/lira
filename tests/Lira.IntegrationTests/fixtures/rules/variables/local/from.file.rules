@@ -1,0 +1,14 @@
+-------------------- rule
+
+GET /variables/from_file
+
+----- response
+{
+    "orders":
+    [
+        {{ #order  }},
+        {{ #order2 }}
+    ]
+}
+
+

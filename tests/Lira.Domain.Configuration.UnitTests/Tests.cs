@@ -3,7 +3,7 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel.Impl;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 using Moq;
 
 namespace Lira.Domain.Configuration.UnitTests;
@@ -34,9 +34,9 @@ public class Tests
     public void ReadVariable(string code, string expected)
     {
         var declaredItems = new DeclaredItems();
-        declaredItems.Variables.Add(new RuntimeVariable(new CustomItemName("read.from.variable"), valueType: null));
+        declaredItems.Variables.Add(new RuntimeRuleVariable(new CustomItemName("read.from.variable"), valueType: null));
 
-        var (codeBlock, _) = CodeParser.Parse(
+        var (codeBlock, _, _) = CodeParser.Parse(
             code,
             declaredItems);
 
@@ -48,9 +48,9 @@ public class Tests
     public void ReadVariableWithPropertyAccess()
     {
         var declaredItems = new DeclaredItems();
-        declaredItems.Variables.Add(new DeclaredVariable(new CustomItemName("person"), [Mock.Of<IObjectTextPart>()], valueType: null));
+        declaredItems.Variables.Add(new DeclaredRuleVariable(new CustomItemName("person"), [Mock.Of<IObjectTextPart>()], valueType: null));
 
-        var (codeBlock, _) = CodeParser.Parse(
+        var (codeBlock, _, _) = CodeParser.Parse(
             "$$person.name",
             declaredItems);
 
@@ -83,7 +83,7 @@ public class Tests
         declaredItems.Functions.Add(new Function(new CustomItemName("read.from.function"),
             Array.Empty<IObjectTextPart>(), valueType: null));
 
-        var (codeBlock, _) = CodeParser.Parse(
+        var (codeBlock, _, _) = CodeParser.Parse(
             code,
             declaredItems);
 
@@ -105,7 +105,7 @@ public class Tests
         "[:w $$read.from.variable][:c =\n   a;]")]
     public void WriteVariable(string code, string expected)
     {
-        var (codeBlock, _) = CodeParser.Parse(
+        var (codeBlock, _, _) = CodeParser.Parse(
             code,
             new DeclaredItems());
 

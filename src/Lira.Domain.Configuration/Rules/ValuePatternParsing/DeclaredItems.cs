@@ -1,34 +1,41 @@
 ﻿using System.Collections;
 using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.LocalVariables;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
 public interface IReadonlyDeclaredItems : IEnumerable<DeclaredItem>
 {
-    IReadOnlyCollection<Variable> Variables { get; }
-
+    IReadOnlyCollection<RuleVariable> Variables { get; }
+    IReadOnlyCollection<LocalVariable> LocalVariables { get; }
     IReadOnlyCollection<Function> Functions { get; }
 }
 class DeclaredItems : IReadonlyDeclaredItems
 {
     public VariableSet Variables { get; }
-    IReadOnlyCollection<Variable> IReadonlyDeclaredItems.Variables => Variables;
+    IReadOnlyCollection<RuleVariable> IReadonlyDeclaredItems.Variables => Variables;
+
+    public LocalVariableSet LocalVariables { get; }
+    IReadOnlyCollection<LocalVariable> IReadonlyDeclaredItems.LocalVariables => LocalVariables;
 
     public FunctionSet Functions { get; }
     IReadOnlyCollection<Function> IReadonlyDeclaredItems.Functions => Functions;
+
 
     public DeclaredItems(IReadonlyDeclaredItems items)
     {
         Variables = new VariableSet(items.Variables);
         Functions = new FunctionSet(items.Functions);
+        LocalVariables = new LocalVariableSet();
     }
 
     public DeclaredItems()
     {
         Variables = new VariableSet();
         Functions = new FunctionSet();
+        LocalVariables = new LocalVariableSet();
     }
 
     public void Add(IReadonlyDeclaredItems items)
@@ -39,7 +46,7 @@ class DeclaredItems : IReadonlyDeclaredItems
 
     public IEnumerator<DeclaredItem> GetEnumerator()
     {
-        return Variables.Cast<DeclaredItem>().Union(Functions).GetEnumerator();
+        return Variables.Cast<DeclaredItem>().Union(Functions).Union(LocalVariables).GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -53,6 +60,9 @@ class DeclaredItems : IReadonlyDeclaredItems
         return
             $"Declared functions: {string.Join(", ", Functions.Select(x => Consts.ControlChars.FunctionPrefix + x.Name))}" +
             nl +
-            $"Declared variables: {string.Join(", ", Variables.Select(x => Consts.ControlChars.VariablePrefix + x.Name))}";
+            $"Declared variables: {string.Join(", ", Variables.Select(x => Consts.ControlChars.RuleVariablePrefix + x.Name))}"+
+            nl +
+            $"Declared local variables: {string.Join(", ", LocalVariables.Select(x => Consts.ControlChars.LocalVariablePrefix + x.Name))}"
+            ;
     }
 }

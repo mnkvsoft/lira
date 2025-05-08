@@ -1,9 +1,9 @@
 using Lira.Common;
 using Lira.Common.Extensions;
 
-namespace Lira.Domain.TextPart.Impl.Custom.VariableModel;
+namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables;
 
-public abstract record Variable : DeclaredItem, IUniqueSetItem, IObjectTextPart
+public abstract record RuleVariable : DeclaredItem, IUniqueSetItem, IObjectTextPart, IVariable
 {
     private readonly CustomItemName _name;
 
@@ -12,7 +12,7 @@ public abstract record Variable : DeclaredItem, IUniqueSetItem, IObjectTextPart
 
     public ReturnType? ReturnType { get; }
 
-    protected Variable(CustomItemName name, ReturnType? valueType)
+    protected RuleVariable(CustomItemName name, ReturnType? valueType)
     {
         _name = name;
         ReturnType = valueType;
@@ -68,7 +68,7 @@ public abstract record Variable : DeclaredItem, IUniqueSetItem, IObjectTextPart
 
     private static Dictionary<CustomItemName, dynamic?> GetVariableValues(RuleExecutingContext ctx)
     {
-        return ctx.Items.GetOrCreate(key: typeof(Variable), () => new Dictionary<CustomItemName, dynamic?>());
+        return ctx.Items.GetOrCreate(key: typeof(RuleVariable), () => new Dictionary<CustomItemName, dynamic?>());
     }
 
     Task<dynamic?> IObjectTextPart.Get(RuleExecutingContext context) => GetValue(context);

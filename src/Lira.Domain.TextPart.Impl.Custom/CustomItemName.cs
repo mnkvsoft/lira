@@ -2,7 +2,7 @@
 
 namespace Lira.Domain.TextPart.Impl.Custom;
 
-public readonly struct CustomItemName : IEquatable<CustomItemName>
+public readonly record struct CustomItemName
 {
     public string Value { get; }
 
@@ -17,7 +17,7 @@ public readonly struct CustomItemName : IEquatable<CustomItemName>
         Value = value;
     }
 
-    public static bool IsValidName(string value)
+    private static bool IsValidName(string value)
     {
         if (!IsAllowedFirstCharInName(value[0]))
             return false;
@@ -34,21 +34,6 @@ public readonly struct CustomItemName : IEquatable<CustomItemName>
 
     public static bool IsAllowedCharInName(char c) => char.IsLetter(c) || char.IsDigit(c) || c == '_' || c == '.';
     public static bool IsAllowedFirstCharInName(char c) => char.IsLetter(c) || char.IsDigit(c) || c == '_';
-
-    public bool Equals(CustomItemName other)
-    {
-        return Value == other.Value;
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return obj is CustomItemName other && Equals(other);
-    }
-
-    public override int GetHashCode()
-    {
-        return Value.GetHashCode();
-    }
 
     public override string ToString()
     {

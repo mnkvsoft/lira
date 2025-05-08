@@ -16,7 +16,7 @@ public abstract class UniqueSet<T> : IReadOnlyCollection<T> where T : IUniqueSet
     {
     }
 
-    public UniqueSet(IReadOnlyCollection<T> set)
+    protected UniqueSet(IReadOnlyCollection<T> set)
     {
         AddRange(set);
     }

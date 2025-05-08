@@ -14,7 +14,8 @@ class Consts
         public const string WriteToVariablePrefix = ">>";
         public const string HeaderSplitter = ":";
         public const string SetType = ":";
-        public const string VariablePrefix = "$$";
+        public const string RuleVariablePrefix = "$$";
+        public const string LocalVariablePrefix = "$";
         public const string FunctionPrefix = "#";
         public const string TemplatePrefix = "@@";
         public const string AssignmentOperator = "=";

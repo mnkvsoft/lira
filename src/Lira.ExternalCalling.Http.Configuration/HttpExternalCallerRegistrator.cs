@@ -35,7 +35,7 @@ public class HttpSystemActionRegistrator : ISystemActionRegistrator
         _partsParser = partsParser;
     }
 
-    public async Task<IAction> Create(FileSection section, IReadonlyParsingContext parsingContext)
+    public async Task<IAction> Create(FileSection section, IParsingContext parsingContext)
     {
         var methodAndUrl = section.GetSingleLine();
         var (methodStr, urlStr) = methodAndUrl.SplitToTwoPartsRequired(" ");

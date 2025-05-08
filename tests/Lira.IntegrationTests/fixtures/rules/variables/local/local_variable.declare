@@ -1,0 +1,33 @@
+#order =
+{
+    "id": {{ echo: 123 >> $id }},
+    "items":
+    [
+        {
+            "orderId": {{ $id }}
+        },
+        {
+            "orderId": {{ $id }}
+        }
+    ]
+}
+
+#order2 =
+{
+    "id": {{ echo: 987 >> $id }},
+    "items":
+    [
+        {
+            "orderId": {{ $id }}
+        },
+        {
+            "orderId": {{ $id }}
+        },
+        {
+            "orderId": {{ echo: 455 >> $id }}
+        },
+        {
+            "orderId": {{ $id }}
+        }
+    ]
+}

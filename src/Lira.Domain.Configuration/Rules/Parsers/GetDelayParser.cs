@@ -9,7 +9,7 @@ namespace Lira.Domain.Configuration.Rules.Parsers;
 
 class GetDelayParser(ITextPartsParser partsParser)
 {
-    public async Task<GetDelay?> Parse(FileSection responseSection, IReadonlyParsingContext parsingContext)
+    public async Task<GetDelay?> Parse(FileSection responseSection, ParsingContext parsingContext)
     {
         var block = responseSection.GetBlock(Constants.BlockName.Response.Delay);
 

@@ -5,13 +5,15 @@ using Lira.Domain.Configuration.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.Custom;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel.Impl;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.LocalVariables;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 
 namespace Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 
 static class CodeParser
 {
-    public static (CodeBlock, IReadOnlyCollection<RuntimeVariable>) Parse(string code,
+    public static (CodeBlock, IReadOnlyCollection<RuntimeRuleVariable>, IReadOnlyCollection<LocalVariable>) Parse(
+        string code,
         IReadonlyDeclaredItems declaredItems)
     {
         try
@@ -29,14 +31,16 @@ static class CodeParser
         }
     }
 
-    private static (CodeBlock, IReadOnlyCollection<RuntimeVariable>) ParseInternal(string code, IReadonlyDeclaredItems declaredItems)
+    private static (CodeBlock, IReadOnlyCollection<RuntimeRuleVariable>, IReadOnlyCollection<LocalVariable>) ParseInternal(string code,
+        IReadonlyDeclaredItems declaredItems)
     {
         var codeTokens = Parse(code);
 
         // case: $$some.var.ToString()
         var result = new List<CodeToken>(codeTokens.Count * 2);
 
-        var onlyNewVariables = new List<RuntimeVariable>();
+        var onlyNewVariables = new List<RuntimeRuleVariable>();
+        var newLocalVariables = new List<LocalVariable>();
 
         var withNewVariables = new List<DeclaredItem>();
         withNewVariables.AddRange(declaredItems);
@@ -73,13 +77,24 @@ static class CodeParser
             }
             else if (codeToken is CodeToken.WriteItem writeItem)
             {
-                if (writeItem.ItemName.StartsWith(Consts.ControlChars.VariablePrefix))
+                if (writeItem.ItemName.StartsWith(Consts.ControlChars.RuleVariablePrefix))
                 {
-                    var variableName = writeItem.ItemName.TrimStart(Consts.ControlChars.VariablePrefix);
+                    var variableName = writeItem.ItemName.TrimStart(Consts.ControlChars.RuleVariablePrefix);
 
-                    var variable = new RuntimeVariable(new CustomItemName(variableName), valueType: null);
+                    var variable = new RuntimeRuleVariable(new CustomItemName(variableName), valueType: null);
 
                     onlyNewVariables.Add(variable);
+                    withNewVariables.Add(variable);
+
+                    result.Add(writeItem);
+                }
+                else if (writeItem.ItemName.StartsWith(Consts.ControlChars.LocalVariablePrefix))
+                {
+                    var variableName = writeItem.ItemName.TrimStart(Consts.ControlChars.LocalVariablePrefix);
+
+                    var variable = new LocalVariable(new CustomItemName(variableName), valueType: null);
+
+                    newLocalVariables.Add(variable);
                     withNewVariables.Add(variable);
 
                     result.Add(writeItem);
@@ -101,7 +116,7 @@ static class CodeParser
 
         result = ConcatNeighboringOtherCodeTokens(result);
 
-        return (new CodeBlock(result), onlyNewVariables);
+        return (new CodeBlock(result), onlyNewVariables, newLocalVariables);
     }
 
     private static List<CodeToken> ConcatNeighboringOtherCodeTokens(List<CodeToken> result)

@@ -8,8 +8,8 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.Custom;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel.Impl;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 using Lira.Domain.TextPart.Impl.System;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;
@@ -97,7 +97,11 @@ class RequestMatchersParser
 
     private async Task<IRequestMatcher> CreateCustomRequestMatcher(string code, ParsingContext context)
     {
-        var (codeBlock, newRuntimeVariables) = CodeParser.Parse(code, context.DeclaredItems);
+        var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(code, context.DeclaredItems);
+
+        if (localVariables.Count > 0)
+            throw new Exception($"Local variables ({string.Join(", ", localVariables.Select(x => x.Name))}) are not supported for matching function");
+
         context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
         var functionFactory = await _functionFactoryCSharpFactory.Get();
@@ -294,7 +298,11 @@ class RequestMatchersParser
         if (context.CustomDicts.TryGetCustomSetFunction(invoke, out var customSetFunction))
             return customSetFunction;
 
-        var (codeBlock, newRuntimeVariables) = CodeParser.Parse(invoke, context.DeclaredItems);
+        var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(invoke, context.DeclaredItems);
+
+        if (localVariables.Count > 0)
+            throw new Exception($"Local variables ({string.Join(", ", localVariables.Select(x => x.Name))}) are not supported for matching function");
+
         context.DeclaredItems.Variables.TryAddRuntimeVariables(newRuntimeVariables);
 
         var functionFactory = await _functionFactoryCSharpFactory.Get();
@@ -307,7 +315,7 @@ class RequestMatchersParser
         var (invoke, maybeVariableDeclaration) = value.SplitToTwoPartsFromEnd(Consts.ControlChars.WriteToVariablePrefix).Trim();
 
         // case: {{ dec >> $$amount }}
-        if (maybeVariableDeclaration != null && maybeVariableDeclaration.StartsWith(Consts.ControlChars.VariablePrefix))
+        if (maybeVariableDeclaration != null && maybeVariableDeclaration.StartsWith(Consts.ControlChars.RuleVariablePrefix))
         {
             if (maybeVariableDeclaration.Split(" ").Length > 1)
                 throw new Exception($"Invalid write to variable declaration: {Consts.ControlChars.WriteToVariablePrefix} " + maybeVariableDeclaration);
@@ -318,7 +326,7 @@ class RequestMatchersParser
 
             var matchFunction = await CreateMatchFunction(invoke, context);
 
-            var variable = new RuntimeVariable(new CustomItemName(name.TrimStart(Consts.ControlChars.VariablePrefix)), type ?? matchFunction.ValueType);
+            var variable = new RuntimeRuleVariable(new CustomItemName(name.TrimStart(Consts.ControlChars.RuleVariablePrefix)), type ?? matchFunction.ValueType);
             context.DeclaredItems.Variables.Add(variable);
             return new MatchFunctionWithSaveVariable(matchFunction, variable);
         }
