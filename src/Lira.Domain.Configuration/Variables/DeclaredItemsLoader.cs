@@ -1,5 +1,6 @@
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 using Lira.FileSectionFormat;
 using NuGet.Packaging;
 
@@ -17,13 +18,21 @@ internal class DeclaredItemsLoader(DeclaredItemsParser parser)
             try
             {
                 var lines = TextCleaner.DeleteEmptiesAndComments(await File.ReadAllTextAsync(variableFile));
-                result.AddRange(await parser.Parse(lines, newContext.WithCurrentPath(variableFile.GetDirectory())));
+                var items = await parser.Parse(lines, newContext.WithCurrentPath(variableFile.GetDirectory()));
+
+                var invalidItems = items.Where(x => x is not Function).ToArray();
+
+                if(invalidItems.Any())
+                    throw new Exception("*.declare files may contain only function definitions. Invalid definitions: " + string.Join(", ", invalidItems.Select(x=> x.Name)));
+
+                result.AddRange(items);
             }
             catch (Exception exc)
             {
                 throw new FileParsingException(variableFile, exc);
             }
         }
+
         return result;
     }
 }

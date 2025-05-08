@@ -18,9 +18,6 @@ class DeclaredItemsParser(ITextPartsParser textPartsParser)
 
         var all = DeclaredItems.WithoutLocalVariables(parsingContext.DeclaredItems);
         var newContext = new ParsingContext(parsingContext, declaredItems: all);
-
-
-
         var onlyNew = new DeclaredItems();
 
         foreach (var (nameWithType, pattern) in GetNameToPatternMap(lines, RuleVariable.Prefix, Function.Prefix))
@@ -46,7 +43,6 @@ class DeclaredItemsParser(ITextPartsParser textPartsParser)
                 var function = new Function(name, parts, type);
                 all.AddOrThrowIfContains(function);
                 onlyNew.AddOrThrowIfContains(function);
-                bool a = ReferenceEquals(all, newContext.DeclaredItems);
             }
             else
             {

@@ -981,15 +981,6 @@
     <None Update="fixtures\rules\generating\csharp\access_to_variable.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\csharp\global_variable.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\csharp\global_variable.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\csharp\csharp.declare">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="fixtures\rules\generating\csharp\body_access\query.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
