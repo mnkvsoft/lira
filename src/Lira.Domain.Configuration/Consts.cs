@@ -17,7 +17,7 @@ class Consts
         // public const string RuleVariablePrefix = "$$";
         // public const string LocalVariablePrefix = "$";
         // public const string FunctionPrefix = "#";
-        public const string TemplatePrefix = "@@";
+        // public const string TemplatePrefix = "@@";
         public const string AssignmentOperator = "=";
     }
 }

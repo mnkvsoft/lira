@@ -3,13 +3,12 @@ using Microsoft.Extensions.Logging;
 using Lira.Domain.Configuration.RangeModel;
 using Lira.Domain.Configuration.Rules;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
-using Lira.Domain.Configuration.Templating;
 using Lira.Domain.Configuration.Variables;
 using System.Diagnostics;
 using Lira.Common.State;
-using Lira.Domain.Configuration.CustomSets;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.System;
+using Lira.Domain.Configuration.CustomDictionaries;
 
 namespace Lira.Domain.Configuration;
 
@@ -23,13 +22,11 @@ class ConfigurationReader(
         logger.LogInformation("Loading rules...");
         var sw = Stopwatch.StartNew();
 
-        var templates = await TemplatesLoader.Load(path);
         var customDicts = await CustomDictsLoader.Load(path);
 
         var context = new ParsingContext(
             new DeclaredItems(),
             FunctionFactoryUsingContext.Empty,
-            templates,
             customDicts,
             rootPath: path,
             currentPath: path);

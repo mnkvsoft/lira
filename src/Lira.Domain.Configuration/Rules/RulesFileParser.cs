@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
-using Lira.Domain.Configuration.Templating;
 using Lira.Domain.Configuration.Variables;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.FileSectionFormat;
@@ -42,9 +41,6 @@ internal class RuleFileParser
         // var ctx = new ParsingContext(parsingContext, cSharpUsingContext: usingContext, currentPath: ruleFile.GetDirectory());
         var ctx = new ParsingContext(parsingContext, cSharpUsingContext: usingContext, currentPath: ruleFile.GetDirectory());
 
-        var templates = GetTemplates(sections, ctx);
-        ctx.SetTemplates(templates);
-
         var declaredItems = await GetDeclaredItems(sections, ctx);
         ctx.SetDeclaredItems(declaredItems);
 
@@ -78,9 +74,6 @@ internal class RuleFileParser
 
         var ctx = new ParsingContext(parsingContext);
         var requestMatchers = await _requestMatchersParser.Parse(ruleSection, ctx);
-
-        var templates = GetTemplates(childSections, parsingContext);
-        ctx.SetTemplates(templates);
 
         var declaredItems = await GetDeclaredItems(childSections, ctx);
         ctx.SetDeclaredItems(declaredItems);
@@ -189,17 +182,6 @@ internal class RuleFileParser
             requestMatchers,
             handlerss)
         ];
-    }
-
-    private TemplateSet GetTemplates(IReadOnlyCollection<FileSection> childSections, IReadonlyParsingContext parsingContext)
-    {
-        var result = new TemplateSet(parsingContext.Templates);
-
-        var templatesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Templates);
-        if (templatesSection != null)
-            result.AddRange(TemplatesParser.Parse(templatesSection.LinesWithoutBlock));
-
-        return result;
     }
 
     private async Task<DeclaredItems> GetDeclaredItems(IReadOnlyCollection<FileSection> childSections, IReadonlyParsingContext parsingContext)

@@ -283,14 +283,6 @@ class RequestMatchersParser
 
     private async Task<IMatchFunctionTyped> CreateMatchFunction(string invoke, ParsingContext context)
     {
-        if (invoke.StartsWith(Consts.ControlChars.TemplatePrefix))
-        {
-            var templateName = invoke.TrimStart(Consts.ControlChars.TemplatePrefix);
-
-            var template = context.Templates.GetOrThrow(templateName);
-            return await CreateMatchFunction(template.Value, context);
-        }
-
         if (_functionFactorySystem.TryCreateMatchFunction(invoke, out var function))
             return function;
 

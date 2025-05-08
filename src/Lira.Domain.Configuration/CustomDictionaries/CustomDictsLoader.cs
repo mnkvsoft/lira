@@ -2,7 +2,7 @@ using Lira.Common.Extensions;
 using Lira.Domain.TextPart.Impl.Custom.CustomDicModel;
 using Lira.FileSectionFormat;
 
-namespace Lira.Domain.Configuration.CustomSets;
+namespace Lira.Domain.Configuration.CustomDictionaries;
 
 static class CustomDictsLoader
 {
