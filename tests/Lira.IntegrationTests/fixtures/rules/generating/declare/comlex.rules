@@ -8,5 +8,5 @@ GET /generating/declare/complex
 200
 
 ~ body
-{{ #random.int.super }}
-{{ #random.int.super }}
+{{ $$var.random.int }}
+{{ $$var.random.int }}

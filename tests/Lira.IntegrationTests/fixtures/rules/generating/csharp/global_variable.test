@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/csharp/global_variable
+
+----- expected
+
+~ code
+200
+
+~ body
+14

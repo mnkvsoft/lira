@@ -4,7 +4,6 @@ using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Variables;
 using Lira.Domain.TextPart.Impl.CSharp;
-using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 using Lira.FileSectionFormat;
 
 namespace Lira.Domain.Configuration.Rules;
@@ -39,14 +38,10 @@ internal class RuleFileParser
 
         var usingContext = _functionFactoryCSharpFactory.CreateRulesUsingContext(sectionsRoot.Lines);
 
+        // var ctx = new ParsingContext(parsingContext, cSharpUsingContext: usingContext, currentPath: ruleFile.GetDirectory());
         var ctx = new ParsingContext(parsingContext, cSharpUsingContext: usingContext, currentPath: ruleFile.GetDirectory());
 
         var declaredItems = await GetDeclaredItems(sections, ctx);
-
-        var invalidItems = declaredItems.Where(x => x is not Function).ToArray();
-        if(invalidItems.Any())
-            throw new Exception($"Section '{Constants.SectionName.Declare}' of file level may contain only function definitions. Invalid definitions: " + string.Join(", ", invalidItems.Select(x=> x.Name)));
-
         ctx.SetDeclaredItems(declaredItems);
 
         var rules = new List<Rule>();

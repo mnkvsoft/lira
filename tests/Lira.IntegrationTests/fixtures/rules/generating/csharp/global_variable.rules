@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/csharp/global_variable
+
+----- response
+
+~ code
+200
+
+~ body
+{{ $$global_csharp_var }}
