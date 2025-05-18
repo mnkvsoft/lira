@@ -85,14 +85,14 @@ class HandlersParser
         else
         {
             var code = GetActionCode(section);
-            var (codeBlock, newRuntimeVariables, newLocalVariables) = CodeParser.Parse(code, parsingContext.DeclaredItems);
+            var (codeBlock, newRuntimeVariables, newLocalVariables) = CodeParser.Parse(code, parsingContext.DeclaredItemsRegistry.GetAllDeclaredNames());
 
-            parsingContext.DeclaredItems.TryAddRange(newRuntimeVariables);
-            parsingContext.DeclaredItems.TryAddRange(newLocalVariables);
+            parsingContext.DeclaredItemsRegistry.AddVariablesRange(newRuntimeVariables);
+            parsingContext.DeclaredItemsRegistry.AddVariablesRange(newLocalVariables);
 
             var functionFactory = await _functionFactoryCSharpFactory.Get();
             var res = functionFactory.TryCreateAction(
-                new FunctionFactoryRuleContext(parsingContext.CSharpUsingContext, new DeclaredPartsProvider(parsingContext.DeclaredItems)),
+                new FunctionFactoryRuleContext(parsingContext.CSharpUsingContext, new DeclaredPartsProvider(parsingContext.DeclaredItemsRegistry)),
                 codeBlock);
             action = res.GetFunctionOrThrow(code, parsingContext);
         }

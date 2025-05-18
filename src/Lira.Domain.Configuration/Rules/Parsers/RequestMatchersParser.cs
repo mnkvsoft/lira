@@ -96,15 +96,15 @@ class RequestMatchersParser
 
     private async Task<IRequestMatcher> CreateCustomRequestMatcher(string code, ParsingContext context)
     {
-        var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(code, context.DeclaredItems);
+        var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(code, context.DeclaredItemsRegistry.GetAllDeclaredNames());
 
         if (localVariables.Count > 0)
             throw new Exception($"Local variables ({string.Join(", ", localVariables.Select(x => x.Name))}) are not supported for matching function");
 
-        context.DeclaredItems.TryAddRange(newRuntimeVariables);
+        context.DeclaredItemsRegistry.AddVariablesRange(newRuntimeVariables);
 
         var functionFactory = await _functionFactoryCSharpFactory.Get();
-        var matcher = functionFactory.TryCreateRequestMatcher(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(context.DeclaredItems)), codeBlock);
+        var matcher = functionFactory.TryCreateRequestMatcher(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(context.DeclaredItemsRegistry)), codeBlock);
         return matcher.GetFunctionOrThrow(code, context);
     }
 
@@ -289,15 +289,15 @@ class RequestMatchersParser
         if (context.CustomDicts.TryGetCustomSetFunction(invoke, out var customSetFunction))
             return customSetFunction;
 
-        var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(invoke, context.DeclaredItems);
+        var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(invoke, context.DeclaredItemsRegistry.GetAllDeclaredNames());
 
         if (localVariables.Count > 0)
             throw new Exception($"Local variables ({string.Join(", ", localVariables.Select(x => x.Name))}) are not supported for matching function");
 
-        context.DeclaredItems.TryAddRange(newRuntimeVariables);
+        context.DeclaredItemsRegistry.AddVariablesRange(newRuntimeVariables);
 
         var functionFactory = await _functionFactoryCSharpFactory.Get();
-        var createFunctionResult = functionFactory.TryCreateMatchFunction(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(context.DeclaredItems)), codeBlock);
+        var createFunctionResult = functionFactory.TryCreateMatchFunction(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(context.DeclaredItemsRegistry)), codeBlock);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 
@@ -317,8 +317,8 @@ class RequestMatchersParser
 
             var matchFunction = await CreateMatchFunction(invoke, context);
 
-            var variable = new RuntimeRuleVariable(name, type ?? matchFunction.ValueType);
-            context.DeclaredItems.Add(variable);
+            var variable = new InlineRuleVariable(name, type ?? matchFunction.ValueType);
+            context.DeclaredItemsRegistry.Add(variable);
             return new MatchFunctionWithSaveVariable(matchFunction, variable);
         }
 

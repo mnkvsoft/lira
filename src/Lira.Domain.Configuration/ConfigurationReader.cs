@@ -22,26 +22,26 @@ class ConfigurationReader(
         logger.LogInformation("Loading rules...");
         var sw = Stopwatch.StartNew();
 
+        using var scope = serviceScopeFactory.CreateScope();
+        var provider = scope.ServiceProvider;
+
         var customDicts = await CustomDictsLoader.Load(path);
 
         var context = new ParsingContext(
-            new DeclaredItems(),
+            provider.GetRequiredService<DeclaredItemsRegistry>(),
             FunctionFactoryUsingContext.Empty,
             customDicts,
             rootPath: path,
             currentPath: path);
 
-        using var scope = serviceScopeFactory.CreateScope();
-        var provider = scope.ServiceProvider;
-
         var ranges = await rangesLoader.Load(path);
         var rulesProvider = provider.GetRequiredService<RangesProvider>();
         rulesProvider.Ranges = ranges;
 
-        var globalVariablesParser = provider.GetRequiredService<DeclaredItemsLoader>();
+        var globalDeclaredItemsParser = provider.GetRequiredService<DeclaredItemsLoader>();
 
-        var variables = await globalVariablesParser.Load(context, path);
-        context.SetDeclaredItems(variables);
+        var declaredItemsDrafts = await globalDeclaredItemsParser.ReadDrafts(path);
+        context.DeclaredItemsRegistry.AddDraftsRange(declaredItemsDrafts);
 
         var rulesLoader = provider.GetRequiredService<RulesLoader>();
         var rules = await rulesLoader.LoadRules(path, context);

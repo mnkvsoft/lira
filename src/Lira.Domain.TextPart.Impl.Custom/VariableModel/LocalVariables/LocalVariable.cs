@@ -2,7 +2,7 @@ using Lira.Common.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.LocalVariables;
 
-public class LocalVariable : Variable
+public class LocalVariable : Variable, IInlineDeclareVariable
 {
     public const string Prefix = "$";
 

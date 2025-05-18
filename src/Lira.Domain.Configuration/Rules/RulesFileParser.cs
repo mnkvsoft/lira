@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.Parsers;
@@ -12,19 +13,19 @@ internal class RuleFileParser
 {
     private readonly RequestMatchersParser _requestMatchersParser;
     private readonly ConditionMatcherParser _conditionMatcherParser;
-    private readonly FileSectionDeclaredItemsParser _fileSectionDeclaredItemsParser;
+    private readonly DeclaredItemsParser _declaredItemsParser;
     private readonly HandlersParser _handlersParser;
     private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
 
     public RuleFileParser(
         RequestMatchersParser requestMatchersParser,
         ConditionMatcherParser conditionMatcherParser,
-        FileSectionDeclaredItemsParser fileSectionDeclaredItemsParser,
+        DeclaredItemsParser declaredItemsParser,
         HandlersParser handlersParser, IFunctionFactoryCSharpFactory functionFactoryCSharpFactory)
     {
         _requestMatchersParser = requestMatchersParser;
         _conditionMatcherParser = conditionMatcherParser;
-        _fileSectionDeclaredItemsParser = fileSectionDeclaredItemsParser;
+        _declaredItemsParser = declaredItemsParser;
         _handlersParser = handlersParser;
         _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
     }
@@ -34,15 +35,17 @@ internal class RuleFileParser
         var sectionsRoot = await SectionFileParser.Parse(ruleFile);
 
         var sections = sectionsRoot.Sections;
-        AssertContainsOnlySections(sections, [Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Templates]);
+        AssertContainsOnlySections(sections,
+            [Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Templates]);
 
         var usingContext = _functionFactoryCSharpFactory.CreateRulesUsingContext(sectionsRoot.Lines);
 
-        // var ctx = new ParsingContext(parsingContext, cSharpUsingContext: usingContext, currentPath: ruleFile.GetDirectory());
-        var ctx = new ParsingContext(parsingContext, cSharpUsingContext: usingContext, currentPath: ruleFile.GetDirectory());
+        var ctx = new ParsingContext(parsingContext, cSharpUsingContext: usingContext,
+            currentPath: ruleFile.GetDirectory());
 
-        var declaredItems = await GetDeclaredItems(sections, ctx);
-        ctx.SetDeclaredItems(declaredItems);
+        var declaredItemsRegistry = ctx.DeclaredItemsRegistry;
+        declaredItemsRegistry.AddDraftsRange(GetDeclaredItemsDrafts(sections, ruleFile + " (file declare section)"));
+        await declaredItemsRegistry.Compile(ctx);
 
         var rules = new List<Rule>();
         var ruleSections = sections.Where(s => s.Name == Constants.SectionName.Rule).ToArray();
@@ -75,8 +78,9 @@ internal class RuleFileParser
         var ctx = new ParsingContext(parsingContext);
         var requestMatchers = await _requestMatchersParser.Parse(ruleSection, ctx);
 
-        var declaredItems = await GetDeclaredItems(childSections, ctx);
-        ctx.SetDeclaredItems(declaredItems);
+        var declaredItemsRegistry = ctx.DeclaredItemsRegistry;
+        declaredItemsRegistry.AddDraftsRange(GetDeclaredItemsDrafts(childSections, ruleName + " (rule declare section)"));
+        await declaredItemsRegistry.Compile(ctx);
 
         bool existsConditionSection = childSections.Any(x => x.Name == Constants.SectionName.Condition);
         bool existsCacheSection = childSections.Any(x => x.Name == Constants.SectionName.Cache);
@@ -86,7 +90,8 @@ internal class RuleFileParser
 
         if (existsConditionSection)
         {
-            AssertContainsOnlySections(childSections, [Constants.SectionName.Condition, Constants.SectionName.Declare, Constants.SectionName.Templates]);
+            AssertContainsOnlySections(childSections,
+                [Constants.SectionName.Condition, Constants.SectionName.Declare, Constants.SectionName.Templates]);
 
             var conditionSections = childSections.Where(s => s.Name == Constants.SectionName.Condition).ToArray();
 
@@ -101,9 +106,11 @@ internal class RuleFileParser
                 var childConditionSections = conditionSection.ChildSections;
                 AssertContainsOnlySections(
                     rulesSections: childConditionSections,
-                    expectedSectionName: _handlersParser.GetAllSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare));
+                    expectedSectionName: _handlersParser.GetAllSectionNames(childConditionSections)
+                        .NewWith(Constants.SectionName.Response, Constants.SectionName.Declare));
 
-                ctx.SetDeclaredItems(await GetDeclaredItems(childConditionSections, ctx));
+                declaredItemsRegistry.AddDraftsRange(GetDeclaredItemsDrafts(childConditionSections, ruleName + $" (rule declare section condition no. {i + 1})"));
+                await declaredItemsRegistry.Compile(ctx);
 
                 var handlers = await _handlersParser.Parse(childConditionSections, ctx);
 
@@ -141,7 +148,6 @@ internal class RuleFileParser
         //        throw new Exception($"Section {Constants.SectionName.Cache} cannot contains child section. Contains: {string.Join(", ", cacheSection.ChildSections.Select(x => x.Name))}");
 
 
-
         //    for (var i = 0; i < conditionSections.Length; i++)
         //    {
         //        var conditionSection = conditionSections[i];
@@ -172,29 +178,25 @@ internal class RuleFileParser
 
         AssertContainsOnlySections(
             childSections,
-            _handlersParser.GetAllSectionNames(childSections).NewWith(Constants.SectionName.Declare, Constants.SectionName.Templates));
+            _handlersParser.GetAllSectionNames(childSections)
+                .NewWith(Constants.SectionName.Declare, Constants.SectionName.Templates));
 
         var handlerss = await _handlersParser.Parse(childSections, ctx);
         return
         [
             new Rule(
-            ruleName,
-            requestMatchers,
-            handlerss)
+                ruleName,
+                requestMatchers,
+                handlerss)
         ];
     }
 
-    private async Task<DeclaredItems> GetDeclaredItems(IReadOnlyCollection<FileSection> childSections, IReadonlyParsingContext parsingContext)
+    private IReadOnlySet<DeclaredItemDraft> GetDeclaredItemsDrafts(IReadOnlyCollection<FileSection> childSections, string sourceDeclaration)
     {
-        var result = DeclaredItems.WithoutLocalVariables(parsingContext.DeclaredItems);
-
         var variablesSection = childSections.FirstOrDefault(x => x.Name == Constants.SectionName.Declare);
-        if (variablesSection != null)
-        {
-            result.TryAddRange(await _fileSectionDeclaredItemsParser.Parse(variablesSection, parsingContext));
-        }
-
-        return result;
+        if (variablesSection == null)
+            return FrozenSet<DeclaredItemDraft>.Empty;
+        return _declaredItemsParser.Parse(variablesSection.LinesWithoutBlock, sourceDeclaration);
     }
 
     private static void AssertContainsOnlySections(IImmutableList<FileSection> rulesSections,

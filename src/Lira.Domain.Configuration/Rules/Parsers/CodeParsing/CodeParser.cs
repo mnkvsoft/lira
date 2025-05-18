@@ -11,13 +11,13 @@ namespace Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 
 static class CodeParser
 {
-    public static (CodeBlock, IReadOnlyCollection<RuntimeRuleVariable>, IReadOnlyCollection<LocalVariable>) Parse(
+    public static (CodeBlock, IReadOnlyCollection<InlineRuleVariable>, IReadOnlyCollection<LocalVariable>) Parse(
         string code,
-        IReadOnlySet<DeclaredItem> declaredItems)
+        IReadOnlySet<string> declaredItemNames)
     {
         try
         {
-            return ParseInternal(code, declaredItems);
+            return ParseInternal(code, declaredItemNames);
         }
         catch (Exception e)
         {
@@ -25,32 +25,32 @@ static class CodeParser
             throw new Exception(e.Message + nl + "Error parsing code: " + nl +
                                 code.WrapBeginEnd() +
                                 "Declared items: " + nl +
-                                declaredItems,
+                                declaredItemNames,
                 e);
         }
     }
 
-    private static (CodeBlock, IReadOnlyCollection<RuntimeRuleVariable>, IReadOnlyCollection<LocalVariable>) ParseInternal(string code,
-        IReadOnlySet<DeclaredItem> declaredItems)
+    private static (CodeBlock, IReadOnlyCollection<InlineRuleVariable>, IReadOnlyCollection<LocalVariable>) ParseInternal(
+        string code,
+        IReadOnlySet<string> declaredItemNames)
     {
         var codeTokens = Parse(code);
 
         // case: $$some.var.ToString()
         var result = new List<CodeToken>(codeTokens.Count * 2);
 
-        var onlyNewVariables = new List<RuntimeRuleVariable>();
+        var onlyNewVariables = new List<InlineRuleVariable>();
         var newLocalVariables = new List<LocalVariable>();
 
-        var withNewVariables = new List<DeclaredItem>();
-        withNewVariables.AddRange(declaredItems);
+        var allDeclaredNames = new List<string>();
+        allDeclaredNames.AddRange(declaredItemNames);
 
         foreach (var codeToken in codeTokens)
         {
             if (codeToken is CodeToken.ReadItem readItem)
             {
-                var names = withNewVariables
-                    .Where(item => readItem.ItemName.StartsWith(item.Name))
-                    .Select(item => item.Name);
+                var names = allDeclaredNames
+                    .Where(name => readItem.ItemName.StartsWith(name));
 
                 string? readItemName = null;
                 foreach (var name in names)
@@ -78,10 +78,10 @@ static class CodeParser
             {
                 if (writeItem.ItemName.StartsWith(RuleVariable.Prefix))
                 {
-                    var variable = new RuntimeRuleVariable(writeItem.ItemName, valueType: null);
+                    var variable = new InlineRuleVariable(writeItem.ItemName, valueType: null);
 
                     onlyNewVariables.Add(variable);
-                    withNewVariables.Add(variable);
+                    allDeclaredNames.Add(variable.Name);
 
                     result.Add(writeItem);
                 }
@@ -90,7 +90,7 @@ static class CodeParser
                     var variable = new LocalVariable(writeItem.ItemName, valueType: null);
 
                     newLocalVariables.Add(variable);
-                    withNewVariables.Add(variable);
+                    allDeclaredNames.Add(variable.Name);
 
                     result.Add(writeItem);
                 }

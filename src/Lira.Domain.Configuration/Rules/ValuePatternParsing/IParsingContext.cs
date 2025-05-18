@@ -1,6 +1,4 @@
-using System.Collections.Immutable;
 using Lira.Domain.TextPart.Impl.CSharp;
-using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Impl.Custom.CustomDicModel;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
@@ -9,7 +7,7 @@ public interface IParsingContext;
 
 public interface IReadonlyParsingContext
 {
-    IReadOnlySet<DeclaredItem> DeclaredItems { get; }
+    IDeclaredItemsRegistryReadonly DeclaredItems { get; }
     IReadOnlyCustomDicts CustomDicts { get; }
     string RootPath { get; }
     string CurrentPath { get; }
@@ -20,26 +18,26 @@ class ParsingContext : IParsingContext, IReadonlyParsingContext
 {
     public CustomDicts CustomDicts { get; }
     public string RootPath { get; }
-    public DeclaredItems DeclaredItems { get; private set; }
+    public DeclaredItemsRegistry DeclaredItemsRegistry { get; private set; }
     public string CurrentPath { get; private init; }
     public FunctionFactoryUsingContext CSharpUsingContext { get; }
 
          public ParsingContext(
          IReadonlyParsingContext context,
          string? currentPath = null,
-         DeclaredItems? declaredItems = null,
+         DeclaredItemsRegistry? declaredItems = null,
          FunctionFactoryUsingContext? cSharpUsingContext = null)
      {
          CSharpUsingContext = cSharpUsingContext ?? context.CSharpUsingContext;
-         DeclaredItems = declaredItems ?? DeclaredItems.WithoutLocalVariables(context.DeclaredItems);
+         DeclaredItemsRegistry = declaredItems ?? DeclaredItemsRegistry.WithoutLocalVariables(context.DeclaredItems);
          CustomDicts = new CustomDicts(context.CustomDicts);
          RootPath = context.RootPath;
          CurrentPath = currentPath ?? context.CurrentPath;
      }
 
-     public ParsingContext(DeclaredItems declaredItems, FunctionFactoryUsingContext cSharpUsingContext, CustomDicts customDicts, string rootPath, string currentPath)
+     public ParsingContext(DeclaredItemsRegistry declaredItemsRegistry, FunctionFactoryUsingContext cSharpUsingContext, CustomDicts customDicts, string rootPath, string currentPath)
      {
-         DeclaredItems = declaredItems;
+         DeclaredItemsRegistry = declaredItemsRegistry;
          CustomDicts = customDicts;
          RootPath = rootPath;
          CurrentPath = currentPath;
@@ -54,19 +52,19 @@ class ParsingContext : IParsingContext, IReadonlyParsingContext
         };
     }
 
-    public void SetDeclaredItems(DeclaredItems declaredItems)
+    public void SetDeclaredItems(DeclaredItemsRegistry declaredItemsRegistry)
     {
-        DeclaredItems = declaredItems;
+        DeclaredItemsRegistry = declaredItemsRegistry;
     }
 
     IReadOnlyCustomDicts IReadonlyParsingContext.CustomDicts => CustomDicts;
-    IReadOnlySet<DeclaredItem> IReadonlyParsingContext.DeclaredItems => DeclaredItems.ToImmutableHashSet();
+    IDeclaredItemsRegistryReadonly IReadonlyParsingContext.DeclaredItems => DeclaredItemsRegistry;
 
     public override string ToString()
     {
         var nl = Environment.NewLine;
         return
-            DeclaredItems + nl +
+            DeclaredItemsRegistry + nl +
             $"Custom dictionaries: {string.Join(", ", CustomDicts.GetRegisteredNames())}";
     }
 }

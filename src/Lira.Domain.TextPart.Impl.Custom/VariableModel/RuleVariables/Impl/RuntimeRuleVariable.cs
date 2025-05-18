@@ -1,8 +1,8 @@
 namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 
-public class RuntimeRuleVariable : RuleVariable
+public class InlineRuleVariable : RuleVariable, IInlineDeclareVariable
 {
-    public RuntimeRuleVariable(string name, ReturnType? valueType) : base(name, valueType)
+    public InlineRuleVariable(string name, ReturnType? valueType) : base(name, valueType)
     {
     }
 

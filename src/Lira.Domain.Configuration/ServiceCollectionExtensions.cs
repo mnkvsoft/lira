@@ -8,7 +8,6 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Variables;
 using Lira.Domain.DataModel;
 using Lira.Domain.TextPart.Impl.CSharp;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 using Lira.Domain.TextPart.Impl.System;
 
 namespace Lira.Domain.Configuration;
@@ -24,7 +23,7 @@ public static class ServiceCollectionExtensions
             .AddFunctionsCSharp()
             .AddTransient<ConditionMatcherParser>()
             .AddTransient<RequestMatchersParser>()
-            .AddTransient<FileSectionDeclaredItemsParser>()
+            .AddScoped<DeclaredItemsRegistry>()
             .AddScoped<ResponseGenerationHandlerParser>()
             .AddScoped<HandlersParser>()
             .AddScoped<HeadersParser>()

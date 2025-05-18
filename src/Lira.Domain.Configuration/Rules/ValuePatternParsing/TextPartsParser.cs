@@ -1,13 +1,8 @@
 using Lira.Common.Exceptions;
-using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel.LocalVariables;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 using Lira.Domain.TextPart.Impl.System;
 using Microsoft.Extensions.Logging;
 
@@ -26,12 +21,8 @@ class TextPartsParser : ITextPartsParser
         public ReturnType ReturnType => ReturnType.String;
     }
 
-    // public record Context(ParsingContext ParsingContext, LocalVariableSet LocalVariables);
-
     private readonly IFunctionFactorySystem _functionFactorySystem;
-
     private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
-
     private readonly ILogger _logger;
 
     public TextPartsParser(
@@ -54,37 +45,33 @@ class TextPartsParser : ITextPartsParser
         var localContext = new ParsingContext(parsingContext.ToImpl());
         foreach (var patternPart in patternParts)
         {
-            parts.AddRange(await CreateValuePart(patternPart, localContext));
+            parts.Add(await CreateValuePart(patternPart, localContext));
         }
 
         var ctx = parsingContext.ToImpl();
-        ctx.DeclaredItems.TryAddRange(localContext.DeclaredItems);
+        ctx.DeclaredItemsRegistry.Merge(localContext.DeclaredItemsRegistry);
 
         bool isString = patternParts.Count == 0 || patternParts.Count > 1 || patternParts[0] is PatternPart.Static;
         return new ObjectTextParts(parts, isString);
     }
 
-    private async Task<IReadOnlyCollection<IObjectTextPart>> CreateValuePart(
+    private async Task<IObjectTextPart> CreateValuePart(
         PatternPart patternPart,
         ParsingContext context)
     {
         return patternPart switch
         {
-            PatternPart.Static @static => [new Static(@static.Value)],
+            PatternPart.Static @static => new Static(@static.Value),
             PatternPart.Dynamic dynamic => await GetDynamicParts(dynamic, context),
             _ => throw new UnsupportedInstanceType(patternPart)
         };
     }
 
-    private async Task<IReadOnlyCollection<IObjectTextPart>> GetDynamicParts(
+    private async Task<IObjectTextPart> GetDynamicParts(
         PatternPart.Dynamic dynamicPart,
         ParsingContext context)
     {
         string value = dynamicPart.Value;
-
-        // var (wasRead, parts) = await TryReadParts(context, value);
-        // if (wasRead)
-        //     return parts!;
 
         TransformPipeline pipeline;
         if (value.Contains("return"))
@@ -92,7 +79,7 @@ class TextPartsParser : ITextPartsParser
             var functionFactory = await _functionFactoryCSharpFactory.Get();
             var createFunctionResult = functionFactory.TryCreateGeneratingFunction(
                 new FunctionFactoryRuleContext(context.CSharpUsingContext,
-                    new DeclaredPartsProvider(context.DeclaredItems)),
+                    new DeclaredPartsProvider(context.DeclaredItemsRegistry)),
                 GetCodeBlock(context, value));
 
             var function = createFunctionResult.GetFunctionOrThrow(value, context);
@@ -109,52 +96,10 @@ class TextPartsParser : ITextPartsParser
             {
                 var maybeVariableDeclaration = pipelineItemsRaw[1].Trim();
 
-                // case: {{ guid >> $$id }}
-                if (maybeVariableDeclaration.StartsWith(RuleVariable.Prefix))
-                {
-                    if (maybeVariableDeclaration.Split(" ").Length > 1)
-                        throw new Exception(
-                            $"Invalid write to variable declaration: {Consts.ControlChars.WriteToVariablePrefix} " +
-                            maybeVariableDeclaration);
+                var variableReference = context.DeclaredItemsRegistry.TryGetVariable(maybeVariableDeclaration, startFunction.ReturnType);
 
-                    var existVar = context.DeclaredItems.OfType<Variable>().SingleOrDefault(x => x.Name == maybeVariableDeclaration);
-
-                    if (existVar == null)
-                    {
-                        var variable = new RuntimeRuleVariable(
-                            maybeVariableDeclaration,
-                            startFunction.ReturnType);
-
-                        context.DeclaredItems.Add(variable);
-                        return [new ObjectTextPartWithSaveVariable(startFunction, variable)];
-                    }
-
-                    context.DeclaredItems.Add(existVar);
-                    return [new ObjectTextPartWithSaveVariable(startFunction, existVar)];
-                }
-
-                // case: {{ guid >> $id }}
-                if (maybeVariableDeclaration.StartsWith(LocalVariable.Prefix))
-                {
-                    if (maybeVariableDeclaration.Split(" ").Length > 1)
-                        throw new Exception(
-                            $"Invalid write to local variable declaration: {Consts.ControlChars.WriteToVariablePrefix} " +
-                            maybeVariableDeclaration);
-
-                    var existVar = context.DeclaredItems.OfType<Variable>().SingleOrDefault(x => x.Name == maybeVariableDeclaration);
-
-                    if (existVar == null)
-                    {
-                        var variable = new LocalVariable(
-                                maybeVariableDeclaration,
-                                startFunction.ReturnType);
-
-                        context.DeclaredItems.Add(variable);
-                        return [new ObjectTextPartWithSaveVariable(startFunction, variable)];
-                    }
-
-                    return [new ObjectTextPartWithSaveVariable(startFunction, existVar)];
-                }
+                if(variableReference != null)
+                    return new ObjectTextPartWithSaveVariable(startFunction, variableReference);
             }
 
             for (int i = 1; i < pipelineItemsRaw.Length; i++)
@@ -164,15 +109,15 @@ class TextPartsParser : ITextPartsParser
             }
         }
 
-        return [pipeline];
+        return pipeline;
     }
 
     private static CodeBlock GetCodeBlock(ParsingContext context, string value)
     {
-        var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(value, context.DeclaredItems);
+        var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(value, context.DeclaredItemsRegistry.GetAllDeclaredNames());
 
-        context.DeclaredItems.TryAddRange(newRuntimeVariables);
-        context.DeclaredItems.TryAddRange(localVariables);
+        context.DeclaredItemsRegistry.AddVariablesRange(newRuntimeVariables);
+        context.DeclaredItemsRegistry.AddVariablesRange(localVariables);
 
         return codeBlock;
     }
@@ -190,20 +135,19 @@ class TextPartsParser : ITextPartsParser
 
     private async Task<IObjectTextPart> CreateStartFunction(string rawText, ParsingContext context)
     {
-        var declaredItems = context.DeclaredItems;
+        var declaredItemsRegistry = context.DeclaredItemsRegistry;
 
-        var declaredFunction = declaredItems
-            .OfType<Function>()
-            .SingleOrDefault(x => x.Name == Function.Prefix + rawText);
+        string functionName = rawText.StartsWith(Function.Prefix) ? rawText : Function.Prefix + rawText;
+        var functionReference = declaredItemsRegistry.TryGetFunctionReference(functionName);
 
         context.CustomDicts.TryGetCustomSetFunction(rawText, out var customSetFunction);
 
         if (_functionFactorySystem.TryCreateGeneratingFunction(rawText, out var function))
         {
-            if (declaredFunction != null)
+            if (functionReference != null)
             {
                 _logger.LogInformation($"System function '{rawText}' was replaced by custom declared");
-                return declaredFunction;
+                return functionReference;
             }
 
             if (customSetFunction != null)
@@ -215,77 +159,17 @@ class TextPartsParser : ITextPartsParser
             return function;
         }
 
-        if (declaredFunction != null)
-            return declaredFunction;
+        if (functionReference != null)
+            return functionReference;
 
         if (customSetFunction != null)
             return customSetFunction;
 
-        var declaredItem = declaredItems
-            .SingleOrDefault(x => x.Name == rawText);
-
-        if (declaredItem != null)
-            return declaredItem;
-
         var functionFactory = await _functionFactoryCSharpFactory.Get();
         var createFunctionResult = functionFactory.TryCreateGeneratingFunction(
-            new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(declaredItems)),
+            new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(declaredItemsRegistry)),
             GetCodeBlock(context, rawText));
 
         return createFunctionResult.GetFunctionOrThrow(rawText, context);
     }
-
-    // private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadParts(
-    //     IReadonlyParsingContext context, string invoke)
-    // {
-    //     var (wasRead, parts) = await TryReadPartsFromFile(context, invoke);
-    //
-    //     if (wasRead)
-    //         return (true, parts!);
-    //
-    //     (wasRead, parts) = await TryReadPartsFromTemplate(context, invoke);
-    //
-    //     if (wasRead)
-    //         return (true, parts!);
-    //
-    //     return (false, null);
-    // }
-
-    // private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadPartsFromTemplate(
-    //     IReadonlyParsingContext context, string invoke)
-    // {
-    //     if (invoke.StartsWith(Consts.ControlChars.TemplatePrefix))
-    //     {
-    //         var templateName = invoke.TrimStart(Consts.ControlChars.TemplatePrefix);
-    //
-    //         var template = context.Templates.GetOrThrow(templateName);
-    //
-    //         var parts = await Parse(template.Value, context);
-    //         return (true, parts);
-    //     }
-    //
-    //     return (false, null);
-    // }
-
-    // private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadPartsFromFile(
-    //     IReadonlyParsingContext context, string invoke)
-    // {
-    //     if (!invoke.StartsWith("read.file:"))
-    //         return (false, null);
-    //
-    //     var args = invoke.TrimStart("read.file:");
-    //     var (fileName, encodingName) = args.SplitToTwoParts(" encoding:").Trim();
-    //
-    //     string filePath;
-    //     if (fileName.StartsWith('/'))
-    //         filePath = context.RootPath + fileName;
-    //     else
-    //         filePath = Path.Combine(context.CurrentPath, fileName);
-    //
-    //     var encoding = encodingName == null ? Encoding.UTF8 : Encoding.GetEncoding(encodingName);
-    //
-    //     string pattern = await File.ReadAllTextAsync(filePath, encoding);
-    //     var parts = await Parse(pattern.Replace("\r\n", "\n"), context);
-    //     return (true, parts);
-    // }
 }

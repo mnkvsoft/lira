@@ -33,8 +33,8 @@ public class Tests
         "[:c $$\"\"\"some string\"\"\"]")]
     public void ReadRuleVariable(string code, string expected)
     {
-        var declaredItems = new DeclaredItems {
-            new RuntimeRuleVariable("$$read.from.variable", valueType: null),
+        var declaredItems = new DeclaredItemsRegistry {
+            new InlineRuleVariable("$$read.from.variable", valueType: null),
         };
 
         var (codeBlock, _, _) = CodeParser.Parse(
@@ -68,7 +68,7 @@ public class Tests
         "[:c $\"\"\"some string\"\"\"]")]
     public void ReadLocalVariable(string code, string expected)
     {
-        var declaredItems = new DeclaredItems {
+        var declaredItems = new DeclaredItemsRegistry {
             new LocalVariable("$read.from.variable", valueType: null)
         };
 
@@ -83,7 +83,7 @@ public class Tests
     [Test]
     public void ReadRuleVariableWithPropertyAccess()
     {
-        var declaredItems = new DeclaredItems { new DeclaredRuleVariable("$$person", [Mock.Of<IObjectTextPart>()], valueType: null) };
+        var declaredItems = new DeclaredItemsRegistry { new DeclaredRuleVariable("$$person", [Mock.Of<IObjectTextPart>()], valueType: null) };
 
         var (codeBlock, _, _) = CodeParser.Parse(
             "$$person.name",
@@ -96,7 +96,7 @@ public class Tests
     [Test]
     public void ReadLocalVariableWithPropertyAccess()
     {
-        var declaredItems = new DeclaredItems { new LocalVariable("$person", valueType: null) };
+        var declaredItems = new DeclaredItemsRegistry { new LocalVariable("$person", valueType: null) };
 
         var (codeBlock, _, _) = CodeParser.Parse(
             "$person.name",
@@ -127,7 +127,7 @@ public class Tests
 
     public void ReadFunction(string code, string expected)
     {
-        var declaredItems = new DeclaredItems
+        var declaredItems = new DeclaredItemsRegistry
         {
             new Function("#read.from.function",
                 Array.Empty<IObjectTextPart>(), valueType: null)
@@ -170,7 +170,7 @@ public class Tests
     {
         var (codeBlock, _, _) = CodeParser.Parse(
             code,
-            new DeclaredItems());
+            new DeclaredItemsRegistry());
 
         var result = string.Concat(codeBlock.Tokens);
         Assert.That(result, Is.EqualTo(expected));

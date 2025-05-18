@@ -1,5 +1,3 @@
-using Lira.Common.Extensions;
-using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.FileSectionFormat;
 using NuGet.Packaging;
 
@@ -7,23 +5,25 @@ namespace Lira.Domain.Configuration.Variables;
 
 internal class DeclaredItemsLoader(DeclaredItemsParser parser)
 {
-    public async Task<DeclaredItems> Load(IReadonlyParsingContext parsingContext, string path)
+    public async Task<IReadOnlyCollection<DeclaredItemDraft>> ReadDrafts(string path)
     {
-        var result = new DeclaredItems();
-        var newContext = new ParsingContext(parsingContext, declaredItems: result);
+        var result = new HashSet<DeclaredItemDraft>();
 
         foreach (var variableFile in DirectoryHelper.GetFiles(path, "*.declare"))
         {
             try
             {
                 var lines = TextCleaner.DeleteEmptiesAndComments(await File.ReadAllTextAsync(variableFile));
-                result.AddRange(await parser.Parse(lines, newContext.WithCurrentPath(variableFile.GetDirectory())));
+                var drafts = parser.Parse(lines, variableFile);
+
+                result.AddRange(drafts);
             }
             catch (Exception exc)
             {
                 throw new FileParsingException(variableFile, exc);
             }
         }
+
         return result;
     }
 }
