@@ -1,0 +1,13 @@
+-------------------- case
+
+GET /generating/declare/unorder/rule_layer
+
+----- expected
+
+~ code
+200
+
+~ body
+13
+23
+3

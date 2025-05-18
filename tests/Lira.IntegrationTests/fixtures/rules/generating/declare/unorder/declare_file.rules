@@ -1,0 +1,12 @@
+-------------------- rule
+
+GET /generating/declare/unorder/declare_file
+
+----- response
+
+~ code
+200
+
+~ body
+{{ #from.file.1.1 }}
+{{ #from.file.2.2 }}

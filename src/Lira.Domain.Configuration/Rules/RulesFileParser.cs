@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using Lira.Common.Extensions;
+using Lira.Domain.Configuration.DeclarationItems;
 using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
-using Lira.Domain.Configuration.Variables;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.FileSectionFormat;
 
@@ -184,7 +184,7 @@ internal class RuleFileParser
         ];
     }
 
-    private async Task<DeclaredItems> GetDeclaredItems(IReadOnlyCollection<FileSection> childSections, IReadonlyParsingContext parsingContext)
+    private async Task<DeclaredItems> GetDeclaredItems(IReadOnlyCollection<FileSection> childSections, ParsingContext parsingContext)
     {
         var result = DeclaredItems.WithoutLocalVariables(parsingContext.DeclaredItems);
 

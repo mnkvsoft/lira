@@ -23,4 +23,15 @@ public static class SetExtensions
             set.Add(item);
         }
     }
+
+    public static bool ContainsAll<T>(this IReadOnlySet<T> set, IEnumerable<T> items)
+    {
+        foreach (var item in items)
+        {
+            if (!set.Contains(item))
+                return false;
+        }
+
+        return true;
+    }
 }

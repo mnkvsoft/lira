@@ -1,30 +1,28 @@
-using Lira.Common.Extensions;
-using Lira.Domain.Configuration.DeclarationItems;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.FileSectionFormat;
 using NuGet.Packaging;
 
-namespace Lira.Domain.Configuration.Variables;
+namespace Lira.Domain.Configuration.DeclarationItems;
 
-internal class DeclaredItemsLoader(DeclaredItemsParser parser)
+internal class DeclaredItemsLoader(DeclaredItemsLinesParser linesParser, DeclaredItemDraftsParser draftsParser)
 {
-    public async Task<DeclaredItems> Load(IReadonlyParsingContext parsingContext, string path)
+    public async Task<DeclaredItems> Load(ParsingContext parsingContext, string path)
     {
-        var result = new DeclaredItems();
-        var newContext = new ParsingContext(parsingContext, declaredItems: result);
+        var drafts = new HashSet<DeclaredItemDraft>();
 
-        foreach (var variableFile in DirectoryHelper.GetFiles(path, "*.declare"))
+        foreach (var declarationFile in DirectoryHelper.GetFiles(path, "*.declare"))
         {
             try
             {
-                var lines = TextCleaner.DeleteEmptiesAndComments(await File.ReadAllTextAsync(variableFile));
-                result.AddRange(await parser.Parse(lines, newContext.WithCurrentPath(variableFile.GetDirectory())));
+                var lines = TextCleaner.DeleteEmptiesAndComments(await File.ReadAllTextAsync(declarationFile));
+                drafts.AddRange(linesParser.Parse(lines));
             }
             catch (Exception exc)
             {
-                throw new FileParsingException(variableFile, exc);
+                throw new FileParsingException(declarationFile, exc);
             }
         }
-        return result;
+
+        return await draftsParser.Parse(drafts, parsingContext);
     }
 }

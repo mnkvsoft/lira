@@ -3,12 +3,12 @@ using Microsoft.Extensions.Logging;
 using Lira.Domain.Configuration.RangeModel;
 using Lira.Domain.Configuration.Rules;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
-using Lira.Domain.Configuration.Variables;
 using System.Diagnostics;
 using Lira.Common.State;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.System;
 using Lira.Domain.Configuration.CustomDictionaries;
+using Lira.Domain.Configuration.DeclarationItems;
 
 namespace Lira.Domain.Configuration;
 

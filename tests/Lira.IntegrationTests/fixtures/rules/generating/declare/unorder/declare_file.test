@@ -1,0 +1,12 @@
+-------------------- case
+
+GET /generating/declare/unorder/declare_file
+
+----- expected
+
+~ code
+200
+
+~ body
+1121
+2212

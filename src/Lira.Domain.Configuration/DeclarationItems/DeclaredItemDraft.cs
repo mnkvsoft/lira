@@ -7,14 +7,12 @@ class DeclaredItemDraft : IEquatable<DeclaredItemDraft>
     public string Name { get; }
     public string Pattern { get; }
     public ReturnType? ReturnType { get; }
-    public string Source { get; }
 
-    public DeclaredItemDraft(string name, string pattern, ReturnType? returnType, string source)
+    public DeclaredItemDraft(string name, string pattern, ReturnType? returnType)
     {
         Name = name;
         Pattern = pattern;
         ReturnType = returnType;
-        Source = source;
     }
 
     public bool Equals(DeclaredItemDraft? other)

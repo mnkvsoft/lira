@@ -6,7 +6,6 @@ using Lira.Domain.Configuration.RangeModel;
 using Lira.Domain.Configuration.Rules;
 using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
-using Lira.Domain.Configuration.Variables;
 using Lira.Domain.DataModel;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel;
@@ -25,15 +24,19 @@ public static class ServiceCollectionExtensions
             .AddFunctionsCSharp()
             .AddTransient<ConditionMatcherParser>()
             .AddTransient<RequestMatchersParser>()
-            .AddTransient<FileSectionDeclaredItemsParser>()
+
+            .AddTransient<RuleFileParser>()
+
             .AddScoped<ResponseGenerationHandlerParser>()
             .AddScoped<HandlersParser>()
             .AddScoped<HeadersParser>()
             .AddScoped<GetDelayParser>()
             .AddScoped<DeclaredItemsLoader>()
-            .AddScoped<DeclaredItemsParser>()
+            .AddScoped<DeclaredItemsLinesParser>()
             .AddScoped<ITextPartsParser, TextPartsParser>()
-            .AddTransient<RuleFileParser>()
+            .AddScoped<DeclaredItemDraftsParser>()
+            .AddScoped<FileSectionDeclaredItemsParser>()
+
             .AddSingleton<ConfigurationLoader>()
             .AddSingleton<IConfigurationLoader>(provider => provider.GetRequiredService<ConfigurationLoader>())
             .AddSingleton<IStateRepository, StateRepository>()

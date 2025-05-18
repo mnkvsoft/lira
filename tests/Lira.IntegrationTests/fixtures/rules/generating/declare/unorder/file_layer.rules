@@ -1,0 +1,19 @@
+-------------------- declare
+
+#func.1 = 1{{ #func.3 }}
+#func.2 = 2{{ #func.3 }}
+#func.3 = 3
+
+-------------------- rule
+
+GET /generating/declare/unorder/file_layer
+
+----- response
+
+~ code
+200
+
+~ body
+{{ #func.1 }}
+{{ #func.2 }}
+{{ #func.3 }}

@@ -1,15 +1,13 @@
-﻿using Lira.Domain.Configuration.DeclarationItems;
-using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+﻿using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.FileSectionFormat;
 
-namespace Lira.Domain.Configuration.Variables;
+namespace Lira.Domain.Configuration.DeclarationItems;
 
-class FileSectionDeclaredItemsParser
+class FileSectionDeclaredItemsParser(DeclaredItemsLinesParser linesParser, DeclaredItemDraftsParser draftsParser)
 {
-    private readonly DeclaredItemsParser _parser;
-
-    public FileSectionDeclaredItemsParser(DeclaredItemsParser parser) => _parser = parser;
-
-    public Task<DeclaredItems> Parse(FileSection variablesSection, IReadonlyParsingContext parsingContext)
-        => _parser.Parse(variablesSection.LinesWithoutBlock, parsingContext);
+    public Task<DeclaredItems> Parse(FileSection variablesSection, ParsingContext parsingContext)
+    {
+        var drafts = linesParser.Parse(variablesSection.LinesWithoutBlock);
+        return draftsParser.Parse(drafts, parsingContext);
+    }
 }
