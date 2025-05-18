@@ -89,7 +89,7 @@ static class DeclaredItemDraftOrderer
         handle(node, route);
         foreach (Node n in node.DependsOn)
         {
-            RecursiveTraversal(route + " -> " + n.Draft.Name, n, handle);
+            RecursiveTraversal(route + " --> " + n.Draft.Name, n, handle);
         }
     }
 }
