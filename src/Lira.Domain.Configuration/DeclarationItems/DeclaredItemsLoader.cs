@@ -1,4 +1,5 @@
 using Lira.Common.Extensions;
+using Lira.Domain.Configuration.DeclarationItems;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.FileSectionFormat;
 using NuGet.Packaging;
