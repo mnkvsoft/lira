@@ -8,12 +8,12 @@ internal interface IWithArgumentFunction : IWithArgument
 
 internal interface IWithArgumentFunction<in T> : IWithArgument
 {
-    void SetArgument(T argument);
+    void SetArgument(T arguments);
 }
 
 internal abstract class WithArgumentFunction<T> : FunctionBase, IWithArgumentFunction, IWithArgumentFunction<T>
 {
-     public abstract void SetArgument(T argument);
+     public abstract void SetArgument(T arguments);
      public void SetArgument(object argument)
      {
          SetArgument((T)argument);

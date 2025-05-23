@@ -1,0 +1,17 @@
+-------------------- rule
+
+GET /generating/function/random
+
+----- declare
+
+#func = 111-{{ echo: 222 }}-333
+$$ruleVar = 111-{{ echo: 222 }}-333
+
+----- response
+
+~ code
+200
+
+~ body
+{{ echo: 111-222-333 >> $localVar }}
+{{ random: #func, $$ruleVar, $localVar }}

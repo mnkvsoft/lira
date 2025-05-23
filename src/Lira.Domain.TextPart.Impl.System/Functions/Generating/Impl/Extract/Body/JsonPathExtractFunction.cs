@@ -16,5 +16,5 @@ class JsonPathExtractFunction : WithArgumentFunction<string>, IBodyExtractFuncti
 
     public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(Extract(context.RequestContext.RequestData.ReadBody()));
 
-    public override void SetArgument(string argument) => _jpath = argument;
+    public override void SetArgument(string arguments) => _jpath = arguments;
 }

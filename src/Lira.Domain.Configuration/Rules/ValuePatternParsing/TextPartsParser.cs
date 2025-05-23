@@ -92,7 +92,7 @@ class TextPartsParser : ITextPartsParser
             var functionFactory = await _functionFactoryCSharpFactory.Get();
             var createFunctionResult = functionFactory.TryCreateGeneratingFunction(
                 new FunctionFactoryRuleContext(context.CSharpUsingContext,
-                    new DeclaredPartsProvider(context.DeclaredItems)),
+                    new DeclaredItemsProvider(context.DeclaredItems)),
                 GetCodeBlock(context, value));
 
             var function = createFunctionResult.GetFunctionOrThrow(value, context);
@@ -198,7 +198,7 @@ class TextPartsParser : ITextPartsParser
 
         context.CustomDicts.TryGetCustomSetFunction(rawText, out var customSetFunction);
 
-        if (_functionFactorySystem.TryCreateGeneratingFunction(rawText, out var function))
+        if (_functionFactorySystem.TryCreateGeneratingFunction(rawText, new SystemFunctionContext(new DeclaredItemsProvider(declaredItems)), out var function))
         {
             if (declaredFunction != null)
             {
@@ -229,7 +229,7 @@ class TextPartsParser : ITextPartsParser
 
         var functionFactory = await _functionFactoryCSharpFactory.Get();
         var createFunctionResult = functionFactory.TryCreateGeneratingFunction(
-            new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(declaredItems)),
+            new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredItemsProvider(declaredItems)),
             GetCodeBlock(context, rawText));
 
         return createFunctionResult.GetFunctionOrThrow(rawText, context);

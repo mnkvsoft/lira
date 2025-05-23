@@ -11,9 +11,9 @@ internal class Echo : WithArgumentFunction<string>, IObjectTextPart
     public ReturnType ReturnType => ReturnType.String;
 
 
-    public override void SetArgument(string? argument)
+    public override void SetArgument(string? arguments)
     {
-        _value = GetValue(argument);
+        _value = GetValue(arguments);
     }
 
     private object? GetValue(string? argument)

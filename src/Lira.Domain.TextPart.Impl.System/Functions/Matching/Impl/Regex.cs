@@ -18,8 +18,8 @@ internal class Regex : WithArgumentFunction<string>, IMatchFunctionTyped
         return Task.FromResult(_regex.IsMatch(value ?? ""));
     }
 
-    public override void SetArgument(string argument)
+    public override void SetArgument(string arguments)
     {
-        _regex = new global::System.Text.RegularExpressions.Regex(argument, RegexOptions.Compiled);
+        _regex = new global::System.Text.RegularExpressions.Regex(arguments, RegexOptions.Compiled);
     }
 }

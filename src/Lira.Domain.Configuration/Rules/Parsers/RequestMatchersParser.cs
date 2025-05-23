@@ -104,7 +104,7 @@ class RequestMatchersParser
         context.DeclaredItems.TryAddRange(newRuntimeVariables);
 
         var functionFactory = await _functionFactoryCSharpFactory.Get();
-        var matcher = functionFactory.TryCreateRequestMatcher(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(context.DeclaredItems)), codeBlock);
+        var matcher = functionFactory.TryCreateRequestMatcher(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredItemsProvider(context.DeclaredItems)), codeBlock);
         return matcher.GetFunctionOrThrow(code, context);
     }
 
@@ -283,7 +283,7 @@ class RequestMatchersParser
 
     private async Task<IMatchFunctionTyped> CreateMatchFunction(string invoke, ParsingContext context)
     {
-        if (_functionFactorySystem.TryCreateMatchFunction(invoke, out var function))
+        if (_functionFactorySystem.TryCreateMatchFunction(invoke, new SystemFunctionContext(new DeclaredItemsProvider(context.DeclaredItems)), out var function))
             return function;
 
         if (context.CustomDicts.TryGetCustomSetFunction(invoke, out var customSetFunction))
@@ -297,7 +297,7 @@ class RequestMatchersParser
         context.DeclaredItems.TryAddRange(newRuntimeVariables);
 
         var functionFactory = await _functionFactoryCSharpFactory.Get();
-        var createFunctionResult = functionFactory.TryCreateMatchFunction(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredPartsProvider(context.DeclaredItems)), codeBlock);
+        var createFunctionResult = functionFactory.TryCreateMatchFunction(new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredItemsProvider(context.DeclaredItems)), codeBlock);
         return createFunctionResult.GetFunctionOrThrow(invoke, context);
     }
 

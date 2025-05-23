@@ -1,8 +1,9 @@
 using System.Collections.Immutable;
+using Lira.Domain.TextPart.Impl.Custom;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
-public record FunctionFactoryRuleContext(FunctionFactoryUsingContext UsingContext, IDeclaredPartsProvider DeclaredPartsProvider);
+public record FunctionFactoryRuleContext(FunctionFactoryUsingContext UsingContext, IDeclaredItemsProvider DeclaredItemsProvider);
 
 public class FunctionFactoryUsingContext
 {
@@ -12,11 +13,4 @@ public class FunctionFactoryUsingContext
     {
         FileUsings = fileUsings;
     }
-}
-
-public interface IDeclaredPartsProvider
-{
-    IObjectTextPart Get(string name);
-
-    void SetVariable(string name, RuleExecutingContext context, dynamic value);
 }

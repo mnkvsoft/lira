@@ -1,8 +1,11 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ParameterOnlyUsedForPreconditionCheck.Local
+
+using Lira.Domain.TextPart.Impl.Custom;
+
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
-public class VariablesWriter(RuleExecutingContext context, IDeclaredPartsProvider declaredPartsProvider, bool readOnly)
+public class VariablesWriter(RuleExecutingContext context, IDeclaredItemsProvider declaredPartsProvider, bool readOnly)
 {
 
     public dynamic this[string name]

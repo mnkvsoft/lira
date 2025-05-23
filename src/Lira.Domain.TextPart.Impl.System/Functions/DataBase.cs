@@ -7,7 +7,7 @@ abstract class RangeBase : WithArgumentFunction<string>
 {
     private readonly IRangesProvider _dataProvider;
     public override bool ArgumentIsRequired => true;
-    
+
     protected RangeBase(IRangesProvider dataProvider)
     {
         _dataProvider = dataProvider;
@@ -16,9 +16,9 @@ abstract class RangeBase : WithArgumentFunction<string>
     private DataName _name;
     private DataName _rangeName;
 
-    public override void SetArgument(string argument)
+    public override void SetArgument(string arguments)
     {
-        var (name, nameRange) = argument.SplitToTwoPartsRequired("/");
+        var (name, nameRange) = arguments.SplitToTwoPartsRequired("/");
 
         _name = new DataName(name);
         _rangeName = new DataName(nameRange);

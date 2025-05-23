@@ -9,8 +9,8 @@ internal class Header : WithArgumentFunction<string>, IObjectTextPart
     public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(context.RequestContext.RequestData.GetHeader(_headerName));
 
 
-    public override void SetArgument(string argument)
+    public override void SetArgument(string arguments)
     {
-        _headerName = argument;
+        _headerName = arguments;
     }
 }

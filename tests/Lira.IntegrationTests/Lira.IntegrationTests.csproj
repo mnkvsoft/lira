@@ -426,6 +426,12 @@
     <None Update="fixtures\rules\generating\declare\unorder\rule_layer.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\generating\function\random.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\function\random.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -1358,7 +1364,7 @@
     <None Update="fixtures\rules\generating\declare\complex.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\declare\comlex.rules">
+    <None Update="fixtures\rules\generating\declare\complex.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\declare\function\fullname.rules">

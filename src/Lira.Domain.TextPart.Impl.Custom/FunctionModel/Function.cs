@@ -11,13 +11,15 @@ public class Function : DeclaredItem
 
     public Function(string name, IReadOnlyCollection<IObjectTextPart> parts, ReturnType? valueType)
     {
-        if(!CustomItemName.IsValidName(Prefix, name))
+        if(!IsValidName(name))
             throw new ArgumentException("Invalid function name: " + name, nameof(name));
 
         _parts = parts;
         ReturnType = valueType;
         Name = name;
     }
+
+    public static bool IsValidName(string name) => CustomItemName.IsValidName(Prefix, name);
 
     public override async Task<dynamic?> Get(RuleExecutingContext context)
     {

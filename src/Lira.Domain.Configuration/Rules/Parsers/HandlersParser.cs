@@ -3,6 +3,7 @@ using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Handling.Actions;
 using Lira.Domain.TextPart.Impl.CSharp;
+using Lira.Domain.TextPart.Impl.Custom;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;
 
@@ -92,7 +93,7 @@ class HandlersParser
 
             var functionFactory = await _functionFactoryCSharpFactory.Get();
             var res = functionFactory.TryCreateAction(
-                new FunctionFactoryRuleContext(parsingContext.CSharpUsingContext, new DeclaredPartsProvider(parsingContext.DeclaredItems)),
+                new FunctionFactoryRuleContext(parsingContext.CSharpUsingContext, new DeclaredItemsProvider(parsingContext.DeclaredItems)),
                 codeBlock);
             action = res.GetFunctionOrThrow(code, parsingContext);
         }

@@ -10,8 +10,8 @@ internal class Query : WithArgumentFunction<string>, IObjectTextPart
 
     public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(context.RequestContext.RequestData.GetQueryParam(_queryParamName));
 
-    public override void SetArgument(string argument)
+    public override void SetArgument(string arguments)
     {
-        _queryParamName = argument;
+        _queryParamName = arguments;
     }
 }

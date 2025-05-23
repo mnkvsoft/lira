@@ -13,7 +13,7 @@ public class LocalVariable : Variable
 
     public LocalVariable(string name, ReturnType? valueType)
     {
-        if(!CustomItemName.IsValidName(Prefix, name))
+        if(!IsValidName(name))
             throw new ArgumentException("Invalid local variable name: " + name, nameof(name));
 
         Name = name;
@@ -22,6 +22,8 @@ public class LocalVariable : Variable
     }
 
     private static readonly object NullValue = new();
+
+    public static bool IsValidName(string name) => CustomItemName.IsValidName(Prefix, name);
 
     private Task<dynamic?> GetValue(RuleExecutingContext ctx)
     {

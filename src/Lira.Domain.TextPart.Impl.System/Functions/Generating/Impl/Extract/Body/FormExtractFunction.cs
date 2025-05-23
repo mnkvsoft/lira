@@ -16,5 +16,5 @@ class FormExtractFunction : WithArgumentFunction<string>, IBodyExtractFunction, 
 
     public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(Extract(context.RequestContext.RequestData.ReadBody()));
 
-    public override void SetArgument(string argument) => _formParamName = argument;
+    public override void SetArgument(string arguments) => _formParamName = arguments;
 }

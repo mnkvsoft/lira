@@ -9,8 +9,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddFunctionsSystem(this IServiceCollection sc)
     {
-        MatchFunctionFactory.AddMatchFunctions(sc);
-        GeneratingFunctionFactory.AddMatchFunctions(sc);
+        MatchFunctionFactory.AddFunctions(sc);
+        GeneratingFunctionFactory.AddFunctions(sc);
 
         return sc
             .AddScoped<IFunctionFactorySystem, FunctionFactorySystem>()

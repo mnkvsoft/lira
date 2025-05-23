@@ -25,14 +25,14 @@ internal class FunctionFactorySystem : IFunctionFactorySystem
         return _generatingFunctionFactory.TryCreateBodyExtractFunction(invoke, out function);
     }
 
-    public bool TryCreateGeneratingFunction(string invoke, [MaybeNullWhen(false)] out IObjectTextPart function)
+    public bool TryCreateGeneratingFunction(string invoke, SystemFunctionContext ctx, [MaybeNullWhen(false)] out IObjectTextPart function)
     {
-        return _generatingFunctionFactory.TryCreateGeneratingFunction(invoke, out function);
+        return _generatingFunctionFactory.TryCreateGeneratingFunction(invoke, ctx, out function);
     }
 
-    public bool TryCreateMatchFunction(string invoke, [MaybeNullWhen(false)] out IMatchFunctionTyped function)
+    public bool TryCreateMatchFunction(string invoke, SystemFunctionContext ctx,[MaybeNullWhen(false)] out IMatchFunctionTyped function)
     {
-        return _matchFunctionFactory.TryCreate(invoke, out function);
+        return _matchFunctionFactory.TryCreate(invoke, ctx, out function);
     }
 
     public bool TryCreateTransformFunction(string invoke, [MaybeNullWhen(false)] out ITransformFunction function)

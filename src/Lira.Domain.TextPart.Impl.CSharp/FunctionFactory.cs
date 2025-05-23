@@ -7,6 +7,7 @@ using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.DataModel;
 using Lira.Domain.Handling.Actions;
+using Lira.Domain.TextPart.Impl.Custom;
 
 // ReSharper disable RedundantExplicitArrayCreation
 
@@ -64,7 +65,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             assemblyPrefixName: prefix,
             classToCompile,
             className,
-            CreateDependenciesBase(ruleContext.DeclaredPartsProvider));
+            CreateDependenciesBase(ruleContext.DeclaredItemsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -120,7 +121,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             assemblyPrefixName: prefix,
             classToCompile,
             className,
-            CreateDependenciesBase(ruleContext.DeclaredPartsProvider));
+            CreateDependenciesBase(ruleContext.DeclaredItemsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -147,7 +148,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             assemblyPrefixName: prefix,
             classToCompile,
             className,
-            CreateDependenciesBase(ruleContext.DeclaredPartsProvider));
+            CreateDependenciesBase(ruleContext.DeclaredItemsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -169,7 +170,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             assemblyPrefixName: prefix,
             classToCompile,
             className,
-            CreateDependenciesBase(ruleContext.DeclaredPartsProvider));
+            CreateDependenciesBase(ruleContext.DeclaredItemsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -271,7 +272,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         return sbCodeWithLiraItems.ToString();
     }
 
-    private static string ReplaceVariableNames(CodeBlock code, IDeclaredPartsProvider declaredPartsProvider)
+    private static string ReplaceVariableNames(CodeBlock code, IDeclaredItemsProvider declaredItemsProvider)
     {
         var sbCodeWithLiraItems = new StringBuilder();
 
@@ -283,7 +284,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             }
             else if (token is CodeToken.ReadItem readItem)
             {
-                var type = declaredPartsProvider.Get(readItem.ItemName).ReturnType;
+                var type = declaredItemsProvider.Get(readItem.ItemName).ReturnType;
 
                 sbCodeWithLiraItems.Append(
                     $"({(type == null || !type.NeedTyped ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
@@ -351,7 +352,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         CodeBlock code,
         FunctionFactoryRuleContext ruleContext)
     {
-        var codeWithVariables = ReplaceVariableNames(code, ruleContext.DeclaredPartsProvider);
+        var codeWithVariables = ReplaceVariableNames(code, ruleContext.DeclaredItemsProvider);
         var (c, usings) = ExtractUsings(codeWithVariables);
         return (c, usings.Concat(ruleContext.UsingContext.FileUsings).ToArray());
     }
@@ -421,8 +422,8 @@ class FunctionFactory : IFunctionFactoryCSharp
             }";
     }
 
-    private DynamicObjectBase.DependenciesBase CreateDependenciesBase(IDeclaredPartsProvider declaredPartsProvider)
+    private DynamicObjectBase.DependenciesBase CreateDependenciesBase(IDeclaredItemsProvider declaredItemsProvider)
     {
-        return new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider, declaredPartsProvider);
+        return new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider, declaredItemsProvider);
     }
 }

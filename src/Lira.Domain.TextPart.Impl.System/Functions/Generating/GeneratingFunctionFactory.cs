@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using System.Runtime.Serialization;
-using Lira.Common;
+using System.Runtime.CompilerServices;
 using Lira.Common.Extensions;
 using Lira.Domain.Matching.Request.Matchers;
 using Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Extract.Body;
@@ -31,7 +30,7 @@ internal class GeneratingFunctionFactory
         foreach (var functionType in GetMatchFunctionTypes())
         {
             // to avoid looping in service container
-            var function = (FunctionBase)FormatterServices.GetUninitializedObject(functionType);
+            var function = (FunctionBase)RuntimeHelpers.GetUninitializedObject(functionType);
 
             if (string.IsNullOrEmpty(function.Name))
                 throw new Exception("Empty function name in type " + functionType.FullName);
@@ -65,7 +64,8 @@ internal class GeneratingFunctionFactory
         return false;
     }
 
-    public bool TryCreateGeneratingFunction(string value, [MaybeNullWhen(false)] out IObjectTextPart function)
+    public bool TryCreateGeneratingFunction(string value, SystemFunctionContext ctx,
+        [MaybeNullWhen(false)] out IObjectTextPart function)
     {
         function = null;
         var (functionName, argument) = value.SplitToTwoParts(":").Trim();
@@ -78,13 +78,14 @@ internal class GeneratingFunctionFactory
         if (functionTemp is not IObjectTextPart objectTextPart)
             throw new Exception($"Function {functionType} not implemented {nameof(IObjectTextPart)}");
 
+        functionTemp.SetContextIfNeed(ctx);
         functionTemp.SetArgumentIfNeed(argument);
 
         function = objectTextPart;
         return true;
     }
 
-    public static void AddMatchFunctions(IServiceCollection sc)
+    public static void AddFunctions(IServiceCollection sc)
     {
         foreach (var functionType in GetMatchFunctionTypes())
         {

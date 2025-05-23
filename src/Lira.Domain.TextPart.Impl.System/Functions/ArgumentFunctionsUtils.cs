@@ -28,7 +28,15 @@ static class FunctionBaseExtensions
                 throw new Exception($"Function '{function.Name}' not support arguments");
         }
     }
-    
+
+    public static void SetContextIfNeed(this FunctionBase function, SystemFunctionContext context)
+    {
+        if (function is IWithContext withContext)
+        {
+            withContext.SetContext(context);
+        }
+    }
+
     private static void SetTypedArgument(IWithArgument function, string argument, string functionName)
     {
         var withArgumentInterface = function.TryGetWithArgumentInterfaceType();

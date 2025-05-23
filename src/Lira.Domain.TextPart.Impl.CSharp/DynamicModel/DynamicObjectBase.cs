@@ -1,6 +1,7 @@
 using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.DataModel;
+using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Types;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
@@ -10,9 +11,9 @@ public abstract class DynamicObjectBase
     public record DependenciesBase(
         Cache Cache,
         IRangesProvider RangesProvider,
-        IDeclaredPartsProvider DeclaredPartsProvider);
+        IDeclaredItemsProvider DeclaredItemsProvider);
 
-    protected readonly IDeclaredPartsProvider DeclaredPartsProvider;
+    protected readonly IDeclaredItemsProvider DeclaredItemsProvider;
     protected readonly Cache Cache;
 
     // ReSharper disable once UnusedMember.Global
@@ -24,7 +25,7 @@ public abstract class DynamicObjectBase
     {
         Cache = dependencies.Cache;
         _rangesProvider = dependencies.RangesProvider;
-        DeclaredPartsProvider = dependencies.DeclaredPartsProvider;
+        DeclaredItemsProvider = dependencies.DeclaredItemsProvider;
     }
 
     protected DataRange GetRange(string rangeName)
@@ -35,7 +36,7 @@ public abstract class DynamicObjectBase
 
     protected VariablesWriter GetVariablesWriter(RuleExecutingContext context, bool readOnly)
     {
-        return new VariablesWriter(context, DeclaredPartsProvider, readOnly);
+        return new VariablesWriter(context, DeclaredItemsProvider, readOnly);
     }
 
     public static Json json(string json)

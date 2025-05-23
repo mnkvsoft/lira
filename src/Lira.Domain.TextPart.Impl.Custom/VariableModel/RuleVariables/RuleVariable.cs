@@ -11,12 +11,14 @@ public abstract class RuleVariable : Variable
 
     protected RuleVariable(string name, ReturnType? valueType)
     {
-        if(!CustomItemName.IsValidName(Prefix, name))
+        if(!IsValidName(name))
             throw new ArgumentException("Invalid local variable name: " + name, nameof(name));
 
         Name = name;
         ReturnType = valueType;
     }
+
+    public static bool IsValidName(string name) => CustomItemName.IsValidName(Prefix, name);
 
     private static readonly object NullValue = new();
     protected abstract Task<dynamic?> GetInitiatedValue(RuleExecutingContext ctx);

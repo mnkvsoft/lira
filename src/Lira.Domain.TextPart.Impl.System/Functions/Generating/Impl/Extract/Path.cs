@@ -10,8 +10,8 @@ internal class Path : WithArgumentFunction<int>, IObjectTextPart
     public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(context.RequestContext.RequestData.GetPath(_index));
 
 
-    public override void SetArgument(int argument)
+    public override void SetArgument(int arguments)
     {
-        _index = argument;
+        _index = arguments;
     }
 }

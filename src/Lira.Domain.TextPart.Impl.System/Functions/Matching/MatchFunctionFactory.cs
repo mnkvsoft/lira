@@ -1,8 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 using Lira.Common.Extensions;
-using Lira.Domain.Matching.Request;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lira.Domain.TextPart.Impl.System.Functions.Matching;
@@ -19,7 +18,7 @@ internal class MatchFunctionFactory
         foreach (var functionType in GetMatchFunctionTypes())
         {
             // to avoid looping in service container
-            var function = (FunctionBase)FormatterServices.GetUninitializedObject(functionType);
+            var function = (FunctionBase)RuntimeHelpers.GetUninitializedObject(functionType);
 
             if (string.IsNullOrEmpty(function.Name))
                 throw new Exception("Empty function name in type " + functionType.FullName);
@@ -33,7 +32,7 @@ internal class MatchFunctionFactory
         _serviceProvider = serviceProvider;
     }
 
-    public bool TryCreate(string value, [MaybeNullWhen(false)] out IMatchFunctionTyped matchFunction)
+    public bool TryCreate(string value, SystemFunctionContext ctx, [MaybeNullWhen(false)] out IMatchFunctionTyped matchFunction)
     {
         matchFunction = null;
         var (functionName, argument) = value.SplitToTwoParts(":").Trim();
@@ -47,13 +46,14 @@ internal class MatchFunctionFactory
         if (function is not IMatchFunctionTyped matchPrettyFunction)
             throw new Exception($"Function {functionType} not implemented {nameof(IMatchFunctionTyped)}");
 
+        function.SetContextIfNeed(ctx);
         function.SetArgumentIfNeed(argument);
 
         matchFunction = matchPrettyFunction;
         return true;
     }
 
-    public static void AddMatchFunctions(IServiceCollection sc)
+    public static void AddFunctions(IServiceCollection sc)
     {
         foreach (var functionType in GetMatchFunctionTypes())
         {
