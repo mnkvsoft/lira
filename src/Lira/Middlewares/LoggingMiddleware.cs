@@ -32,10 +32,10 @@ public class LoggingMiddleware
 
         //Format the response from the server
 
-        string response = context.RequestAborted.IsCancellationRequested 
-            ? "Request was aborted" 
+        string response = context.RequestAborted.IsCancellationRequested
+            ? "Request was aborted"
             : await FormatResponse(context.Response);
-        
+
         _logger.LogInformation(response);
 
         //Copy the contents of the new memory stream (which contains the response) to the original stream, which is then returned to the client.
@@ -94,6 +94,7 @@ public class LoggingMiddleware
 
         //...and copy it into a string
         string text = await new StreamReader(response.Body).ReadToEndAsync();
+        text = text.Replace("\n", Environment.NewLine);
 
         //We need to reset the reader for the response so that the client can read it.
         response.Body.Seek(0, SeekOrigin.Begin);

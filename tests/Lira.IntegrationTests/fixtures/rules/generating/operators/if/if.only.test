@@ -1,0 +1,35 @@
+-------------------- case
+
+GET /generating/operators/if/only?with-accounts=1
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "products": [
+        {
+            "type": "account"
+            "alias": "head",
+            "number": "08895519584330798354"
+        }
+    ]
+}
+
+-------------------- case
+
+GET /generating/operators/if/only?with-accounts=0
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "products": [
+        
+    ]
+}

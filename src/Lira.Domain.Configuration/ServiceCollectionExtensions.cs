@@ -6,9 +6,11 @@ using Lira.Domain.Configuration.RangeModel;
 using Lira.Domain.Configuration.Rules;
 using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators;
+using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
+using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 using Lira.Domain.DataModel;
 using Lira.Domain.TextPart.Impl.CSharp;
-using Lira.Domain.TextPart.Impl.Custom.VariableModel;
 using Lira.Domain.TextPart.Impl.System;
 
 namespace Lira.Domain.Configuration;
@@ -27,12 +29,28 @@ public static class ServiceCollectionExtensions
 
             .AddTransient<RuleFileParser>()
 
+            .AddScoped<OperatorParser>()
+            .AddScoped<OperatorPartFactory>()
+
+            .AddScoped<IfOperatorDefinition>()
+            .AddScoped<OperatorDefinition>(provider => provider.GetRequiredService<IfOperatorDefinition>())
+            .AddScoped<IOperatorHandler, IfHandler>()
+
+            .AddScoped<RandomOperatorDefinition>()
+            .AddScoped<OperatorDefinition>(provider => provider.GetRequiredService<RandomOperatorDefinition>())
+            .AddScoped<IOperatorHandler, RandomHandler>()
+
+            .AddScoped<RepeatOperatorDefinition>()
+            .AddScoped<OperatorDefinition>(provider => provider.GetRequiredService<RepeatOperatorDefinition>())
+            .AddScoped<IOperatorHandler, RepeatHandler>()
+
             .AddScoped<ResponseGenerationHandlerParser>()
             .AddScoped<HandlersParser>()
             .AddScoped<HeadersParser>()
             .AddScoped<GetDelayParser>()
             .AddScoped<DeclaredItemsLoader>()
             .AddScoped<DeclaredItemsLinesParser>()
+            .AddScoped<TextPartsParserInternal>()
             .AddScoped<ITextPartsParser, TextPartsParser>()
             .AddScoped<DeclaredItemDraftsParser>()
             .AddScoped<FileSectionDeclaredItemsParser>()

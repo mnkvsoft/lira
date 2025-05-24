@@ -8,7 +8,7 @@ using Moq;
 
 namespace Lira.Domain.Configuration.UnitTests;
 
-public class Tests
+public class CodeParserTests
 {
     [TestCase(
         "int a = $$read.from.variable;",

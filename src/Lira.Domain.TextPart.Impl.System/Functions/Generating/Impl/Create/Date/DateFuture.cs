@@ -5,7 +5,7 @@ internal class DateFuture : FunctionBase, IObjectTextPart
     public override string Name => "date.future";
     public ReturnType ReturnType => ReturnType.Date;
 
-    public Task<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         var now = DateTime.Now;
         var from = now.AddYears(1);
@@ -13,6 +13,6 @@ internal class DateFuture : FunctionBase, IObjectTextPart
 
         var ticks = Random.Shared.NextInt64(from.Ticks, to.Ticks);
 
-        return Task.FromResult<dynamic?>(new DateTime(ticks));
+        yield return new DateTime(ticks);
     }
 }

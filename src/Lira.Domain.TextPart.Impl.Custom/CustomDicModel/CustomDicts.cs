@@ -51,9 +51,9 @@ public class CustomSetFunction(IReadOnlyList<string> list) : IObjectTextPart, IM
     ReturnType IMatchFunctionTyped.ValueType => ReturnType.String;
     ReturnType IObjectTextPart.ReturnType => ReturnType.String;
 
-    public Task<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
-        return Task.FromResult<dynamic?>(list.Random());
+        yield return list.Random();
     }
 
     public Task<bool> IsMatch(RuleExecutingContext context, string? value)

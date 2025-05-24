@@ -10,20 +10,20 @@ public class HttpAction : IAction
     public const string HttpClientName = nameof(HttpAction);
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly HttpMethod _httpMethod;
-    private readonly TextParts _requestUriParts;
-    private readonly TextParts? _bodyParts;
+    private readonly TextPartsProvider _requestUriPartsProvider;
+    private readonly TextPartsProvider? _bodyParts;
     private readonly IReadOnlyCollection<GeneratingHeader>? _headers;
 
     public HttpAction(
         IHttpClientFactory httpClientFactory,
         HttpMethod httpMethod,
-        TextParts requestUriParts,
-        TextParts? bodyParts,
+        TextPartsProvider requestUriPartsProvider,
+        TextPartsProvider? bodyParts,
         IReadOnlyCollection<GeneratingHeader>? headers)
     {
         _httpClientFactory = httpClientFactory;
         _httpMethod = httpMethod;
-        _requestUriParts = requestUriParts;
+        _requestUriPartsProvider = requestUriPartsProvider;
         _bodyParts = bodyParts;
         _headers = headers;
     }
@@ -32,17 +32,17 @@ public class HttpAction : IAction
     {
         var client = _httpClientFactory.CreateClient(HttpClientName);
 
-        var req = await CreateRequest(context);
+        var req = CreateRequest(context);
 
         await client.SendAsync(req);
     }
 
-    private async Task<HttpRequestMessage> CreateRequest(RuleExecutingContext context)
+    private HttpRequestMessage CreateRequest(RuleExecutingContext context)
     {
         var req = new HttpRequestMessage();
         req.Method = _httpMethod;
 
-        var url = await _requestUriParts.Generate(context);
+        var url = _requestUriPartsProvider.GetSingleString(context);
 
         if (string.IsNullOrWhiteSpace(url))
             throw new InvalidOperationException("Url can't be empty");
@@ -54,7 +54,7 @@ public class HttpAction : IAction
         {
             foreach (var header in _headers)
             {
-                string value = await header.TextParts.Generate(context);
+                string value = header.TextPartsProvider.GetSingleString(context);
 
                 if (header.Name == Header.ContentType)
                 {
@@ -69,7 +69,7 @@ public class HttpAction : IAction
         if (string.IsNullOrWhiteSpace(contentType))
             throw new Exception("Header Content-Type is required");
 
-        var content = _bodyParts == null ? "" : await _bodyParts.Generate(context);
+        var content = _bodyParts == null ? "" : _bodyParts.GetSingleString(context);
         req.Content = new StringContent(content, Encoding.UTF8, contentType);
         return req;
     }

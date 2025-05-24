@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Lira.Common.Extensions;
 
 namespace Lira.FileSectionFormat;
 
@@ -30,7 +31,7 @@ public class FileSectionBuilder
         return new FileSection(
             Name,
             Key,
-            LinesWithoutBlock.ToImmutableList(),
+            LinesWithoutBlock.TrimEmptyLines().ToImmutableList(),
             ChildSections.Select(x => x.Build()).ToImmutableList(),
             Blocks);
     }

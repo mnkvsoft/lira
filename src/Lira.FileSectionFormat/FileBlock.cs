@@ -1,18 +1,8 @@
+using Lira.Common.Extensions;
+
 namespace Lira.FileSectionFormat;
-public class FileBlock : IComparable<FileBlock>
+public record FileBlock(string Name, IReadOnlyList<string> Lines) : IComparable<FileBlock>
 {
-    private readonly List<string> _lines = new();
-    public IReadOnlyList<string> Lines => _lines;
-
-    public string Name { get; }
-
-    public FileBlock(string name)
-    {
-        Name = name;
-    }
-
-    public void Add(string line) => _lines.Add(line);
-
     public int CompareTo(FileBlock? other)
     {
         if (ReferenceEquals(this, other))
@@ -27,4 +17,19 @@ public class FileBlock : IComparable<FileBlock>
 
         return string.Compare(Name, other.Name, StringComparison.Ordinal);
     }
+}
+
+internal class FileBlockBuilder
+{
+    private readonly List<string> _lines = new();
+    private readonly string _name;
+
+    public FileBlockBuilder(string name)
+    {
+        _name = name;
+    }
+
+    public void Add(string line) => _lines.Add(line);
+
+    public FileBlock Build() => new(_name, _lines.TrimEmptyLines().ToArray());
 }

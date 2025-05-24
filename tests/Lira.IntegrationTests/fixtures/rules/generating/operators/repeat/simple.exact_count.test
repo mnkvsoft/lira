@@ -1,0 +1,10 @@
+-------------------- case
+
+GET /generating/operators/repeat/simple/exact_count
+
+----- expected
+
+~ code
+200
+
+## body eye check

@@ -52,7 +52,7 @@ public class Rules_Tests : TestBase
             {
                 var delay = caseSection.GetBlockValueOrDefault<TimeSpan>("delay");
 
-                if (delay != default)
+                if (delay != TimeSpan.Zero)
                     await Task.Delay(delay);
 
                 var sw = Stopwatch.StartNew();
@@ -74,11 +74,11 @@ public class Rules_Tests : TestBase
 
                 var wait = caseSection.GetBlockValueOrDefault<TimeSpan>("wait");
 
-                if (wait != default)
+                if (wait != TimeSpan.Zero)
                     await Task.Delay(wait);
 
                 var elapsed = expectedSection.GetBlockValueOrDefault<TimeSpan>("elapsed");
-                if (elapsed != default)
+                if (elapsed != TimeSpan.Zero)
                     Assert.That(sw.Elapsed, Is.GreaterThan(elapsed));
 
                 int expectedHttpCode = expectedSection.GetBlockValue<int>("code");

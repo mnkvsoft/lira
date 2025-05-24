@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /variables/from_file
+GET /variables/local
 
 ----- expected
 

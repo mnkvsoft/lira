@@ -1,16 +1,13 @@
 // ReSharper disable UnusedMember.Global
-
-using Lira.Domain.TextPart.Impl.Custom;
-
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
 public class DynamicObjectWithDeclaredPartsBase : DynamicObjectBase
 {
     protected DynamicObjectWithDeclaredPartsBase(DependenciesBase dependencies) : base(dependencies){}
 
-    protected Task<dynamic?> GetDeclaredPart(string name, RuleExecutingContext context)
+    protected dynamic? GetDeclaredPart(string name, RuleExecutingContext context)
     {
-        return DeclaredItemsProvider.Get(name).Get(context);
+        return DeclaredItemsProvider.Get(name).Generate(context);
     }
 
     protected IObjectTextPart GetDeclaredPart(string name)
@@ -18,15 +15,34 @@ public class DynamicObjectWithDeclaredPartsBase : DynamicObjectBase
         return DeclaredItemsProvider.Get(name);
     }
 
-    protected async Task<string> Repeat(RuleExecutingContext context, IObjectTextPart part, string separator, int count)
-    {
-        var parts = new List<string>(count);
-        for (var i = 0; i < count; i++)
-        {
-            var obj = await part.Get(context);
-            parts.Add(obj?.ToString() ?? string.Empty);
-        }
-
-        return string.Join(separator, parts);
-    }
+    // protected async IAsyncEnumerable<dynamic?> Repeat(RuleExecutingContext context, IObjectTextPart part, string separator, int count)
+    // {
+    //     for (var i = 0; i < count; i++)
+    //     {
+    //         await foreach (var obj in part.Get(context))
+    //         {
+    //             if(i > 0)
+    //                 yield return separator;
+    //             yield return obj;
+    //         }
+    //     }
+    // }
+    //
+    // private class RepeatPart(IObjectTextPart part, string separator, int count) : IObjectTextPart
+    // {
+    //     public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    //     {
+    //         for (var i = 0; i < count; i++)
+    //         {
+    //             await foreach (var obj in part.Get(context))
+    //             {
+    //                 if(i > 0)
+    //                     yield return separator;
+    //                 yield return obj;
+    //             }
+    //         }
+    //     }
+    //
+    //     public ReturnType? ReturnType => part.ReturnType;
+    // }
 }

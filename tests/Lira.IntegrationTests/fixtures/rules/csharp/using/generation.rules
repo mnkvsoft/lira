@@ -6,30 +6,36 @@ GET /csharp/using/generation
 
 ~ headers
 Trace-Id: {{
-    @using System.IO;
+    @using System.Text.RegularExpressions;
 
-    if(File.Exists("header"))
-        return await File.ReadAllTextAsync("header");
+    var regex = new Regex("\\d{1}");
+
+    if(regex.IsMatch(req.query("flag")))
+        return "matched";
 
     return "not-found";
 }}
 
 ~ code
 {{
-    @using System.IO
+    @using System.Text.RegularExpressions;
 
-    if(File.Exists("code"))
-        return await File.ReadAllTextAsync("code");
+    var regex = new Regex("\\d{1}");
+
+    if(regex.IsMatch(req.query("flag")))
+        return 200;
 
     return 204;
 }}
 
 ~ body
 {{
-    @using System.IO;
+    @using System.Text.RegularExpressions;
 
-    if(File.Exists("page"))
-        return await File.ReadAllTextAsync("page");
+    var regex = new Regex("\\d{1}");
+
+    if(regex.IsMatch(req.query("flag")))
+       return "matched";
 
     return "page not found";
 }}
