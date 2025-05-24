@@ -7,11 +7,11 @@ static class PatternPartsExtensions
     public record TwoPartsWithSecondRequired(PatternParts One, PatternParts Second);
     public record TwoPartsWithSecondOptional(PatternParts One, PatternParts? Second);
 
-    public static TwoPartsWithSecondRequired Trim(this TwoPartsWithSecondRequired parts)
-        => new TwoPartsWithSecondRequired(parts.One.Trim(), parts.Second.Trim());
+    public static TwoPartsWithSecondRequired Trim(this TwoPartsWithSecondRequired parts) =>
+        new(parts.One.Trim(), parts.Second.Trim());
 
-    public static TwoPartsWithSecondOptional Trim(this TwoPartsWithSecondOptional parts)
-        => new TwoPartsWithSecondOptional(parts.One.Trim(), parts.Second?.Trim());
+    public static TwoPartsWithSecondOptional Trim(this TwoPartsWithSecondOptional parts) =>
+        new(parts.One.Trim(), parts.Second?.Trim());
 
     public static PatternParts Trim(this PatternParts parts) => parts.TrimStart().TrimEnd();
 
@@ -154,7 +154,7 @@ static class PatternPartsExtensions
 
     public static IReadOnlyList<PatternParts> Split(this PatternParts pathParts, string splitter)
     {
-        var result = new List<PatternParts>(15);
+        var result = new List<PatternParts>(50);
 
         List<PatternPart> remainder = new();
         foreach (PatternPart patternPart in pathParts)

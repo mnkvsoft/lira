@@ -10,6 +10,7 @@ using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 using Lira.Domain.TextPart.Impl.System;
 using Microsoft.Extensions.Logging;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -18,7 +19,7 @@ public interface ITextPartsParser
     Task<ObjectTextParts> Parse(string pattern, IParsingContext parsingContext);
 }
 
-class TextPartsParser : ITextPartsParser
+partial class TextPartsParser : ITextPartsParser
 {
     private record Static(string Value) : IObjectTextPart
     {
@@ -60,8 +61,10 @@ class TextPartsParser : ITextPartsParser
         var ctx = parsingContext.ToImpl();
         ctx.DeclaredItems.TryAddRange(localContext.DeclaredItems);
 
+        var result = СontrolStructuresEnricher.AddOperators(parts);
+
         bool isString = patternParts.Count == 0 || patternParts.Count > 1 || patternParts[0] is PatternPart.Static;
-        return new ObjectTextParts(parts, isString);
+        return new ObjectTextParts(result, isString);
     }
 
     private async Task<IReadOnlyCollection<IObjectTextPart>> CreateValuePart(
@@ -117,7 +120,8 @@ class TextPartsParser : ITextPartsParser
                             $"Invalid write to variable declaration: {Consts.ControlChars.WriteToVariablePrefix} " +
                             maybeVariableDeclaration);
 
-                    var existVar = context.DeclaredItems.OfType<Variable>().SingleOrDefault(x => x.Name == maybeVariableDeclaration);
+                    var existVar = context.DeclaredItems.OfType<Variable>()
+                        .SingleOrDefault(x => x.Name == maybeVariableDeclaration);
 
                     if (existVar == null)
                     {
@@ -141,13 +145,14 @@ class TextPartsParser : ITextPartsParser
                             $"Invalid write to local variable declaration: {Consts.ControlChars.WriteToVariablePrefix} " +
                             maybeVariableDeclaration);
 
-                    var existVar = context.DeclaredItems.OfType<Variable>().SingleOrDefault(x => x.Name == maybeVariableDeclaration);
+                    var existVar = context.DeclaredItems.OfType<Variable>()
+                        .SingleOrDefault(x => x.Name == maybeVariableDeclaration);
 
                     if (existVar == null)
                     {
                         var variable = new LocalVariable(
-                                maybeVariableDeclaration,
-                                startFunction.ReturnType);
+                            maybeVariableDeclaration,
+                            startFunction.ReturnType);
 
                         context.DeclaredItems.Add(variable);
                         return [new ObjectTextPartWithSaveVariable(startFunction, variable)];
@@ -198,7 +203,8 @@ class TextPartsParser : ITextPartsParser
 
         context.CustomDicts.TryGetCustomSetFunction(rawText, out var customSetFunction);
 
-        if (_functionFactorySystem.TryCreateGeneratingFunction(rawText, new SystemFunctionContext(new DeclaredItemsProvider(declaredItems)), out var function))
+        if (_functionFactorySystem.TryCreateGeneratingFunction(rawText,
+                new SystemFunctionContext(new DeclaredItemsProvider(declaredItems)), out var function))
         {
             if (declaredFunction != null)
             {
