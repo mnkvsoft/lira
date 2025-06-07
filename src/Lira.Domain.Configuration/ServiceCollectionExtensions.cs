@@ -6,6 +6,8 @@ using Lira.Domain.Configuration.RangeModel;
 using Lira.Domain.Configuration.Rules;
 using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators;
+using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
 using Lira.Domain.DataModel;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.System;
@@ -25,6 +27,12 @@ public static class ServiceCollectionExtensions
             .AddTransient<RequestMatchersParser>()
 
             .AddTransient<RuleFileParser>()
+
+            .AddSingleton<OperatorPartFactory>()
+            .AddSingleton<OperatorsEnricher>()
+
+            .AddSingleton<IOperatorHandler, RandomHandler>()
+            .AddSingleton<IOperatorHandler, RepeatHandler>()
 
             .AddScoped<ResponseGenerationHandlerParser>()
             .AddScoped<HandlersParser>()

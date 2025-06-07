@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/function/random
+GET /generating/function/example
 
 ----- declare
 
@@ -16,7 +16,7 @@ $$ruleVar = 111-{{ echo: 222 }}-333
 ~ body
 {
     "items": [
-        @repeat()
+        @repeat
             @random
                 @item
                 {
@@ -32,6 +32,34 @@ $$ruleVar = 111-{{ echo: 222 }}-333
                     "type": "bike"
                 }
             @end
+        @end
+    ]
+}
+
+###
+~ body
+{
+    "items": [
+        @repeat
+
+            @random
+
+                @item
+                {
+                    "type": "car"
+                    "name" "{{ str }}"
+                }
+                @item
+                {
+                    "type": "fly"
+                }
+                @item
+                {
+                    "type": "bike"
+                }
+
+            @end
+
         @end
     ]
 }

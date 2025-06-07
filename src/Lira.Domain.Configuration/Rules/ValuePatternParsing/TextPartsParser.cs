@@ -1,6 +1,7 @@
 using Lira.Common.Exceptions;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
+using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
@@ -19,14 +20,8 @@ public interface ITextPartsParser
     Task<ObjectTextParts> Parse(string pattern, IParsingContext parsingContext);
 }
 
-partial class TextPartsParser : ITextPartsParser
+class TextPartsParser : ITextPartsParser
 {
-    private record Static(string Value) : IObjectTextPart
-    {
-        public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(Value);
-        public ReturnType ReturnType => ReturnType.String;
-    }
-
     // public record Context(ParsingContext ParsingContext, LocalVariableSet LocalVariables);
 
     private readonly IFunctionFactorySystem _functionFactorySystem;
@@ -34,14 +29,17 @@ partial class TextPartsParser : ITextPartsParser
     private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
 
     private readonly ILogger _logger;
+    private readonly OperatorsEnricher _operatorsEnricher;
+
 
     public TextPartsParser(
         IFunctionFactorySystem functionFactorySystem,
         IFunctionFactoryCSharpFactory functionFactoryCSharpFactory,
-        ILoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory, OperatorsEnricher operatorsEnricher)
     {
         _functionFactorySystem = functionFactorySystem;
         _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
+        _operatorsEnricher = operatorsEnricher;
         _logger = loggerFactory.CreateLogger(GetType());
     }
 
@@ -61,7 +59,7 @@ partial class TextPartsParser : ITextPartsParser
         var ctx = parsingContext.ToImpl();
         ctx.DeclaredItems.TryAddRange(localContext.DeclaredItems);
 
-        var result = СontrolStructuresEnricher.AddOperators(parts);
+        var result = _operatorsEnricher.Enrich(parts);
 
         bool isString = patternParts.Count == 0 || patternParts.Count > 1 || patternParts[0] is PatternPart.Static;
         return new ObjectTextParts(result, isString);
@@ -73,7 +71,7 @@ partial class TextPartsParser : ITextPartsParser
     {
         return patternPart switch
         {
-            PatternPart.Static @static => [new Static(@static.Value)],
+            PatternPart.Static @static => [new StaticPart(@static.Value)],
             PatternPart.Dynamic dynamic => await GetDynamicParts(dynamic, context),
             _ => throw new UnsupportedInstanceType(patternPart)
         };

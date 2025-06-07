@@ -1,0 +1,12 @@
+-------------------- case
+
+GET /generating/function/example
+
+----- expected
+
+~ code
+200
+
+~ body
+111-222-333
+111-222-333

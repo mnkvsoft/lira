@@ -128,6 +128,42 @@ public static class StringExtensions
     {
         return new SplitResult(splitResult.Splitter, splitResult.LeftPart.Trim(), splitResult.RightPart.Trim());
     }
+
+    public static List<(string Name, int Index)> GetPositions(this string str, IReadOnlyCollection<string> names)
+    {
+        string current = str;
+        var result = new List<(string Name, int Index)>();
+        int deletedLength = 0;
+
+        while (current.Length > 0)
+        {
+            int nearIndex = current.Length - 1;
+            string? nearName = null;
+            foreach (var name in names)
+            {
+                var idx = current.IndexOf(name, StringComparison.OrdinalIgnoreCase);
+                if (idx > 0 && idx < nearIndex)
+                {
+                    nearIndex = idx;
+                    nearName = name;
+                }
+            }
+
+            if (nearName != null)
+            {
+                result.Add((nearName, nearIndex + deletedLength));
+                var newCurrent = current.Substring(nearIndex + nearName.Length);
+                deletedLength += (current.Length - newCurrent.Length);
+                current = newCurrent;
+            }
+            else
+            {
+                return result;
+            }
+        }
+
+        return result;
+    }
 }
 
 public record SplitResult(string Splitter, string LeftPart, string RightPart);
