@@ -27,9 +27,9 @@ class RandomOperator : IObjectTextPart
     public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         var randomItems = _items.Random();
-        foreach (var part in randomItems)
+        await foreach (var obj in randomItems.GetAllObjects(context))
         {
-            yield return part.Get(context);
+            yield return obj;
         }
     }
 

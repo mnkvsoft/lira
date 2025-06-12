@@ -1,4 +1,3 @@
-using System.Text;
 using Lira.Domain.TextPart;
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
@@ -17,15 +16,14 @@ class RepeatOperator(OperatorDraft draft) : IObjectTextPart
     {
         int count = Random.Shared.Next(1, 5);
 
-        var sb = new StringBuilder();
         for (int i = 0; i < count; i++)
         {
-            if(sb.Length > 0)
+            if(i > 0)
                 yield return ',';
 
-            foreach (var part in _body)
+            await foreach (var obj in _body.GetAllObjects(context))
             {
-                yield return part;
+                yield return obj;
             }
         }
     }

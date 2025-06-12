@@ -22,9 +22,9 @@ public abstract class RuleVariable : Variable
     public static bool IsValidName(string name) => CustomItemName.IsValidName(Prefix, name);
 
     private static readonly object NullValue = new();
-    protected abstract Task<dynamic?> GetInitiatedValue(RuleExecutingContext ctx);
+    protected abstract ValueTask<dynamic?> GetInitiatedValue(RuleExecutingContext ctx);
 
-    private async Task<dynamic?> GetValue(RuleExecutingContext ctx)
+    private async ValueTask<dynamic?> GetValue(RuleExecutingContext ctx)
     {
         var values = GetVariableValues(ctx);
 
@@ -76,6 +76,7 @@ public abstract class RuleVariable : Variable
 
     public override async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
-        yield return await GetValue(context);
+        var value = await GetValue(context);
+        yield return value;
     }
 }

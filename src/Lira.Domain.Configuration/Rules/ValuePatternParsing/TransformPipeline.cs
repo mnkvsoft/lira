@@ -32,6 +32,6 @@ record TransformPipeline(IObjectTextPart ObjectTextPart) : IObjectTextPart
     public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         dynamic? value = await ObjectTextPart.Generate(context);
-        yield return ValueTask.FromResult(ExecutePipeline(value));
+        yield return ExecutePipeline(value);
     }
 }

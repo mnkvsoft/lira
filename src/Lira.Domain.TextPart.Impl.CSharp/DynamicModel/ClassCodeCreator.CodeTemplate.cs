@@ -41,15 +41,9 @@ static partial class ClassCodeCreator
                 {
                 }
 
-            /*
                 public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext ctx)
                 {
                     yield return await GetInternal(ctx);
-                }*/
-
-                public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext ctx)
-                {
-                    yield return 1;
                 }
 
                 private async ValueTask<dynamic?> GetInternal(RuleExecutingContext [context])
