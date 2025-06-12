@@ -38,19 +38,7 @@ public static class ObjectTextPartsExtensions
         return sb?.ToString() ?? firstObj;
     }
 
-    public static async IAsyncEnumerable<dynamic?> GetAllObjects(this IEnumerable<IObjectTextPart> parts,
-        RuleExecutingContext context)
-    {
-        foreach (var part in parts)
-        {
-            await foreach (var obj in part.Get(context))
-            {
-                yield return obj;
-            }
-        }
-    }
-
-    public static async Task<dynamic?> Generate(this IObjectTextPart part, RuleExecutingContext context)
+    public static async ValueTask<dynamic?> Generate(this IObjectTextPart part, RuleExecutingContext context)
     {
         int counter = 0;
         StringBuilder? sb = null;
@@ -77,6 +65,18 @@ public static class ObjectTextPartsExtensions
         }
 
         return sb?.ToString() ?? firstObj;
+    }
+
+    public static async IAsyncEnumerable<dynamic?> GetAllObjects(this IEnumerable<IObjectTextPart> parts,
+        RuleExecutingContext context)
+    {
+        foreach (var part in parts)
+        {
+            await foreach (var obj in part.Get(context))
+            {
+                yield return obj;
+            }
+        }
     }
 
     public static TextPartsProvider WrapToTextParts(this IReadOnlyCollection<IObjectTextPart> parts)

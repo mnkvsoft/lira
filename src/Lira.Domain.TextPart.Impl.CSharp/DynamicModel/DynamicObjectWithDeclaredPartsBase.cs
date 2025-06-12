@@ -5,7 +5,7 @@ public class DynamicObjectWithDeclaredPartsBase : DynamicObjectBase
 {
     protected DynamicObjectWithDeclaredPartsBase(DependenciesBase dependencies) : base(dependencies){}
 
-    protected Task<dynamic?> GetDeclaredPart(string name, RuleExecutingContext context)
+    protected ValueTask<dynamic?> GetDeclaredPart(string name, RuleExecutingContext context)
     {
         return DeclaredItemsProvider.Get(name).Generate(context);
     }
