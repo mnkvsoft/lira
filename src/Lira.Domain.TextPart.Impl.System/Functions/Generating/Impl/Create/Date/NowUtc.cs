@@ -4,5 +4,8 @@ internal class NowUtc : FunctionBase, IObjectTextPart
 {
     public override string Name => "now.utc";
     public ReturnType ReturnType => ReturnType.Date;
-    public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(DateTime.UtcNow);
+    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    {
+        yield return DateTime.UtcNow;
+    }
 }

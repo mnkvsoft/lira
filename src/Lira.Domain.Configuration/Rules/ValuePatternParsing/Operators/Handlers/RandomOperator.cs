@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Lira.Common.Extensions;
 using Lira.Domain.TextPart;
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
 
@@ -23,11 +24,14 @@ class RandomOperator : IObjectTextPart
         _items = operatorData.Items.Select(x => x.Body).ToImmutableArray();
     }
 
-    public Task<dynamic?> Get(RuleExecutingContext context)
+    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
-        return _items.Random().Generate(context);
+        var randomItems = _items.Random();
+        foreach (var part in randomItems)
+        {
+            yield return part.Get(context);
+        }
     }
 
     public ReturnType ReturnType => ReturnType.String;
 }
-

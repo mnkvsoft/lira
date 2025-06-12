@@ -1,5 +1,6 @@
 using System.Text;
 using Lira.Domain.TextPart;
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
 
@@ -12,7 +13,7 @@ class RepeatHandler : IOperatorHandler
 class RepeatOperator(OperatorDraft draft) : IObjectTextPart
 {
     private readonly IReadOnlyCollection<IObjectTextPart> _body = OperatorParser.Parse(draft).Body;
-    public async Task<dynamic?> Get(RuleExecutingContext context)
+    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         int count = Random.Shared.Next(1, 5);
 
@@ -20,12 +21,13 @@ class RepeatOperator(OperatorDraft draft) : IObjectTextPart
         for (int i = 0; i < count; i++)
         {
             if(sb.Length > 0)
-                sb.Append(',');
+                yield return ',';
 
-            sb.Append(await _body.Generate(context));
+            foreach (var part in _body)
+            {
+                yield return part;
+            }
         }
-
-        return sb.ToString();
     }
 
     public ReturnType ReturnType => ReturnType.String;

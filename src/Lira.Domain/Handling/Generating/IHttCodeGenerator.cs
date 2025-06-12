@@ -12,11 +12,11 @@ public record StaticHttCodeGenerator(int Code) : IHttCodeGenerator
     public Task<int> Generate(RuleExecutingContext context) => Task.FromResult(Code);
 }
 
-public record DynamicHttCodeGenerator(TextParts Parts) : IHttCodeGenerator
+public record DynamicHttCodeGenerator(TextPartsProvider PartsProvider) : IHttCodeGenerator
 {
     public async Task<int> Generate(RuleExecutingContext context)
     {
-        string strCode = await Parts.Generate(context);
+        string strCode = await PartsProvider.GetSingleString(context);
         return strCode.ToHttpCode();
     }
 }

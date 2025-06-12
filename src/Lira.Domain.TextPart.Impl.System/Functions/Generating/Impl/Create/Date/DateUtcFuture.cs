@@ -4,7 +4,7 @@ internal class DateUtcFuture : FunctionBase, IObjectTextPart
 {
     public override string Name => "date.utc.future";
     public ReturnType ReturnType => ReturnType.Date;
-    public Task<dynamic?> Get(RuleExecutingContext context)
+    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         var now = DateTime.UtcNow;
         var from = now.AddYears(1);
@@ -12,6 +12,6 @@ internal class DateUtcFuture : FunctionBase, IObjectTextPart
 
         var ticks = Random.Shared.NextInt64(from.Ticks, to.Ticks);
 
-        return Task.FromResult<dynamic?>(new DateTime(ticks, DateTimeKind.Utc));
+        yield return new DateTime(ticks, DateTimeKind.Utc);
     }
 }

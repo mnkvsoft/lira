@@ -17,7 +17,7 @@ class OperatorPart(OperatorDraft draft) : IObjectTextPart
         set => _value = value;
     }
 
-    public Task<dynamic?> Get(RuleExecutingContext context) => Value.Get(context);
+    public IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context) => Value.Get(context);
 
     public ReturnType? ReturnType => Value.ReturnType;
 }

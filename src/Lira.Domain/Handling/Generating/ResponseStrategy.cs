@@ -26,7 +26,7 @@ public abstract record ResponseGenerationHandler : IHandler
 
             if (BodyGenerator != null)
             {
-                foreach (string bodyPart in await BodyGenerator.Create(context))
+                await foreach (string bodyPart in BodyGenerator.Create(context))
                 {
                     await response.WriteAsync(bodyPart);
                 }

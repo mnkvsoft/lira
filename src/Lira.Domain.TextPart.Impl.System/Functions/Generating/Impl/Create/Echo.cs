@@ -7,7 +7,11 @@ internal class Echo : WithArgumentFunction<string>, IObjectTextPart
 
     private object? _value;
 
-    public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(_value);
+    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    {
+        yield return _value;
+    }
+
     public ReturnType ReturnType => ReturnType.String;
 
 

@@ -14,7 +14,10 @@ class XPathExtractFunction : WithArgumentFunction<string>, IBodyExtractFunction,
 
     public string? Extract(string? body) => BodyUtils.GetByXPath(body, _xpath);
 
-    public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(Extract(context.RequestContext.RequestData.ReadBody()));
+    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    {
+        yield return Extract(context.RequestContext.RequestData.ReadBody());
+    }
 
     public override void SetArgument(string arguments) => _xpath = arguments;
 }

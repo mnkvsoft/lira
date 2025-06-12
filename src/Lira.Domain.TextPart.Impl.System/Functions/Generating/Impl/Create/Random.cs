@@ -4,16 +4,18 @@ namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create;
 internal class RandomCustom : WithArgumentFunction<string[]>, IObjectTextPart, IWithContext
 {
     public override string Name => "random";
-    private IReadOnlyList<Func<RuleExecutingContext, Task<dynamic?>>> _factories = null!;
+    private IReadOnlyList<IObjectTextPart> _parts = null!;
     private SystemFunctionContext _context = null!;
 
     public override bool ArgumentIsRequired => true;
 
-    public async Task<dynamic?> Get(RuleExecutingContext context)
+    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
-        var func = _factories.Random();
-        var result = await func(context);
-        return result;
+        var part = _parts.Random();
+        await foreach (var value in part.Get(context))
+        {
+            yield return value;
+        }
     }
 
     public ReturnType? ReturnType { get; private set; }
@@ -24,25 +26,18 @@ internal class RandomCustom : WithArgumentFunction<string[]>, IObjectTextPart, I
             throw new Exception("Not empty array required for function 'random'");
 
 
-        var factories = new List<Func<RuleExecutingContext, Task<dynamic?>>>();
-        var types = new List<ReturnType?>();
+        var parts = new List<IObjectTextPart>();
 
         foreach(var arg in arguments)
         {
-            if (_context.DeclaredItemsProvider.ItsAccessToDeclaredItem(arg, out var part))
-            {
-                factories.Add(ctx => part.Get(ctx));
-                types.Add(part.ReturnType);
-            }
-            else
-            {
-                types.Add(ReturnType.String);
-                factories.Add(_ => Task.FromResult<dynamic?>(arg));
-            }
+            parts.Add(_context.DeclaredItemsProvider.ItsAccessToDeclaredItem(arg, out var part)
+                ? part
+                : new StaticPart(arg));
         }
 
+        var types = parts.Select(x => x.ReturnType).Distinct().ToArray();
         ReturnType = SameTypes(types) ? types.First() : null;
-        _factories = factories;
+        _parts = parts;
     }
 
     public void SetContext(SystemFunctionContext context)

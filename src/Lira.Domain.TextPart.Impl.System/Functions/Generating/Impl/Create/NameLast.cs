@@ -7,7 +7,11 @@ internal class NameLast : FunctionBase, IObjectTextPart
 {
     public override string Name => "name.last";
 
-    public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(Next());
+    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    {
+        yield return Next();
+    }
+
     public ReturnType ReturnType => ReturnType.String;
 
     public static string Next() => LastNames.Random();

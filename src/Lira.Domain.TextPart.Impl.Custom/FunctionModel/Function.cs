@@ -21,7 +21,7 @@ public class Function : DeclaredItem
 
     public static bool IsValidName(string name) => CustomItemName.IsValidName(Prefix, name);
 
-    public override async Task<dynamic?> Get(RuleExecutingContext context)
+    public override async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         var value = await _parts.Generate(context);
         dynamic? valueToReturn = value;
@@ -41,6 +41,6 @@ public class Function : DeclaredItem
             valueToReturn = valueTyped;
         }
 
-        return valueToReturn;
+        yield return valueToReturn;
     }
 }

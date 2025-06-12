@@ -5,12 +5,12 @@ internal class Date : FunctionBase, IObjectTextPart
     public override string Name => "date";
     public ReturnType ReturnType => ReturnType.Date;
 
-    public Task<dynamic?> Get(RuleExecutingContext context)
+    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         var now = DateTime.Now;
         var from = now.AddYears(-1);
         var ticks = Random.Shared.NextInt64(from.Ticks, now.Ticks);
 
-        return Task.FromResult<dynamic?>(new DateTime(ticks));
+        yield return new DateTime(ticks);
     }
 }

@@ -17,7 +17,7 @@ public class HeadersGenerator
         var result = new List<Header>();
         foreach (var header in _headers)
         {
-            var value = await header.TextParts.Generate(context);
+            var value = await header.TextPartsProvider.GetSingleString(context);
             result.Add(new Header(header.Name, value));
         }
 

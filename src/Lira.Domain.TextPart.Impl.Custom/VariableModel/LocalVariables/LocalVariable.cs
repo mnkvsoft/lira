@@ -1,4 +1,5 @@
 using Lira.Common.Extensions;
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.LocalVariables;
 
@@ -68,5 +69,8 @@ public class LocalVariable : Variable
         return ctx.Items.GetOrCreate(key: typeof(LocalVariable), () => new Dictionary<int, dynamic?>());
     }
 
-    public override Task<dynamic?> Get(RuleExecutingContext context) => GetValue(context);
+    public override async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    {
+        yield return GetValue(context);
+    }
 }
