@@ -1,12 +1,18 @@
 namespace Lira.Domain.Configuration.Parsing;
 
+public enum ParametersMode
+{
+    Required,
+    None,
+    Maybe
+}
 public class OperatorDefinition
 {
-    public OperatorDefinition(bool withBody, string name, IReadOnlyDictionary<string, (string Name, bool ParametersIsRequired)> allowedChildElements)
+    public OperatorDefinition(string name, ParametersMode parametersMode, bool withBody = true, IReadOnlyDictionary<string, ParametersMode>? allowedChildElements = null)
     {
         WithBody = withBody;
         Name = name;
-        AllowedChildElements = allowedChildElements.ToDictionary(x => x.Key, x => new AllowedChildElementDefinition(this, x.Value.Name, x.Value.ParametersIsRequired));
+        AllowedChildElements = allowedChildElements?.ToDictionary(x => x.Key, x => new AllowedChildElementDefinition(this, x.Key, x.Value)) ?? new Dictionary<string, AllowedChildElementDefinition>();
     }
 
     public string Name { get; }
@@ -14,4 +20,4 @@ public class OperatorDefinition
     public bool WithBody { get; }
 }
 
-public record AllowedChildElementDefinition(OperatorDefinition Operator, string Name, bool ParametersIsRequired);
+public record AllowedChildElementDefinition(OperatorDefinition Operator, string Name, ParametersMode ParametersMode);
