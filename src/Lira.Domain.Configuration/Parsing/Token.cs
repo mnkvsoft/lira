@@ -18,6 +18,11 @@ public abstract record Token
         private readonly List<Token> _content = new();
         public IReadOnlyList<Token> Content => _content;
 
+        // public void ClearContentIfWhitespace()
+        // {
+        //     if(_content.IsWhiteSpace())
+        //         _content.Clear();
+        // }
 
         public void AddChildElement(OperatorElement element) => _children.Add(element);
         private readonly List<OperatorElement> _children = new();
@@ -26,7 +31,7 @@ public abstract record Token
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append($"<op name=\"{Definition.Name}\" pars=\"{Parameters}\">");
+            sb.Append($"<op name='{Definition.Name}' pars='{Parameters}'>");
             foreach (var token in Content)
             {
                 sb.Append(token);
@@ -63,7 +68,7 @@ public abstract record Token
             public override string ToString()
             {
                 var sb = new StringBuilder();
-                sb.Append($"<i name=\"{Definition.Name}\" pars=\"{Parameters}\">");
+                sb.Append($"<i name='{Definition.Name}' pars='{Parameters}'>");
                 foreach (var token in Content)
                 {
                     sb.Append(token);

@@ -14,7 +14,7 @@ public class TokenParserTests
         _operatorDefinitions =
         [
             new OperatorDefinition("repeat", ParametersMode.Maybe),
-            new OperatorDefinition("random", ParametersMode.None, allowedChildElements: new Dictionary<string, ParametersMode> { { "item", ParametersMode.None } }),
+            new OperatorDefinition("random", ParametersMode.None, allowedChildElements: new Dictionary<string, ParametersMode> { { "item", ParametersMode.Maybe } }),
             new OperatorDefinition("if", ParametersMode.Required, allowedChildElements: new Dictionary<string, ParametersMode>
             {
                 { "else", ParametersMode.None }
@@ -25,91 +25,178 @@ public class TokenParserTests
     }
 
     [Test]
-    public void Parse_StaticText_ReturnsSingleStaticToken()
+    public void StaticText()
     {
-        string onlyText = "Hello World";
-        var result = _parser.Parse(onlyText);
-
-        Assert.That(result.Count, Is.EqualTo(1));
-        Assert.That(result[0], Is.InstanceOf<Token.StaticData>());
-        var staticData = (Token.StaticData)result[0];
-
-        Assert.That(staticData.Content, Is.EqualTo(onlyText));
+        var result = _parser.Parse("Hello World");
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<t>Hello World</t>"
+            ));
     }
 
     [Test]
-    public void Parse_SimpleOperator_WithAndWithoutParentheses1()
+    public void SimpleOperator_With_ParentText_Without_Parameters()
     {
         var result = _parser.Parse("@repeat Content@end");
 
-        Assert.That(result.Count, Is.EqualTo(1));
-        Assert.That(result[0], Is.InstanceOf<Token.Operator>());
-        var @operator = (Token.Operator)result[0];
-
-        var s = @operator.ToString();
-
-        Assert.That(@operator.Content.Count, Is.EqualTo(1));
-        Assert.That(@operator.Content[0], Is.InstanceOf<Token.StaticData>());
-        var staticData = (Token.StaticData)@operator.Content[0];
-
-        Assert.That(staticData.Content, Is.EqualTo("Content"));
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<op name='repeat' pars=''>" +
+                "<t>Content</t>" +
+            "</op>"
+        ));
     }
 
+    [Test]
+    public void SimpleOperator_With_ParentText_Without_Parameters_With_NewLine()
+    {
+        var result = _parser.Parse(
+            """
+            [
+                @repeat
+                    @random
+                        @item
+                        {
+                            "type": "car"
+                        }
+                        @item
+                        {
+                            "type": "bike"
+                        }
+                    @end
+                @end
+            ]
+            """);
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<t>[</t>"+
+            "<op name='repeat' pars=''>" +
+            "<t>Content</t>" +
+            "</op>"+
+            "<t>]</t>"
+        ));
+    }
+
+    [Test]
+    public void SimpleOperator_With_ParentText_With_OneParameters()
+    {
+        var result = _parser.Parse("@repeat(3)Content@end");
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<op name='repeat' pars='(3)'>" +
+                "<t>Content</t>" +
+            "</op>"
+        ));
+    }
+
+    [Test]
+    public void SimpleOperator_With_ParentText_With_ManyParameters()
+    {
+        var result = _parser.Parse("@repeat(3, 4, 5)Content@end");
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<op name='repeat' pars='(3, 4, 5)'>" +
+            "<t>Content</t>" +
+            "</op>"
+        ));
+    }
+
+    [Test]
+    public void SimpleOperator_With_ParentText_With_NewLineInParameters()
+    {
+        var result = _parser.Parse("@repeat(3\n, 4\n, 5\n)Content@end");
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<op name='repeat' pars='(3\n, 4\n, 5\n)'>" +
+            "<t>Content</t>" +
+            "</op>"
+        ));
+    }
+
+    [Test]
+    public void SimpleOperator_With_ParentText_With_SimpleParameter()
+    {
+        var result = _parser.Parse("@repeat: 3 \n Content@end");
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<op name='repeat' pars=': 3 \n'>" +
+            "<t>Content</t>" +
+            "</op>"
+        ));
+    }
+
+    [Test]
+    public void NestedOperators()
+    {
+        var input = "@if($$variable == 123)@repeat(3)Text@end@end";
+        var result = _parser.Parse(input);
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<op name='if' pars='($$variable == 123)'>" +
+                "<op name='repeat' pars='(3)'>" +
+                    "<t>Text</t>" +
+                "</op>"+
+            "</op>"
+        ));
+    }
+
+    [Test]
+    public void RandomOperator_WithItems()
+    {
+        var input ="""
+                    @random
+                       @item First
+                       @item(percent: 2) Second
+                    @end
+                    """;
+        var result = _parser.Parse(input);
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<op name='random' pars=''>" +
+                "<i name='item' pars=''><t>First</t></i>" +
+                "<i name='item' pars='(percent: 2)'><t>Second</t></i>" +
+            "</op>"
+        ));
+    }
+
+    [Test]
+    public void IfOperator_WithElseConditions()
+    {
+        var input ="""
+                    @if(cond1)
+                      Content
+                    @else
+                      Default
+                    @end
+                    """;
+        var result = _parser.Parse(input);
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<op name='if' pars='(cond1)'>" +
+                "<t>Content</t>" +
+                "<i name='else' pars=''><t>Default</t></i>" +
+            "</op>"
+        ));
+    }
+
+    //
     // [Test]
-    // public void Parse_SimpleOperator_WithAndWithoutParentheses()
+    // public void Parse_MissingEndTag_ThrowsException()
     // {
-    //     var withParens = _parser.Parse("@repeat(3)Content@end");
-    //     var withoutParens = _parser.Parse("@repeat Content@end");
+    //     var ex = Assert.Throws<TokenParsingException>(() =>
+    //         _parser.Parse("@repeat(3)Content"));
     //
-    //     Assert.That(withParens[0].Name, Is.EqualTo("repeat"));
-    //     Assert.That(withParens[0].Parameters, Is.EqualTo("3"));
-    //     Assert.That(withoutParens[0].Name, Is.EqualTo("repeat"));
-    //     Assert.That(withoutParens[0].Parameters, Is.Null);
+    //     Assert.That(ex.Message, Does.Contain("missing closing @end tag"));
     // }
-    //
-    // [Test]
-    // public void Parse_NestedOperators_CorrectlyBuildsHierarchy()
-    // {
-    //     var input = "@if(cond1)@repeat(3)Text@end@end";
-    //     var result = _parser.Parse(input);
-    //
-    //     Assert.That(result[0].Name, Is.EqualTo("if"));
-    //     Assert.That(result[0].Children[0].Name, Is.EqualTo("repeat"));
-    // }
-    //
-    // [Test]
-    // public void Parse_RandomOperator_WithItems()
-    // {
-    //     var input = @"@random
-    //         @item First
-    //         @item(weight=2) Second
-    //     @end";
-    //
-    //     var result = _parser.Parse(input);
-    //
-    //     Assert.That(result[0].Name, Is.EqualTo("random"));
-    //     Assert.That(result[0].Children.Count, Is.EqualTo(2));
-    //     Assert.That(result[0].Children[1].Parameters, Is.EqualTo("weight=2"));
-    // }
-    //
-    // [Test]
-    // public void Parse_IfOperator_WithElseConditions()
-    // {
-    //     var input = @"@if(cond1)
-    //         Content
-    //     @else if(cond2)
-    //         Other
-    //     @else
-    //         Default
-    //     @end";
-    //
-    //     var result = _parser.Parse(input);
-    //
-    //     Assert.That(result[0].Name, Is.EqualTo("if"));
-    //     Assert.That(result[0].Children.Count, Is.EqualTo(2));
-    //     Assert.That(result[0].Children[0].Name, Is.EqualTo("else if"));
-    //     Assert.That(result[0].Children[1].Name, Is.EqualTo("else"));
-    // }
+
     //
     // [Test]
     // public void Parse_MissingEndTag_ThrowsException()
@@ -183,5 +270,25 @@ public class TokenParserTests
     //     var result = _parser.Parse("@if(a==1 && b==2)Content@end");
     //
     //     Assert.That(result[0].Parameters, Is.EqualTo("a==1 && b==2"));
+    // }
+
+    //
+    // [Test]
+    // public void Parse_IfOperator_WithElseConditions()
+    // {
+    //     var input = @"@if(cond1)
+    //         Content
+    //     @else if(cond2)
+    //         Other
+    //     @else
+    //         Default
+    //     @end";
+    //
+    //     var result = _parser.Parse(input);
+    //
+    //     Assert.That(result[0].Name, Is.EqualTo("if"));
+    //     Assert.That(result[0].Children.Count, Is.EqualTo(2));
+    //     Assert.That(result[0].Children[0].Name, Is.EqualTo("else if"));
+    //     Assert.That(result[0].Children[1].Name, Is.EqualTo("else"));
     // }
 }

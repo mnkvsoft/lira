@@ -28,7 +28,7 @@ class StringIterator(string source)
 
     public bool MoveTo(char c, Func<char, bool> available) => MoveTo(currentPredicate: ch => ch == c, available: available);
 
-    private bool MoveTo(Func<char, bool>? currentPredicate = null, Func<char, bool>? nextPredicate = null, Func<char, bool>? available = null)
+    public bool MoveTo(Func<char, bool>? currentPredicate = null, Func<char, bool>? nextPredicate = null, Func<char, bool>? available = null)
     {
         if(currentPredicate == null && nextPredicate == null)
             throw new ArgumentException($"'{nameof(currentPredicate)}' and '{nameof(nextPredicate)}' should not be null.");

@@ -2,6 +2,18 @@ namespace Lira.Domain.Configuration.Parsing;
 
 public class TokenParser
 {
+    static class Chars
+    {
+        public static class StartParams
+        {
+            public static readonly IReadOnlyCollection<(char Start, char End)> Pairs =
+            [
+                ('(', ')'),
+                (':', '\n')
+            ];
+        }
+    }
+
     private readonly Dictionary<string, OperatorDefinition> _operatorDefinitions;
 
     public TokenParser(IEnumerable<OperatorDefinition> operatorDefinitions)
@@ -11,7 +23,7 @@ public class TokenParser
             x => x);
     }
 
-    public List<Token> Parse(string input)
+    public IReadOnlyList<Token> Parse(string input)
     {
         var openOperators = new Stack<Token.Operator>();
 
@@ -31,38 +43,18 @@ public class TokenParser
             else if (iterator.NextIs("end"))
             {
                 iterator.MoveToEnd("end");
-                iterator.PopExcludeCurrent();
+                iterator.PopIncludeCurrent();
                 if (!openOperators.TryPop(out var closedOperator))
                     throw new TokenParsingException("For @end operator missing the open operator");
 
-                result.Add(closedOperator);
+                if(openOperators.Count == 0)
+                    result.Add(closedOperator);
             }
             // значит попытка объявить оператор или элемент оператора
             else
             {
-                // пытаемся получить имя
-                while (iterator.MoveNext())
-                {
-                    if (iterator.Current == '(' || char.IsWhiteSpace(iterator.Current))
-                    {
-                        // закончили ввод имени
-                        break;
-                    }
-
-                    if (!char.IsLetter(iterator.Current))
-                        throw new TokenParsingException(
-                            $"Unexpected character '{iterator.Current}' in operator name: {iterator.Peek()}");
-                }
-
-                var maybeName = iterator.PopExcludeCurrent() ?? throw new NullReferenceException("Name cannot be null");
-
-                //  символ @ стоит в самом конце
-                if (maybeName == "@")
-                    throw new TokenParsingException("End symbol @ must be escaped as @@ or contains operator name");
-
-                var name = maybeName.TrimStart('@');
+                string name = PopName(iterator);
                 var parameters = PopParameters(iterator);
-                iterator.PopIncludeCurrent();
 
                 // значит это попытка определения оператора
                 if (openOperators.Count == 0)
@@ -107,7 +99,7 @@ public class TokenParser
 
                         if (!allowedElements.TryGetValue(name, out var options))
                             throw new TokenParsingException(
-                                $"Unknown element '{maybeName}' for operator {current.Definition.Name}");
+                                $"Unknown element @'{name}' for operator {current.Definition.Name}");
 
                         current.AddChildElement(new Token.Operator.OperatorElement(options, parameters));
                     }
@@ -115,23 +107,24 @@ public class TokenParser
             }
         }
 
-        if(openOperators.Count > 0)
+        if (openOperators.Count > 0)
             throw new TokenParsingException($"Operator @{openOperators.Peek()} must be closed with an @end");
 
         if (iterator.HasNext())
         {
             iterator.MoveToEnd();
-            AddContent(iterator.PopExcludeCurrent());
+            AddContent(iterator.PopIncludeCurrent());
         }
 
         return result;
 
         void AddContent(string? content)
         {
-            if(content == null)
+            var value = content?.Trim();
+            if (string.IsNullOrWhiteSpace(value))
                 return;
 
-            var staticData = new Token.StaticData(content);
+            var staticData = new Token.StaticData(value);
             if (openOperators.Count == 0)
             {
                 result.Add(staticData);
@@ -152,37 +145,98 @@ public class TokenParser
         }
     }
 
+    private static string PopName(StringIterator iterator)
+    {
+        // пытаемся получить имя
+        while (iterator.MoveNext())
+        {
+            if (char.IsWhiteSpace(iterator.Current))
+            {
+                // закончили ввод имени
+                break;
+            }
+
+            bool isEnd = false;
+            foreach (var pair in Chars.StartParams.Pairs)
+            {
+                if (pair.Start == iterator.Current)
+                    // закончили ввод имени
+                    isEnd = true;
+            }
+
+            if (isEnd)
+                break;
+
+            if (!char.IsLetter(iterator.Current))
+                throw new TokenParsingException(
+                    $"Unexpected character '{iterator.Current}' in operator name: {iterator.Peek()}");
+        }
+
+        var maybeName = iterator.PopExcludeCurrent() ?? throw new NullReferenceException("Name cannot be null");
+
+        //  символ @ стоит в самом конце
+        if (maybeName == "@")
+            throw new TokenParsingException("End symbol @ must be escaped as @@ or contains operator name");
+
+        return maybeName.TrimStart('@');
+    }
+
     private static string? PopParameters(StringIterator iterator)
     {
-        if (iterator.Current == '(')
-            return PopParametersAfterBrace(iterator);
+        var pair = GetPair(iterator.Current);
 
-        if (iterator.MoveTo('(', available: char.IsWhiteSpace))
+        if (pair != null)
+            return PopParametersAfterBrace(iterator, pair.Value.End);
+
+        if (iterator.MoveTo(currentPredicate: c => Chars.StartParams.Pairs.Any(x => x.Start == c),
+                available: char.IsWhiteSpace))
         {
+            pair = GetPair(iterator.Current) ??
+                   throw new TokenParsingException($"Unknown character '{iterator.Current}'");
             iterator.PopExcludeCurrent();
-            return PopParametersAfterBrace(iterator);
+            return PopParametersAfterBrace(iterator, pair.Value.End);
         }
 
         return null;
+
+        (char Start, char End)? GetPair(char current)
+        {
+            (char Start, char End)? valueTuple = null;
+
+            foreach (var p in Chars.StartParams.Pairs)
+            {
+                if (p.Start == current)
+                {
+                    valueTuple = p;
+                    break;
+                }
+            }
+
+            return valueTuple;
+        }
     }
 
-    static string PopParametersAfterBrace(StringIterator iterator)
+    static string? PopParametersAfterBrace(StringIterator iterator, char valueEnd)
     {
         int braces = 0;
         while (iterator.MoveNext())
         {
-            if (iterator.Current == ')')
+            if (iterator.Current == valueEnd && braces == 0)
             {
-                if (braces == 0)
-                    break;
-                braces--;
+                break;
             }
-            else if (iterator.Current == '(')
+
+            switch (iterator.Current)
             {
-                braces++;
+                case ')':
+                    braces--;
+                    break;
+                case '(':
+                    braces++;
+                    break;
             }
         }
 
-        return iterator.PopExcludeCurrent();
+        return iterator.PopIncludeCurrent();
     }
 }
