@@ -1,4 +1,6 @@
 using System.Text;
+using Lira.Common;
+using Lira.Common.Extensions;
 
 namespace Lira.Domain.Configuration.Parsing;
 
@@ -12,9 +14,31 @@ public abstract record Token
         }
     }
 
-    public record Operator(OperatorDefinition Definition, string? Parameters) : Token
+    public record Operator(OperatorDefinition Definition, string? Parameters, int NewLineIndent) : Token
     {
-        public void AddContent(Token token) => _content.Add(token);
+        public void AddStaticContent(string staticContent)
+        {
+            var indented = string.Join(Constants.NewLine, staticContent.TrimEnd()
+                                                    .Split(Constants.NewLine)
+                                                    .AlignIndents(NewLineIndent));
+
+            var staticData = new StaticData(indented);
+            AddContent(staticData);
+        }
+
+        public void AddContent(Token token)
+        {
+            if (_elements.Count == 0)
+            {
+                _content.Add(token);
+            }
+            else
+            {
+                var lastItem = _elements.Last();
+                lastItem.AddContent(token);
+            }
+        }
+
         private readonly List<Token> _content = new();
         public IReadOnlyList<Token> Content => _content;
 
@@ -24,9 +48,9 @@ public abstract record Token
         //         _content.Clear();
         // }
 
-        public void AddChildElement(OperatorElement element) => _children.Add(element);
-        private readonly List<OperatorElement> _children = new();
-        public IReadOnlyCollection<OperatorElement> Children => _children;
+        public void AddChildElement(OperatorElement element) => _elements.Add(element);
+        private readonly List<OperatorElement> _elements = new();
+        public IReadOnlyCollection<OperatorElement> Elements => _elements;
 
         public override string ToString()
         {
@@ -36,7 +60,7 @@ public abstract record Token
             {
                 sb.Append(token);
             }
-            foreach (var child in Children)
+            foreach (var child in Elements)
             {
                 sb.Append(child);
             }
@@ -53,7 +77,8 @@ public abstract record Token
             private readonly List<Token> _content = new();
             public IReadOnlyCollection<Token> Content => _content;
 
-            public OperatorElement(AllowedChildElementDefinition definition, string? parameters)
+            public OperatorElement(AllowedChildElementDefinition definition, string? parameters,
+                int currentNewLineIndent)
             {
                 if(definition.ParametersMode == ParametersMode.None && !string.IsNullOrEmpty(parameters))
                     throw new ArgumentException($"Element '{definition.Name}' for operator {definition.Operator.Name}' not expected parameters, but found: '{parameters}'");

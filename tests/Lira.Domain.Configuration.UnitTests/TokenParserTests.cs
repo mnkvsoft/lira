@@ -14,11 +14,13 @@ public class TokenParserTests
         _operatorDefinitions =
         [
             new OperatorDefinition("repeat", ParametersMode.Maybe),
-            new OperatorDefinition("random", ParametersMode.None, allowedChildElements: new Dictionary<string, ParametersMode> { { "item", ParametersMode.Maybe } }),
-            new OperatorDefinition("if", ParametersMode.Required, allowedChildElements: new Dictionary<string, ParametersMode>
-            {
-                { "else", ParametersMode.None }
-            })
+            new OperatorDefinition("random", ParametersMode.None,
+                allowedChildElements: new Dictionary<string, ParametersMode> { { "item", ParametersMode.Maybe } }),
+            new OperatorDefinition("if", ParametersMode.Required,
+                allowedChildElements: new Dictionary<string, ParametersMode>
+                {
+                    { "else", ParametersMode.None }
+                })
         ];
 
         _parser = new TokenParser(_operatorDefinitions);
@@ -31,7 +33,7 @@ public class TokenParserTests
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
             "<t>Hello World</t>"
-            ));
+        ));
     }
 
     [Test]
@@ -42,7 +44,7 @@ public class TokenParserTests
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
             "<op name='repeat' pars=''>" +
-                "<t>Content</t>" +
+            "<t>Content</t>" +
             "</op>"
         ));
     }
@@ -51,30 +53,44 @@ public class TokenParserTests
     public void SimpleOperator_With_ParentText_Without_Parameters_With_NewLine()
     {
         var result = _parser.Parse(
-            """
-            [
-                @repeat
-                    @random
-                        @item
-                        {
-                            "type": "car"
-                        }
-                        @item
-                        {
-                            "type": "bike"
-                        }
-                    @end
-                @end
-            ]
-            """);
+
+            "[\n" +
+            "    @repeat\n" +
+            "        @random\n" +
+            "            @item\n" +
+            "            {\n" +
+            "                \"type\": \"car\"\n" +
+            "            }\n" +
+            "            @item\n" +
+            "            {\n" +
+            "                \"type\": \"bike\"\n" +
+            "            }\n" +
+            "        @end\n" +
+            "    @end\n" +
+            "]");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
-            "<t>[</t>"+
+            "<t>[\n    </t>" +
             "<op name='repeat' pars=''>" +
-            "<t>Content</t>" +
-            "</op>"+
-            "<t>]</t>"
+                "<op name='random' pars=''>" +
+                    "<i name='item' pars=''>" +
+                        "<t>" +
+                        "    {\n" +
+                        "        \"type\": \"car\"\n" +
+                        "    }" +
+                        "</t>" +
+                    "</i>" +
+                    "<i name='item' pars=''>" +
+                        "<t>" +
+                        "    {\n" +
+                        "        \"type\": \"bike\"\n" +
+                        "    }" +
+                        "</t>" +
+                    "</i>" +
+                "</op>" +
+            "</op>" +
+            "<t>\n]</t>"
         ));
     }
 
@@ -86,7 +102,7 @@ public class TokenParserTests
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
             "<op name='repeat' pars='(3)'>" +
-                "<t>Content</t>" +
+            "<t>Content</t>" +
             "</op>"
         ));
     }
@@ -139,9 +155,9 @@ public class TokenParserTests
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
             "<op name='if' pars='($$variable == 123)'>" +
-                "<op name='repeat' pars='(3)'>" +
-                    "<t>Text</t>" +
-                "</op>"+
+            "<op name='repeat' pars='(3)'>" +
+            "<t>Text</t>" +
+            "</op>" +
             "</op>"
         ));
     }
@@ -149,7 +165,7 @@ public class TokenParserTests
     [Test]
     public void RandomOperator_WithItems()
     {
-        var input ="""
+        var input = """
                     @random
                        @item First
                        @item(percent: 2) Second
@@ -160,8 +176,8 @@ public class TokenParserTests
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
             "<op name='random' pars=''>" +
-                "<i name='item' pars=''><t>First</t></i>" +
-                "<i name='item' pars='(percent: 2)'><t>Second</t></i>" +
+            "<i name='item' pars=''><t>First</t></i>" +
+            "<i name='item' pars='(percent: 2)'><t>Second</t></i>" +
             "</op>"
         ));
     }
@@ -169,7 +185,7 @@ public class TokenParserTests
     [Test]
     public void IfOperator_WithElseConditions()
     {
-        var input ="""
+        var input = """
                     @if(cond1)
                       Content
                     @else
@@ -181,8 +197,8 @@ public class TokenParserTests
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
             "<op name='if' pars='(cond1)'>" +
-                "<t>Content</t>" +
-                "<i name='else' pars=''><t>Default</t></i>" +
+            "<t>Content</t>" +
+            "<i name='else' pars=''><t>Default</t></i>" +
             "</op>"
         ));
     }

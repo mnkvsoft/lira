@@ -47,7 +47,7 @@ indent_size = 2
 
 # Batch Files
 [*.{cmd,bat}]
-end_of_line = crlf
+end_of_line = lf
 
 # Bash Files
 [*.sh]
@@ -64,7 +64,7 @@ indent_style = space
 tab_width = 4
 
 # New line preferences
-end_of_line = crlf
+end_of_line = lf
 insert_final_newline = false
 
 #### .NET Coding Conventions ####

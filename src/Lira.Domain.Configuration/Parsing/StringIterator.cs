@@ -1,4 +1,5 @@
 // ReSharper disable ReplaceWithPrimaryConstructorParameter
+
 namespace Lira.Domain.Configuration.Parsing;
 
 class StringIterator(string source)
@@ -146,5 +147,16 @@ class StringIterator(string source)
         var result = _source.Substring(startIndex, currentIndex - startIndex);
         _lastPopIndex = currentIndex;
         return result;
+    }
+
+    public string GetAllFromStart() => _source[..(_currentIndex)];
+}
+
+static class StringIteratorExtensions
+{
+    public static void MoveToNewlineAndPop(this StringIterator iterator)
+    {
+        if (iterator.Current == '\n' || iterator.MoveTo('\n', available: char.IsWhiteSpace))
+            iterator.PopIncludeCurrent();
     }
 }

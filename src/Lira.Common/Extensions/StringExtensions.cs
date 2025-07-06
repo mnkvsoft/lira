@@ -164,6 +164,42 @@ public static class StringExtensions
 
         return result;
     }
+
+    public static IReadOnlyCollection<string> AlignIndents(this IReadOnlyCollection<string> lines, int count)
+    {
+        var minIndent = lines.Min(GetCountWhitespacesStart);
+        var indent = new string(' ', count);
+
+        var result = new List<string>();
+        foreach (var line in lines)
+        {
+             result.Add(indent + new string(' ', GetCountWhitespacesStart(line) - minIndent) + line.TrimStart());
+        }
+
+        return result;
+    }
+
+    private static int GetCountWhitespacesStart(this string str)
+    {
+        for (int i = 0; i < str.Length; i++)
+        {
+            if (str[i] != ' ')
+                return i;
+        }
+
+        return str.Length;
+    }
+
+    public static int GetCountWhitespacesEnd(this string str)
+    {
+        for (int i = str.Length - 1; i >= 0; i--)
+        {
+            if (str[i] == '\n')
+                return str.Length - 1 - i;
+        }
+
+        return str.Length;
+    }
 }
 
 public record SplitResult(string Splitter, string LeftPart, string RightPart);

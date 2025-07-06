@@ -1,3 +1,5 @@
+using Lira.Common.Extensions;
+
 namespace Lira.Domain.Configuration.Parsing;
 
 public class TokenParser
@@ -53,6 +55,7 @@ public class TokenParser
             // значит попытка объявить оператор или элемент оператора
             else
             {
+                var beforeName = iterator.GetAllFromStart();
                 string name = PopName(iterator);
                 var parameters = PopParameters(iterator);
 
@@ -62,7 +65,11 @@ public class TokenParser
                     if (!_operatorDefinitions.TryGetValue(name, out OperatorDefinition? operatorDefinition))
                         throw new TokenParsingException($"Unknown operator '{name}'");
 
-                    var @operator = new Token.Operator(operatorDefinition, parameters);
+                    int newLineIndent = beforeName.GetCountWhitespacesEnd();
+
+                    iterator.MoveToNewlineAndPop();
+
+                    var @operator = new Token.Operator(operatorDefinition, parameters, newLineIndent);
                     if (operatorDefinition.WithBody)
                     {
                         openOperators.Push(@operator);
@@ -77,18 +84,15 @@ public class TokenParser
                     // начинается новый оператор внутри текущего
                     if (_operatorDefinitions.TryGetValue(name, out OperatorDefinition? operatorDefinition))
                     {
-                        var @operator = new Token.Operator(operatorDefinition, parameters);
                         var current = openOperators.Peek();
-                        if (current.Children.Count == 0)
-                        {
-                            current.AddContent(@operator);
-                        }
-                        else
-                        {
-                            var lastItem = current.Children.Last();
-                            lastItem.AddContent(@operator);
-                        }
 
+                        int newLineIndent = current.Content.Count == 0 ? current.NewLineIndent : beforeName.GetCountWhitespacesEnd();
+
+                        iterator.MoveToNewlineAndPop();
+
+                        var @operator = new Token.Operator(operatorDefinition, parameters, newLineIndent);
+
+                        current.AddContent(@operator);
                         openOperators.Push(@operator);
                     }
                     // иначе поптыка объявления элемента внутри текущего оператора
@@ -101,7 +105,9 @@ public class TokenParser
                             throw new TokenParsingException(
                                 $"Unknown element @'{name}' for operator {current.Definition.Name}");
 
-                        current.AddChildElement(new Token.Operator.OperatorElement(options, parameters));
+                        iterator.MoveToNewlineAndPop();
+
+                        current.AddChildElement(new Token.Operator.OperatorElement(options, parameters, current.NewLineIndent));
                     }
                 }
             }
@@ -120,27 +126,17 @@ public class TokenParser
 
         void AddContent(string? content)
         {
-            var value = content?.Trim();
-            if (string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(content))
                 return;
 
-            var staticData = new Token.StaticData(value);
             if (openOperators.Count == 0)
             {
-                result.Add(staticData);
+                result.Add(new Token.StaticData(content));
             }
             else
             {
                 var current = openOperators.Peek();
-                if (current.Children.Count == 0)
-                {
-                    current.AddContent(staticData);
-                }
-                else
-                {
-                    var lastItem = current.Children.Last();
-                    lastItem.AddContent(staticData);
-                }
+                current.AddStaticContent(content);
             }
         }
     }
