@@ -6,23 +6,31 @@ namespace Lira.Domain.Configuration.Parsing;
 
 public abstract record Token
 {
-    public record StaticData(string Content) : Token
+    public record StaticData : Token
     {
+        public string Content { get; set; }
+
+        public StaticData(string content)
+        {
+            Content = content;
+        }
+
         public override string ToString()
         {
             return "<t>" + Content + "</t>";
         }
     }
 
-    public record Operator(OperatorDefinition Definition, string? Parameters, int NewLineIndent) : Token
+    public record Operator(OperatorDefinition Definition, string? Parameters) : Token
     {
         public void AddStaticContent(string staticContent)
         {
-            var indented = string.Join(Constants.NewLine, staticContent.TrimEnd()
-                                                    .Split(Constants.NewLine)
-                                                    .AlignIndents(NewLineIndent));
+            // var indented = string.Join(Constants.NewLine, staticContent
+            //                                         .Split(Constants.NewLine)
+            //                                         .AlignIndents(NewLineIndent));
 
-            var staticData = new StaticData(indented);
+            // var staticData = new StaticData(indented);
+            var staticData = new StaticData(staticContent);
             AddContent(staticData);
         }
 
@@ -77,8 +85,7 @@ public abstract record Token
             private readonly List<Token> _content = new();
             public IReadOnlyCollection<Token> Content => _content;
 
-            public OperatorElement(AllowedChildElementDefinition definition, string? parameters,
-                int currentNewLineIndent)
+            public OperatorElement(AllowedChildElementDefinition definition, string? parameters)
             {
                 if(definition.ParametersMode == ParametersMode.None && !string.IsNullOrEmpty(parameters))
                     throw new ArgumentException($"Element '{definition.Name}' for operator {definition.Operator.Name}' not expected parameters, but found: '{parameters}'");

@@ -3,6 +3,8 @@
 namespace Lira.Common.Extensions;
 public static class StringExtensions
 {
+    public static string Join(this string value, char c) => string.Join(c, value);
+
     public static string TrimStart(this string value, string trimString)
     {
         if (string.IsNullOrEmpty(trimString))
@@ -165,21 +167,18 @@ public static class StringExtensions
         return result;
     }
 
-    public static IReadOnlyCollection<string> AlignIndents(this IReadOnlyCollection<string> lines, int count)
-    {
-        var minIndent = lines.Min(GetCountWhitespacesStart);
-        var indent = new string(' ', count);
+    // public static IEnumerable<string> AlignIndents(this IReadOnlyCollection<string> lines, int count = 0)
+    // {
+    //     var minIndent = lines.Min(GetCountWhitespacesStart);
+    //     var indent = new string(' ', count);
+    //
+    //     foreach (var line in lines)
+    //     {
+    //         yield return indent + new string(' ', GetCountWhitespacesStart(line) - minIndent) + line.TrimStart();
+    //     }
+    // }
 
-        var result = new List<string>();
-        foreach (var line in lines)
-        {
-             result.Add(indent + new string(' ', GetCountWhitespacesStart(line) - minIndent) + line.TrimStart());
-        }
-
-        return result;
-    }
-
-    private static int GetCountWhitespacesStart(this string str)
+    public static int GetCountWhitespacesStart(this string str)
     {
         for (int i = 0; i < str.Length; i++)
         {
@@ -199,6 +198,57 @@ public static class StringExtensions
         }
 
         return str.Length;
+    }
+
+    public static IEnumerable<string> TrimIfSingleLine(this IEnumerable<string> lines) => ActionIfSingleLine(lines, str => str.Trim());
+    public static IEnumerable<string> TrimEndIfSingleLine(this IEnumerable<string> lines) => ActionIfSingleLine(lines, str => str.TrimEnd());
+
+    private static IEnumerable<string> ActionIfSingleLine(this IEnumerable<string> lines, Func<string, string> action)
+    {
+        int count = 0;
+        string? firstSourceLine = null;
+        foreach (var line in lines)
+        {
+            if (count == 0)
+            {
+                firstSourceLine = line;
+            }
+            else if (count == 1)
+            {
+                yield return firstSourceLine!;
+                yield return line;
+            }
+            else
+            {
+                yield return line;
+            }
+
+            count++;
+        }
+
+        if(count == 1)
+            yield return action(firstSourceLine!);
+    }
+
+    public static IEnumerable<string> TrimEmptyLines(this IEnumerable<string> lines) => lines.TrimStartEmptyLines().TrimEndEmptyLines();
+
+    public static IEnumerable<string> TrimEndEmptyLines(this IEnumerable<string> lines)
+    {
+        return TrimStartEmptyLines(lines.Reverse()).Reverse();
+    }
+
+    public static IEnumerable<string> TrimStartEmptyLines(this IEnumerable<string> lines)
+    {
+        bool start = true;
+
+        foreach (var line in lines)
+        {
+            if (start && string.IsNullOrWhiteSpace(line))
+                continue;
+            if (start)
+                start = false;
+            yield return line;
+        }
     }
 }
 

@@ -53,44 +53,98 @@ public class TokenParserTests
     public void SimpleOperator_With_ParentText_Without_Parameters_With_NewLine()
     {
         var result = _parser.Parse(
-
-            "[\n" +
-            "    @repeat\n" +
-            "        @random\n" +
-            "            @item\n" +
-            "            {\n" +
-            "                \"type\": \"car\"\n" +
-            "            }\n" +
-            "            @item\n" +
-            "            {\n" +
-            "                \"type\": \"bike\"\n" +
-            "            }\n" +
-            "        @end\n" +
-            "    @end\n" +
-            "]");
+            """
+            [
+                @repeat
+                    @random
+                        @item
+                        {
+                            "type": "car"
+                        }
+                        @item
+                        {
+                            "type": "bike"
+                        }
+                    @end
+                @end
+            ]
+            """.Replace("\r\n", "\n"));
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
             "<t>[\n    </t>" +
             "<op name='repeat' pars=''>" +
-                "<op name='random' pars=''>" +
-                    "<i name='item' pars=''>" +
-                        "<t>" +
-                        "    {\n" +
-                        "        \"type\": \"car\"\n" +
-                        "    }" +
-                        "</t>" +
-                    "</i>" +
-                    "<i name='item' pars=''>" +
-                        "<t>" +
-                        "    {\n" +
-                        "        \"type\": \"bike\"\n" +
-                        "    }" +
-                        "</t>" +
-                    "</i>" +
-                "</op>" +
+            "<op name='random' pars=''>" +
+            "<i name='item' pars=''>" +
+            "<t>" +
+            "{\n" +
+            "    \"type\": \"car\"\n" +
+            "}" +
+            "</t>" +
+            "</i>" +
+            "<i name='item' pars=''>" +
+            "<t>" +
+            "{\n" +
+            "    \"type\": \"bike\"\n" +
+            "}" +
+            "</t>" +
+            "</i>" +
+            "</op>" +
             "</op>" +
             "<t>\n]</t>"
+        ));
+    }
+
+    [Test]
+    public void SimpleOperator_With_ParentText_Without_Parameters_With_NewLine2()
+    {
+        var result = _parser.Parse(
+            """
+            {
+                "orders": [
+                    @repeat: 3
+                    {
+                        "items": [
+                            @repeat(min: 1, max: 5)
+                            {
+                                "id": 123
+                            }
+                            @end
+                        ]
+                    }
+                    @end
+                ]
+            }
+            """.Replace("\r\n", "\n"));
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<t>{\n" +
+            "    \"orders\": [\n" +
+            "        " +
+            "</t>" +
+            "<op name='repeat' pars=': 3\n'>" +
+                "<t>" +
+                "{\n" +
+                "    \"items\": [\n" +
+                "        " +
+                "</t>" +
+
+                "<op name='repeat' pars='(min: 1, max: 5)'>" +
+                    "<t>" +
+                        "{\n" +
+                        "    \"id\": 123\n" +
+                        "}" +
+                    "</t>" +
+                "</op>" +
+
+                "<t>\n    ]\n" +
+                "}" +
+                "</t>" +
+            "</op>" +
+            "<t>\n    ]\n" +
+            "}" +
+            "</t>"
         ));
     }
 

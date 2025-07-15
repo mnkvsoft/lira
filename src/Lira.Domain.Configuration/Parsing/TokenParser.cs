@@ -49,13 +49,12 @@ public class TokenParser
                 if (!openOperators.TryPop(out var closedOperator))
                     throw new TokenParsingException("For @end operator missing the open operator");
 
-                if(openOperators.Count == 0)
+                if (openOperators.Count == 0)
                     result.Add(closedOperator);
             }
             // значит попытка объявить оператор или элемент оператора
             else
             {
-                var beforeName = iterator.GetAllFromStart();
                 string name = PopName(iterator);
                 var parameters = PopParameters(iterator);
 
@@ -65,11 +64,9 @@ public class TokenParser
                     if (!_operatorDefinitions.TryGetValue(name, out OperatorDefinition? operatorDefinition))
                         throw new TokenParsingException($"Unknown operator '{name}'");
 
-                    int newLineIndent = beforeName.GetCountWhitespacesEnd();
-
                     iterator.MoveToNewlineAndPop();
 
-                    var @operator = new Token.Operator(operatorDefinition, parameters, newLineIndent);
+                    var @operator = new Token.Operator(operatorDefinition, parameters);
                     if (operatorDefinition.WithBody)
                     {
                         openOperators.Push(@operator);
@@ -86,11 +83,9 @@ public class TokenParser
                     {
                         var current = openOperators.Peek();
 
-                        int newLineIndent = current.Content.Count == 0 ? current.NewLineIndent : beforeName.GetCountWhitespacesEnd();
-
                         iterator.MoveToNewlineAndPop();
 
-                        var @operator = new Token.Operator(operatorDefinition, parameters, newLineIndent);
+                        var @operator = new Token.Operator(operatorDefinition, parameters);
 
                         current.AddContent(@operator);
                         openOperators.Push(@operator);
@@ -107,7 +102,8 @@ public class TokenParser
 
                         iterator.MoveToNewlineAndPop();
 
-                        current.AddChildElement(new Token.Operator.OperatorElement(options, parameters, current.NewLineIndent));
+                        current.AddChildElement(
+                            new Token.Operator.OperatorElement(options, parameters));
                     }
                 }
             }
@@ -121,6 +117,15 @@ public class TokenParser
             iterator.MoveToEnd();
             AddContent(iterator.PopIncludeCurrent());
         }
+
+        foreach (var token in result)
+        {
+            if (token is Token.Operator op)
+            {
+                ClearWhitespaces(op);
+            }
+        }
+
 
         return result;
 
@@ -138,6 +143,61 @@ public class TokenParser
                 var current = openOperators.Peek();
                 current.AddStaticContent(content);
             }
+        }
+    }
+
+    private static void ClearWhitespaces(Token.Operator op)
+    {
+        Trim(op.Content);
+
+        foreach (var elem in op.Elements)
+        {
+            Trim(elem.Content);
+        }
+    }
+
+    private static void Trim(IReadOnlyCollection<Token> content)
+    {
+        var indentCounts = content.OfType<Token.StaticData>()
+            .SelectMany(sd => sd.Content.Split('\n'))
+            .TrimEmptyLines()
+            .Where(x => x.Length != 0)
+            .Select(x => x.GetCountWhitespacesStart())
+            .ToArray();
+
+        var minIndent = indentCounts.Length == 0 ? 0 : indentCounts.Min();
+
+        if (content.Count > 1)
+        {
+            var first = content.First();
+            if (first is Token.StaticData sdFirst)
+            {
+                sdFirst.Content = sdFirst.Content.Split('\n').TrimStartEmptyLines().JoinWithNewLine();
+            }
+
+            var last = content.Last();
+            if (last is Token.StaticData sdLast)
+            {
+                sdLast.Content = sdLast.Content.Split('\n').TrimEndEmptyLines().JoinWithNewLine();
+            }
+        }
+
+        if (content.Count == 1)
+        {
+            var single = content.First();
+            if (single is Token.StaticData sd)
+            {
+                sd.Content = sd.Content.Split('\n').TrimEmptyLines().TrimEndIfSingleLine().JoinWithNewLine();
+            }
+        }
+
+        foreach (var token in content)
+        {
+            if(token is Token.Operator o)
+                ClearWhitespaces(o);
+
+            if(token is Token.StaticData st)
+                st.Content = st.Content.Split('\n').Select(x => x.Length > 0 ? x.Substring(minIndent) : String.Empty).JoinWithNewLine();
         }
     }
 
