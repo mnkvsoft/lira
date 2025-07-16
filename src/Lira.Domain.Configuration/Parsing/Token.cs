@@ -88,10 +88,10 @@ public abstract record Token
             public OperatorElement(AllowedChildElementDefinition definition, string? parameters)
             {
                 if(definition.ParametersMode == ParametersMode.None && !string.IsNullOrEmpty(parameters))
-                    throw new ArgumentException($"Element '{definition.Name}' for operator {definition.Operator.Name}' not expected parameters, but found: '{parameters}'");
+                    throw new ArgumentException($"Element '@{definition.Name}' for '@{definition.Operator.Name}' operator not expected parameters, but found: '{parameters}'");
 
-                if(definition.ParametersMode == ParametersMode.Required && !string.IsNullOrWhiteSpace(parameters))
-                    throw new ArgumentException($"Element '{definition.Name}' for operator {definition.Operator.Name}' expected parameters, but not found");
+                if(definition.ParametersMode == ParametersMode.Required && string.IsNullOrWhiteSpace(parameters))
+                    throw new ArgumentException($"Element '@{definition.Name}' for '@{definition.Operator.Name}' operator expected parameters, but not found");
 
                 Definition = definition;
                 Parameters = parameters;

@@ -19,7 +19,8 @@ public class TokenParserTests
             new OperatorDefinition("if", ParametersMode.Required,
                 allowedChildElements: new Dictionary<string, ParametersMode>
                 {
-                    { "else", ParametersMode.None }
+                    { "else", ParametersMode.None },
+                    { "else if", ParametersMode.Required }
                 })
         ];
 
@@ -37,7 +38,7 @@ public class TokenParserTests
     }
 
     [Test]
-    public void SimpleOperator_With_ParentText_Without_Parameters()
+    public void SimpleOperator_Inline_WithParentText_WithoutParameters()
     {
         var result = _parser.Parse("@repeat Content@end");
 
@@ -50,106 +51,20 @@ public class TokenParserTests
     }
 
     [Test]
-    public void SimpleOperator_With_ParentText_Without_Parameters_With_NewLine()
+    public void SimpleOperator_Content_NewLine()
     {
-        var result = _parser.Parse(
-            """
-            [
-                @repeat
-                    @random
-                        @item
-                        {
-                            "type": "car"
-                        }
-                        @item
-                        {
-                            "type": "bike"
-                        }
-                    @end
-                @end
-            ]
-            """.Replace("\r\n", "\n"));
+        var result = _parser.Parse("@repeat\nContent\n@end");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
-            "<t>[\n    </t>" +
             "<op name='repeat' pars=''>" +
-            "<op name='random' pars=''>" +
-            "<i name='item' pars=''>" +
-            "<t>" +
-            "{\n" +
-            "    \"type\": \"car\"\n" +
-            "}" +
-            "</t>" +
-            "</i>" +
-            "<i name='item' pars=''>" +
-            "<t>" +
-            "{\n" +
-            "    \"type\": \"bike\"\n" +
-            "}" +
-            "</t>" +
-            "</i>" +
-            "</op>" +
-            "</op>" +
-            "<t>\n]</t>"
+            "<t>Content</t>" +
+            "</op>"
         ));
     }
 
     [Test]
-    public void SimpleOperator_With_ParentText_Without_Parameters_With_NewLine2()
-    {
-        var result = _parser.Parse(
-            """
-            {
-                "orders": [
-                    @repeat: 3
-                    {
-                        "items": [
-                            @repeat(min: 1, max: 5)
-                            {
-                                "id": 123
-                            }
-                            @end
-                        ]
-                    }
-                    @end
-                ]
-            }
-            """.Replace("\r\n", "\n"));
-
-        string xmlView = result.GetXmlView();
-        Assert.That(xmlView, Is.EqualTo(
-            "<t>{\n" +
-            "    \"orders\": [\n" +
-            "        " +
-            "</t>" +
-            "<op name='repeat' pars=': 3\n'>" +
-                "<t>" +
-                "{\n" +
-                "    \"items\": [\n" +
-                "        " +
-                "</t>" +
-
-                "<op name='repeat' pars='(min: 1, max: 5)'>" +
-                    "<t>" +
-                        "{\n" +
-                        "    \"id\": 123\n" +
-                        "}" +
-                    "</t>" +
-                "</op>" +
-
-                "<t>\n    ]\n" +
-                "}" +
-                "</t>" +
-            "</op>" +
-            "<t>\n    ]\n" +
-            "}" +
-            "</t>"
-        ));
-    }
-
-    [Test]
-    public void SimpleOperator_With_ParentText_With_OneParameters()
+    public void SimpleOperators_With_ParentText_With_OneParameters()
     {
         var result = _parser.Parse("@repeat(3)Content@end");
 
@@ -201,7 +116,53 @@ public class TokenParserTests
     }
 
     [Test]
-    public void NestedOperators()
+    public void NestedOperator_Simple_WithParentText_WithoutParameters()
+    {
+        var result = _parser.Parse(
+            """
+                [
+                    @repeat
+                        @random
+                            @item
+                            {
+                                "type": "car"
+                            }
+                            @item
+                            {
+                                "type": "bike"
+                            }
+                        @end
+                    @end
+                ]
+                """.Replace("\r\n", "\n"));
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<t>[\n    </t>" +
+            "<op name='repeat' pars=''>" +
+            "<op name='random' pars=''>" +
+            "<i name='item' pars=''>" +
+            "<t>" +
+            "{\n" +
+            "    \"type\": \"car\"\n" +
+            "}" +
+            "</t>" +
+            "</i>" +
+            "<i name='item' pars=''>" +
+            "<t>" +
+            "{\n" +
+            "    \"type\": \"bike\"\n" +
+            "}" +
+            "</t>" +
+            "</i>" +
+            "</op>" +
+            "</op>" +
+            "<t>\n]</t>"
+        ));
+    }
+
+    [Test]
+    public void NestedOperators_Inline()
     {
         var input = "@if($$variable == 123)@repeat(3)Text@end@end";
         var result = _parser.Parse(input);
@@ -217,7 +178,94 @@ public class TokenParserTests
     }
 
     [Test]
-    public void RandomOperator_WithItems()
+    public void NestedOperators_WithParameters()
+    {
+        var result = _parser.Parse(
+            """
+                {
+                    "orders": [
+                        @repeat: 3
+                        {
+                            "items": [
+                                @repeat(min: 1, max: 5)
+                                {
+                                    "id": 123
+                                }
+                                @end
+                            ]
+                        }
+                        @end
+                    ]
+                }
+                """.Replace("\r\n", "\n"));
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<t>{\n" +
+            "    \"orders\": [\n" +
+            "        " +
+            "</t>" +
+            "<op name='repeat' pars=': 3\n'>" +
+            "<t>" +
+            "{\n" +
+            "    \"items\": [\n" +
+            "        " +
+            "</t>" +
+            "<op name='repeat' pars='(min: 1, max: 5)'>" +
+            "<t>" +
+            "{\n" +
+            "    \"id\": 123\n" +
+            "}" +
+            "</t>" +
+            "</op>" +
+            "<t>\n    ]\n" +
+            "}" +
+            "</t>" +
+            "</op>" +
+            "<t>\n    ]\n" +
+            "}" +
+            "</t>"
+        ));
+    }
+
+
+    [Test]
+    public void NestedOperators_ComplexStructure()
+    {
+        var result = _parser.Parse(
+            """
+                Start
+                @if(user)
+                    @repeat(3)
+                        @random
+                            @item A
+                            @item B
+                        @end
+                    @end
+                @else
+                    Nothing
+                @end
+                Finish
+                """.Replace("\r\n", "\n"));
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<t>Start\n</t>" +
+            "<op name='if' pars='(user)'>" +
+            "<op name='repeat' pars='(3)'>" +
+            "<op name='random' pars=''>" +
+            "<i name='item' pars=''><t>A</t></i>" +
+            "<i name='item' pars=''><t>B</t></i>" +
+            "</op>" +
+            "</op>" +
+            "<i name='else' pars=''><t>Nothing</t></i>" +
+            "</op>" +
+            "<t>\nFinish</t>"
+        ));
+    }
+
+    [Test]
+    public void RandomOperator_WithItemsInLine()
     {
         var input = """
                     @random
@@ -257,6 +305,37 @@ public class TokenParserTests
         ));
     }
 
+
+    [Test]
+    public void Parse_IfOperator_WithElseConditions()
+    {
+        var input =
+            """
+            @if(cond1)
+                Content
+            @else if(cond2)
+                Other
+            @else
+                Default
+            @end
+            """.Replace("\r\n", "\n");
+
+        var result = _parser.Parse(input);
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<op name='if' pars='(cond1)'>" +
+                    "<t>Content</t>" +
+                "<i name='else if' pars='(cond2)'>" +
+                    "<t>Other</t>" +
+                "</i>" +
+                "<i name='else' pars=''>" +
+                    "<t>Default</t>" +
+                "</i>" +
+            "</op>"
+        ));
+    }
+
     //
     // [Test]
     // public void Parse_MissingEndTag_ThrowsException()
@@ -286,43 +365,8 @@ public class TokenParserTests
     //     Assert.That(ex.Message, Does.Contain("Unclosed parameters"));
     // }
     //
-    // [Test]
-    // public void Parse_OperatorWithoutParentheses_WorksCorrectly()
-    // {
-    //     var result = _parser.Parse("@repeat\nContent\n@end");
-    //
-    //     Assert.That(result[0].Name, Is.EqualTo("repeat"));
-    //     Assert.That(result[0].Parameters, Is.Null);
-    //     Assert.That(result[0].Content, Is.EqualTo("\nContent\n"));
-    // }
-    //
-    // [Test]
-    // public void Parse_ItemWithoutParentheses_WorksCorrectly()
-    // {
-    //     var result = _parser.Parse("@random\n@item Content\n@end");
-    //
-    //     Assert.That(result[0].Children[0].Name, Is.EqualTo("item"));
-    //     Assert.That(result[0].Children[0].Parameters, Is.Null);
-    // }
-    //
-    // [Test]
-    // public void Parse_ComplexStructure_WithMixedOperators()
-    // {
-    //     var input = @"Start
-    //         @if(user)
-    //             @repeat(3)
-    //                 @random
-    //                     @item A
-    //                     @item B
-    //                 @end
-    //             @end
-    //         @else
-    //             Nothing
-    //         @end
-    //         Finish";
-    //
-    //     Assert.DoesNotThrow(() => _parser.Parse(input));
-    // }
+
+
     //
     // [Test]
     // public void Parse_EmptyOperator_WorksCorrectly()
@@ -340,25 +384,5 @@ public class TokenParserTests
     //     var result = _parser.Parse("@if(a==1 && b==2)Content@end");
     //
     //     Assert.That(result[0].Parameters, Is.EqualTo("a==1 && b==2"));
-    // }
-
-    //
-    // [Test]
-    // public void Parse_IfOperator_WithElseConditions()
-    // {
-    //     var input = @"@if(cond1)
-    //         Content
-    //     @else if(cond2)
-    //         Other
-    //     @else
-    //         Default
-    //     @end";
-    //
-    //     var result = _parser.Parse(input);
-    //
-    //     Assert.That(result[0].Name, Is.EqualTo("if"));
-    //     Assert.That(result[0].Children.Count, Is.EqualTo(2));
-    //     Assert.That(result[0].Children[0].Name, Is.EqualTo("else if"));
-    //     Assert.That(result[0].Children[1].Name, Is.EqualTo("else"));
     // }
 }
