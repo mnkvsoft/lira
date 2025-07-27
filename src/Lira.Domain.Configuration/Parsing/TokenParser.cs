@@ -62,7 +62,7 @@ public class TokenParser
                     if (!TryGetOperatorDefinition(iterator, out var operatorDefinition))
                         throw new TokenParsingException($"Unknown operator '{PopName(iterator)}'");
 
-                    var parameters = PopParameters(iterator);
+                    var parameters = PopParameters(operatorDefinition.Name, iterator);
 
                     iterator.MoveToNewlineAndPop();
 
@@ -81,7 +81,7 @@ public class TokenParser
                     // начинается новый оператор внутри текущего
                     if (TryGetOperatorDefinition(iterator, out var operatorDefinition))
                     {
-                        var parameters = PopParameters(iterator);
+                        var parameters = PopParameters(operatorDefinition.Name, iterator);
                         var current = openOperators.Peek();
 
                         iterator.MoveToNewlineAndPop();
@@ -97,7 +97,7 @@ public class TokenParser
                         var current = openOperators.Peek();
                         var element = GetAllowedChildElementDefinition(current, iterator);
 
-                        var elemParameters = PopParameters(iterator);
+                        var elemParameters = PopParameters(element.Name, iterator);
 
                         iterator.MoveToNewlineAndPop();
 
@@ -108,7 +108,10 @@ public class TokenParser
         }
 
         if (openOperators.Count > 0)
-            throw new TokenParsingException($"Operator @{openOperators.Peek()} must be closed with an @end");
+        {
+            var @operator = openOperators.Peek();
+            throw new TokenParsingException($"Operator @{@operator.Definition.Name + @operator.Parameters} must be closed with an @end");
+        }
 
         if (iterator.HasNext())
         {
@@ -123,7 +126,6 @@ public class TokenParser
                 ClearWhitespaces(op);
             }
         }
-
 
         return result;
 
@@ -274,12 +276,12 @@ public class TokenParser
         return maybeName.TrimStart('@');
     }
 
-    private static string? PopParameters(StringIterator iterator)
+    private static string? PopParameters(string name, StringIterator iterator)
     {
         var pair = GetPair(iterator.Current);
 
         if (pair != null)
-            return PopParametersAfterBrace(iterator, pair.Value.End);
+            return PopParametersAfterBrace(name, iterator, pair.Value.End);
 
         if (iterator.MoveTo(currentPredicate: c => Chars.StartParams.Pairs.Any(x => x.Start == c),
                 available: char.IsWhiteSpace))
@@ -287,7 +289,7 @@ public class TokenParser
             pair = GetPair(iterator.Current) ??
                    throw new TokenParsingException($"Unknown character '{iterator.Current}'");
             iterator.PopExcludeCurrent();
-            return PopParametersAfterBrace(iterator, pair.Value.End);
+            return PopParametersAfterBrace(name, iterator, pair.Value.End);
         }
 
         return null;
@@ -309,14 +311,16 @@ public class TokenParser
         }
     }
 
-    static string? PopParametersAfterBrace(StringIterator iterator, char valueEnd)
+    static string? PopParametersAfterBrace(string name, StringIterator iterator, char valueEnd)
     {
         int braces = 0;
+
+        var sourceIterator = iterator.Clone();
         while (iterator.MoveNext())
         {
             if (iterator.Current == valueEnd && braces == 0)
             {
-                break;
+                return iterator.PopIncludeCurrent();
             }
 
             switch (iterator.Current)
@@ -330,6 +334,8 @@ public class TokenParser
             }
         }
 
-        return iterator.PopIncludeCurrent();
+        // возвращаемся назад к определению оператора или его элемента, чтобы вывести информативное сообщение об ошибке
+        sourceIterator.MoveBackTo('@');
+        throw new TokenParsingException($"Missing closing symbol '{valueEnd}' when defining @{name} parameters: '{sourceIterator.PeekFromCurrentToEnd()}'");
     }
 }

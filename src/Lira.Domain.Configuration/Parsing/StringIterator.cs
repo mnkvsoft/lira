@@ -4,13 +4,28 @@ using System.Text;
 
 namespace Lira.Domain.Configuration.Parsing;
 
-class StringIterator(string source)
+class StringIterator
 {
-    private readonly string _source = source;
+    private readonly string _source;
+    private readonly int _lastIndex;
 
-    private readonly int _lastIndex = source.Length - 1;
     private int _currentIndex = -1;
     private int _lastPopIndex = -1;
+
+    public StringIterator(string source)
+    {
+        _source = source;
+        _lastIndex = source.Length - 1;
+    }
+
+    private StringIterator(StringIterator iterator)
+    {
+        _source = iterator._source;
+        _lastIndex = _source.Length - 1;
+
+        _currentIndex = iterator._currentIndex;
+        _lastPopIndex = iterator._lastPopIndex;
+    }
 
     public char Current => _source[_currentIndex];
     private char Next => _source[NextIndex];
@@ -56,6 +71,23 @@ class StringIterator(string source)
                 return false;
             }
             index++;
+        }
+
+        return false;
+    }
+
+    private bool MoveBackTo(Func<char, bool> currentPredicate)
+    {
+        if (_source.Length == 0)
+            return false;
+
+        for (int index = _currentIndex - 1; index >= 0; index--)
+        {
+            if (currentPredicate.Invoke(_source[index]))
+            {
+                _currentIndex = index;
+                return true;
+            }
         }
 
         return false;
@@ -125,6 +157,7 @@ class StringIterator(string source)
     public void MoveToEnd() =>_currentIndex = _lastIndex;
 
     public string Peek() => _source.Substring(_lastPopIndex, _currentIndex - _lastPopIndex);
+    public string PeekFromCurrentToEnd() => _source[_currentIndex..];
 
     public string? PopExcludeCurrent()
     {
@@ -151,15 +184,20 @@ class StringIterator(string source)
         return result;
     }
 
-    public string GetAllFromStart() => _source[..(_currentIndex)];
-
     public override string ToString()
     {
-        var start = _currentIndex - 2;
+        int count = 4;
+        var start = _currentIndex - count;
         start = start < 0 ? 0 : start;
 
+        int lastIndex = _source.Length - 1;
+        var endCount = _currentIndex + 1 + count > lastIndex ? lastIndex - (_currentIndex + 1) : count;
 
-        return "..." + _source.Substring(start, 2) + "[[" + _source[_currentIndex] + "]]" +
-               _source.Substring(_currentIndex + 1, 2) + "...";
+        return "..." + _source.Substring(start, count) + "[[" + _source[_currentIndex] + "]]" +
+               _source.Substring(_currentIndex + 1, endCount) + "...";
     }
+
+    public bool MoveBackTo(char c) => MoveBackTo(ch => ch == c);
+
+    public StringIterator Clone() => new(this);
 }

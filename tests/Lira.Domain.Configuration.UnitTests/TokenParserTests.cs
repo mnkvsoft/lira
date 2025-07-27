@@ -336,53 +336,40 @@ public class TokenParserTests
         ));
     }
 
-    //
-    // [Test]
-    // public void Parse_MissingEndTag_ThrowsException()
-    // {
-    //     var ex = Assert.Throws<TokenParsingException>(() =>
-    //         _parser.Parse("@repeat(3)Content"));
-    //
-    //     Assert.That(ex.Message, Does.Contain("missing closing @end tag"));
-    // }
+    [Test]
+    public void MissingEndTag()
+    {
+        var ex = Assert.Throws<TokenParsingException>(() =>
+            _parser.Parse("@repeat(3)Content"));
 
-    //
-    // [Test]
-    // public void Parse_MissingEndTag_ThrowsException()
-    // {
-    //     var ex = Assert.Throws<TokenParsingException>(() =>
-    //         _parser.Parse("@repeat(3)Content"));
-    //
-    //     Assert.That(ex.Message, Does.Contain("missing closing @end tag"));
-    // }
-    //
-    // [Test]
-    // public void Parse_UnclosedParameters_ThrowsException()
-    // {
-    //     var ex = Assert.Throws<TokenParsingException>(() =>
-    //         _parser.Parse("@repeat(3 Content@end"));
-    //
-    //     Assert.That(ex.Message, Does.Contain("Unclosed parameters"));
-    // }
-    //
+        Assert.That(ex.Message, Is.EqualTo("Operator @repeat(3) must be closed with an @end"));
+    }
 
+    [Test]
+    public void UnclosedParameters()
+    {
+        var ex = Assert.Throws<TokenParsingException>(() =>
+            _parser.Parse("@repeat(3 Content@end"));
 
-    //
-    // [Test]
-    // public void Parse_EmptyOperator_WorksCorrectly()
-    // {
-    //     var result = _parser.Parse("@repeat()@end");
-    //
-    //     Assert.That(result[0].Name, Is.EqualTo("repeat"));
-    //     Assert.That(result[0].Parameters, Is.Empty);
-    //     Assert.That(result[0].Content, Is.Empty);
-    // }
-    //
-    // [Test]
-    // public void Parse_SpecialCharacters_InParameters()
-    // {
-    //     var result = _parser.Parse("@if(a==1 && b==2)Content@end");
-    //
-    //     Assert.That(result[0].Parameters, Is.EqualTo("a==1 && b==2"));
-    // }
+        Assert.That(ex.Message, Is.EqualTo("Missing closing symbol ')' when defining @repeat parameters: '@repeat(3 Content@end'"));
+    }
+
+    [Test]
+    public void Escaping()
+    {
+        var result = _parser.Parse("@@repeat");
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo("<t>@</t><t>@repeat</t>"));
+    }
+
+    [Test]
+    public void EmptyOperator()
+    {
+        var result = _parser.Parse("@repeat()@end");
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<op name='repeat' pars='()'>" +
+            "</op>"
+        ));
+    }
 }

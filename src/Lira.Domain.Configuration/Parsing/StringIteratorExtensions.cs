@@ -1,5 +1,3 @@
-using Lira.Common;
-
 namespace Lira.Domain.Configuration.Parsing;
 
 static class StringIteratorExtensions

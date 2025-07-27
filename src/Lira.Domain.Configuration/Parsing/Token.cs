@@ -1,6 +1,4 @@
 using System.Text;
-using Lira.Common;
-using Lira.Common.Extensions;
 
 namespace Lira.Domain.Configuration.Parsing;
 
@@ -25,11 +23,6 @@ public abstract record Token
     {
         public void AddStaticContent(string staticContent)
         {
-            // var indented = string.Join(Constants.NewLine, staticContent
-            //                                         .Split(Constants.NewLine)
-            //                                         .AlignIndents(NewLineIndent));
-
-            // var staticData = new StaticData(indented);
             var staticData = new StaticData(staticContent);
             AddContent(staticData);
         }
