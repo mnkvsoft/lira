@@ -3,34 +3,13 @@ using Lira.Domain.Configuration.Parsing;
 namespace Lira.Domain.Configuration.UnitTests;
 
 [TestFixture]
-public class TokenParserTests
+public class OperatorParserTests
 {
-    private TokenParser _parser;
-    private List<OperatorDefinition> _operatorDefinitions;
-
-    [SetUp]
-    public void Setup()
-    {
-        _operatorDefinitions =
-        [
-            new OperatorDefinition("repeat", ParametersMode.Maybe),
-            new OperatorDefinition("random", ParametersMode.None,
-                allowedChildElements: new Dictionary<string, ParametersMode> { { "item", ParametersMode.Maybe } }),
-            new OperatorDefinition("if", ParametersMode.Required,
-                allowedChildElements: new Dictionary<string, ParametersMode>
-                {
-                    { "else", ParametersMode.None },
-                    { "else if", ParametersMode.Required }
-                })
-        ];
-
-        _parser = new TokenParser(_operatorDefinitions);
-    }
 
     [Test]
     public void StaticText()
     {
-        var result = _parser.Parse("Hello World");
+        var result = OperatorParser.Parse("Hello World");
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
             "<t>Hello World</t>"
@@ -40,7 +19,7 @@ public class TokenParserTests
     [Test]
     public void SimpleOperator_Inline_WithParentText_WithoutParameters()
     {
-        var result = _parser.Parse("@repeat Content@end");
+        var result = OperatorParser.Parse("@repeat Content@end");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -53,7 +32,7 @@ public class TokenParserTests
     [Test]
     public void SimpleOperator_Content_NewLine()
     {
-        var result = _parser.Parse("@repeat\nContent\n@end");
+        var result = OperatorParser.Parse("@repeat\nContent\n@end");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -66,7 +45,7 @@ public class TokenParserTests
     [Test]
     public void SimpleOperators_With_ParentText_With_OneParameters()
     {
-        var result = _parser.Parse("@repeat(3)Content@end");
+        var result = OperatorParser.Parse("@repeat(3)Content@end");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -79,7 +58,7 @@ public class TokenParserTests
     [Test]
     public void SimpleOperator_With_ParentText_With_ManyParameters()
     {
-        var result = _parser.Parse("@repeat(3, 4, 5)Content@end");
+        var result = OperatorParser.Parse("@repeat(3, 4, 5)Content@end");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -92,7 +71,7 @@ public class TokenParserTests
     [Test]
     public void SimpleOperator_With_ParentText_With_NewLineInParameters()
     {
-        var result = _parser.Parse("@repeat(3\n, 4\n, 5\n)Content@end");
+        var result = OperatorParser.Parse("@repeat(3\n, 4\n, 5\n)Content@end");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -105,7 +84,7 @@ public class TokenParserTests
     [Test]
     public void SimpleOperator_With_ParentText_With_SimpleParameter()
     {
-        var result = _parser.Parse("@repeat: 3 \n Content@end");
+        var result = OperatorParser.Parse("@repeat: 3 \n Content@end");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -118,7 +97,7 @@ public class TokenParserTests
     [Test]
     public void NestedOperator_Simple_WithParentText_WithoutParameters()
     {
-        var result = _parser.Parse(
+        var result = OperatorParser.Parse(
             """
                 [
                     @repeat
@@ -165,7 +144,7 @@ public class TokenParserTests
     public void NestedOperators_Inline()
     {
         var input = "@if($$variable == 123)@repeat(3)Text@end@end";
-        var result = _parser.Parse(input);
+        var result = OperatorParser.Parse(input);
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -180,7 +159,7 @@ public class TokenParserTests
     [Test]
     public void NestedOperators_WithParameters()
     {
-        var result = _parser.Parse(
+        var result = OperatorParser.Parse(
             """
                 {
                     "orders": [
@@ -232,7 +211,7 @@ public class TokenParserTests
     [Test]
     public void NestedOperators_ComplexStructure()
     {
-        var result = _parser.Parse(
+        var result = OperatorParser.Parse(
             """
                 Start
                 @if(user)
@@ -273,7 +252,7 @@ public class TokenParserTests
                        @item(percent: 2) Second
                     @end
                     """;
-        var result = _parser.Parse(input);
+        var result = OperatorParser.Parse(input);
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -294,7 +273,7 @@ public class TokenParserTests
                       Default
                     @end
                     """;
-        var result = _parser.Parse(input);
+        var result = OperatorParser.Parse(input);
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -320,7 +299,7 @@ public class TokenParserTests
             @end
             """.Replace("\r\n", "\n");
 
-        var result = _parser.Parse(input);
+        var result = OperatorParser.Parse(input);
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -340,7 +319,7 @@ public class TokenParserTests
     public void MissingEndTag()
     {
         var ex = Assert.Throws<TokenParsingException>(() =>
-            _parser.Parse("@repeat(3)Content"));
+            OperatorParser.Parse("@repeat(3)Content"));
 
         Assert.That(ex.Message, Is.EqualTo("Operator @repeat(3) must be closed with an @end"));
     }
@@ -349,7 +328,7 @@ public class TokenParserTests
     public void UnclosedParameters()
     {
         var ex = Assert.Throws<TokenParsingException>(() =>
-            _parser.Parse("@repeat(3 Content@end"));
+            OperatorParser.Parse("@repeat(3 Content@end"));
 
         Assert.That(ex.Message, Is.EqualTo("Missing closing symbol ')' when defining @repeat parameters: '@repeat(3 Content@end'"));
     }
@@ -357,7 +336,7 @@ public class TokenParserTests
     [Test]
     public void Escaping()
     {
-        var result = _parser.Parse("@@repeat");
+        var result = OperatorParser.Parse("@@repeat");
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo("<t>@</t><t>@repeat</t>"));
     }
@@ -365,7 +344,7 @@ public class TokenParserTests
     [Test]
     public void EmptyOperator()
     {
-        var result = _parser.Parse("@repeat()@end");
+        var result = OperatorParser.Parse("@repeat()@end");
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
             "<op name='repeat' pars='()'>" +

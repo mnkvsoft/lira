@@ -1,10 +1,8 @@
 // ReSharper disable ReplaceWithPrimaryConstructorParameter
 
-using System.Text;
+namespace Lira.Common;
 
-namespace Lira.Domain.Configuration.Parsing;
-
-class StringIterator
+public class StringIterator
 {
     private readonly string _source;
     private readonly int _lastIndex;

@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Lira.Domain.Configuration.Parsing;
 
-public abstract record Token
+abstract record Token
 {
     public record StaticData : Token
     {
@@ -43,12 +43,6 @@ public abstract record Token
         private readonly List<Token> _content = new();
         public IReadOnlyList<Token> Content => _content;
 
-        // public void ClearContentIfWhitespace()
-        // {
-        //     if(_content.IsWhiteSpace())
-        //         _content.Clear();
-        // }
-
         public void AddChildElement(OperatorElement element) => _elements.Add(element);
         private readonly List<OperatorElement> _elements = new();
         public IReadOnlyCollection<OperatorElement> Elements => _elements;
@@ -75,6 +69,7 @@ public abstract record Token
             public string? Parameters { get; }
 
             public void AddContent(Token token) => _content.Add(token);
+
             private readonly List<Token> _content = new();
             public IReadOnlyCollection<Token> Content => _content;
 

@@ -1,6 +1,6 @@
-namespace Lira.Domain.Configuration.Parsing;
+namespace Lira.Common;
 
-static class StringIteratorExtensions
+public static class StringIteratorExtensions
 {
     public static void MoveToNewlineAndPop(this StringIterator iterator)
     {

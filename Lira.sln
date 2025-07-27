@@ -83,8 +83,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "design_solutions", "design_
 		design_solutions\external_libs.md = design_solutions\external_libs.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lira.Common.UnitTests", "tests\Lira.Common.UnitTests\Lira.Common.UnitTests.csproj", "{3405DAF5-DC3D-4168-A201-C3433370D399}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,10 +157,6 @@ Global
 		{E48CDBD6-D043-4F4A-823C-A8C21B25B305}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E48CDBD6-D043-4F4A-823C-A8C21B25B305}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E48CDBD6-D043-4F4A-823C-A8C21B25B305}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3405DAF5-DC3D-4168-A201-C3433370D399}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3405DAF5-DC3D-4168-A201-C3433370D399}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3405DAF5-DC3D-4168-A201-C3433370D399}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3405DAF5-DC3D-4168-A201-C3433370D399}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -189,7 +183,6 @@ Global
 		{0766174A-0D61-4F45-B33C-E01B89847E11} = {72A44983-7297-4284-BD2C-24CC9D307612}
 		{96F062B3-F9BC-4EB7-982E-79B8B76A5FC2} = {801BCB31-DB66-4C7C-97A0-CB67BA63CD91}
 		{E48CDBD6-D043-4F4A-823C-A8C21B25B305} = {BE927F78-B04F-4B6F-97FD-9B8397AF9915}
-		{3405DAF5-DC3D-4168-A201-C3433370D399} = {BE927F78-B04F-4B6F-97FD-9B8397AF9915}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5607801-446F-4C0E-B08E-5A39EE462311}

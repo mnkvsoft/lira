@@ -1,9 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
+using Lira.Common;
 using Lira.Common.Extensions;
 
 namespace Lira.Domain.Configuration.Parsing;
 
-public class TokenParser
+class TokenParser
 {
     static class Chars
     {
