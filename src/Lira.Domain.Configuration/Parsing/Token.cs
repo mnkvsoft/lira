@@ -19,8 +19,34 @@ abstract record Token
         }
     }
 
-    public record Operator(OperatorDefinition Definition, string? Parameters) : Token
+    public record Operator : Token
     {
+        private readonly List<Token> _content = new();
+        public IReadOnlyList<Token> Content => _content;
+
+
+        private readonly List<OperatorElement> _elements = new();
+        public IReadOnlyCollection<OperatorElement> Elements => _elements;
+
+        public OperatorDefinition Definition { get; }
+        public OperatorParameters? Parameters { get; }
+
+        public Operator(OperatorDefinition definition, OperatorParameters? parameters)
+        {
+            var parametersMode = definition.ParametersMode;
+
+            if(parametersMode == ParametersMode.None && parameters != null)
+                throw new ArgumentException($"@{definition.Name}' operator not expected parameters, but found: '{parameters}'");
+
+            if(parametersMode == ParametersMode.Required && parameters == null)
+                throw new ArgumentException($"@{definition.Name} operator expected parameters, but not found");
+
+            Definition = definition;
+            Parameters = parameters;
+        }
+
+        public void AddChildElement(OperatorElement element) => _elements.Add(element);
+
         public void AddStaticContent(string staticContent)
         {
             var staticData = new StaticData(staticContent);
@@ -39,13 +65,6 @@ abstract record Token
                 lastItem.AddContent(token);
             }
         }
-
-        private readonly List<Token> _content = new();
-        public IReadOnlyList<Token> Content => _content;
-
-        public void AddChildElement(OperatorElement element) => _elements.Add(element);
-        private readonly List<OperatorElement> _elements = new();
-        public IReadOnlyCollection<OperatorElement> Elements => _elements;
 
         public override string ToString()
         {
@@ -66,19 +85,19 @@ abstract record Token
         public class OperatorElement
         {
             public AllowedChildElementDefinition Definition { get; }
-            public string? Parameters { get; }
+            public OperatorParameters? Parameters { get; }
 
             public void AddContent(Token token) => _content.Add(token);
 
             private readonly List<Token> _content = new();
             public IReadOnlyCollection<Token> Content => _content;
 
-            public OperatorElement(AllowedChildElementDefinition definition, string? parameters)
+            public OperatorElement(AllowedChildElementDefinition definition, OperatorParameters? parameters)
             {
-                if(definition.ParametersMode == ParametersMode.None && !string.IsNullOrEmpty(parameters))
+                if(definition.ParametersMode == ParametersMode.None && parameters != null)
                     throw new ArgumentException($"Element '@{definition.Name}' for '@{definition.Operator.Name}' operator not expected parameters, but found: '{parameters}'");
 
-                if(definition.ParametersMode == ParametersMode.Required && string.IsNullOrWhiteSpace(parameters))
+                if(definition.ParametersMode == ParametersMode.Required && parameters == null)
                     throw new ArgumentException($"Element '@{definition.Name}' for '@{definition.Operator.Name}' operator expected parameters, but not found");
 
                 Definition = definition;

@@ -277,7 +277,7 @@ class TokenParser
         return maybeName.TrimStart('@');
     }
 
-    private static string? PopParameters(string name, StringIterator iterator)
+    private static OperatorParameters? PopParameters(string name, StringIterator iterator)
     {
         var pair = GetPair(iterator.Current);
 
@@ -312,7 +312,7 @@ class TokenParser
         }
     }
 
-    static string? PopParametersAfterBrace(string name, StringIterator iterator, char valueEnd)
+    static OperatorParameters? PopParametersAfterBrace(string name, StringIterator iterator, char valueEnd)
     {
         int braces = 0;
 
@@ -321,7 +321,7 @@ class TokenParser
         {
             if (iterator.Current == valueEnd && braces == 0)
             {
-                return iterator.PopIncludeCurrent();
+                return new OperatorParameters(iterator.PopIncludeCurrent() ?? throw new Exception("Here parameters cannot be null"));
             }
 
             switch (iterator.Current)

@@ -1,8 +1,9 @@
+- inline repeat block
+- make dic-function
 - global usings
 - line structure for conditions
 - key for conditions
 - local variables in functions
-- inline repeat block
 - random: using dynamic blocks (random: $$var1, $$var2)
 - cache section
 - type inference for dynamic block
@@ -14,3 +15,4 @@
 - RequestStatisticStorage ttl to config
 - network latency
 - rules index
+- response model in cs-code

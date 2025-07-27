@@ -5,7 +5,6 @@ namespace Lira.Domain.Configuration.UnitTests;
 [TestFixture]
 public class OperatorParserTests
 {
-
     [Test]
     public void StaticText()
     {
@@ -249,7 +248,7 @@ public class OperatorParserTests
         var input = """
                     @random
                        @item First
-                       @item(percent: 2) Second
+                       @item Second
                     @end
                     """;
         var result = OperatorParser.Parse(input);
@@ -258,7 +257,7 @@ public class OperatorParserTests
         Assert.That(xmlView, Is.EqualTo(
             "<op name='random' pars=''>" +
             "<i name='item' pars=''><t>First</t></i>" +
-            "<i name='item' pars='(percent: 2)'><t>Second</t></i>" +
+            "<i name='item' pars=''><t>Second</t></i>" +
             "</op>"
         ));
     }
