@@ -47,6 +47,31 @@ public class Json : DynamicObject
         return this;
     }
 
+    public Json remove(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            throw new ArgumentNullException(nameof(path) + " is empty");
+
+        foreach (var tokenToRemove in _jObject.SelectTokens(path))
+        {
+            if (tokenToRemove == _jObject)
+            {
+                throw new InvalidOperationException("Cannot remove the root object");
+            }
+
+            if (tokenToRemove.Parent is JProperty property)
+            {
+                property.Remove();
+            }
+            else if (tokenToRemove.Parent is JArray)
+            {
+                tokenToRemove.Remove();
+            }
+        }
+
+        return this;
+    }
+
     public Json add(string path, params object[] values)
     {
         if (string.IsNullOrWhiteSpace(path))

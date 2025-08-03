@@ -1,0 +1,18 @@
+-------------------- case
+
+GET /generating/types/json/remove
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+  "age": 30,
+  "phones": [
+    {
+      "type": "work"
+    }
+  ]
+}
