@@ -1,6 +1,7 @@
 using System.Text;
+using Lira.Domain.Configuration.Parsing;
 
-namespace Lira.Domain.Configuration.Parsing;
+namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 
 abstract record Token
 {

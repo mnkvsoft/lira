@@ -1,37 +1,44 @@
-using System.Collections.Immutable;
 using Lira.Common.Extensions;
+using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 using Lira.Domain.TextPart;
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
 
-class RandomHandler : IOperatorHandler
+class RandomHandler(TextPartsParserInternal parser) : IOperatorHandler
 {
-    public string OperatorName => OperatorPart.Prefix + "random";
-    public IObjectTextPart CreateOperatorPart(OperatorDraft draft) => new RandomOperator(draft);
-}
+    public OperatorDefinition Definition { get; } = new(
+        "random",
+        ParametersMode.None,
+        withBody: false,
+        allowedChildElements: new Dictionary<string, ParametersMode> { { "item", ParametersMode.None } });
 
-class RandomOperator : IObjectTextPart
-{
-    private readonly IReadOnlyList<IReadOnlyCollection<IObjectTextPart>> _items;
-
-    public RandomOperator(OperatorDraft draft)
+    public async Task<IObjectTextPart> CreateOperatorPart(Token.Operator @operator, IParsingContext context,
+        OperatorPartFactory operatorPartFactory)
     {
-        string item = OperatorPart.Prefix + "item";
-        var operatorData = OperatorParser.Parse(draft, item);
-        if(operatorData.Body.Count > 0)
-            throw new Exception("@random declaration must contain at least one @item.");
-        _items = operatorData.Items.Select(x => x.Body).ToImmutableArray();
-    }
+        if(@operator.Elements.Count < 2)
+            throw new Exception("The @random operator must have at least two 'item' elements");
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
-    {
-        var randomItems = _items.Random();
-        await foreach (var obj in randomItems.GetAllObjects(context))
+        var items = new List<IReadOnlyCollection<IObjectTextPart>>();
+        foreach (var item in @operator.Elements)
         {
-            yield return obj;
+            items.Add(await parser.Parse(item.Content, context, operatorPartFactory));
         }
+
+        return new RandomOperator(items);
     }
 
-    public ReturnType ReturnType => ReturnType.String;
+    class RandomOperator(IReadOnlyList<IReadOnlyCollection<IObjectTextPart>> items) : IObjectTextPart
+    {
+        public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+        {
+            var randomItems = items.Random();
+            await foreach (var obj in randomItems.GetAllObjects(context))
+            {
+                yield return obj;
+            }
+        }
+
+        public ReturnType ReturnType => ReturnType.String;
+    }
 }

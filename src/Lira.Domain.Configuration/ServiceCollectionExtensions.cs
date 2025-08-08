@@ -8,6 +8,7 @@ using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
+using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 using Lira.Domain.DataModel;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.System;
@@ -28,11 +29,11 @@ public static class ServiceCollectionExtensions
 
             .AddTransient<RuleFileParser>()
 
-            .AddSingleton<OperatorPartFactory>()
-            .AddSingleton<OperatorsEnricher>()
+            .AddScoped<OperatorParser>()
+            .AddScoped<OperatorPartFactory>()
 
-            .AddSingleton<IOperatorHandler, RandomHandler>()
-            .AddSingleton<IOperatorHandler, RepeatHandler>()
+            .AddScoped<IOperatorHandler, RandomHandler>()
+            .AddScoped<IOperatorHandler, RepeatHandler>()
 
             .AddScoped<ResponseGenerationHandlerParser>()
             .AddScoped<HandlersParser>()
@@ -40,6 +41,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<GetDelayParser>()
             .AddScoped<DeclaredItemsLoader>()
             .AddScoped<DeclaredItemsLinesParser>()
+            .AddScoped<TextPartsParserInternal>()
             .AddScoped<ITextPartsParser, TextPartsParser>()
             .AddScoped<DeclaredItemDraftsParser>()
             .AddScoped<FileSectionDeclaredItemsParser>()

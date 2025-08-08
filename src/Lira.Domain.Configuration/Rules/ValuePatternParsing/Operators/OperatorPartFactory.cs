@@ -1,19 +1,18 @@
+using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 using Lira.Domain.TextPart;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators;
 
 class OperatorPartFactory(IEnumerable<IOperatorHandler> handlers)
 {
-    private List<string>? _registeredOperators;
-    public IReadOnlyCollection<string> RegisteredOperators => _registeredOperators ??= handlers.Select(x => x.OperatorName).ToList();
-
-    public IObjectTextPart CreateOperatorPart(OperatorDraft draft)
+    public Task<IObjectTextPart> CreateOperatorPart(Token.Operator @operator, IParsingContext localContext)
     {
+        var name = @operator.Definition.Name;
         foreach (var handler in handlers)
         {
-            if(handler.OperatorName == draft.Name)
-                return handler.CreateOperatorPart(draft);
+            if(handler.Definition.Name == name)
+                return handler.CreateOperatorPart(@operator, localContext, this);
         }
-        throw new Exception($"No operator handler found for {draft.Name}");
+        throw new Exception($"No operator handler found for {name}");
     }
 }

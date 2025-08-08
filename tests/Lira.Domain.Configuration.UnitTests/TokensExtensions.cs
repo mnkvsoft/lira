@@ -1,4 +1,5 @@
 using Lira.Domain.Configuration.Parsing;
+using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 
 namespace Lira.Domain.Configuration.UnitTests;
 

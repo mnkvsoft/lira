@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Lira.Common;
 using Lira.Common.Extensions;
+using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 
 namespace Lira.Domain.Configuration.Parsing;
 

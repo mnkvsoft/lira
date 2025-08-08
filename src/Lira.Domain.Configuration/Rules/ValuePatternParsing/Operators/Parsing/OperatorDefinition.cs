@@ -1,4 +1,4 @@
-namespace Lira.Domain.Configuration.Parsing;
+namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 
 class OperatorDefinition
 {
@@ -7,7 +7,7 @@ class OperatorDefinition
     public IReadOnlyDictionary<string, AllowedChildElementDefinition> AllowedChildElements { get; }
     public bool WithBody { get; }
 
-    public OperatorDefinition(string name, ParametersMode parametersMode, bool withBody = true, IReadOnlyDictionary<string, ParametersMode>? allowedChildElements = null)
+    public OperatorDefinition(string name, ParametersMode parametersMode, bool withBody, IReadOnlyDictionary<string, ParametersMode>? allowedChildElements)
     {
         WithBody = withBody;
         Name = name;
