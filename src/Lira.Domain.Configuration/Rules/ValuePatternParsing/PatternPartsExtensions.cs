@@ -1,4 +1,5 @@
-﻿using Lira.Common.Exceptions;
+﻿using System.Text;
+using Lira.Common.Exceptions;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -167,12 +168,12 @@ static class PatternPartsExtensions
         return new TwoPartsWithSecondRequired(splitted.First(), new PatternParts(secondPart));
     }
 
-    public static IReadOnlyList<PatternParts> Split(this PatternParts pathParts, string splitter)
+    public static IReadOnlyList<PatternParts> Split(this PatternParts parts, string splitter)
     {
         var result = new List<PatternParts>(50);
 
         List<PatternPart> remainder = new();
-        foreach (PatternPart patternPart in pathParts)
+        foreach (PatternPart patternPart in parts)
         {
             if (patternPart is PatternPart.Static @static)
             {
@@ -214,6 +215,36 @@ static class PatternPartsExtensions
             result.Add(new PatternParts(remainder));
 
         return result;
+    }
+
+    public static PatternParts Substring(this PatternParts parts, int startIndex)
+    {
+        var result = new List<PatternPart>();
+        int restIndex = startIndex;
+
+        foreach (var part in parts)
+        {
+            if (restIndex > 0)
+            {
+                if (part is not PatternPart.Static st)
+                    throw new InvalidOperationException($"Cannot substring for {startIndex} of {parts}");
+
+                var lastIndex = st.Value.Length - 1;
+                if (startIndex <= lastIndex)
+                    result.Add(new PatternPart.Static(st.Value[startIndex..]));
+                else
+                {
+                    restIndex = startIndex - lastIndex;
+                }
+            }
+            else
+            {
+                result.Add(part);
+            }
+        }
+
+        return new PatternParts(result);
+
     }
 
     public static void AddStaticIfNotEmpty(this IList<PatternPart> parts, string value)

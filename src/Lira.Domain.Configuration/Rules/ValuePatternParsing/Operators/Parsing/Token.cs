@@ -21,8 +21,7 @@ abstract record Token
 
     public record Operator : Token
     {
-        private readonly List<Token> _content = new();
-        public List<Token> Content => _content;
+        public List<Token> Content = new();
 
 
         private readonly List<OperatorElement> _elements = new();
@@ -57,7 +56,7 @@ abstract record Token
         {
             if (_elements.Count == 0)
             {
-                _content.Add(token);
+                Content.Add(token);
             }
             else
             {
@@ -89,7 +88,7 @@ abstract record Token
 
             public void AddContent(Token token) => Content.Add(token);
 
-            public readonly List<Token> Content = new();
+            public List<Token> Content = new();
 
             public OperatorElement(AllowedChildElementDefinition definition, OperatorParameters? parameters)
             {

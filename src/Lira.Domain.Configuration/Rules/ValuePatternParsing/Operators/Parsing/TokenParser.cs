@@ -187,58 +187,49 @@ class TokenParser
 
     private static void ClearWhitespaces(Token.Operator op)
     {
-        Trim(op.Content);
+        op.Content = Trim(op.Content);
 
         foreach (var elem in op.Elements)
         {
-            Trim(elem.Content);
+            elem.Content = Trim(elem.Content);
         }
     }
 
-    private static void Trim(ICollection<Token> content)
+    private static List<Token> Trim(IReadOnlyList<Token> content)
     {
-        var indentCounts = content.OfType<Token.StaticData>()
-            .SelectMany(x => x.Content.Split("\n"))
-            .TrimEmptyLines()
-            .SelectMany(x => x)
-            .OfType<PatternPart.Static>()
-            .Where(x => x.Value.Length != 0)
-            .Select(x => x.Value.GetCountWhitespacesStart())
-            .ToArray();
-
-        var minIndent = indentCounts.Length == 0 ? 0 : indentCounts.Min();
+        var trimmed = new List<Token>();
 
         if (content.Count > 1)
         {
             var first = content.First();
 
-            bool remFirst = false;
             if (first is Token.StaticData sdFirst)
             {
                 var newContent = sdFirst.Content.Split("\n").TrimStartEmptyLines().JoinWithNewLine();
 
-                if (newContent.Count == 0)
-                    remFirst = true;
-                else
+                if (newContent.Count > 0)
+                {
                     sdFirst.Content = newContent;
+                    trimmed.Add(sdFirst);
+                }
+            }
+
+            for (int i = 1; i < content.Count - 1; i++)
+            {
+                trimmed.Add(content[i]);
             }
 
             var last = content.Last();
-            bool remLast = false;
             if (last is Token.StaticData sdLast)
             {
                 var newContent = sdLast.Content.Split("\n").TrimEndEmptyLines().JoinWithNewLine();
 
-                if (newContent.Count == 0)
-                    remLast = true;
-
-                sdLast.Content = newContent;
+                if (newContent.Count > 0)
+                {
+                    sdLast.Content = newContent;
+                    trimmed.Add(sdLast);
+                }
             }
-
-            if (remFirst)
-                content.Remove(first);
-            if(remLast)
-                content.Add(last);
         }
 
         if (content.Count == 1)
@@ -250,26 +241,46 @@ class TokenParser
                 var ifSingleLine = lines.TrimEndIfSingleLine().ToArray();
                 var newContent = ifSingleLine.JoinWithNewLine();
 
-                if (newContent.Count == 0)
-                {
-                    content.Remove(single);
-                }
-                else
+                if (newContent.Count > 0)
                 {
                     sd.Content = newContent;
+                    trimmed.Add(sd);
                 }
             }
         }
 
-        foreach (var token in content)
+        var indentCounts = content.OfType<Token.StaticData>()
+            .SelectMany(x => x.Content.Split("\n"))
+            .TrimEmptyLines()
+            .SelectMany(x => x)
+            .OfType<PatternPart.Static>()
+            .Where(x => x.Value.Length != 0)
+            .Select(x => x.Value.GetCountWhitespacesStart())
+            .ToArray();
+
+        var minIndent = indentCounts.Length == 0 ? 0 : indentCounts.Min();
+
+        var result = new List<Token>();
+        foreach (var token in trimmed)
         {
             if (token is Token.Operator o)
+            {
                 ClearWhitespaces(o);
+                result.Add(o);
+            }
 
             if (token is Token.StaticData st)
-                st.Content = st.Content.Split('\n').Select(x => x.Length > 0 ? x.Substring(minIndent) : String.Empty)
-                    .JoinWithNewLine();
+            {
+                var newContent = st.Content.Split("\n").Select(x => x.Substring(minIndent)).JoinWithNewLine();
+                if (newContent.Count > 0)
+                {
+                    st.Content = newContent;
+                    result.Add(st);
+                }
+            }
         }
+
+        return result;
     }
 
     private static string PopName(PatternPartsIterator iterator)
