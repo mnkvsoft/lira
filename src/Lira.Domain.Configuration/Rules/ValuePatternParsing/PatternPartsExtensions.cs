@@ -73,6 +73,21 @@ static class PatternPartsExtensions
         return dyn;
     }
 
+    public static string GetStaticValue(this PatternParts parts) => GetSingleStatic(parts).Value;
+
+    public static PatternPart.Static GetSingleStatic(this PatternParts parts)
+    {
+        if(parts.Count != 1)
+            throw new Exception($"Expecting only one static block. Current count: {parts.Count}. Value: {parts} ");
+
+        var part = parts.Single();
+
+        if(part is not PatternPart.Static st)
+            throw new Exception($"Expecting only one static block. Current block is dynamic. Value: {parts} ");
+
+        return st;
+    }
+
     public static PatternParts Replace(this PatternParts parts, PatternPart currentValue, PatternPart newValue)
     {
         var result = new List<PatternPart>();
@@ -199,5 +214,33 @@ static class PatternPartsExtensions
             result.Add(new PatternParts(remainder));
 
         return result;
+    }
+
+    public static IEnumerable<string> TrimEmptyLines(this PatternParts lines) => lines.TrimStartEmptyLines().TrimEndEmptyLines();
+
+    public static IEnumerable<string> TrimEndEmptyLines(this PatternParts lines)
+    {
+        return TrimStartEmptyLines(lines.Reverse()).Reverse();
+    }
+
+    public static PatternParts TrimStartEmptyLines(this PatternParts parts)
+    {
+        var result = new List<PatternPart>();
+
+        bool start = true;
+
+        foreach (var part in parts)
+        {
+            if (part is PatternPart.Dynamic)
+                result.Add(part);
+            else if(part is PatternPart.Static)
+            {
+
+            }
+            else
+            {
+             throw new UnsupportedInstanceType(part);
+            }
+        }
     }
 }

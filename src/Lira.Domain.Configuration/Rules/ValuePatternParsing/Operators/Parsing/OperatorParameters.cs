@@ -1,6 +1,6 @@
 using ArgValidation;
 
-namespace Lira.Domain.Configuration.Parsing;
+namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 
 struct OperatorParameters
 {

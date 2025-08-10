@@ -4,9 +4,12 @@ using Lira.Domain.TextPart;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
 
-class RepeatHandler(TextPartsParserInternal parser) : IOperatorHandler
+class RepeatOperatorDefinition()
+    : OperatorDefinition("repeat", ParametersMode.Maybe, withBody: true, allowedChildElements: null);
+
+class RepeatHandler(TextPartsParserInternal parser, RepeatOperatorDefinition operatorDefinition) : IOperatorHandler
 {
-    public OperatorDefinition Definition { get; } = new("repeat", ParametersMode.Maybe, withBody: true, allowedChildElements: null);
+    public OperatorDefinition Definition => operatorDefinition;
     public async Task<IObjectTextPart> CreateOperatorPart(Token.Operator @operator, IParsingContext context,
         OperatorPartFactory operatorPartFactory)
     {

@@ -5,13 +5,15 @@ using Lira.Domain.TextPart;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
 
-class RandomHandler(TextPartsParserInternal parser) : IOperatorHandler
+class RandomOperatorDefinition() : OperatorDefinition(
+    "random",
+    ParametersMode.None,
+    withBody: false,
+    allowedChildElements: new Dictionary<string, ParametersMode> { { "item", ParametersMode.None } });
+
+class RandomHandler(TextPartsParserInternal parser, RandomOperatorDefinition randomOperatorDefinition) : IOperatorHandler
 {
-    public OperatorDefinition Definition { get; } = new(
-        "random",
-        ParametersMode.None,
-        withBody: false,
-        allowedChildElements: new Dictionary<string, ParametersMode> { { "item", ParametersMode.None } });
+    public OperatorDefinition Definition => randomOperatorDefinition;
 
     public async Task<IObjectTextPart> CreateOperatorPart(Token.Operator @operator, IParsingContext context,
         OperatorPartFactory operatorPartFactory)

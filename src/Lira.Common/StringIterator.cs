@@ -8,6 +8,8 @@ public class StringIterator
     private readonly int _lastIndex;
 
     private int _currentIndex = -1;
+    public int CurrentIndex => _currentIndex;
+
     private int _lastPopIndex = -1;
 
     public StringIterator(string source)
@@ -74,7 +76,7 @@ public class StringIterator
         return false;
     }
 
-    private bool MoveBackTo(Func<char, bool> currentPredicate)
+    public bool MoveBackTo(Func<char, bool> currentPredicate)
     {
         if (_source.Length == 0)
             return false;
@@ -93,6 +95,8 @@ public class StringIterator
 
     public bool MoveNext()
     {
+        // todo: use MoveTo()?
+
         if (_source.Length == 0)
             return false;
 
@@ -152,47 +156,40 @@ public class StringIterator
     /// <summary>
     /// Смещает индек к концу этого значения
     /// </summary>
-    public void MoveToEnd() =>_currentIndex = _lastIndex;
+    public void MoveToEnd() => _currentIndex = _lastIndex;
 
     public string Peek() => _source.Substring(_lastPopIndex, _currentIndex - _lastPopIndex);
     public string PeekFromCurrentToEnd() => _source[_currentIndex..];
 
-    public string? PopExcludeCurrent()
+    public string? PopExcludeCurrent() => Pop(includeCurrent: false, out int _);
+
+    public string? PopIncludeCurrent()=>Pop(includeCurrent: true, out int _);
+
+    public string? Pop(bool includeCurrent, out int index)
     {
         var startIndex = _lastPopIndex == -1 ? 0 : _lastPopIndex;
 
-        if(startIndex == _currentIndex)
+        index = _currentIndex + (includeCurrent ? 1 : 0);
+        if (startIndex == index)
+        {
             return null;
+        }
 
-        var result = _source.Substring(startIndex, _currentIndex - startIndex);
-        _lastPopIndex = _currentIndex;
-        return result;
-    }
-
-    public string? PopIncludeCurrent()
-    {
-        var startIndex = _lastPopIndex == -1 ? 0 : _lastPopIndex;
-
-        int currentIndex = _currentIndex + 1;
-        if(startIndex == currentIndex)
-            return null;
-
-        var result = _source.Substring(startIndex, currentIndex - startIndex);
-        _lastPopIndex = currentIndex;
+        var result = _source.Substring(startIndex, index - startIndex);
+        _lastPopIndex = index;
         return result;
     }
 
     public override string ToString()
     {
-        int count = 4;
-        var start = _currentIndex - count;
-        start = start < 0 ? 0 : start;
+        var after = _currentIndex == _lastIndex ? "" : _source[(_currentIndex + 1)..];
+        if (_currentIndex == -1)
+        {
+            return ">><<" + after;
+        }
 
-        int lastIndex = _source.Length - 1;
-        var endCount = _currentIndex + 1 + count > lastIndex ? lastIndex - (_currentIndex + 1) : count;
-
-        return "..." + _source.Substring(start, count) + "[[" + _source[_currentIndex] + "]]" +
-               _source.Substring(_currentIndex + 1, endCount) + "...";
+        return _source[.._currentIndex] + ">>" + _source[_currentIndex] + "<<" +
+               after;
     }
 
     public bool MoveBackTo(char c) => MoveBackTo(ch => ch == c);

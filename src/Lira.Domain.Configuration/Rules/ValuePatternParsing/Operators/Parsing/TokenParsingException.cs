@@ -1,4 +1,4 @@
-namespace Lira.Domain.Configuration.Parsing;
+namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 
 public class TokenParsingException : Exception
 {

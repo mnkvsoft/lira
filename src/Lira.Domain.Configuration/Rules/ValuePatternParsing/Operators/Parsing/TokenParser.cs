@@ -1,9 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
-using Lira.Common;
-using Lira.Common.Extensions;
-using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 
-namespace Lira.Domain.Configuration.Parsing;
+namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 
 class TokenParser
 {
@@ -28,12 +25,12 @@ class TokenParser
             x => x);
     }
 
-    public IReadOnlyList<Token> Parse(string input)
+    public IReadOnlyList<Token> Parse(PatternParts input)
     {
         var openOperators = new Stack<Token.Operator>();
 
         var result = new List<Token>();
-        var iterator = new StringIterator(input);
+        var iterator = new PatternPartsIterator(input);
 
         while (iterator.MoveTo('@'))
         {
@@ -131,9 +128,9 @@ class TokenParser
 
         return result;
 
-        void AddContent(string? content)
+        void AddContent(PatternParts content)
         {
-            if (string.IsNullOrWhiteSpace(content))
+            if (content.Count == 0)
                 return;
 
             if (openOperators.Count == 0)
@@ -149,7 +146,7 @@ class TokenParser
     }
 
     private static AllowedChildElementDefinition GetAllowedChildElementDefinition(Token.Operator current,
-        StringIterator iterator)
+        PatternPartsIterator iterator)
     {
         var allowedChildElems = current.Definition.AllowedChildElements.Select(x => x.Value)
             .OrderByDescending(x => x.Name.Length);
@@ -168,7 +165,7 @@ class TokenParser
             $"Unknown element @{PopName(iterator)} for operator {current.Definition.Name}");
     }
 
-    private bool TryGetOperatorDefinition(StringIterator iterator,
+    private bool TryGetOperatorDefinition(PatternPartsIterator iterator,
         [MaybeNullWhen(false)] out OperatorDefinition definition)
     {
         definition = null;
@@ -199,7 +196,7 @@ class TokenParser
     private static void Trim(IReadOnlyCollection<Token> content)
     {
         var indentCounts = content.OfType<Token.StaticData>()
-            .SelectMany(sd => sd.Content.Split('\n'))
+            .SelectMany(sd => sd.Content.Split("\n"))
             .TrimEmptyLines()
             .Where(x => x.Length != 0)
             .Select(x => x.GetCountWhitespacesStart())
@@ -242,7 +239,7 @@ class TokenParser
         }
     }
 
-    private static string PopName(StringIterator iterator)
+    private static string PopName(PatternPartsIterator iterator)
     {
         // пытаемся получить имя
         while (iterator.MoveNext())
@@ -269,7 +266,7 @@ class TokenParser
                     $"Unexpected character '{iterator.Current}' in operator name: {iterator.Peek()}");
         }
 
-        var maybeName = iterator.PopExcludeCurrent() ?? throw new NullReferenceException("Name cannot be null");
+        var maybeName = iterator.PopExcludeCurrent().GetStaticValue();
 
         //  символ @ стоит в самом конце
         if (maybeName == "@")
@@ -278,7 +275,7 @@ class TokenParser
         return maybeName.TrimStart('@');
     }
 
-    private static OperatorParameters? PopParameters(string name, StringIterator iterator)
+    private static OperatorParameters? PopParameters(string name, PatternPartsIterator iterator)
     {
         var pair = GetPair(iterator.Current);
 
@@ -313,7 +310,7 @@ class TokenParser
         }
     }
 
-    static OperatorParameters? PopParametersAfterBrace(string name, StringIterator iterator, char valueEnd)
+    static OperatorParameters? PopParametersAfterBrace(string name, PatternPartsIterator iterator, char valueEnd)
     {
         int braces = 0;
 
@@ -322,7 +319,7 @@ class TokenParser
         {
             if (iterator.Current == valueEnd && braces == 0)
             {
-                return new OperatorParameters(iterator.PopIncludeCurrent() ?? throw new Exception("Here parameters cannot be null"));
+                return new OperatorParameters(iterator.PopIncludeCurrent().GetStaticValue());
             }
 
             switch (iterator.Current)
@@ -338,6 +335,10 @@ class TokenParser
 
         // возвращаемся назад к определению оператора или его элемента, чтобы вывести информативное сообщение об ошибке
         sourceIterator.MoveBackTo('@');
-        throw new TokenParsingException($"Missing closing symbol '{valueEnd}' when defining @{name} parameters: '{sourceIterator.PeekFromCurrentToEnd()}'");
+        sourceIterator.SavePopPosition();
+        sourceIterator.MoveToEnd();
+        var pars = sourceIterator.PopIncludeCurrent();
+
+        throw new TokenParsingException($"Missing closing symbol '{valueEnd}' when defining @{name} parameters: '{pars}'");
     }
 }

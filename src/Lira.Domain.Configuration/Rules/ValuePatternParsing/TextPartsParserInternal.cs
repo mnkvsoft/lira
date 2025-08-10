@@ -64,14 +64,12 @@ class TextPartsParserInternal
 
     async Task<IReadOnlyCollection<IObjectTextPart>> Parse(Token.StaticData staticData, IParsingContext context)
     {
-        var patternParts = PatternParser.Parse(staticData.Content);
-
         var parts = new List<IObjectTextPart>();
 
         var ctx = context.ToImpl();
-        foreach (var patternPart in patternParts)
+        foreach (var part in staticData.Content)
         {
-            parts.AddRange(await CreateValuePart(patternPart, ctx));
+            parts.AddRange(await CreateValuePart(part, ctx));
         }
 
         return parts;

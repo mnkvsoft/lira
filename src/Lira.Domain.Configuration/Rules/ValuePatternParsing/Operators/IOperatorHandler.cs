@@ -1,4 +1,3 @@
-using Lira.Domain.Configuration.Parsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 using Lira.Domain.TextPart;
 

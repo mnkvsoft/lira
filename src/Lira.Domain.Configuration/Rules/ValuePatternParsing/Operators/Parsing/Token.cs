@@ -1,5 +1,4 @@
 using System.Text;
-using Lira.Domain.Configuration.Parsing;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 
@@ -7,9 +6,9 @@ abstract record Token
 {
     public record StaticData : Token
     {
-        public string Content { get; set; }
+        public PatternParts Content { get; set; }
 
-        public StaticData(string content)
+        public StaticData(PatternParts content)
         {
             Content = content;
         }
@@ -48,7 +47,7 @@ abstract record Token
 
         public void AddChildElement(OperatorElement element) => _elements.Add(element);
 
-        public void AddStaticContent(string staticContent)
+        public void AddStaticContent(PatternParts staticContent)
         {
             var staticData = new StaticData(staticContent);
             AddContent(staticData);

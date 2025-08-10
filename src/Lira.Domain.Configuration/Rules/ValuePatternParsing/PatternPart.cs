@@ -2,14 +2,14 @@
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
-abstract record PatternPart
+abstract record PatternPart(string Value)
 {
-    public record Static(string Value) : PatternPart
+    public record Static(string Value) : PatternPart(Value)
     {
         public override string ToString() => Value;
     }
 
-    public record Dynamic(string Value) : PatternPart
+    public record Dynamic(string Value) : PatternPart(Value)
     {
         public override string ToString() => "{{" + Value + "}}";
     }

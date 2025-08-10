@@ -32,7 +32,10 @@ public static class ServiceCollectionExtensions
             .AddScoped<OperatorParser>()
             .AddScoped<OperatorPartFactory>()
 
+            .AddScoped<OperatorDefinition, RandomOperatorDefinition>()
             .AddScoped<IOperatorHandler, RandomHandler>()
+
+            .AddScoped<OperatorDefinition, RepeatOperatorDefinition>()
             .AddScoped<IOperatorHandler, RepeatHandler>()
 
             .AddScoped<ResponseGenerationHandlerParser>()

@@ -1,5 +1,9 @@
-using Lira.Domain.Configuration.Parsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 
 namespace Lira.Domain.Configuration.UnitTests;
 
@@ -9,7 +13,8 @@ public class OperatorParserTests
     [Test]
     public void StaticText()
     {
-        var result = OperatorParser.Parse("Hello World");
+        var sut = GetSut();
+        var result = sut.Parse("Hello World");
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
             "<t>Hello World</t>"
@@ -19,7 +24,8 @@ public class OperatorParserTests
     [Test]
     public void SimpleOperator_Inline_WithParentText_WithoutParameters()
     {
-        var result = OperatorParser.Parse("@repeat Content@end");
+        var sut = GetSut();
+        var result = sut.Parse("@repeat Content@end");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -32,7 +38,8 @@ public class OperatorParserTests
     [Test]
     public void SimpleOperator_Content_NewLine()
     {
-        var result = OperatorParser.Parse("@repeat\nContent\n@end");
+        var sut = GetSut();
+        var result = sut.Parse("@repeat\nContent\n@end");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -45,7 +52,8 @@ public class OperatorParserTests
     [Test]
     public void SimpleOperators_With_ParentText_With_OneParameters()
     {
-        var result = OperatorParser.Parse("@repeat(3)Content@end");
+        var sut = GetSut();
+        var result = sut.Parse("@repeat(3)Content@end");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -58,7 +66,8 @@ public class OperatorParserTests
     [Test]
     public void SimpleOperator_With_ParentText_With_ManyParameters()
     {
-        var result = OperatorParser.Parse("@repeat(3, 4, 5)Content@end");
+        var sut = GetSut();
+        var result = sut.Parse("@repeat(3, 4, 5)Content@end");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -71,7 +80,8 @@ public class OperatorParserTests
     [Test]
     public void SimpleOperator_With_ParentText_With_NewLineInParameters()
     {
-        var result = OperatorParser.Parse("@repeat(3\n, 4\n, 5\n)Content@end");
+        var sut = GetSut();
+        var result = sut.Parse("@repeat(3\n, 4\n, 5\n)Content@end");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -84,7 +94,8 @@ public class OperatorParserTests
     [Test]
     public void SimpleOperator_With_ParentText_With_SimpleParameter()
     {
-        var result = OperatorParser.Parse("@repeat: 3 \n Content@end");
+        var sut = GetSut();
+        var result = sut.Parse("@repeat: 3 \n Content@end");
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -97,7 +108,8 @@ public class OperatorParserTests
     [Test]
     public void NestedOperator_Simple_WithParentText_WithoutParameters()
     {
-        var result = OperatorParser.Parse(
+        var sut = GetSut();
+        var result = sut.Parse(
             """
                 [
                     @repeat
@@ -143,8 +155,9 @@ public class OperatorParserTests
     [Test]
     public void NestedOperators_Inline()
     {
+        var sut = GetSut();
         var input = "@if($$variable == 123)@repeat(3)Text@end@end";
-        var result = OperatorParser.Parse(input);
+        var result = sut.Parse(input);
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -159,7 +172,8 @@ public class OperatorParserTests
     [Test]
     public void NestedOperators_WithParameters()
     {
-        var result = OperatorParser.Parse(
+        var sut = GetSut();
+        var result = sut.Parse(
             """
                 {
                     "orders": [
@@ -211,7 +225,8 @@ public class OperatorParserTests
     [Test]
     public void NestedOperators_ComplexStructure()
     {
-        var result = OperatorParser.Parse(
+        var sut = GetSut();
+        var result = sut.Parse(
             """
                 Start
                 @if(user)
@@ -246,13 +261,14 @@ public class OperatorParserTests
     [Test]
     public void RandomOperator_WithItemsInLine()
     {
+        var sut = GetSut();
         var input = """
                     @random
                        @item First
                        @item Second
                     @end
                     """;
-        var result = OperatorParser.Parse(input);
+        var result = sut.Parse(input);
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -266,6 +282,7 @@ public class OperatorParserTests
     [Test]
     public void IfOperator_WithElseConditions()
     {
+        var sut = GetSut();
         var input = """
                     @if(cond1)
                       Content
@@ -273,7 +290,7 @@ public class OperatorParserTests
                       Default
                     @end
                     """;
-        var result = OperatorParser.Parse(input);
+        var result = sut.Parse(input);
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -288,6 +305,7 @@ public class OperatorParserTests
     [Test]
     public void Parse_IfOperator_WithElseConditions()
     {
+        var sut = GetSut();
         var input =
             """
             @if(cond1)
@@ -299,7 +317,7 @@ public class OperatorParserTests
             @end
             """.Replace("\r\n", "\n");
 
-        var result = OperatorParser.Parse(input);
+        var result = sut.Parse(input);
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -318,8 +336,9 @@ public class OperatorParserTests
     [Test]
     public void MissingEndTag()
     {
+        var sut = GetSut();
         var ex = Assert.Throws<TokenParsingException>(() =>
-            OperatorParser.Parse("@repeat(3)Content"));
+            sut.Parse("@repeat(3)Content"));
 
         Assert.That(ex.Message, Is.EqualTo("Operator @repeat(3) must be closed with an @end"));
     }
@@ -327,8 +346,9 @@ public class OperatorParserTests
     [Test]
     public void UnclosedParameters()
     {
+        var sut = GetSut();
         var ex = Assert.Throws<TokenParsingException>(() =>
-            OperatorParser.Parse("@repeat(3 Content@end"));
+            sut.Parse("@repeat(3 Content@end"));
 
         Assert.That(ex.Message, Is.EqualTo("Missing closing symbol ')' when defining @repeat parameters: '@repeat(3 Content@end'"));
     }
@@ -336,7 +356,8 @@ public class OperatorParserTests
     [Test]
     public void Escaping()
     {
-        var result = OperatorParser.Parse("@@repeat");
+        var sut = GetSut();
+        var result = sut.Parse("@@repeat");
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo("<t>@</t><t>@repeat</t>"));
     }
@@ -344,11 +365,20 @@ public class OperatorParserTests
     [Test]
     public void EmptyOperator()
     {
-        var result = OperatorParser.Parse("@repeat()@end");
+        var sut = GetSut();
+        var result = sut.Parse("@repeat()@end");
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
             "<op name='repeat' pars='()'>" +
             "</op>"
         ));
+    }
+
+    OperatorParser GetSut()
+    {
+        var services = new ServiceCollection();
+        services.AddDomainConfiguration();
+        var provider = services.BuildServiceProvider();
+        return provider.GetRequiredService<OperatorParser>();
     }
 }
