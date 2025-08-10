@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Lira.Common.Extensions;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 
@@ -109,7 +110,8 @@ class TokenParser
         if (openOperators.Count > 0)
         {
             var @operator = openOperators.Peek();
-            throw new TokenParsingException($"Operator @{@operator.Definition.Name + @operator.Parameters} must be closed with an @end");
+            throw new TokenParsingException(
+                $"Operator @{@operator.Definition.Name + @operator.Parameters} must be closed with an @end");
         }
 
         if (iterator.HasNext())
@@ -193,13 +195,15 @@ class TokenParser
         }
     }
 
-    private static void Trim(IReadOnlyCollection<Token> content)
+    private static void Trim(ICollection<Token> content)
     {
         var indentCounts = content.OfType<Token.StaticData>()
-            .SelectMany(sd => sd.Content.Split("\n"))
+            .SelectMany(x => x.Content.Split("\n"))
             .TrimEmptyLines()
-            .Where(x => x.Length != 0)
-            .Select(x => x.GetCountWhitespacesStart())
+            .SelectMany(x => x)
+            .OfType<PatternPart.Static>()
+            .Where(x => x.Value.Length != 0)
+            .Select(x => x.Value.GetCountWhitespacesStart())
             .ToArray();
 
         var minIndent = indentCounts.Length == 0 ? 0 : indentCounts.Min();
@@ -207,16 +211,34 @@ class TokenParser
         if (content.Count > 1)
         {
             var first = content.First();
+
+            bool remFirst = false;
             if (first is Token.StaticData sdFirst)
             {
-                sdFirst.Content = sdFirst.Content.Split('\n').TrimStartEmptyLines().JoinWithNewLine();
+                var newContent = sdFirst.Content.Split("\n").TrimStartEmptyLines().JoinWithNewLine();
+
+                if (newContent.Count == 0)
+                    remFirst = true;
+                else
+                    sdFirst.Content = newContent;
             }
 
             var last = content.Last();
+            bool remLast = false;
             if (last is Token.StaticData sdLast)
             {
-                sdLast.Content = sdLast.Content.Split('\n').TrimEndEmptyLines().JoinWithNewLine();
+                var newContent = sdLast.Content.Split("\n").TrimEndEmptyLines().JoinWithNewLine();
+
+                if (newContent.Count == 0)
+                    remLast = true;
+
+                sdLast.Content = newContent;
             }
+
+            if (remFirst)
+                content.Remove(first);
+            if(remLast)
+                content.Add(last);
         }
 
         if (content.Count == 1)
@@ -224,7 +246,18 @@ class TokenParser
             var single = content.First();
             if (single is Token.StaticData sd)
             {
-                sd.Content = sd.Content.Split('\n').TrimEmptyLines().TrimEndIfSingleLine().JoinWithNewLine();
+                var lines = sd.Content.Split("\n").TrimEmptyLines().ToArray();
+                var ifSingleLine = lines.TrimEndIfSingleLine().ToArray();
+                var newContent = ifSingleLine.JoinWithNewLine();
+
+                if (newContent.Count == 0)
+                {
+                    content.Remove(single);
+                }
+                else
+                {
+                    sd.Content = newContent;
+                }
             }
         }
 
@@ -339,6 +372,7 @@ class TokenParser
         sourceIterator.MoveToEnd();
         var pars = sourceIterator.PopIncludeCurrent();
 
-        throw new TokenParsingException($"Missing closing symbol '{valueEnd}' when defining @{name} parameters: '{pars}'");
+        throw new TokenParsingException(
+            $"Missing closing symbol '{valueEnd}' when defining @{name} parameters: '{pars}'");
     }
 }

@@ -190,11 +190,11 @@ static class PatternPartsExtensions
 
                     if (i == splitted.Length - 1)
                     {
-                        remainder.Add(new PatternPart.Static(s));
+                        remainder.AddStaticIfNotEmpty(s);
                     }
                     else
                     {
-                        remainder.Add(new PatternPart.Static(s));
+                        remainder.AddStaticIfNotEmpty(s);
                         result.Add(new PatternParts(remainder));
                         remainder = new List<PatternPart>();
                     }
@@ -216,31 +216,85 @@ static class PatternPartsExtensions
         return result;
     }
 
-    public static IEnumerable<string> TrimEmptyLines(this PatternParts lines) => lines.TrimStartEmptyLines().TrimEndEmptyLines();
+    public static void AddStaticIfNotEmpty(this IList<PatternPart> parts, string value)
+    {
+        if(value != string.Empty)
+            parts.Add(new PatternPart.Static(value));
+    }
 
-    public static IEnumerable<string> TrimEndEmptyLines(this PatternParts lines)
+    public static IEnumerable<PatternParts> TrimEmptyLines(this IEnumerable<PatternParts> lines) => lines.TrimStartEmptyLines().TrimEndEmptyLines();
+
+    public static IEnumerable<PatternParts> TrimEndEmptyLines(this IEnumerable<PatternParts> lines)
     {
         return TrimStartEmptyLines(lines.Reverse()).Reverse();
     }
 
-    public static PatternParts TrimStartEmptyLines(this PatternParts parts)
+    public static IEnumerable<PatternParts> TrimStartEmptyLines(this IEnumerable<PatternParts> parts)
     {
-        var result = new List<PatternPart>();
-
         bool start = true;
 
         foreach (var part in parts)
         {
-            if (part is PatternPart.Dynamic)
-                result.Add(part);
-            else if(part is PatternPart.Static)
-            {
+            if (start && part.IsNullOrWhiteSpace())
+                continue;
+            if (start)
+                start = false;
+            yield return part;
+        }
+    }
 
+    private static bool IsNullOrWhiteSpace(this PatternParts parts)
+    {
+        return parts.All(x => x is PatternPart.Static st && string.IsNullOrWhiteSpace(st.Value));
+    }
+
+    public static PatternParts JoinWithNewLine(this IEnumerable<PatternParts> partsList) => Join(partsList, "\n");
+
+    private static PatternParts Join(this IEnumerable<PatternParts> partsList, string separator)
+    {
+        var result = new List<PatternPart>();
+
+        bool first = true;
+        foreach (var parts in partsList)
+        {
+            if(!first)
+                result.Add(new PatternPart.Static(separator));
+
+            result.AddRange(parts);
+
+            first = false;
+        }
+
+        return new PatternParts(result);
+    }
+
+    public static IEnumerable<PatternParts> TrimIfSingleLine(this IEnumerable<PatternParts> lines) => ActionIfSingleLine(lines, str => str.Trim());
+    public static IEnumerable<PatternParts> TrimEndIfSingleLine(this IEnumerable<PatternParts> lines) => ActionIfSingleLine(lines, str => str.TrimEnd());
+
+    private static IEnumerable<PatternParts> ActionIfSingleLine(this IEnumerable<PatternParts> lines, Func<PatternParts, PatternParts> action)
+    {
+        int count = 0;
+        PatternParts? firstSourceLine = null;
+        foreach (var line in lines)
+        {
+            if (count == 0)
+            {
+                firstSourceLine = line;
+            }
+            else if (count == 1)
+            {
+                yield return firstSourceLine!;
+                yield return line;
             }
             else
             {
-             throw new UnsupportedInstanceType(part);
+                yield return line;
             }
+
+            count++;
         }
+
+        if(count == 1)
+            yield return action(firstSourceLine!);
     }
 }

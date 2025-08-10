@@ -38,7 +38,7 @@ class TextPartsParserInternal
         _logger = loggerFactory.CreateLogger(GetType());
     }
 
-    public async Task<IReadOnlyCollection<IObjectTextPart>> Parse(IReadOnlyCollection<Token> tokens,
+    public async Task<IReadOnlyCollection<IObjectTextPart>> Parse(IReadOnlyList<Token> tokens,
         IParsingContext context, OperatorPartFactory operatorPartFactory)
     {
         var result = new List<IObjectTextPart>();

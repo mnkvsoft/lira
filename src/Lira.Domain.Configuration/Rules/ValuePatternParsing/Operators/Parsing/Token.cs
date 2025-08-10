@@ -22,7 +22,7 @@ abstract record Token
     public record Operator : Token
     {
         private readonly List<Token> _content = new();
-        public IReadOnlyList<Token> Content => _content;
+        public List<Token> Content => _content;
 
 
         private readonly List<OperatorElement> _elements = new();
@@ -87,10 +87,9 @@ abstract record Token
             public AllowedChildElementDefinition Definition { get; }
             public OperatorParameters? Parameters { get; }
 
-            public void AddContent(Token token) => _content.Add(token);
+            public void AddContent(Token token) => Content.Add(token);
 
-            private readonly List<Token> _content = new();
-            public IReadOnlyCollection<Token> Content => _content;
+            public readonly List<Token> Content = new();
 
             public OperatorElement(AllowedChildElementDefinition definition, OperatorParameters? parameters)
             {

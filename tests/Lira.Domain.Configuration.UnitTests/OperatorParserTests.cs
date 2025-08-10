@@ -1,9 +1,5 @@
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Moq;
 
 namespace Lira.Domain.Configuration.UnitTests;
 
