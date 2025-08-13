@@ -8,8 +8,6 @@ public class StringIterator
     private readonly int _lastIndex;
 
     private int _currentIndex = -1;
-    public int CurrentIndex => _currentIndex;
-
     private int _lastPopIndex = -1;
 
     public StringIterator(string source)
@@ -41,10 +39,6 @@ public class StringIterator
     }
 
     public bool HasNext() => _source.Length > 0 && _currentIndex <= _lastIndex;
-
-    public bool MoveTo(char c) => MoveTo(ch => ch == c);
-
-    public bool MoveTo(char c, Func<char, bool> available) => MoveTo(currentPredicate: ch => ch == c, available: available);
 
     public bool MoveTo(Func<char, bool>? currentPredicate = null, Func<char, bool>? nextPredicate = null, Func<char, bool>? available = null)
     {

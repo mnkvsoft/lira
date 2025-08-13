@@ -57,12 +57,6 @@
     <None Update="fixtures\rules\generating\types\json\replace.cs.objects.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\action\set_variable.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\action\set_variable.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="fixtures\rules\match\csharp\custom\values.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -432,10 +426,10 @@
     <None Update="fixtures\rules\generating\function\random.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\example.rules">
+    <None Update="fixtures\debug\example.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\example.test">
+    <None Update="fixtures\debug\example.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -459,12 +453,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="fixtures\debug\less.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\debug\less.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="fixtures\rules\cache\short.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -1514,6 +1502,10 @@
     <None Update="fixtures\rules\generating\repeat\count.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="fixtures\rules\action\" />
   </ItemGroup>
 
 </Project>

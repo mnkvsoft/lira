@@ -10,8 +10,8 @@ namespace Lira.IntegrationTests.Tests;
 
 public class Rules_Tests : TestBase
 {
-    private static readonly string RulesFolderName = "rules";
-    //private static readonly string RulesFolderName = "debug";
+    // private static readonly string RulesFolderName = "rules";
+    private static readonly string RulesFolderName = "debug";
 
     public static string[] Cases
     {

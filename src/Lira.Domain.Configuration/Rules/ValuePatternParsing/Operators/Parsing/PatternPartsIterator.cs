@@ -174,7 +174,9 @@ class PatternPartsIterator
         {
             if (_lastPopIndex != -1 && _lastPopIterator != null)
             {
-                result.AddStaticIfNotEmpty(_lastPopIterator.Pop(includeCurrent: true));
+                _lastPopIterator.MoveToEnd();
+                var value = _lastPopIterator.Pop(includeCurrent: true);
+                result.AddStaticIfNotEmpty(value);
             }
 
             for (int i = _lastPopIndex + 1; i < _index; i++)
@@ -192,6 +194,14 @@ class PatternPartsIterator
                 if (pop)
                 {
                     _lastPopIterator = iterator;
+                    _lastPopIndex = _index;
+                }
+            }
+            else
+            {
+                result.Add(_source[_index]);
+                if (pop)
+                {
                     _lastPopIndex = _index;
                 }
             }
