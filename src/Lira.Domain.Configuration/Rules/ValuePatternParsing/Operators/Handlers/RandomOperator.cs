@@ -8,7 +8,7 @@ namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers
 class RandomOperatorDefinition() : OperatorDefinition(
     "random",
     ParametersMode.None,
-    withBody: false,
+    withBody: true,
     allowedChildElements: new Dictionary<string, ParametersMode> { { "item", ParametersMode.None } });
 
 class RandomHandler(TextPartsParserInternal parser, RandomOperatorDefinition randomOperatorDefinition) : IOperatorHandler

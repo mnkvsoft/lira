@@ -13,7 +13,7 @@ class PatternPartsIterator
     private StringIterator? _currentIterator;
 
     private int _lastPopIndex = -1;
-    private int _lastPopIndexInPart = -1;
+    private StringIterator? _lastPopIterator = null;
 
     public PatternPartsIterator(PatternParts source)
     {
@@ -34,7 +34,7 @@ class PatternPartsIterator
         _lastIndex = iterator._lastIndex;
         _currentIterator = iterator._currentIterator;
         _lastPopIndex = iterator._lastPopIndex;
-        _lastPopIndexInPart = iterator._lastPopIndexInPart;
+        _lastPopIterator = iterator._lastPopIterator;
     }
 
     public char Current => GetStaticPartIterator().Current;
@@ -99,30 +99,36 @@ class PatternPartsIterator
         if (_source.Count == 0)
             return false;
 
+
+        var index = _index;
+        var iterator = _currentIterator?.Clone();
+
         while (_index >= 0)
         {
-            if (_currentIterator != null)
+            if (iterator != null)
             {
-                if (_currentIterator.MoveBackTo(currentPredicate))
+                if (iterator.MoveBackTo(currentPredicate))
                 {
+                    _index = index;
+                    _currentIterator = iterator;
                     return true;
                 }
                 else
                 {
-                    _currentIterator = null;
-                    _index--;
+                    iterator = null;
+                    index--;
                 }
             }
             else
             {
-                var part = _source[_index];
+                var part = _source[index];
                 if (part is PatternPart.Dynamic)
                 {
-                    _index--;
+                    index--;
                 }
                 else if (part is PatternPart.Static st)
                 {
-                    _currentIterator = new StringIterator(st.Value);
+                    iterator = new StringIterator(st.Value);
                 }
                 else
                 {
@@ -159,19 +165,16 @@ class PatternPartsIterator
         if (_index == _lastPopIndex)
         {
             iterator = GetStaticPartIterator();
-            AddIfNotNull(iterator.Pop(includeCurrent, out var index));
+            AddIfNotNull(iterator.PopOrPeek(includeCurrent, pop));
 
             if (pop)
-                _lastPopIndexInPart = index;
+                _lastPopIterator = iterator;
         }
         else
         {
-            if (_lastPopIndex != -1 && _source[_lastPopIndex] is PatternPart.Static st)
+            if (_lastPopIndex != -1 && _lastPopIterator != null)
             {
-                result.Add(new PatternPart.Static(st.Value[_lastPopIndexInPart..]));
-
-                if (pop)
-                    _lastPopIndexInPart = -1;
+                result.AddStaticIfNotEmpty(_lastPopIterator.Pop(includeCurrent: true));
             }
 
             for (int i = _lastPopIndex + 1; i < _index; i++)
@@ -185,10 +188,10 @@ class PatternPartsIterator
 
             if (CurrentPartIsStatic(out iterator))
             {
-                AddIfNotNull(iterator.Pop(includeCurrent, out var index));
+                AddIfNotNull(iterator.PopOrPeek(includeCurrent, pop));
                 if (pop)
                 {
-                    _lastPopIndexInPart = index;
+                    _lastPopIterator = iterator;
                     _lastPopIndex = _index;
                 }
             }
@@ -297,7 +300,7 @@ class PatternPartsIterator
         if (CurrentPartIsStatic(out var iterator))
         {
             _lastPopIndex = _index;
-            _lastPopIndexInPart = iterator.CurrentIndex - 1;
+            iterator.SavePopPosition();
         }
         else
         {
@@ -312,10 +315,10 @@ class PatternPartsIterator
             return ">><<" + string.Concat(_source.Select(x => x.Value));
         }
 
-        string current = _currentIterator != null ? _currentIterator.ToString() : _source[_index].ToString();
-        string before = string.Concat(_source.Take(new Range(start: 0, _index)).Select(x => x.ToString()));
+        var current = _currentIterator != null ? _currentIterator.ToString() : _source[_index].ToString();
+        var before = string.Concat(_source.Take(new Range(start: 0, _index)).Select(x => x.ToString()));
 
-        string after = _index == _lastIndex ? "" : string.Concat(_source.Skip(_index + 1));
+        var after = _index == _lastIndex ? "" : string.Concat(_source.Skip(_index + 1));
 
         var result = $"{before}>>{current}<<{after}";
         return result;

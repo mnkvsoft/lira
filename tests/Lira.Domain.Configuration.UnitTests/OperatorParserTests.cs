@@ -263,7 +263,7 @@ public class OperatorParserTests
                        @item First
                        @item Second
                     @end
-                    """;
+                    """.Replace("\r\n", "\n");;
         var result = sut.Parse(input);
 
         string xmlView = result.GetXmlView();

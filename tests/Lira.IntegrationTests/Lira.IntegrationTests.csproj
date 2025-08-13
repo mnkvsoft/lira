@@ -1516,8 +1516,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="fixtures\_draft\" />
-  </ItemGroup>
-
 </Project>

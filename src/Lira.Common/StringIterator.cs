@@ -158,25 +158,32 @@ public class StringIterator
     /// </summary>
     public void MoveToEnd() => _currentIndex = _lastIndex;
 
-    public string Peek() => _source.Substring(_lastPopIndex, _currentIndex - _lastPopIndex);
+
     public string PeekFromCurrentToEnd() => _source[_currentIndex..];
 
-    public string? PopExcludeCurrent() => Pop(includeCurrent: false, out int _);
+    public string? PopExcludeCurrent() => PopOrPeek(includeCurrent: false, pop: true);
 
-    public string? PopIncludeCurrent()=>Pop(includeCurrent: true, out int _);
+    public string? PopIncludeCurrent()=>PopOrPeek(includeCurrent: true, pop: true);
 
-    public string? Pop(bool includeCurrent, out int index)
+    public string? Pop(bool includeCurrent) => PopOrPeek(includeCurrent, pop: true);
+
+
+    public string? Peek() => PopOrPeek(includeCurrent: false, pop: false);
+    public string? PopOrPeek(bool includeCurrent, bool pop)
     {
         var startIndex = _lastPopIndex == -1 ? 0 : _lastPopIndex;
 
-        index = _currentIndex + (includeCurrent ? 1 : 0);
+        var index = _currentIndex + (includeCurrent ? 1 : 0);
         if (startIndex == index)
         {
             return null;
         }
 
         var result = _source.Substring(startIndex, index - startIndex);
-        _lastPopIndex = index;
+
+        if(pop)
+            _lastPopIndex = index;
+
         return result;
     }
 
@@ -195,4 +202,6 @@ public class StringIterator
     public bool MoveBackTo(char c) => MoveBackTo(ch => ch == c);
 
     public StringIterator Clone() => new(this);
+
+    public void SavePopPosition() => _lastPopIndex = _currentIndex;
 }

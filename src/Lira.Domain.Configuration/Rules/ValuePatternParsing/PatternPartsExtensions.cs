@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Lira.Common.Exceptions;
+﻿using Lira.Common.Exceptions;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -14,23 +13,36 @@ static class PatternPartsExtensions
     public static TwoPartsWithSecondOptional Trim(this TwoPartsWithSecondOptional parts) =>
         new(parts.One.Trim(), parts.Second?.Trim());
 
-    public static PatternParts Trim(this PatternParts parts) => parts.TrimStart().TrimEnd();
+    private static PatternParts Trim(this PatternParts parts) => parts.TrimStart().TrimEnd();
 
-    public static PatternParts TrimEnd(this PatternParts parts)
+    private static PatternParts TrimEnd(this PatternParts parts)
     {
-        var temp = new List<PatternPart>(parts);
+        bool end = true;
+        var temp = new List<PatternPart>(parts.Count);
+
+        var lastIndex = parts.Count - 1;
+        for (int i = lastIndex; i >=0 ; i--)
+        {
+            var part = parts[i];
+            if (end && part is PatternPart.Static st)
+            {
+                if(string.IsNullOrWhiteSpace(st.Value))
+                    continue;
+
+                temp.Add(new PatternPart.Static(st.Value.TrimEnd()));
+                end = false;
+                continue;
+            }
+
+            end = false;
+            temp.Add(part);
+        }
+
         temp.Reverse();
-
-        var reversed = new PatternParts(temp);
-        reversed = reversed.TrimStart();
-
-        temp = new List<PatternPart>(reversed);
-        temp.Reverse();
-
         return new PatternParts(temp);
     }
 
-    public static PatternParts TrimStart(this PatternParts parts)
+    private static PatternParts TrimStart(this PatternParts parts)
     {
         bool start = true;
         var temp = new List<PatternPart>(parts.Count);
@@ -54,13 +66,12 @@ static class PatternPartsExtensions
         return new PatternParts(temp);
     }
 
-    public static bool ContainsDynamic(this PatternParts parts)
-        => parts.Any(x => x is PatternPart.Dynamic);
-
     public static bool ContainsInStatic(this PatternParts parts, string value)
         => parts.Any(x => x is PatternPart.Static st && st.Value.Contains(value));
+
     public static IReadOnlyCollection<PatternParts> GetLines(this PatternParts parts)
         => parts.Split("\n");
+
     public static PatternPart.Dynamic GetSingleDynamic(this PatternParts parts)
     {
         if(parts.Count != 1)
@@ -76,7 +87,7 @@ static class PatternPartsExtensions
 
     public static string GetStaticValue(this PatternParts parts) => GetSingleStatic(parts).Value;
 
-    public static PatternPart.Static GetSingleStatic(this PatternParts parts)
+    private static PatternPart.Static GetSingleStatic(this PatternParts parts)
     {
         if(parts.Count != 1)
             throw new Exception($"Expecting only one static block. Current count: {parts.Count}. Value: {parts} ");
@@ -87,26 +98,6 @@ static class PatternPartsExtensions
             throw new Exception($"Expecting only one static block. Current block is dynamic. Value: {parts} ");
 
         return st;
-    }
-
-    public static PatternParts Replace(this PatternParts parts, PatternPart currentValue, PatternPart newValue)
-    {
-        var result = new List<PatternPart>();
-
-        foreach (var part in parts)
-        {
-            if (part == currentValue)
-            {
-                result.Add(newValue);
-            }
-            else
-            {
-                result.Add(part);
-            }
-
-        }
-
-        return new PatternParts(result);
     }
 
     public static PatternParts Replace(this PatternParts parts, Predicate<PatternPart> predicate, Func<PatternPart, PatternPart> getNewValue)
@@ -247,9 +238,9 @@ static class PatternPartsExtensions
 
     }
 
-    public static void AddStaticIfNotEmpty(this IList<PatternPart> parts, string value)
+    public static void AddStaticIfNotEmpty(this IList<PatternPart> parts, string? value)
     {
-        if(value != string.Empty)
+        if(!string.IsNullOrEmpty(value))
             parts.Add(new PatternPart.Static(value));
     }
 
@@ -299,7 +290,6 @@ static class PatternPartsExtensions
         return new PatternParts(result);
     }
 
-    public static IEnumerable<PatternParts> TrimIfSingleLine(this IEnumerable<PatternParts> lines) => ActionIfSingleLine(lines, str => str.Trim());
     public static IEnumerable<PatternParts> TrimEndIfSingleLine(this IEnumerable<PatternParts> lines) => ActionIfSingleLine(lines, str => str.TrimEnd());
 
     private static IEnumerable<PatternParts> ActionIfSingleLine(this IEnumerable<PatternParts> lines, Func<PatternParts, PatternParts> action)

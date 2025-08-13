@@ -247,6 +247,10 @@ class TokenParser
                     trimmed.Add(sd);
                 }
             }
+            else
+            {
+                trimmed.Add(single);
+            }
         }
 
         var indentCounts = content.OfType<Token.StaticData>()
