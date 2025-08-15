@@ -149,6 +149,57 @@ public class OperatorParserTests
     }
 
     [Test]
+    public void NestedOperator_WithDynamicPart()
+    {
+        var sut = GetSut();
+        var result = sut.Parse(
+                """
+                {
+                    "items": [
+                        @repeat
+                            @random
+                                @item
+                                {
+                                    "type": "car"
+                                    "name": "{{ str }}"
+                                }
+                                @item
+                                {
+                                    "type": "bike"
+                                }
+                            @end
+                        @end
+                    ]
+                }
+                """.Replace("\r\n", "\n"));
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<t>{\n    \"items\": [\n        </t>" +
+            "<op name='repeat' pars=''>" +
+            "<op name='random' pars=''>" +
+            "<i name='item' pars=''>" +
+            "<t>" +
+            "{\n" +
+            "    \"type\": \"car\"\n" +
+            "    \"name\": \"{{ str }}\"\n" +
+            "}" +
+            "</t>" +
+            "</i>" +
+            "<i name='item' pars=''>" +
+            "<t>" +
+            "{\n" +
+            "    \"type\": \"bike\"\n" +
+            "}" +
+            "</t>" +
+            "</i>" +
+            "</op>" +
+            "</op>" +
+            "<t>\n    ]\n}</t>"
+        ));
+    }
+
+    [Test]
     public void NestedOperators_Inline()
     {
         var sut = GetSut();
@@ -170,7 +221,7 @@ public class OperatorParserTests
     {
         var sut = GetSut();
         var result = sut.Parse(
-            """
+                """
                 {
                     "orders": [
                         @repeat: 3
@@ -263,7 +314,8 @@ public class OperatorParserTests
                        @item First
                        @item Second
                     @end
-                    """.Replace("\r\n", "\n");;
+                    """.Replace("\r\n", "\n");
+        ;
         var result = sut.Parse(input);
 
         string xmlView = result.GetXmlView();
@@ -304,27 +356,27 @@ public class OperatorParserTests
         var sut = GetSut();
         var input =
             """
-            @if(cond1)
-                Content
-            @else if(cond2)
-                Other
-            @else
-                Default
-            @end
-            """.Replace("\r\n", "\n");
+                @if(cond1)
+                    Content
+                @else if(cond2)
+                    Other
+                @else
+                    Default
+                @end
+                """.Replace("\r\n", "\n");
 
         var result = sut.Parse(input);
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
             "<op name='if' pars='(cond1)'>" +
-                    "<t>Content</t>" +
-                "<i name='else if' pars='(cond2)'>" +
-                    "<t>Other</t>" +
-                "</i>" +
-                "<i name='else' pars=''>" +
-                    "<t>Default</t>" +
-                "</i>" +
+            "<t>Content</t>" +
+            "<i name='else if' pars='(cond2)'>" +
+            "<t>Other</t>" +
+            "</i>" +
+            "<i name='else' pars=''>" +
+            "<t>Default</t>" +
+            "</i>" +
             "</op>"
         ));
     }
@@ -346,7 +398,8 @@ public class OperatorParserTests
         var ex = Assert.Throws<TokenParsingException>(() =>
             sut.Parse("@repeat(3 Content@end"));
 
-        Assert.That(ex.Message, Is.EqualTo("Missing closing symbol ')' when defining @repeat parameters: '@repeat(3 Content@end'"));
+        Assert.That(ex.Message,
+            Is.EqualTo("Missing closing symbol ')' when defining @repeat parameters: '@repeat(3 Content@end'"));
     }
 
     [Test]

@@ -1,4 +1,5 @@
 ﻿using Lira.Common.Exceptions;
+using Lira.Common.Extensions;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -218,11 +219,14 @@ static class PatternPartsExtensions
             if (restIndex > 0)
             {
                 if (part is not PatternPart.Static st)
-                    throw new InvalidOperationException($"Cannot substring for {startIndex} of {parts}");
+                    throw new InvalidOperationException($"Cannot substring for {startIndex} of '{parts}'");
 
                 var lastIndex = st.Value.Length - 1;
                 if (startIndex <= lastIndex)
+                {
                     result.Add(new PatternPart.Static(st.Value[startIndex..]));
+                    restIndex = 0;
+                }
                 else
                 {
                     restIndex = startIndex - lastIndex;
@@ -317,5 +321,23 @@ static class PatternPartsExtensions
 
         if(count == 1)
             yield return action(firstSourceLine!);
+    }
+
+    public static int GetCountWhitespacesStart(this PatternParts parts)
+    {
+        var startStatics = GetStartStatics(parts).ToArray();
+        if (startStatics.Length == 0)
+            return 0;
+        return string.Concat(startStatics.Select(x => x.Value)).GetCountWhitespacesStart();
+    }
+
+    private static IEnumerable<PatternPart.Static> GetStartStatics(this PatternParts parts)
+    {
+        foreach (var part in parts)
+        {
+            if(part is PatternPart.Static st)
+                yield return st;
+            break;
+        }
     }
 }

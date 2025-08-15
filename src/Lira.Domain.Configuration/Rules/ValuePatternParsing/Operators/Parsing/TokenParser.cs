@@ -256,10 +256,8 @@ class TokenParser
         var indentCounts = content.OfType<Token.StaticData>()
             .SelectMany(x => x.Content.Split("\n"))
             .TrimEmptyLines()
-            .SelectMany(x => x)
-            .OfType<PatternPart.Static>()
-            .Where(x => x.Value.Length != 0)
-            .Select(x => x.Value.GetCountWhitespacesStart())
+            .Where(x => x.Count != 0)
+            .Select(x => x.GetCountWhitespacesStart())
             .ToArray();
 
         var minIndent = indentCounts.Length == 0 ? 0 : indentCounts.Min();
