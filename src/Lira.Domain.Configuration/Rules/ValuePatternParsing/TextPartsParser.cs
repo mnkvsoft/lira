@@ -25,7 +25,73 @@ class TextPartsParser(OperatorParser operatorParser, TextPartsParserInternal par
         var ctx = parsingContext.ToImpl();
         ctx.DeclaredItems.TryAddRange(localContext.DeclaredItems);
 
+        if (tokens.Any(x => x is Token.Operator))
+            return new ObjectTextParts([new AddIndentsWrapper(result)], isString: true);
+
         bool isString = result.Count is 0 or > 1;
         return new ObjectTextParts(result, isString);
+    }
+
+    class AddIndentsWrapper(List<IObjectTextPart> parts) : IObjectTextPart
+    {
+        public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+        {
+            int countIndent = 0;
+            string? lastStr = null;
+
+            foreach (var part in parts)
+            {
+                if (part is OperatorPart)
+                {
+                    bool isFirst = true;
+                    await foreach (var obj in part.Get(context))
+                    {
+                        string? str = ObjectTextPartsExtensions.GetStringValue(obj);
+
+                        if (isFirst)
+                        {
+                            isFirst = false;
+                            lastStr = str;
+                            yield return str;
+                        }
+                        else
+                        {
+                            if(lastStr != null && lastStr.EndsWith('\n'))
+                                yield return new string(' ', countIndent);
+
+                            lastStr = str;
+                            yield return str;
+                        }
+                    }
+
+                    countIndent = 0;
+                }
+                else
+                {
+                    await foreach (var obj in part.Get(context))
+                    {
+                        string? str = ObjectTextPartsExtensions.GetStringValue(obj);
+
+                        if(str == null)
+                            continue;
+
+                        int nlIndex = str.LastIndexOf('\n');
+                        if (nlIndex != -1)
+                        {
+                            countIndent = str.Length - nlIndex - 1;
+                        }
+                        else
+                        {
+                            countIndent += str.Length;
+                        }
+
+                        lastStr = str;
+                        yield return str;
+                    }
+                }
+            }
+        }
+
+        public ReturnType ReturnType => ReturnType.String;
     }
 }

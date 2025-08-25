@@ -17,31 +17,18 @@ class IfHandler(TextPartsParserInternal parser, IfOperatorDefinition operatorDef
 {
     public OperatorDefinition Definition => operatorDefinition;
 
-    public Task<IObjectTextPart> CreateOperatorPart(Token.Operator @operator, IParsingContext context, OperatorPartFactory operatorPartFactory)
+    public Task<OperatorPart> CreateOperatorPart(Token.Operator @operator, IParsingContext context, OperatorPartFactory operatorPartFactory)
     {
         throw new NotImplementedException();
     }
 
-    class IfOperator(IReadOnlyCollection<IObjectTextPart> body) : IObjectTextPart
+    class IfOperator(IReadOnlyCollection<IObjectTextPart> body) : OperatorPart
     {
-        public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+        public override async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
         {
-            int count = Random.Shared.Next(1, 5);
-
-            for (int i = 0; i < count; i++)
-            {
-                if(i > 0)
-                    yield return ',';
-
-                await foreach (var obj in body.GetAllObjects(context))
-                {
-                    yield return obj;
-                }
-            }
+            throw new NotImplementedException();
+            yield return null;
         }
-
-        // todo: string ?
-        public ReturnType ReturnType => ReturnType.String;
     }
 }
 

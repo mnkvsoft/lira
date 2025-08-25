@@ -7,6 +7,6 @@ interface IOperatorHandler
 {
     OperatorDefinition Definition { get; }
 
-    Task<IObjectTextPart> CreateOperatorPart(Token.Operator @operator, IParsingContext context,
+    Task<OperatorPart> CreateOperatorPart(Token.Operator @operator, IParsingContext context,
         OperatorPartFactory operatorPartFactory);
 }

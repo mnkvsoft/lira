@@ -11,11 +11,11 @@ class RandomOperatorDefinition() : OperatorDefinition(
     withBody: true,
     allowedChildElements: new Dictionary<string, ParametersMode> { { "item", ParametersMode.None } });
 
-class RandomHandler(TextPartsParserInternal parser, RandomOperatorDefinition randomOperatorDefinition) : IOperatorHandler
+class RandomHandler(TextPartsParserInternal parser, RandomOperatorDefinition definition) : IOperatorHandler
 {
-    public OperatorDefinition Definition => randomOperatorDefinition;
+    public OperatorDefinition Definition => definition;
 
-    public async Task<IObjectTextPart> CreateOperatorPart(Token.Operator @operator, IParsingContext context,
+    public async Task<OperatorPart> CreateOperatorPart(Token.Operator @operator, IParsingContext context,
         OperatorPartFactory operatorPartFactory)
     {
         if(@operator.Elements.Count < 2)
@@ -30,9 +30,9 @@ class RandomHandler(TextPartsParserInternal parser, RandomOperatorDefinition ran
         return new RandomOperator(items);
     }
 
-    class RandomOperator(IReadOnlyList<IReadOnlyCollection<IObjectTextPart>> items) : IObjectTextPart
+    class RandomOperator(IReadOnlyList<IReadOnlyCollection<IObjectTextPart>> items) : OperatorPart
     {
-        public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+        public override async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
         {
             var randomItems = items.Random();
             await foreach (var obj in randomItems.GetAllObjects(context))
@@ -40,7 +40,5 @@ class RandomHandler(TextPartsParserInternal parser, RandomOperatorDefinition ran
                 yield return obj;
             }
         }
-
-        public ReturnType ReturnType => ReturnType.String;
     }
 }

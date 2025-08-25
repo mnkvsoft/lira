@@ -95,7 +95,7 @@ public static class ObjectTextPartsExtensions
         }
     }
 
-    private static string? GetStringValue(dynamic? obj)
+    public static string? GetStringValue(dynamic? obj)
     {
         if (obj == null)
             return null;

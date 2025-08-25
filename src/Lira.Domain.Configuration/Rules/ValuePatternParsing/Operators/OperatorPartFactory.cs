@@ -5,7 +5,7 @@ namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators;
 
 class OperatorPartFactory(IEnumerable<IOperatorHandler> handlers)
 {
-    public Task<IObjectTextPart> CreateOperatorPart(Token.Operator @operator, IParsingContext localContext)
+    public Task<OperatorPart> CreateOperatorPart(Token.Operator @operator, IParsingContext localContext)
     {
         var name = @operator.Definition.Name;
         foreach (var handler in handlers)

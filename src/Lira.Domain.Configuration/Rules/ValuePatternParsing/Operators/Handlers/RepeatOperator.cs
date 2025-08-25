@@ -7,25 +7,26 @@ namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers
 class RepeatOperatorDefinition()
     : OperatorDefinition("repeat", ParametersMode.Maybe, withBody: true, allowedChildElements: null);
 
-class RepeatHandler(TextPartsParserInternal parser, RepeatOperatorDefinition operatorDefinition) : IOperatorHandler
+class RepeatHandler(TextPartsParserInternal parser, RepeatOperatorDefinition definition) : IOperatorHandler
 {
-    public OperatorDefinition Definition => operatorDefinition;
-    public async Task<IObjectTextPart> CreateOperatorPart(Token.Operator @operator, IParsingContext context,
+    public OperatorDefinition Definition => definition;
+    public async Task<OperatorPart> CreateOperatorPart(Token.Operator @operator, IParsingContext context,
         OperatorPartFactory operatorPartFactory)
     {
         return new RepeatOperator(await parser.Parse(@operator.Content, context, operatorPartFactory));
     }
 
-    class RepeatOperator(IReadOnlyCollection<IObjectTextPart> body) : IObjectTextPart
+    class RepeatOperator(IReadOnlyCollection<IObjectTextPart> body) : OperatorPart
     {
-        public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+        public override async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
         {
             int count = Random.Shared.Next(1, 5);
 
             for (int i = 0; i < count; i++)
             {
                 if(i > 0)
-                    yield return ',';
+                    // todo: use either the value passed by the user or try to calculate it based on the Content-Type header
+                    yield return ",\n";
 
                 await foreach (var obj in body.GetAllObjects(context))
                 {
@@ -33,8 +34,6 @@ class RepeatHandler(TextPartsParserInternal parser, RepeatOperatorDefinition ope
                 }
             }
         }
-
-        public ReturnType ReturnType => ReturnType.String;
     }
 }
 
