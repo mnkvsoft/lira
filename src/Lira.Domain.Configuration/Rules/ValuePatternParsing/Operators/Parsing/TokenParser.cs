@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using Lira.Common.Extensions;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 
@@ -9,10 +8,10 @@ class TokenParser
     {
         public static class StartParams
         {
-            public static readonly IReadOnlyCollection<(char Start, char End)> Pairs =
+            public static readonly IReadOnlyCollection<(char Start, char End, OperatorParametersType Type)> Pairs =
             [
-                ('(', ')'),
-                (':', '\n')
+                ('(', ')', OperatorParametersType.Full),
+                (':', '\n', OperatorParametersType.SingleLine)
             ];
         }
     }
@@ -326,7 +325,7 @@ class TokenParser
         var pair = GetPair(iterator.Current);
 
         if (pair != null)
-            return PopParametersAfterBrace(name, iterator, pair.Value.End);
+            return PopParametersAfterBrace(pair.Value.Type, name, iterator, pair.Value.End);
 
         if (iterator.MoveTo(currentPredicate: c => Chars.StartParams.Pairs.Any(x => x.Start == c),
                 available: char.IsWhiteSpace))
@@ -334,14 +333,14 @@ class TokenParser
             pair = GetPair(iterator.Current) ??
                    throw new TokenParsingException($"Unknown character '{iterator.Current}'");
             iterator.PopExcludeCurrent();
-            return PopParametersAfterBrace(name, iterator, pair.Value.End);
+            return PopParametersAfterBrace(pair.Value.Type, name, iterator, pair.Value.End);
         }
 
         return null;
 
-        (char Start, char End)? GetPair(char current)
+        (char Start, char End, OperatorParametersType Type)? GetPair(char current)
         {
-            (char Start, char End)? valueTuple = null;
+            (char Start, char End, OperatorParametersType Type)? valueTuple = null;
 
             foreach (var p in Chars.StartParams.Pairs)
             {
@@ -356,16 +355,23 @@ class TokenParser
         }
     }
 
-    static OperatorParameters? PopParametersAfterBrace(string name, PatternPartsIterator iterator, char valueEnd)
+    static OperatorParameters PopParametersAfterBrace(OperatorParametersType type, string name, PatternPartsIterator iterator, char valueEnd)
     {
         int braces = 0;
 
         var sourceIterator = iterator.Clone();
+
+        // убираем стартовый символ параметров
+        iterator.PopIncludeCurrent();
         while (iterator.MoveNext())
         {
             if (iterator.Current == valueEnd && braces == 0)
             {
-                return new OperatorParameters(iterator.PopIncludeCurrent().GetStaticValue());
+                var value = iterator.PopExcludeCurrent().GetStaticValue();
+
+                // убираем завершающий символ параметров
+                iterator.PopIncludeCurrent();
+                return new OperatorParameters(type, value);
             }
 
             switch (iterator.Current)

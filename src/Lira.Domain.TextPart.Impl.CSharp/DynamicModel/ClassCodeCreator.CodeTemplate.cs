@@ -105,6 +105,25 @@ static partial class ClassCodeCreator
             }
             """;
 
+        public readonly static string IPredicateFunction =
+            ImportNamespaces + Nl + Nl +
+            Namespace + Nl + Nl +
+            "using Lira.Domain.Matching.Request;" + Nl +
+            """
+            public sealed class [className] : DynamicObjectWithDeclaredPartsBase, IPredicateFunction
+            {
+                public [className](DependenciesBase dependencies) : base(dependencies)
+                {
+                }
+
+                public bool IsMatch(RuleExecutingContext __ctx)
+                {
+                    var [externalRequestVariableName] = new RequestModel(__ctx.RequestContext.RequestData);
+                    [code]
+                }
+            }
+            """;
+
         public readonly static string IRequestMatcher =
             ImportNamespaces + Nl + Nl +
             Namespace + Nl + Nl +

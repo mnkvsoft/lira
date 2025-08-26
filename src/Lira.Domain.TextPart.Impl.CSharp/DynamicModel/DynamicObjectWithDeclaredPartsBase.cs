@@ -15,34 +15,34 @@ public class DynamicObjectWithDeclaredPartsBase : DynamicObjectBase
         return DeclaredItemsProvider.Get(name);
     }
 
-    protected async IAsyncEnumerable<dynamic?> Repeat(RuleExecutingContext context, IObjectTextPart part, string separator, int count)
-    {
-        for (var i = 0; i < count; i++)
-        {
-            await foreach (var obj in part.Get(context))
-            {
-                if(i > 0)
-                    yield return separator;
-                yield return obj;
-            }
-        }
-    }
-
-    private class RepeatPart(IObjectTextPart part, string separator, int count) : IObjectTextPart
-    {
-        public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
-        {
-            for (var i = 0; i < count; i++)
-            {
-                await foreach (var obj in part.Get(context))
-                {
-                    if(i > 0)
-                        yield return separator;
-                    yield return obj;
-                }
-            }
-        }
-
-        public ReturnType? ReturnType => part.ReturnType;
-    }
+    // protected async IAsyncEnumerable<dynamic?> Repeat(RuleExecutingContext context, IObjectTextPart part, string separator, int count)
+    // {
+    //     for (var i = 0; i < count; i++)
+    //     {
+    //         await foreach (var obj in part.Get(context))
+    //         {
+    //             if(i > 0)
+    //                 yield return separator;
+    //             yield return obj;
+    //         }
+    //     }
+    // }
+    //
+    // private class RepeatPart(IObjectTextPart part, string separator, int count) : IObjectTextPart
+    // {
+    //     public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    //     {
+    //         for (var i = 0; i < count; i++)
+    //         {
+    //             await foreach (var obj in part.Get(context))
+    //             {
+    //                 if(i > 0)
+    //                     yield return separator;
+    //                 yield return obj;
+    //             }
+    //         }
+    //     }
+    //
+    //     public ReturnType? ReturnType => part.ReturnType;
+    // }
 }

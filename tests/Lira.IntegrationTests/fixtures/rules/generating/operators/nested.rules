@@ -1,0 +1,73 @@
+-------------------- rule
+
+GET /generating/operators/nested
+
+----- response
+
+{
+    "vehicle": [
+        @repeat: 2
+            @random
+                @item
+                {
+                    "type": "car"
+                }
+                @item
+                {
+                    "type": "car"
+                }
+                @item
+                {
+                    "type": "car"
+                }
+            @end
+        @end
+    ]
+}
+
+###
+~ body
+{
+    "items": [
+        @repeat
+
+            @random
+
+                @item
+                {
+                    "type": "car"
+                    "name" "{{ str }}"
+                }
+                @item
+                {
+                    "type": "fly"
+                }
+                @item
+                {
+                    "type": "bike"
+                }
+
+            @end
+
+        @end
+    ]
+}
+
+
+@if: {{ }}
+
+@end
+
+@if(count > 1)
+
+@else if()
+
+@else if()
+
+@else
+
+@end
+
+!! it comment
+
+!!* it comment *!!

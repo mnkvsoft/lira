@@ -17,4 +17,10 @@ public interface IFunctionFactoryCSharp
     CreateFunctionResult<IMatchFunctionTyped> TryCreateMatchFunction(FunctionFactoryRuleContext ruleContext, CodeBlock code);
     CreateFunctionResult<IRequestMatcher> TryCreateRequestMatcher(FunctionFactoryRuleContext ruleContext, CodeBlock code);
     CreateFunctionResult<ITransformFunction> TryCreateTransformFunction(CodeBlock code);
+    CreateFunctionResult<IPredicateFunction> TryCreatePredicateFunction(FunctionFactoryRuleContext ruleContext, string code);
+}
+
+public interface IPredicateFunction
+{
+    bool IsMatch(RuleExecutingContext context);
 }

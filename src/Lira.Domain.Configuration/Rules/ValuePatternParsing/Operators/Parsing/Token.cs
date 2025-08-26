@@ -25,7 +25,7 @@ abstract record Token
 
 
         private readonly List<OperatorElement> _elements = new();
-        public IReadOnlyCollection<OperatorElement> Elements => _elements;
+        public IReadOnlyList<OperatorElement> Elements => _elements;
 
         public OperatorDefinition Definition { get; }
         public OperatorParameters? Parameters { get; }

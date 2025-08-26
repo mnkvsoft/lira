@@ -1,0 +1,16 @@
+-------------------- rule
+
+GET /generating/operators/if/only
+
+----- response
+{
+    "bindings": [
+        @if(req.query("with-accounts") == "1")
+            {
+                "type": "account"
+                "alias": "head",
+                "number": "08895519584330798354"
+            }
+        @end
+    ]
+}

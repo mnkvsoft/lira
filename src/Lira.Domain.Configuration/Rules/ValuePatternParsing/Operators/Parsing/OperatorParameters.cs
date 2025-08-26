@@ -1,15 +1,21 @@
-using ArgValidation;
-
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 
-readonly struct OperatorParameters
+public enum OperatorParametersType
 {
-    private string Value { get; }
+    SingleLine,
+    Full
+}
 
-    public OperatorParameters(string value)
+class OperatorParameters
+{
+    public OperatorParametersType Type { get; }
+    public string Value { get; }
+
+    public OperatorParameters(OperatorParametersType type, string value)
     {
-        Arg.NotNullOrWhitespace(value, nameof(value));
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
         Value = value;
+        Type = type;
     }
 
     public override string ToString() => Value;

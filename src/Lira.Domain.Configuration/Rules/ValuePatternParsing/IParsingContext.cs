@@ -5,7 +5,7 @@ using Lira.Domain.TextPart.Impl.Custom.CustomDicModel;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
-public interface IParsingContext;
+public interface IParsingContext : IReadonlyParsingContext;
 
 public interface IReadonlyParsingContext
 {
@@ -16,7 +16,7 @@ public interface IReadonlyParsingContext
     FunctionFactoryUsingContext CSharpUsingContext { get; }
 }
 
-class ParsingContext : IParsingContext, IReadonlyParsingContext
+class ParsingContext : IParsingContext
 {
     public CustomDicts CustomDicts { get; }
     public string RootPath { get; }
