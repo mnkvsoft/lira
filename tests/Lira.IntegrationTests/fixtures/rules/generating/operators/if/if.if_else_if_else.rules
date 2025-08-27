@@ -1,0 +1,34 @@
+-------------------- rule
+
+GET /generating/operators/if/if_else_if_else
+
+----- response
+{
+    "products": [
+        @if(req.query("with-accounts") == "1")
+            {
+                "type": "account"
+                "alias": "head",
+                "number": "08895519584330798354"
+            }
+        @else if(req.query("with-deposit") == "1")
+            {
+                "type": "deposit"
+                "alias": "hand",
+                "number": "08895519584330798355"
+            }
+        @else if(req.query("with-card") == "1")
+            {
+                "type": "card"
+                "alias": "JPMorganChase card",
+                "masked_pan": "4***1234"
+            }
+        @else
+            {
+                "type": "brokerage_account"
+                "alias": "sp500",
+                "number": "08895519584330798359"
+            }
+        @end
+    ]
+}

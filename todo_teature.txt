@@ -1,20 +1,16 @@
+- delete unused peimage files immediately
+- function start with @
 - {{{ escaping
-- comment as !!*
-- inline repeat block
+- comment as @*
 - make dic-function
-- global usings
 - line structure for conditions
 - key for conditions
-- local variables in functions
-- random: using dynamic blocks (random: $$var1, $$var2)
 - cache section
 - type inference for dynamic block
 - hide dynamic class details on exception
-- json() extension for object
-- remove method for json type
-- dynamic block in ~ delay block
-- describe file section format
+- remove method for json type ??
 - RequestStatisticStorage ttl to config
-- network latency
+- slow network
 - rules index
 - response model in cs-code
+- describe file section format

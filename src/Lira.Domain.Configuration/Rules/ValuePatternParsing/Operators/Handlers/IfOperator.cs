@@ -2,8 +2,6 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
 
 class IfOperatorDefinition() : OperatorDefinition(
@@ -41,31 +39,46 @@ class IfHandler(TextPartsParserInternal parser, IfOperatorDefinition operatorDef
             }
         }
 
-
-        var ifCode = @operator.Parameters?.Value ?? throw new Exception("Empty parameters");
-        var functionFactoryCSharp = await functionFactoryCSharpFactory.Get();
-        var ifPredicateResult = functionFactoryCSharp.TryCreatePredicateFunction(
-            new FunctionFactoryRuleContext(context.CSharpUsingContext,
-                new DeclaredItemsProvider(context.DeclaredItems)),
-            ifCode);
-
-        var ifParts = await parser.Parse(@operator.Content, context, operatorPartFactory);
-        var ifPredicate = ifPredicateResult.GetFunctionOrThrow(ifCode, context);
-
         var predicates = new List<(IPredicateFunction predicate, IReadOnlyCollection<IObjectTextPart> parts)>(elements.Count + 1)
         {
-            (ifPredicate, ifParts)
+            await GetPredicateAndParts(
+                @operator.Parameters?.Value ?? throw new Exception("Empty parameters"),
+                @operator.Content,
+                context,
+                operatorPartFactory)
         };
 
-        for (int i = 0; i <  elements.Count - (elseParts == null ? 1 : 2); i++)
+        for (int i = 0; i < elements.Count - (elseParts == null ? 0 : 1); i++)
         {
             var elseIfElem = elements[i];
-            var elseIfPredicate = ifPredicateResult.GetFunctionOrThrow(elseIfElem.Parameters?.Value ?? throw new Exception("Empty parameters"), context);
-            var ifElseParts = await parser.Parse(elseIfElem.Content, context, operatorPartFactory);
-            predicates.Add((elseIfPredicate, ifElseParts));
+
+            predicates.Add(await GetPredicateAndParts(
+                elseIfElem.Parameters?.Value ?? throw new Exception("Empty parameters"),
+                elseIfElem.Content,
+                context,
+                operatorPartFactory));
         }
 
         return new IfOperator(predicates, elseParts);
+    }
+
+    private async Task<(IPredicateFunction, IReadOnlyCollection<IObjectTextPart>)> GetPredicateAndParts(
+        string? predicateCode,
+        List<Token> content,
+        IParsingContext context,
+        OperatorPartFactory operatorPartFactory)
+    {
+        var parts = await parser.Parse(content, context, operatorPartFactory);
+        var predicate = await GetPredicate(predicateCode, context);
+        return (predicate, parts);
+    }
+
+    private async Task<IPredicateFunction> GetPredicate(string code, IParsingContext context)
+    {
+        var functionFactoryCSharp = await functionFactoryCSharpFactory.Get();
+        var functionFactoryRuleContext = new FunctionFactoryRuleContext(context.CSharpUsingContext, new DeclaredItemsProvider(context.DeclaredItems));
+        var predicateFunctionResult = functionFactoryCSharp.TryCreatePredicateFunction(functionFactoryRuleContext, code);
+        return predicateFunctionResult.GetFunctionOrThrow(code, context);
     }
 
     class IfOperator(IReadOnlyCollection<(IPredicateFunction predicate, IReadOnlyCollection<IObjectTextPart> parts)> conditions, IReadOnlyCollection<IObjectTextPart>? elseParts) : OperatorPart

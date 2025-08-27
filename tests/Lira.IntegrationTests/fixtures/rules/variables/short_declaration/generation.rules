@@ -5,7 +5,7 @@ GET /variables/short_declaration/generation
 ----- response
 {
     "created_binding_id": {{ echo: 123 >> $$bindingId }},
-    "bindings":[
+    "products":[
         {
             "binding":{
                 "id": {{ $$bindingId }}

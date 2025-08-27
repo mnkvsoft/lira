@@ -19,12 +19,8 @@ namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
 class TextPartsParserInternal
 {
-    // public record Context(ParsingContext ParsingContext, LocalVariableSet LocalVariables);
-
     private readonly IFunctionFactorySystem _functionFactorySystem;
-
     private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
-
     private readonly ILogger _logger;
 
 

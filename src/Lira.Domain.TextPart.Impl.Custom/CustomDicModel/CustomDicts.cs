@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Lira.Common.Extensions;
 using Lira.Domain.Matching.Request;
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace Lira.Domain.TextPart.Impl.Custom.CustomDicModel;
 

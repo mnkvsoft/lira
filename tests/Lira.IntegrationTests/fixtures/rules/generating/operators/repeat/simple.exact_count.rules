@@ -5,11 +5,11 @@ GET /generating/operators/repeat/simple/exact_count
 ----- response
 
 {
-    "bindings": [
+    "products": [
         @repeat: 3
             {
                 "type": "card"
-                "alias": "JP Morgan card",
+                "alias": "JPMorganChase card",
                 "masked_pan": "4***1234"
             }
         @end

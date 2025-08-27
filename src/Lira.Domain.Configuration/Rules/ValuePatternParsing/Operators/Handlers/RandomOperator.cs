@@ -1,7 +1,6 @@
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 using Lira.Domain.TextPart;
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
 

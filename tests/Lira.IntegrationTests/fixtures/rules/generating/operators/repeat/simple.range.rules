@@ -5,7 +5,7 @@ GET /generating/operators/repeat/simple/range
 ----- response
 
 {
-    "bindings": [
+    "products": [
         @repeat: [2 - 5]
             {
                 "type": "card"
