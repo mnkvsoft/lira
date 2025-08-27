@@ -15,7 +15,7 @@ public static class SectionFileParser
     public static async Task<FileSectionRoot> Parse(string ruleFile)
     {
         string text = await File.ReadAllTextAsync(ruleFile);
-        var lines =  TextCleaner.DeleteEmptiesAndComments(text);
+        var lines =  text.DeleteComments();
 
         if (lines.Count == 0)
             return FileSectionRoot.Empty;
@@ -35,7 +35,7 @@ public static class SectionFileParser
         }
 
         var sections = GetSections(lines.Skip(linesWithoutSections.Count).ToArray());
-        return new FileSectionRoot(linesWithoutSections.ToImmutableArray(), sections.ToImmutableList());
+        return new FileSectionRoot(linesWithoutSections.TrimEmptyLines().ToImmutableArray(), sections.ToImmutableList());
     }
 
     private static IImmutableList<FileSection> GetSections(IReadOnlyList<string> lines)
@@ -144,15 +144,20 @@ public static class SectionFileParser
                 }
             }
 
-            FileBlock? currentBlock = null;
+            FileBlockBuilder? currentBlock = null;
             foreach (var line in sectionBlocksLines)
             {
                 if (IsBlock(line, out var blockName, out var shortBlockValue))
                 {
-                    currentBlock = new FileBlock(blockName);
+                    if (currentBlock != null)
+                    {
+                        section.Blocks.AddOrThrowIfContains(currentBlock.Build());
+                    }
+
+                    currentBlock = new FileBlockBuilder(blockName);
                     if(shortBlockValue != null)
                         currentBlock.Add(shortBlockValue);
-                    section.Blocks.AddOrThrowIfContains(currentBlock);
+
                     continue;
                 }
 
@@ -160,6 +165,11 @@ public static class SectionFileParser
                     currentBlock.Add(line);
                 else
                     section.LinesWithoutBlock.Add(line);
+            }
+
+            if (currentBlock != null)
+            {
+                section.Blocks.AddOrThrowIfContains(currentBlock.Build());
             }
 
             if (childSectionsBlocksLines.Count > 0)

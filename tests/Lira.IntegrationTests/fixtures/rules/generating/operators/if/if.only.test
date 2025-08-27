@@ -30,5 +30,6 @@ GET /generating/operators/if/only?with-accounts=0
 ~ body
 {
     "bindings": [
+        
     ]
 }

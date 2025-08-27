@@ -28,7 +28,7 @@ class TextPartsParser(OperatorParser operatorParser, TextPartsParserInternal par
         if (tokens.Any(x => x is Token.Operator))
             return new ObjectTextParts([new AddIndentsWrapper(result)], isString: true);
 
-        bool isString = result.Count is 0 or > 1;
+        bool isString = tokens.Count == 0 || tokens.Count > 1 || (tokens[0] is Token.StaticData sd && sd.Content[0] is PatternPart.Static);
         return new ObjectTextParts(result, isString);
     }
 

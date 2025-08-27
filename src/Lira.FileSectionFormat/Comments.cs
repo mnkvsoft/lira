@@ -10,12 +10,11 @@ internal static class Comments
         public const string MultiLineStart = "###";
         public const string MultiLineEnd = "###";
     }
-    
+
     public static string Delete(string text)
     {
         text = Delete(text, CommentChar.MultiLineStart, CommentChar.MultiLineEnd, isMultiline: true);
         text = Delete(text, CommentChar.SingleLine, "\n", isMultiline: false);
-        text = Delete(text, CommentChar.SingleLine, "\r\n", isMultiline: false);
 
         return text;
     }
@@ -25,9 +24,12 @@ internal static class Comments
         var result = new StringBuilder();
 
         int startCommentIndex = text.IndexOf(startComment, StringComparison.OrdinalIgnoreCase);
+
+        string? lastNotComment = null;
         while (startCommentIndex != -1)
         {
-            result.Append(text.Substring(0, startCommentIndex));
+            lastNotComment = text.Substring(0, startCommentIndex);
+            result.Append(lastNotComment);
             text = text.Substring(startCommentIndex + startComment.Length);
 
             int endCommentIndex = text.IndexOf(endComment, StringComparison.OrdinalIgnoreCase);
@@ -37,7 +39,23 @@ internal static class Comments
                 break;
             }
 
-            text = text.Substring(isMultiline ? endCommentIndex + endComment.Length : endCommentIndex);
+            int idx;
+            if (isMultiline)
+            {
+                idx = endCommentIndex + endComment.Length;
+            }
+            else
+            {
+                idx = endCommentIndex;
+            }
+
+            if (idx + 1 < text.Length && text[idx] == '\n')
+            {
+                if(lastNotComment.LastOrDefault() == '\n')
+                    idx++;
+            }
+
+            text = text.Substring(idx);
             startCommentIndex = text.IndexOf(startComment, StringComparison.OrdinalIgnoreCase);
         }
 

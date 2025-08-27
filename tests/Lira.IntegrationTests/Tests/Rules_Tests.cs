@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Diagnostics;
 using Moq;
 using Moq.Contrib.HttpClient;
