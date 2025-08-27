@@ -52,7 +52,7 @@ public class CustomSetFunction(IReadOnlyList<string> list) : IObjectTextPart, IM
     ReturnType IMatchFunctionTyped.ValueType => ReturnType.String;
     ReturnType IObjectTextPart.ReturnType => ReturnType.String;
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return list.Random();
     }

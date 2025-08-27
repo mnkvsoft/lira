@@ -41,19 +41,19 @@ static partial class ClassCodeCreator
                 {
                 }
 
-                public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext ctx)
+                public IEnumerable<dynamic?> Get(RuleExecutingContext ctx)
                 {
-                    yield return await GetInternal(ctx);
+                    yield return GetInternal(ctx);
                 }
 
-                private async ValueTask<dynamic?> GetInternal(RuleExecutingContext [context])
+                private dynamic? GetInternal(RuleExecutingContext [context])
                 {
                     var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
                     var __variablesWriter = GetVariablesWriter([context], readOnly: false);
 
                     [code]
 
-                    IAsyncEnumerable<dynamic?> [repeat](IObjectTextPart part, string separator = ",", int? count = null, int? from = null, int? to = null)
+                    IEnumerable<dynamic?> [repeat](IObjectTextPart part, string separator = ",", int? count = null, int? from = null, int? to = null)
                     {
                         int cnt;
                         if(count != null)

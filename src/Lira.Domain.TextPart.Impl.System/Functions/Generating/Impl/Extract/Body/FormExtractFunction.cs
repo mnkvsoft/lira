@@ -14,7 +14,7 @@ class FormExtractFunction : WithArgumentFunction<string>, IBodyExtractFunction, 
 
     public string? Extract(string? value) => BodyUtils.GetByForm(value, _formParamName);
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return Extract(context.RequestContext.RequestData.ReadBody());
     }

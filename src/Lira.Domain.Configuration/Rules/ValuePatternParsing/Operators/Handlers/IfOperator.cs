@@ -70,7 +70,7 @@ class IfHandler(TextPartsParserInternal parser, IfOperatorDefinition operatorDef
 
     class IfOperator(IReadOnlyCollection<(IPredicateFunction predicate, IReadOnlyCollection<IObjectTextPart> parts)> conditions, IReadOnlyCollection<IObjectTextPart>? elseParts) : OperatorPart
     {
-        public override async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+        public override IEnumerable<dynamic?> Get(RuleExecutingContext context)
         {
             foreach (var condition in conditions)
             {
@@ -78,7 +78,7 @@ class IfHandler(TextPartsParserInternal parser, IfOperatorDefinition operatorDef
                 {
                     foreach (var part in condition.parts)
                     {
-                        await foreach (var value in part.Get(context))
+                        foreach (var value in part.Get(context))
                         {
                             yield return value;
                         }
@@ -91,7 +91,7 @@ class IfHandler(TextPartsParserInternal parser, IfOperatorDefinition operatorDef
             {
                 foreach (var part in elseParts)
                 {
-                    await foreach (var value in part.Get(context))
+                    foreach (var value in part.Get(context))
                     {
                         yield return value;
                     }

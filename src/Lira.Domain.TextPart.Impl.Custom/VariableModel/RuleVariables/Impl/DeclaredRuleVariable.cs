@@ -8,5 +8,5 @@ public class DeclaredRuleVariable : RuleVariable
     {
         _parts = parts;
     }
-    protected override ValueTask<dynamic?> GetInitiatedValue(RuleExecutingContext ctx) => _parts.Generate(ctx);
+    protected override dynamic? GetInitiatedValue(RuleExecutingContext ctx) => _parts.Generate(ctx);
 }

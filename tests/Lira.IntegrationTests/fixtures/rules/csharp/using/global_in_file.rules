@@ -13,12 +13,14 @@ GET /csharp/using/global_in_file/{{
 
 }}
 
+----- action
+
+## using System.IO;
+
+$$page = "page not found";
+if(File.Exists("page"))
+   $$page = await File.ReadAllTextAsync("page");
+
 ----- response
 
-{{
-    ## using System.IO;
-    if(File.Exists("page"))
-        return await File.ReadAllTextAsync("page");
-
-    return "page not found";
-}}
+{{ $$page }}

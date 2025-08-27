@@ -34,7 +34,7 @@ class TextPartsParser(OperatorParser operatorParser, TextPartsParserInternal par
 
     class AddIndentsWrapper(List<IObjectTextPart> parts) : IObjectTextPart
     {
-        public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+        public IEnumerable<dynamic?> Get(RuleExecutingContext context)
         {
             int countIndent = 0;
             string? lastStr = null;
@@ -44,7 +44,7 @@ class TextPartsParser(OperatorParser operatorParser, TextPartsParserInternal par
                 if (part is OperatorPart)
                 {
                     bool isFirst = true;
-                    await foreach (var obj in part.Get(context))
+                    foreach (var obj in part.Get(context))
                     {
                         string? str = ObjectTextPartsExtensions.GetStringValue(obj);
 
@@ -68,7 +68,7 @@ class TextPartsParser(OperatorParser operatorParser, TextPartsParserInternal par
                 }
                 else
                 {
-                    await foreach (var obj in part.Get(context))
+                    foreach (var obj in part.Get(context))
                     {
                         string? str = ObjectTextPartsExtensions.GetStringValue(obj);
 

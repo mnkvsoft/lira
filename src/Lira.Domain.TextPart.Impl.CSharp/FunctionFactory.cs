@@ -312,8 +312,8 @@ class FunctionFactory : IFunctionFactoryCSharp
                 var type = declaredItemsProvider.Get(readItem.ItemName).ReturnType;
 
                 sbCodeWithLiraItems.Append(
-                    $"({(type == null || !type.NeedTyped ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
-                    $"\"{readItem.ItemName}\", {ContextParameterName})))");
+                    $"({(type == null || !type.NeedTyped ? "" : "(" + type.DotnetType.FullName + ")")}GetDeclaredPart(" +
+                    $"\"{readItem.ItemName}\", {ContextParameterName}))");
             }
             else if (token is CodeToken.WriteItem writeItem)
             {

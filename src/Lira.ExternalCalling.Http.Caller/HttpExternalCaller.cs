@@ -32,17 +32,17 @@ public class HttpAction : IAction
     {
         var client = _httpClientFactory.CreateClient(HttpClientName);
 
-        var req = await CreateRequest(context);
+        var req = CreateRequest(context);
 
         await client.SendAsync(req);
     }
 
-    private async Task<HttpRequestMessage> CreateRequest(RuleExecutingContext context)
+    private HttpRequestMessage CreateRequest(RuleExecutingContext context)
     {
         var req = new HttpRequestMessage();
         req.Method = _httpMethod;
 
-        var url = await _requestUriPartsProvider.GetSingleString(context);
+        var url = _requestUriPartsProvider.GetSingleString(context);
 
         if (string.IsNullOrWhiteSpace(url))
             throw new InvalidOperationException("Url can't be empty");
@@ -54,7 +54,7 @@ public class HttpAction : IAction
         {
             foreach (var header in _headers)
             {
-                string value = await header.TextPartsProvider.GetSingleString(context);
+                string value = header.TextPartsProvider.GetSingleString(context);
 
                 if (header.Name == Header.ContentType)
                 {
@@ -69,7 +69,7 @@ public class HttpAction : IAction
         if (string.IsNullOrWhiteSpace(contentType))
             throw new Exception("Header Content-Type is required");
 
-        var content = _bodyParts == null ? "" : await _bodyParts.GetSingleString(context);
+        var content = _bodyParts == null ? "" : _bodyParts.GetSingleString(context);
         req.Content = new StringContent(content, Encoding.UTF8, contentType);
         return req;
     }

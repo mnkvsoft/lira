@@ -13,7 +13,7 @@ class AllExtractFunction : FunctionBase, IBodyExtractFunction, IObjectTextPart
         return value;
     }
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return context.RequestContext.RequestData.ReadBody();
     }

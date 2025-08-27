@@ -14,7 +14,7 @@ class JsonPathExtractFunction : WithArgumentFunction<string>, IBodyExtractFuncti
 
     public string? Extract(string? body) => BodyUtils.GetByJPath(body, _jpath);
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return Extract(context.RequestContext.RequestData.ReadBody());
     }

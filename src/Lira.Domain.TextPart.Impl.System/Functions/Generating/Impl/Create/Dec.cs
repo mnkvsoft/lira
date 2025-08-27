@@ -10,7 +10,7 @@ internal class Dec : WithRangeArgumentFunction<decimal>, IObjectTextPart
 
     private Interval<decimal> _interval = new(0.01m, 10_000);
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return Math.Round(Random.Shared.NextDecimal(_interval), 2);
     }

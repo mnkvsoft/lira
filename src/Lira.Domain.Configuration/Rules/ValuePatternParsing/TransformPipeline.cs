@@ -29,9 +29,9 @@ record TransformPipeline(IObjectTextPart ObjectTextPart) : IObjectTextPart
         _transformFunctions.Add(transform);
     }
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
-        dynamic? value = await ObjectTextPart.Generate(context);
+        dynamic? value = ObjectTextPart.Generate(context);
         yield return ExecutePipeline(value);
     }
 }

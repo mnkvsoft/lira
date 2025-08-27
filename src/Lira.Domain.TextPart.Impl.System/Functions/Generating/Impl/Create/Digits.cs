@@ -7,7 +7,7 @@ internal class Digits : WithArgumentFunction<int>, IObjectTextPart
 
     private int _length = 10;
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         for (int i = 0; i < _length; i++)
         {

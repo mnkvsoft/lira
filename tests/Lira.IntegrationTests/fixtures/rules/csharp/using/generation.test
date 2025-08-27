@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /csharp/using/generation
+GET /csharp/using/generation?flag=none
 
 ----- expected
 

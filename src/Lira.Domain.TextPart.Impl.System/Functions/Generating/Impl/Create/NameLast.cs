@@ -7,7 +7,7 @@ internal class NameLast : FunctionBase, IObjectTextPart
 {
     public override string Name => "name.last";
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return Next();
     }

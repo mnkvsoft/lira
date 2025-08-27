@@ -7,7 +7,7 @@ internal class Path : WithArgumentFunction<int>, IObjectTextPart
     public override bool ArgumentIsRequired => true;
     private int _index;
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return context.RequestContext.RequestData.GetPath(_index);
     }

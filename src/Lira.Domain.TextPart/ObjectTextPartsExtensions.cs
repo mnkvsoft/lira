@@ -5,7 +5,7 @@ namespace Lira.Domain.TextPart;
 
 public static class ObjectTextPartsExtensions
 {
-    public static async ValueTask<dynamic?> Generate(this IReadOnlyCollection<IObjectTextPart> parts,
+    public static dynamic? Generate(this IReadOnlyCollection<IObjectTextPart> parts,
         RuleExecutingContext context)
     {
         int counter = 0;
@@ -14,7 +14,7 @@ public static class ObjectTextPartsExtensions
 
         foreach (var part in parts)
         {
-            await foreach (var obj in part.Get(context))
+            foreach (var obj in part.Get(context))
             {
                 if (counter == 0)
                 {
@@ -38,13 +38,13 @@ public static class ObjectTextPartsExtensions
         return sb?.ToString() ?? firstObj;
     }
 
-    public static async ValueTask<dynamic?> Generate(this IObjectTextPart part, RuleExecutingContext context)
+    public static dynamic? Generate(this IObjectTextPart part, RuleExecutingContext context)
     {
         int counter = 0;
         StringBuilder? sb = null;
         dynamic? firstObj = null;
 
-        await foreach (var obj in part.Get(context))
+        foreach (var obj in part.Get(context))
         {
             if (counter == 0)
             {
@@ -67,12 +67,12 @@ public static class ObjectTextPartsExtensions
         return sb?.ToString() ?? firstObj;
     }
 
-    public static async IAsyncEnumerable<dynamic?> GetAllObjects(this IEnumerable<IObjectTextPart> parts,
+    public static IEnumerable<dynamic?> GetAllObjects(this IEnumerable<IObjectTextPart> parts,
         RuleExecutingContext context)
     {
         foreach (var part in parts)
         {
-            await foreach (var obj in part.Get(context))
+            foreach (var obj in part.Get(context))
             {
                 yield return obj;
             }
@@ -86,9 +86,9 @@ public static class ObjectTextPartsExtensions
 
     private record TextPartsAdapter(IObjectTextPart ObjectTextPart) : ITextParts
     {
-        public async IAsyncEnumerable<string> Get(RuleExecutingContext context)
+        public IEnumerable<string> Get(RuleExecutingContext context)
         {
-            await foreach (var objPart in ObjectTextPart.Get(context))
+            foreach (var objPart in ObjectTextPart.Get(context))
             {
                 yield return GetStringValue(objPart);
             }

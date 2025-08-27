@@ -6,5 +6,5 @@ public class RuntimeRuleVariable : RuleVariable
     {
     }
 
-    protected override ValueTask<dynamic?> GetInitiatedValue(RuleExecutingContext ctx) => throw new InvalidOperationException($"Attempt to read from uninitialized variable '{Name}'");
+    protected override dynamic GetInitiatedValue(RuleExecutingContext ctx) => throw new InvalidOperationException($"Attempt to read from uninitialized variable '{Name}'");
 }

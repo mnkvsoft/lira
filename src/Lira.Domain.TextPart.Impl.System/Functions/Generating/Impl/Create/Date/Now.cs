@@ -4,7 +4,7 @@ internal class Now : FunctionBase, IObjectTextPart
 {
     public override string Name => "now";
     public ReturnType ReturnType => ReturnType.Date;
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return DateTime.Now;
     }

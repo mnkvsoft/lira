@@ -32,10 +32,10 @@ class RandomHandler(TextPartsParserInternal parser, RandomOperatorDefinition def
 
     class RandomOperator(IReadOnlyList<IReadOnlyCollection<IObjectTextPart>> items) : OperatorPart
     {
-        public override async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+        public override IEnumerable<dynamic?> Get(RuleExecutingContext context)
         {
             var randomItems = items.Random();
-            await foreach (var obj in randomItems.GetAllObjects(context))
+            foreach (var obj in randomItems.GetAllObjects(context))
             {
                 yield return obj;
             }

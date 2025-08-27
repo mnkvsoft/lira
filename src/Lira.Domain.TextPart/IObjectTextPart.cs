@@ -2,15 +2,15 @@ namespace Lira.Domain.TextPart;
 
 public interface IObjectTextPart
 {
-    IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context);
+    IEnumerable<dynamic?> Get(RuleExecutingContext context);
     ReturnType? ReturnType { get; }
 }
 
 public record StaticPart(string Value) : IObjectTextPart
 {
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
-        yield return await ValueTask.FromResult(Value);
+        yield return Value;
     }
     public ReturnType ReturnType => ReturnType.String;
 }

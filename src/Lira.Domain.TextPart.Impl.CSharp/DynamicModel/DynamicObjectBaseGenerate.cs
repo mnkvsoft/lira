@@ -16,11 +16,11 @@ public abstract class DynamicObjectBaseGenerate : DynamicObjectWithDeclaredParts
         return GetRange(rangeName).NextValue();
     }
 
-    protected async IAsyncEnumerable<dynamic?> Repeat(RuleExecutingContext context, IObjectTextPart part, string separator, int count)
+    protected IEnumerable<dynamic?> Repeat(RuleExecutingContext context, IObjectTextPart part, string separator, int count)
     {
         for (var i = 0; i < count; i++)
         {
-            await foreach (var obj in part.Get(context))
+            foreach (var obj in part.Get(context))
             {
                 if(i > 0)
                     yield return separator;

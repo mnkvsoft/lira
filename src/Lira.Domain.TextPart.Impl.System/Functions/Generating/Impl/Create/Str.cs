@@ -9,7 +9,7 @@ internal class Str : WithArgumentFunction<int>, IObjectTextPart
 
     private int _length = 20;
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return GetRandomString(_length);
     }

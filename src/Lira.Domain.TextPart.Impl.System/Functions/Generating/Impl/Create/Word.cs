@@ -6,7 +6,7 @@ internal class Word : FunctionBase, IObjectTextPart
 {
     public override string Name => "word";
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return Next();
     }

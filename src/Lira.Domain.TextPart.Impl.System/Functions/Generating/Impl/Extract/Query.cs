@@ -8,7 +8,7 @@ internal class Query : WithArgumentFunction<string>, IObjectTextPart
 
     private string _queryParamName = "";
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return context.RequestContext.RequestData.GetQueryParam(_queryParamName);
     }

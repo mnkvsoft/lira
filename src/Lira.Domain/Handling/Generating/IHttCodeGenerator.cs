@@ -2,21 +2,21 @@ namespace Lira.Domain.Handling.Generating;
 
 public interface IHttCodeGenerator
 {
-    Task<int> Generate(RuleExecutingContext context);
+    int Generate(RuleExecutingContext context);
 }
 
 public record StaticHttCodeGenerator(int Code) : IHttCodeGenerator
 {
     public static readonly StaticHttCodeGenerator Code200 = new(200);
 
-    public Task<int> Generate(RuleExecutingContext context) => Task.FromResult(Code);
+    public int Generate(RuleExecutingContext context) => Code;
 }
 
 public record DynamicHttCodeGenerator(TextPartsProvider PartsProvider) : IHttCodeGenerator
 {
-    public async Task<int> Generate(RuleExecutingContext context)
+    public int Generate(RuleExecutingContext context)
     {
-        string strCode = await PartsProvider.GetSingleString(context);
+        string strCode = PartsProvider.GetSingleString(context);
         return strCode.ToHttpCode();
     }
 }

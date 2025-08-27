@@ -9,10 +9,10 @@ internal class RandomCustom : WithArgumentFunction<string[]>, IObjectTextPart, I
 
     public override bool ArgumentIsRequired => true;
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         var part = _parts.Random();
-        await foreach (var value in part.Get(context))
+        foreach (var value in part.Get(context))
         {
             yield return value;
         }

@@ -53,7 +53,7 @@ class RepeatHandler(TextPartsParserInternal parser, RepeatOperatorDefinition def
 
     class RepeatOperator(IReadOnlyCollection<IObjectTextPart> body, Func<int> getCount) : OperatorPart
     {
-        public override async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+        public override IEnumerable<dynamic?> Get(RuleExecutingContext context)
         {
             var count = getCount();
             for (int i = 0; i < count; i++)
@@ -62,7 +62,7 @@ class RepeatHandler(TextPartsParserInternal parser, RepeatOperatorDefinition def
                     // todo: use either the value passed by the user or try to calculate it based on the Content-Type header
                     yield return ",\n";
 
-                await foreach (var obj in body.GetAllObjects(context))
+                foreach (var obj in body.GetAllObjects(context))
                 {
                     yield return obj;
                 }

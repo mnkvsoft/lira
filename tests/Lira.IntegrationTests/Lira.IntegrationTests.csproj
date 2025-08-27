@@ -387,10 +387,10 @@
     <None Update="fixtures\rules\variables\short_declaration\generation.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\variables\local\from.file.rules">
+    <None Update="fixtures\rules\variables\local\1.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\variables\local\from.file.test">
+    <None Update="fixtures\rules\variables\local\1.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\variables\local\local_variable.declare">
@@ -432,12 +432,6 @@
     <None Update="fixtures\debug\example.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\generating\function\example.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\function\example.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="fixtures\rules\generating\operators\nested.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -454,6 +448,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\operators\if\if.only.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\operators\repeat\simple.exact_count.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\operators\repeat\simple.exact_count.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -1518,12 +1518,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\fault\fault.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\repeat\count.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\repeat\count.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

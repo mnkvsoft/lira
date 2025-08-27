@@ -14,7 +14,7 @@ class XPathExtractFunction : WithArgumentFunction<string>, IBodyExtractFunction,
 
     public string? Extract(string? body) => BodyUtils.GetByXPath(body, _xpath);
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return Extract(context.RequestContext.RequestData.ReadBody());
     }

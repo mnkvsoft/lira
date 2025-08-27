@@ -26,12 +26,12 @@ public class LocalVariable : Variable
 
     public static bool IsValidName(string name) => CustomItemName.IsValidName(Prefix, name);
 
-    private Task<dynamic?> GetValue(RuleExecutingContext ctx)
+    private dynamic? GetValue(RuleExecutingContext ctx)
     {
         var values = GetVariableValues(ctx);
 
         if (values.TryGetValue(_id, out var value))
-            return Task.FromResult<dynamic?>(ReferenceEquals(value, NullValue) ? null : value);
+            return ReferenceEquals(value, NullValue) ? null : value;
 
         throw new InvalidOperationException($"Attempt to read from uninitialized variable '{Name}'");
     }
@@ -69,7 +69,7 @@ public class LocalVariable : Variable
         return ctx.Items.GetOrCreate(key: typeof(LocalVariable), () => new Dictionary<int, dynamic?>());
     }
 
-    public override async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public override IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return GetValue(context);
     }

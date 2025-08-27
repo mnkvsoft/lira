@@ -4,7 +4,7 @@ internal class Name_ : FunctionBase, IObjectTextPart
 {
     public override string Name => "name";
 
-    public async IAsyncEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         yield return NameFirst.Next();
         yield return " ";

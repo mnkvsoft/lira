@@ -12,12 +12,12 @@ public class HeadersGenerator
         _headers = headers;
     }
 
-    internal async Task<IReadOnlyCollection<Header>> Create(RuleExecutingContext context)
+    internal IReadOnlyCollection<Header> Create(RuleExecutingContext context)
     {
         var result = new List<Header>();
         foreach (var header in _headers)
         {
-            var value = await header.TextPartsProvider.GetSingleString(context);
+            var value = header.TextPartsProvider.GetSingleString(context);
             result.Add(new Header(header.Name, value));
         }
 
