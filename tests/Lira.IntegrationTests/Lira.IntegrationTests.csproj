@@ -1554,6 +1554,7 @@
 
   <ItemGroup>
     <Folder Include="fixtures\rules\action\" />
+    <Folder Include="fixtures\rules\generating\operators\foreach\" />
   </ItemGroup>
 
 </Project>
