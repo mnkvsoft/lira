@@ -1,0 +1,32 @@
+-------------------- rule
+
+GET /generating/types/json/remove
+
+----- declare
+
+#person:json =
+{
+  "name": "John",
+  "age": 30,
+  "address": {
+    "street": "123 Main St"
+  },
+  "phones": [
+    { "type": "home", "number": "555-1234" },
+    { "type": "work", "number": "555-5678" }
+  ]
+}
+
+----- response
+
+~ code
+200
+
+~ body
+{{
+     #person
+        .remove("$.name")
+        .remove("$.address")
+        .remove("$.phones[0]")
+        .remove("$.phones[0].number")
+}}

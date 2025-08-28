@@ -426,10 +426,10 @@
     <None Update="fixtures\rules\generating\function\random.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\debug\example.test">
+    <None Update="fixtures\rules\generating\types\json\remove.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\debug\example.rules">
+    <None Update="fixtures\rules\generating\types\json\remove.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\operators\nested.test">
