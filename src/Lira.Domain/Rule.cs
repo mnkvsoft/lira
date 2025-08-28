@@ -27,7 +27,7 @@ public class Rule(
         foreach (var handler in handlers)
         {
             if(handler.GetDelay != null)
-                await Task.Delay(await handler.GetDelay(httpContextData.RuleExecutingContext));
+                await Task.Delay(handler.GetDelay(httpContextData.RuleExecutingContext));
 
             await handler.Value.Handle(httpContextData);
         }

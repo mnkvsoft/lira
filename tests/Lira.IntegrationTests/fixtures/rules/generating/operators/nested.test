@@ -1,0 +1,20 @@
+-------------------- case
+
+GET /generating/operators/nested
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "vehicle": [
+        {
+            "type": "car"
+        },
+        {
+            "type": "car"
+        }
+    ]
+}

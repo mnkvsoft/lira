@@ -1,0 +1,79 @@
+-------------------- case
+
+GET /generating/operators/if/simple_syntax?with-accounts=1&with-deposit=1&with-card=1
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "products": [
+        {
+            "type": "account"
+            "alias": "head",
+            "number": "08895519584330798354"
+        }
+    ]
+}
+
+-------------------- case
+
+GET /generating/operators/if/if_else_if_else?with-accounts=0&with-deposit=1&with-card=1
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "products": [
+        {
+            "type": "deposit"
+            "alias": "hand",
+            "number": "08895519584330798355"
+        }
+    ]
+}
+
+-------------------- case
+
+GET /generating/operators/if/if_else_if_else?with-accounts=0&with-deposit=0&with-card=1
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "products": [
+        {
+            "type": "card"
+            "alias": "JPMorganChase card",
+            "masked_pan": "4***1234"
+        }
+    ]
+}
+
+-------------------- case
+
+GET /generating/operators/if/if_else_if_else
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "products": [
+        {
+            "type": "brokerage_account"
+            "alias": "sp500",
+            "number": "08895519584330798359"
+        }
+    ]
+}

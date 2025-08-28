@@ -14,11 +14,11 @@ public abstract record ResponseGenerationHandler : IHandler
             var context = httpContextData.RuleExecutingContext;
             var response = httpContextData.Response;
 
-            response.StatusCode = await CodeGenerator.Generate(httpContextData.RuleExecutingContext);
+            response.StatusCode = CodeGenerator.Generate(httpContextData.RuleExecutingContext);
 
             if (HeadersGenerator != null)
             {
-                foreach (var header in await HeadersGenerator.Create(context))
+                foreach (var header in HeadersGenerator.Create(context))
                 {
                     response.Headers.Add(header.Name, header.Value);
                 }
@@ -26,7 +26,7 @@ public abstract record ResponseGenerationHandler : IHandler
 
             if (BodyGenerator != null)
             {
-                foreach (string bodyPart in await BodyGenerator.Create(context))
+                foreach (string bodyPart in BodyGenerator.Create(context))
                 {
                     await response.WriteAsync(bodyPart);
                 }

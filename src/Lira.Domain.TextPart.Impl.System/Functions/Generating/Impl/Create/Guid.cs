@@ -4,6 +4,10 @@ internal class Guid : FunctionBase, IObjectTextPart
 {
     public override string Name => "guid";
 
-    public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(global::System.Guid.NewGuid());
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
+    {
+        yield return global::System.Guid.NewGuid();
+    }
+
     public ReturnType ReturnType => ReturnType.Guid;
 }

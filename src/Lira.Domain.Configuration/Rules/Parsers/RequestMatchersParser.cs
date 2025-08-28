@@ -232,7 +232,7 @@ class RequestMatchersParser
             if (!parts.Any(x => x is PatternPart.Static))
                 throw new Exception($"'{parts}' must contains one static part");
 
-            if (!parts.Any(x => x is PatternPart.Static))
+            if (!parts.Any(x => x is PatternPart.Dynamic))
                 throw new Exception($"'{parts}' must contains one dynamic part");
 
             if (parts[0] is PatternPart.Static @static)
@@ -245,7 +245,7 @@ class RequestMatchersParser
                     await CreateMatchFunctionWithSaveVariable(dyn.Value, context));
             }
 
-            if (parts[0] is PatternPart.Static dynamic)
+            if (parts[0] is PatternPart.Dynamic dynamic)
             {
                 return new TextPatternPart.Dynamic(
                     Start: null,

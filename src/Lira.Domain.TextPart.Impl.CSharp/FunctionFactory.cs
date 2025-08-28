@@ -83,7 +83,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         string classToCompile = ClassCodeCreator.CreateTransformFunction(
             className,
-            WrapToTryCatch(new Code(ForCompile: $"return {withoutUsings};", Source: code)),
+            WrapToTryCatch(new Code(ForCompile: $"return {withoutUsings};", Source: code.ToString())),
             ReservedVariable.Value,
             usings,
             GetNamespaces(),
@@ -93,6 +93,31 @@ class FunctionFactory : IFunctionFactoryCSharp
             assemblyPrefixName: prefix,
             classToCompile,
             className);
+
+        _compilationStatistic.AddTotalTime(sw.Elapsed);
+
+        return result;
+    }
+
+    public CreateFunctionResult<IPredicateFunction> TryCreatePredicateFunction(FunctionFactoryRuleContext ruleContext, string code)
+    {
+        var sw = Stopwatch.StartNew();
+
+        string prefix = "PredicateFunction";
+        string className = _namer.GetClassName(prefix, code);
+
+        string classToCompile = ClassCodeCreator.CreatePredicateFunction(
+            className,
+            WrapToTryCatch(new Code(ForCompile: $"return {code};", Source: code)),
+            ReservedVariable.Req,
+            GetNamespaces(),
+            GetUsingStatic());
+
+        var result = CreateFunctionResult<IPredicateFunction>(
+            assemblyPrefixName: prefix,
+            classToCompile,
+            className,
+            CreateDependenciesBase(ruleContext.DeclaredItemsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -111,7 +136,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         string classToCompile = ClassCodeCreator.CreateMatchFunction(
             className,
-            GetMethodBody(new Code(ForCompile: withoutUsings, Source: code)),
+            GetMethodBody(new Code(ForCompile: withoutUsings, Source: code.ToString())),
             ReservedVariable.Value,
             usings,
             GetNamespaces(),
@@ -138,7 +163,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         var (withoutUsings, usings) = PrepareCode(code, ruleContext);
         string classToCompile = ClassCodeCreator.CreateRequestMatcher(
             className,
-            GetMethodBody(new Code(ForCompile: withoutUsings, Source: code)),
+            GetMethodBody(new Code(ForCompile: withoutUsings, Source: code.ToString())),
             ReservedVariable.Req,
             usings,
             GetNamespaces(),
@@ -238,7 +263,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             className,
             GetMethodBody(new Code(
                 ForCompile: toCompile,
-                Source: code)),
+                Source: code.ToString())),
             ContextParameterName,
             ReservedVariable.Req,
             repeatFunctionName,
@@ -287,8 +312,8 @@ class FunctionFactory : IFunctionFactoryCSharp
                 var type = declaredItemsProvider.Get(readItem.ItemName).ReturnType;
 
                 sbCodeWithLiraItems.Append(
-                    $"({(type == null || !type.NeedTyped ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
-                    $"\"{readItem.ItemName}\", {ContextParameterName})))");
+                    $"({(type == null || !type.NeedTyped ? "" : "(" + type.DotnetType.FullName + ")")}GetDeclaredPart(" +
+                    $"\"{readItem.ItemName}\", {ContextParameterName}))");
             }
             else if (token is CodeToken.WriteItem writeItem)
             {
@@ -314,7 +339,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             className,
             WrapToTryCatch(new Code(
                 ForCompile: withoutUsings + ";",
-                Source: code)),
+                Source: code.ToString())),
             ContextParameterName,
             ReservedVariable.Req,
             usings,
@@ -378,7 +403,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         return (newCode.ToString(), usings);
     }
 
-    record Code(string ForCompile, CodeBlock Source);
+    record Code(string ForCompile, string Source);
 
     private static string GetMethodBody(Code code)
     {
@@ -403,7 +428,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private static string WrapToTryCatch(Code code)
     {
-        string escapedCode = code.Source.ToString()
+        string escapedCode = code.Source
             .Replace("\\", "\\\\")
             .Replace("\"", "\\\"")
             .Replace("\r\n", "\" + nl + \"")

@@ -1,0 +1,24 @@
+-------------------- case
+
+GET /generating/operators/if/multiline_condition?with-accounts=1&with-deposit=1
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "products": [
+        {
+            "type": "account"
+            "alias": "head",
+            "number": "08895519584330798354"
+        },
+        {
+            "type": "deposit"
+            "alias": "hand",
+            "number": "08895519584330798355"
+        }
+    ]
+}

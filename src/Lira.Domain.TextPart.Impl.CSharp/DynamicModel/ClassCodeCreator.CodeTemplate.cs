@@ -32,117 +32,140 @@ static partial class ClassCodeCreator
         public readonly static string IObjectTextPart =
             ImportNamespaces + Nl + Nl +
             Namespace + Nl + Nl +
-            @"
-public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
-{
-    ReturnType? IObjectTextPart.ReturnType => null;
+            """
+            public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
+            {
+                ReturnType? IObjectTextPart.ReturnType => null;
 
-    public [className](DependenciesBase dependencies) : base(dependencies)
-    {
-    }
+                public [className](DependenciesBase dependencies) : base(dependencies)
+                {
+                }
 
-    public async Task<dynamic?> Get(RuleExecutingContext [context])
-    {
-        var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
-        var __variablesWriter = GetVariablesWriter([context], readOnly: false);
+                public IEnumerable<dynamic?> Get(RuleExecutingContext ctx)
+                {
+                    yield return GetInternal(ctx);
+                }
 
-        [code]
+                private dynamic? GetInternal(RuleExecutingContext [context])
+                {
+                    var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
+                    var __variablesWriter = GetVariablesWriter([context], readOnly: false);
 
-        Task<string> [repeat](IObjectTextPart part, string separator = "","", int? count = null, int? from = null, int? to = null)
-        {
-            int cnt;
-            if(count != null)
-                cnt = count.Value;
-            else if(from != null)
-                cnt = Random.Shared.Next(from.Value, to.Value + 1);
-            else
-                cnt = Random.Shared.Next(3, 9);
-            return Repeat([context], part, separator, cnt);
-        }
-    }
-}";
+                    [code]
+
+                    IEnumerable<dynamic?> [repeat](IObjectTextPart part, string separator = ",", int? count = null, int? from = null, int? to = null)
+                    {
+                        int cnt;
+                        if(count != null)
+                            cnt = count.Value;
+                        else if(from != null)
+                            cnt = Random.Shared.Next(from.Value, to.Value + 1);
+                        else
+                            cnt = Random.Shared.Next(3, 9);
+                        return Repeat([context], part, separator, cnt);
+                    }
+                }
+            }
+            """;
 
         public readonly static string ITransformFunction =
             ImportNamespaces + Nl + Nl +
             Namespace + Nl + Nl +
-            @"
-public sealed class [className] : ITransformFunction
-{
-    ReturnType? ITransformFunction.ReturnType => null;
+            """
+            public sealed class [className] : ITransformFunction
+            {
+                ReturnType? ITransformFunction.ReturnType => null;
 
-    public dynamic? Transform(dynamic? [input])
-    {
-        [code]
-    }
-}
-";
+                public dynamic? Transform(dynamic? [input])
+                {
+                    [code]
+                }
+            }
+            """;
 
         public readonly static string IMatchFunction =
             ImportNamespaces + Nl + Nl +
             Namespace + Nl + Nl +
             "using Lira.Domain.Matching.Request;" + Nl +
-            @"
+            """
+            public sealed class [className] : DynamicObjectBaseMatch, IMatchFunctionTyped
+            {
+                public ReturnType? ValueType => null;
 
-public sealed class [className] : DynamicObjectBaseMatch, IMatchFunctionTyped
-{
-    public ReturnType? ValueType => null;
+                public [className](DependenciesBase dependencies) : base(dependencies)
+                {
+                }
 
-    public [className](DependenciesBase dependencies) : base(dependencies)
-    {
-    }
+                public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
+                public async Task<bool> IsMatch(RuleExecutingContext __ctx, string? [input])
+                {
+                    var __variablesWriter = GetVariablesWriter(__ctx, readOnly: false);
+                    [code]
+                }
+            }
+            """;
 
-    public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
-    public async Task<bool> IsMatch(RuleExecutingContext __ctx, string? [input])
-    {
-        var __variablesWriter = GetVariablesWriter(__ctx, readOnly: false);
-        [code]
-    }
-}
-";
+        public readonly static string IPredicateFunction =
+            ImportNamespaces + Nl + Nl +
+            Namespace + Nl + Nl +
+            "using Lira.Domain.Matching.Request;" + Nl +
+            """
+            public sealed class [className] : DynamicObjectWithDeclaredPartsBase, IPredicateFunction
+            {
+                public [className](DependenciesBase dependencies) : base(dependencies)
+                {
+                }
+
+                public bool IsMatch(RuleExecutingContext __ctx)
+                {
+                    var [externalRequestVariableName] = new RequestModel(__ctx.RequestContext.RequestData);
+                    [code]
+                }
+            }
+            """;
 
         public readonly static string IRequestMatcher =
             ImportNamespaces + Nl + Nl +
             Namespace + Nl + Nl +
             "using Lira.Domain.Matching.Request;" + Nl +
             "using System.Collections.Immutable;" + Nl +
-            @"
+            """
+            public sealed class [className] : DynamicObjectBaseRequestMatcher
+            {
+                public [className](DependenciesBase dependencies) : base(dependencies)
+                {
+                }
 
-public sealed class [className] : DynamicObjectBaseRequestMatcher
-{
-    public [className](DependenciesBase dependencies) : base(dependencies)
-    {
-    }
+                protected override async Task<bool> IsMatchInternal(RuleExecutingContext __ctx)
+                {
+                    var [externalRequestVariableName] = new RequestModel(__ctx.RequestContext.RequestData);
+                    var __variablesWriter = GetVariablesWriter(__ctx, readOnly: false);
 
-    protected override async Task<bool> IsMatchInternal(RuleExecutingContext __ctx)
-    {
-        var [externalRequestVariableName] = new RequestModel(__ctx.RequestContext.RequestData);
-        var __variablesWriter = GetVariablesWriter(__ctx, readOnly: false);
-
-        [code]
-    }
-}
-";
+                    [code]
+                }
+            }
+            """;
 
         public readonly static string IAction =
             ImportNamespaces + Nl + Nl +
             Namespace + Nl + Nl +
             "using Lira.Domain.Handling.Actions;" + Nl +
-            @"
+            """
 
-public sealed class [className] : DynamicObjectBaseAction, IAction
-{
-    public [className](DependenciesBase dependencies) : base(dependencies)
-    {
-    }
+            public sealed class [className] : DynamicObjectBaseAction, IAction
+            {
+                public [className](DependenciesBase dependencies) : base(dependencies)
+                {
+                }
 
-    public async Task Execute(RuleExecutingContext [context])
-    {
-        var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
-        var __variablesWriter = GetVariablesWriter([context], readOnly: false);
+                public async Task Execute(RuleExecutingContext [context])
+                {
+                    var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
+                    var __variablesWriter = GetVariablesWriter([context], readOnly: false);
 
-        [code]
-    }
-}
-";
+                    [code]
+                }
+            }
+            """;
     }
 }

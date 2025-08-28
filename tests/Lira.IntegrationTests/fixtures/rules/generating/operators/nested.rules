@@ -1,0 +1,26 @@
+-------------------- rule
+
+GET /generating/operators/nested
+
+----- response
+
+{
+    "vehicle": [
+        @repeat: 2
+            @random
+                @item
+                {
+                    "type": "car"
+                }
+                @item
+                {
+                    "type": "car"
+                }
+                @item
+                {
+                    "type": "car"
+                }
+            @end
+        @end
+    ]
+}

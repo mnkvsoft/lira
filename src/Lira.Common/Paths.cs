@@ -2,5 +2,6 @@ namespace Lira.Common;
 
 public static class Paths
 {
-    public static string GetTempSubPath(string subPath) => Path.Combine(Path.GetTempPath(), "lira", subPath);
+    public static readonly string GetTempPath = Path.Combine(Path.GetTempPath(), "lira");
+    public static string GetTempSubPath(string subPath) => Path.Combine(GetTempPath, subPath);
 }
