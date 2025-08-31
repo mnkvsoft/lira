@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/csharp/using_yield
+
+----- expected
+
+~ code
+200
+
+~ body
+1, 2, 3, 4

@@ -1,7 +1,10 @@
+- add log() method
+- git repository
+- fail container start if error in rule
 - delete unused peimage files immediately
 - function start with @
 - {{{ escaping
-- comment as @*
+- comment as @* @//
 - make dic-function
 - line structure for conditions
 - key for conditions

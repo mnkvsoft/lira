@@ -1,6 +1,4 @@
-﻿using Lira.Common;
-using Lira.Common.State;
-using Lira.Domain.TextPart;
+﻿using Lira.Common.State;
 
 namespace Lira.Domain.Configuration;
 

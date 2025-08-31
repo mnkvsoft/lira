@@ -45,4 +45,9 @@ public abstract class DeclaredItem : IObjectTextPart, IEquatable<DeclaredItem>
     {
         return Name.GetHashCode();
     }
+
+    public override string ToString()
+    {
+        return Name;
+    }
 }

@@ -30,6 +30,10 @@
       <Content Update="appsettings.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <Content Update="appsettings.Local.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <DependentUpon>appsettings.json</DependentUpon>
+      </Content>
     </ItemGroup>
 
 </Project>

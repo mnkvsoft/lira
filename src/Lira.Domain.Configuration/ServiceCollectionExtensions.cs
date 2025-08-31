@@ -9,9 +9,11 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
+using Lira.Domain.Configuration.RulesStorageStrategies;
 using Lira.Domain.DataModel;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.System;
+using Microsoft.Extensions.Configuration;
 
 namespace Lira.Domain.Configuration;
 
@@ -55,6 +57,11 @@ public static class ServiceCollectionExtensions
             .AddScoped<DeclaredItemDraftsParser>()
             .AddScoped<FileSectionDeclaredItemsParser>()
 
+            .AddSingleton<LocalDirectoryRulesStorageStrategy>()
+            .AddSingleton<GitRulesStorageStrategy>()
+
+            .AddSingleton<IRulesStorageStrategy>(RulesStorageFactory)
+
             .AddSingleton<ConfigurationLoader>()
             .AddSingleton<IConfigurationLoader>(provider => provider.GetRequiredService<ConfigurationLoader>())
             .AddSingleton<IStateRepository, StateRepository>()
@@ -72,5 +79,19 @@ public static class ServiceCollectionExtensions
 
             .AddTransient<RulesLoader>()
             .AddSingleton<IRulesProvider>(provider => provider.GetRequiredService<ConfigurationLoader>());
+    }
+
+    private static IRulesStorageStrategy RulesStorageFactory(IServiceProvider provider)
+    {
+        var config = provider.GetRequiredService<IConfiguration>();
+        var mode = config.GetValue<string>("RulesStorageMode") ?? "local";
+
+        if (mode.Equals("local", StringComparison.OrdinalIgnoreCase))
+            return provider.GetRequiredService<LocalDirectoryRulesStorageStrategy>();
+
+        if (mode.Equals("git", StringComparison.OrdinalIgnoreCase))
+            return provider.GetRequiredService<GitRulesStorageStrategy>();
+
+        throw new ArgumentException($"Unknown RulesStorageMode: {mode}");
     }
 }
