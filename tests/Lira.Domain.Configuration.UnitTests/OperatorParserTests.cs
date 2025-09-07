@@ -350,7 +350,6 @@ public class OperatorParserTests
         ));
     }
 
-
     [Test]
     public void Parse_IfOperator_WithElseConditions()
     {
@@ -419,7 +418,7 @@ public class OperatorParserTests
         var result = sut.Parse("@repeat()@end");
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
-            "<op name='repeat' pars='()'>" +
+            "<op name='repeat' pars=''>" +
             "</op>"
         ));
     }

@@ -311,7 +311,7 @@ class TokenParser
                     $"Unexpected character '{iterator.Current}' in operator name: {iterator.Peek()}");
         }
 
-        var maybeName = iterator.PopExcludeCurrent().GetStaticValue();
+        var maybeName = iterator.PopExcludeCurrent().GetSingleStaticValue();
 
         //  символ @ стоит в самом конце
         if (maybeName == "@")
@@ -355,7 +355,7 @@ class TokenParser
         }
     }
 
-    static OperatorParameters PopParametersAfterBrace(OperatorParametersType type, string name, PatternPartsIterator iterator, char valueEnd)
+    static OperatorParameters? PopParametersAfterBrace(OperatorParametersType type, string name, PatternPartsIterator iterator, char valueEnd)
     {
         int braces = 0;
 
@@ -367,10 +367,14 @@ class TokenParser
         {
             if (iterator.Current == valueEnd && braces == 0)
             {
-                var value = iterator.PopExcludeCurrent().GetStaticValue();
-
+                var parts = iterator.PopExcludeCurrent();
                 // убираем завершающий символ параметров
                 iterator.PopIncludeCurrent();
+
+                var value = parts.Count == 0 ? null : parts.GetSingleStaticValue();
+                if (string.IsNullOrWhiteSpace(value))
+                    return null;
+
                 return new OperatorParameters(type, value);
             }
 

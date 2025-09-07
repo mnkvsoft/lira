@@ -6,7 +6,11 @@ using Lira.Domain.TextPart;
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
 
 class RepeatOperatorDefinition()
-    : OperatorDefinition("repeat", ParametersMode.Maybe, withBody: true, allowedChildElements: null);
+    : OperatorDefinition(
+        "repeat",
+        ParametersMode.Maybe,
+        withBody: true,
+        allowedChildElements: null);
 
 class RepeatHandler(TextPartsParserInternal parser, RepeatOperatorDefinition definition) : IOperatorHandler
 {

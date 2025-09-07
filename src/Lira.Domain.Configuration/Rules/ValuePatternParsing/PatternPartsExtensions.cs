@@ -86,7 +86,7 @@ static class PatternPartsExtensions
         return dyn;
     }
 
-    public static string GetStaticValue(this PatternParts parts) => GetSingleStatic(parts).Value;
+    public static string GetSingleStaticValue(this PatternParts parts) => GetSingleStatic(parts).Value;
 
     private static PatternPart.Static GetSingleStatic(this PatternParts parts)
     {

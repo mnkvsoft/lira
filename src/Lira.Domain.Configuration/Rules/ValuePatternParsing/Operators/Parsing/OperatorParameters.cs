@@ -18,5 +18,8 @@ class OperatorParameters
         Type = type;
     }
 
-    public override string ToString() => Value;
+    public override string ToString()
+    {
+        return Type == OperatorParametersType.SingleLine ? $":{Value}\n" : $"({Value})";
+    }
 }

@@ -116,6 +116,7 @@ class PeImagesCache : IDisposable
                 return;
             }
 
+            // todo: clean immediately
             if (DateTime.UtcNow - _state.LastClean.Value > TimeSpan.FromDays(1))
             {
                 foreach (var notUsedFile in notUsed)
