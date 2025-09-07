@@ -12,11 +12,11 @@ internal class ExtLibsProvider
     private readonly ILogger<ExtLibsProvider> _logger;
     private readonly NugetLibsProvider _nugetLibsProvider;
 
-    public ExtLibsProvider(IConfiguration configuration, ILogger<ExtLibsProvider> logger, NugetLibsProvider nugetLibsProvider)
+    public ExtLibsProvider(IConfiguration configuration, IRulesPathProvider rulesPathProvider, ILogger<ExtLibsProvider> logger, NugetLibsProvider nugetLibsProvider)
     {
         _logger = logger;
         _nugetLibsProvider = nugetLibsProvider;
-        _libsPath = configuration.GetLibsPath() ?? configuration.GetRulesPath();
+        _libsPath = configuration.GetLibsPath() ?? rulesPathProvider.Path;
     }
 
     public async Task<IImmutableList<string>> GetLibsFiles(CancellationToken ct = default)

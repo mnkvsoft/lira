@@ -1,12 +1,23 @@
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
 using Lira.Common;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Lira.Domain.Configuration.RulesStorageStrategies;
 
-public class GitRulesStorageStrategy : IRulesStorageStrategy, IDisposable
+class GitConfig
+{
+    public required string? GitUsername { get; init; }
+    public required string? GitPassword { get; init; }
+
+    public required string GitRepository { get; init; }
+    public required string GitBranch { get; init; }
+    public required string GitRepositoryDirectory { get; init; } = string.Empty;
+    public int GitPollingIntervalSeconds { get; init; } = 60;
+}
+
+class GitRulesStorageStrategy : IRulesStorageStrategy, IDisposable
 {
     private readonly string _repositoryUrl;
     private readonly string _localPath;
@@ -18,23 +29,29 @@ public class GitRulesStorageStrategy : IRulesStorageStrategy, IDisposable
     private readonly ILogger<GitRulesStorageStrategy> _logger;
 
     public GitRulesStorageStrategy(
-        IConfiguration configuration,
+        IOptions<GitConfig> options,
         ILogger<GitRulesStorageStrategy> logger)
     {
-        _repositoryUrl = configuration.GetValue<string>("GitRepository") ??
-                         throw new ArgumentException("GitRepository cannot be null.");
-        _branchName = configuration.GetValue<string>("GitBranch") ??
-                      throw new ArgumentException("GitBranch cannot be null.");
-        _pollingInterval = TimeSpan.FromSeconds(configuration.GetValue<int?>("GitPollingIntervalSeconds") ?? 60);
+        var config = options.Value;
+        _repositoryUrl = config.GitRepository;
+        _branchName = config.GitBranch;
+        _pollingInterval = TimeSpan.FromSeconds(config.GitPollingIntervalSeconds);
 
         var localPath = Paths.GetTempSubPath("git_repo");
         _localPath = localPath;
 
         _logger = logger;
-        _credentialsHandler = null;
+        if (!string.IsNullOrEmpty(config.GitPassword) || !string.IsNullOrEmpty(config.GitUsername))
+        {
+            var credentials = new UsernamePasswordCredentials
+            {
+                Username = config.GitUsername,
+                Password = config.GitPassword
+            };
+            _credentialsHandler = (_, _, _) => credentials;
+        }
 
-        var repositoryDirectory = configuration.GetValue<string>("GitRepositoryDirectory") ?? string.Empty;
-        Path = System.IO.Path.Combine(localPath, repositoryDirectory);
+        Path = System.IO.Path.Combine(localPath, config.GitRepositoryDirectory);
     }
 
     public string Path { get; }
@@ -84,7 +101,7 @@ public class GitRulesStorageStrategy : IRulesStorageStrategy, IDisposable
                 switch (result)
                 {
                     case UpdateRepositoryResult.ChangesExists:
-                        _logger.LogInformation($"Git repository was changed, changes is loaded. Commit: {GetCurrentCommitInfo()}");
+                        _logger.LogInformation($"Git repository was changed, changes is loaded. {GetCurrentCommitInfo()}");
                         await OnChanges();
                         break;
                     case UpdateRepositoryResult.PushForce:
@@ -182,7 +199,7 @@ public class GitRulesStorageStrategy : IRulesStorageStrategy, IDisposable
         using var repo = new Repository(_localPath);
         var localBranch = repo.Branches[_branchName];
         var tip = localBranch.Tip;
-        return $"{tip.Sha} ({tip.MessageShort})";
+        return $"Commit: {tip.Sha}, Message: {tip.MessageShort}";
     }
 
     private void ReCreateRepository(string localPath)
@@ -197,7 +214,7 @@ public class GitRulesStorageStrategy : IRulesStorageStrategy, IDisposable
         Directory.CreateDirectory(localPath);
 
         CloneRepository(localPath);
-        _logger.LogInformation($"Repository was cloned. Commit: {GetCurrentCommitInfo()}");
+        _logger.LogInformation($"Repository was cloned. {GetCurrentCommitInfo()}");
     }
 
     static void RemoveReadOnlyAttributeRecursive(string directoryPath)

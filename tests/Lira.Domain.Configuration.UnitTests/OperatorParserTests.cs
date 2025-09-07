@@ -1,4 +1,5 @@
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lira.Domain.Configuration.UnitTests;
@@ -426,7 +427,7 @@ public class OperatorParserTests
     OperatorParser GetSut()
     {
         var services = new ServiceCollection();
-        services.AddDomainConfiguration();
+        services.AddDomainConfiguration(new ConfigurationRoot(new List<IConfigurationProvider>()));
         var provider = services.BuildServiceProvider();
         return provider.GetRequiredService<OperatorParser>();
     }

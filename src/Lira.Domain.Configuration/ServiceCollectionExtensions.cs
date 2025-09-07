@@ -11,6 +11,7 @@ using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 using Lira.Domain.Configuration.RulesStorageStrategies;
 using Lira.Domain.DataModel;
+using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.System;
 using Microsoft.Extensions.Configuration;
@@ -19,9 +20,11 @@ namespace Lira.Domain.Configuration;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddDomainConfiguration(this IServiceCollection services)
+    public static IServiceCollection AddDomainConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
         services.TryAddTransient<IMemoryCache, MemoryCache>();
+
+        services.Configure<GitConfig>(configuration);
 
         return services
             .AddFunctionsSystem()
@@ -61,6 +64,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<GitRulesStorageStrategy>()
 
             .AddSingleton<IRulesStorageStrategy>(RulesStorageFactory)
+            .AddSingleton<IRulesPathProvider>(p => p.GetRequiredService<IRulesStorageStrategy>())
 
             .AddSingleton<ConfigurationLoader>()
             .AddSingleton<IConfigurationLoader>(provider => provider.GetRequiredService<ConfigurationLoader>())

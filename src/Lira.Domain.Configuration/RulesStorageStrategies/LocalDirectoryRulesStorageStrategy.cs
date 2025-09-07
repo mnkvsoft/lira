@@ -1,4 +1,3 @@
-using Lira.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
@@ -18,12 +17,22 @@ class LocalDirectoryRulesStorageStrategy : IRulesStorageStrategy, IDisposable
     public LocalDirectoryRulesStorageStrategy(IConfiguration configuration, ILogger<LocalDirectoryRulesStorageStrategy> logger)
     {
         _logger = logger;
-        var path = configuration.GetRulesPath();
+        var path = GetRulesPath(configuration);
         Path = path;
 
         _fileProvider = new PhysicalFileProvider(path);
         _fileProvider.UsePollingFileWatcher = true;
         _fileProvider.UseActivePolling = true;
+    }
+
+    static string GetRulesPath(IConfiguration configuration)
+    {
+        var rulesPath = configuration.GetValue<string>("RulesPath");
+
+        if (string.IsNullOrWhiteSpace(rulesPath))
+            throw new InvalidOperationException("RulesPath is empty");
+
+        return rulesPath;
     }
 
     public void InitIfNeed()

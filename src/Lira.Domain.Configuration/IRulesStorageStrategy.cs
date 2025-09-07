@@ -1,8 +1,9 @@
+using Lira.Domain.TextPart;
+
 namespace Lira.Domain.Configuration;
 
-interface IRulesStorageStrategy
+interface IRulesStorageStrategy : IRulesPathProvider
 {
-    string Path { get; }
     event Func<Task> OnChanged;
     void InitIfNeed();
 }
