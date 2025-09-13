@@ -26,7 +26,9 @@ public class StringIterator
     }
 
     public char Current => _source[_currentIndex];
-    private char Next => _source[NextIndex];
+    public char? Previous => _currentIndex == 0 ? null : _source[_currentIndex - 1];
+    private char? Next => HasNext() ? _source[NextIndex] : null;
+
     private int NextIndex
     {
         get
@@ -38,8 +40,9 @@ public class StringIterator
         }
     }
 
-    public bool HasNext() => _source.Length > 0 && _currentIndex <= _lastIndex;
+    public bool HasNext() => _source.Length > 0 && _currentIndex < _lastIndex;
 
+    public bool MoveTo(char currentChar) => MoveTo(currentPredicate: c => c == currentChar);
     public bool MoveTo(Func<char, bool>? currentPredicate = null, Func<char, bool>? nextPredicate = null, Func<char, bool>? available = null)
     {
         if(currentPredicate == null && nextPredicate == null)
@@ -113,7 +116,7 @@ public class StringIterator
         if (!HasNext())
             return false;
 
-        return predicate(Next);
+        return predicate((char)Next!);
     }
 
     /// <summary>

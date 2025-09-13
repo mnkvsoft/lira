@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,10 @@ public class OperatorParserTests
     [Test]
     public void StaticText()
     {
+        string s = "\\\"";
+
+        var a = Regex.Unescape(s);
+
         var sut = GetSut();
         var result = sut.Parse("Hello World");
         string xmlView = result.GetXmlView();

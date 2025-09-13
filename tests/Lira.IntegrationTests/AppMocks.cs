@@ -27,12 +27,6 @@ public class AppMocks
 
     public IServiceCollection Configure(IServiceCollection services)
     {
-        var claims = new List<Claim>
-        {
-            new("phone", "9161112233"),
-        };
-
-
         var mock = new Mock<ExternalCalling.Http.Configuration.IHttpMessageHandlerFactory>();
         mock
             .Setup(x => x.Create())

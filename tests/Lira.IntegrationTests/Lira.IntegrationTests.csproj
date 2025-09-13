@@ -492,6 +492,9 @@
     <None Update="fixtures\rules\generating\csharp\using_yield.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\generating\operators\repeat\full.range.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -1560,7 +1563,6 @@
 
   <ItemGroup>
     <Folder Include="fixtures\rules\action\" />
-    <Folder Include="fixtures\rules\generating\operators\foreach\" />
   </ItemGroup>
 
 </Project>
