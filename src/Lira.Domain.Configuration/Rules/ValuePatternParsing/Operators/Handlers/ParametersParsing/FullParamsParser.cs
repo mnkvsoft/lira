@@ -174,7 +174,7 @@ static class FullParamsParser
         {
             var value = iterator.MoveToNextParameterOrEnd();
 
-            if (!Int64.TryParse(value, out var intValue))
+            if (!int.TryParse(value, out var intValue))
             {
                 fail = new ParamsParseResult.Fail($"Parameter '{definition.Name}' is decimal but have invalid value: '{value}'");
                 return false;

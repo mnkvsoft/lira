@@ -20,6 +20,7 @@ public class TestApplicationFactory : WebApplicationFactory<Startup>
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseEnvironment("Testing");
         var settings = new Dictionary<string, string?>
         {
             {"RulesPath", _rulesPath},
@@ -27,6 +28,7 @@ public class TestApplicationFactory : WebApplicationFactory<Startup>
 
         var cfgBuilder = new ConfigurationBuilder();
         cfgBuilder.AddInMemoryCollection(settings);
+        cfgBuilder.AddJsonFile("appsettings.Testing.json", optional: false);
         IConfiguration cfg = cfgBuilder.Build();
 
         builder.UseConfiguration(cfg);

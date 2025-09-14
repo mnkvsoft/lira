@@ -6,7 +6,7 @@ GET /generating/operators/nested
 
 {
     "vehicle": [
-        @repeat: 2
+        @repeat(count: 2, separator: ",\n")
             @random
                 @item
                 {

@@ -54,7 +54,7 @@ internal record MethodParameter(MethodParameterDefinition Definition)
         }
     }
 
-    public record Int(MethodParameterDefinition Definition, long Value) : MethodParameter(Definition)
+    public record Int(MethodParameterDefinition Definition, int Value) : MethodParameter(Definition)
     {
         public override string ToString()
         {
