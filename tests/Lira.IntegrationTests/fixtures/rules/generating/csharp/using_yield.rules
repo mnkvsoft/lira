@@ -1,0 +1,20 @@
+-------------------- rule
+
+GET /generating/csharp/using_yield
+
+----- response
+
+~ code
+200
+
+~ body
+{{
+    var arr = new List<int> {1, 2, 3, 4};
+    foreach(var elem in arr)
+    {
+        if(arr.IndexOf(elem) > 0)
+            yield return ", ";
+
+        yield return elem;
+    }
+}}

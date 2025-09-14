@@ -1,12 +1,9 @@
 using System.Collections.Immutable;
-using System.Reflection;
 using Lira.Common;
-using Lira.Configuration;
 using Lira.Domain.DataModel;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.ExternalLibsLoading;
 using Lira.Domain.TextPart.Types;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
@@ -21,7 +18,7 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
     private readonly string _rulesPath;
 
     public FunctionFactoryCSharpFactory(
-        IConfiguration configuration,
+        IRulesPathProvider rulesPathProvider,
         FunctionFactory.Dependencies functionFactoryFunctionFactoryDependencies,
         CsFilesCompiler.Dependencies csFilesCompilerDependencies,
         ExtLibsProvider extLibsProvider,
@@ -31,7 +28,7 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
         _assembliesLoader = assembliesLoader;
         _functionFactoryDependencies = functionFactoryFunctionFactoryDependencies;
         _csFilesCompilerDependencies = csFilesCompilerDependencies;
-        _rulesPath = configuration.GetRulesPath();
+        _rulesPath = rulesPathProvider.Path;
     }
 
     public FunctionFactoryUsingContext CreateRulesUsingContext(IReadOnlyCollection<string> fileLines)

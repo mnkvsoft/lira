@@ -41,12 +41,7 @@ static partial class ClassCodeCreator
                 {
                 }
 
-                public IEnumerable<dynamic?> Get(RuleExecutingContext ctx)
-                {
-                    yield return GetInternal(ctx);
-                }
-
-                private dynamic? GetInternal(RuleExecutingContext [context])
+                public IEnumerable<dynamic?> Get(RuleExecutingContext [context])
                 {
                     var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
                     var __variablesWriter = GetVariablesWriter([context], readOnly: false);

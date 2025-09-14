@@ -29,11 +29,11 @@ internal class NugetLibsProvider
 
     private readonly Dictionary<string, IReadOnlyCollection<string>> _packagesConfigToLibsCache = new();
 
-    public NugetLibsProvider(IConfiguration configuration, ILogger<NugetLibsProvider> logger)
+    public NugetLibsProvider(IConfiguration configuration, IRulesPathProvider rulesPathProvider, ILogger<NugetLibsProvider> logger)
     {
         _logger = logger;
         _nugetLogger = NullLogger.Instance;
-        _rulesPath = configuration.GetRulesPath();
+        _rulesPath = rulesPathProvider.Path;
 
         // Load machine and user settings
 

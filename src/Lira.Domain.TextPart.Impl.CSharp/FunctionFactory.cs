@@ -7,7 +7,6 @@ using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.DataModel;
 using Lira.Domain.Handling.Actions;
-using Lira.Domain.TextPart.Impl.Custom;
 
 // ReSharper disable RedundantExplicitArrayCreation
 
@@ -250,14 +249,25 @@ class FunctionFactory : IFunctionFactoryCSharp
         IReadOnlyCollection<string> usings;
         if (sourceCode.StartsWith(repeatFunctionName))
         {
-            toCompile = ReplaceVariableNamesForRepeat(code)
-                .Replace(repeatFunctionName, "await " + repeatFunctionName);
+            toCompile = ReplaceVariableNamesForRepeat(code);
             usings = Array.Empty<string>();
         }
         else
         {
             (toCompile, usings) = PrepareCode(code, ruleContext);
         }
+
+        toCompile = EnrichReturnOperator(toCompile);
+
+        toCompile =
+            $$"""
+              {{WrapToTryCatch(new Code("return GetInternal();", sourceCode))}}
+
+              IEnumerable<dynamic?> GetInternal()
+              {
+                    {{toCompile}}
+              }
+              """;
 
         string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
             className,
@@ -272,6 +282,18 @@ class FunctionFactory : IFunctionFactoryCSharp
             GetUsingStatic());
 
         return classToCompile;
+
+        string EnrichReturnOperator(string c)
+        {
+            if (c.Contains("yield"))
+                return c;
+
+            if (c.Contains("return"))
+                return c.Replace("return", "yield return");
+
+            return $"var __result = {c};" + Constants.NewLine +
+                   "; yield return __result;";
+        }
     }
 
     private static string ReplaceVariableNamesForRepeat(CodeBlock code)
@@ -434,17 +456,18 @@ class FunctionFactory : IFunctionFactoryCSharp
             .Replace("\r\n", "\" + nl + \"")
             .Replace("\n", "\" + nl + \"");
 
-        return @"try
+        return
+            $$"""
+            try
             {
-                " + code.ForCompile + @"
+                {{code.ForCompile}}
             }
             catch (Exception e)
             {
                 var nl = Lira.Common.Constants.NewLine;
-                throw new Exception(" + "\"An error has occurred while execute code block: \" + nl + \"" +
-               escapedCode +
-               "\", e);" + @"
-            }";
+                throw new Exception("An error has occurred while execute code block: " + nl + "{{escapedCode}}", e);
+            }
+            """;
     }
 
     private DynamicObjectBase.DependenciesBase CreateDependenciesBase(IDeclaredItemsProvider declaredItemsProvider)

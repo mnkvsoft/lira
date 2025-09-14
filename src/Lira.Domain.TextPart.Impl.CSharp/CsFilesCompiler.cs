@@ -1,16 +1,14 @@
 using System.Collections.Immutable;
 using Lira.Common;
 using Lira.Common.Extensions;
-using Lira.Configuration;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
-using Microsoft.Extensions.Configuration;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
 class CsFilesCompiler
 {
     public record Dependencies(
-        IConfiguration Configuration,
+        IRulesPathProvider RulesPathProvider,
         Compiler Compiler,
         AssembliesLoader AssembliesLoader,
         Namer Namer);
@@ -27,7 +25,7 @@ class CsFilesCompiler
         _compiler = dependencies.Compiler;
         _assembliesLoader = dependencies.AssembliesLoader;
         _namer = dependencies.Namer;
-        _path = dependencies.Configuration.GetRulesPath();
+        _path = dependencies.RulesPathProvider.Path;
 
         _assembliesLocations = assembliesLocations;
     }

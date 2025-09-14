@@ -8,11 +8,10 @@ class TokenParser
     {
         public static class StartParams
         {
-            public static readonly IReadOnlyCollection<(char Start, char End, OperatorParametersType Type)> Pairs =
-            [
-                ('(', ')', OperatorParametersType.Full),
-                (':', '\n', OperatorParametersType.SingleLine)
-            ];
+            public const char Full = '(';
+            public const char SingleLine = ':';
+
+            public static IReadOnlyCollection<char> List = [Full, SingleLine];
         }
     }
 
@@ -295,15 +294,7 @@ class TokenParser
                 break;
             }
 
-            bool isEnd = false;
-            foreach (var pair in Chars.StartParams.Pairs)
-            {
-                if (pair.Start == iterator.Current)
-                    // закончили ввод имени
-                    isEnd = true;
-            }
-
-            if (isEnd)
+            if(Chars.StartParams.List.Contains(iterator.Current))
                 break;
 
             if (!char.IsLetter(iterator.Current))
@@ -311,7 +302,7 @@ class TokenParser
                     $"Unexpected character '{iterator.Current}' in operator name: {iterator.Peek()}");
         }
 
-        var maybeName = iterator.PopExcludeCurrent().GetStaticValue();
+        var maybeName = iterator.PopExcludeCurrent().GetSingleStaticValue();
 
         //  символ @ стоит в самом конце
         if (maybeName == "@")
@@ -322,40 +313,23 @@ class TokenParser
 
     private static OperatorParameters? PopParameters(string name, PatternPartsIterator iterator)
     {
-        var pair = GetPair(iterator.Current);
-
-        if (pair != null)
-            return PopParametersAfterBrace(pair.Value.Type, name, iterator, pair.Value.End);
-
-        if (iterator.MoveTo(currentPredicate: c => Chars.StartParams.Pairs.Any(x => x.Start == c),
-                available: char.IsWhiteSpace))
+        if (iterator.Current != Chars.StartParams.SingleLine || iterator.Current != Chars.StartParams.Full)
         {
-            pair = GetPair(iterator.Current) ??
-                   throw new TokenParsingException($"Unknown character '{iterator.Current}'");
-            iterator.PopExcludeCurrent();
-            return PopParametersAfterBrace(pair.Value.Type, name, iterator, pair.Value.End);
+            if (!iterator.MoveTo(currentPredicate: c => Chars.StartParams.List.Contains(c),
+                    available: char.IsWhiteSpace))
+                return null;
         }
 
-        return null;
+        if(iterator.Current == Chars.StartParams.SingleLine)
+            return PopParametersAfterBraceForSingleLine(name, iterator);
 
-        (char Start, char End, OperatorParametersType Type)? GetPair(char current)
-        {
-            (char Start, char End, OperatorParametersType Type)? valueTuple = null;
+        if(iterator.Current == Chars.StartParams.Full)
+            return PopParametersAfterBraceForFull(name, iterator);
 
-            foreach (var p in Chars.StartParams.Pairs)
-            {
-                if (p.Start == current)
-                {
-                    valueTuple = p;
-                    break;
-                }
-            }
-
-            return valueTuple;
-        }
+        throw new TokenParsingException($"Unknown character '{iterator.Current}'");
     }
 
-    static OperatorParameters PopParametersAfterBrace(OperatorParametersType type, string name, PatternPartsIterator iterator, char valueEnd)
+    static OperatorParameters? PopParametersAfterBraceForSingleLine(string name, PatternPartsIterator iterator)
     {
         int braces = 0;
 
@@ -365,13 +339,17 @@ class TokenParser
         iterator.PopIncludeCurrent();
         while (iterator.MoveNext())
         {
-            if (iterator.Current == valueEnd && braces == 0)
+            if (iterator.Current == '\n' && braces == 0)
             {
-                var value = iterator.PopExcludeCurrent().GetStaticValue();
-
+                var parts = iterator.PopExcludeCurrent();
                 // убираем завершающий символ параметров
                 iterator.PopIncludeCurrent();
-                return new OperatorParameters(type, value);
+
+                var value = parts.Count == 0 ? null : parts.GetSingleStaticValue();
+                if (string.IsNullOrWhiteSpace(value))
+                    return null;
+
+                return new OperatorParameters(OperatorParametersType.SingleLine, value);
             }
 
             switch (iterator.Current)
@@ -392,6 +370,78 @@ class TokenParser
         var pars = sourceIterator.PopIncludeCurrent();
 
         throw new TokenParsingException(
-            $"Missing closing symbol '{valueEnd}' when defining @{name} parameters: '{pars}'");
+            $"Missing closing symbol '\\\n' when defining @{name} parameters: '{pars}'");
+    }
+
+    static OperatorParameters? PopParametersAfterBraceForFull(string name, PatternPartsIterator iterator)
+    {
+        int braces = 0;
+
+        var sourceIterator = iterator.Clone();
+
+        // убираем стартовый символ параметров
+        iterator.PopIncludeCurrent();
+
+        bool isString = false;
+        while (iterator.MoveNext())
+        {
+            if (isString && iterator.Current == '\\')
+            {
+                if (iterator.HasNext())
+                {
+                    iterator.MoveNext();
+                    continue;
+                }
+
+                throw new TokenParsingException(
+                    $"Missing closing symbol '\"' for string when defining @{name} parameters: '{sourceIterator.PopIncludeCurrent()}'");
+            }
+
+            if (iterator.Current == '"')
+            {
+                if (isString)
+                {
+                    isString = false;
+                    continue;
+                }
+
+                isString = true;
+                continue;
+            }
+
+            if(isString)
+                continue;
+
+            if (iterator.Current == ')' && braces == 0)
+            {
+                var parts = iterator.PopExcludeCurrent();
+                // убираем завершающий символ параметров
+                iterator.PopIncludeCurrent();
+
+                var value = parts.Count == 0 ? null : parts.GetSingleStaticValue();
+                if (string.IsNullOrWhiteSpace(value))
+                    return null;
+
+                return new OperatorParameters(OperatorParametersType.Full, value);
+            }
+
+            switch (iterator.Current)
+            {
+                case ')':
+                    braces--;
+                    break;
+                case '(':
+                    braces++;
+                    break;
+            }
+        }
+
+        // возвращаемся назад к определению оператора или его элемента, чтобы вывести информативное сообщение об ошибке
+        sourceIterator.MoveBackTo('@');
+        sourceIterator.SavePopPosition();
+        sourceIterator.MoveToEnd();
+
+        throw new TokenParsingException(
+            $"Missing closing symbol ')' when defining @{name} parameters: '{sourceIterator.PopIncludeCurrent()}'");
     }
 }

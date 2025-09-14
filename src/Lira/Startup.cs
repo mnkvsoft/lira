@@ -25,7 +25,7 @@ public class Startup
         services
             .AddLogging(x => { x.AddConsole(); })
             .AddSingleton<RoutingMiddleware>()
-            .AddDomainConfiguration()
+            .AddDomainConfiguration(_configuration)
             .AddDomain()
             .AddHttpCalling(_configuration)
             .AddControllers();

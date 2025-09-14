@@ -116,6 +116,7 @@ class PeImagesCache : IDisposable
                 return;
             }
 
+            // todo: clean immediately
             if (DateTime.UtcNow - _state.LastClean.Value > TimeSpan.FromDays(1))
             {
                 foreach (var notUsedFile in notUsed)
@@ -130,6 +131,11 @@ class PeImagesCache : IDisposable
         {
             _logger.LogError(e, "Error while disposing PE image cache");
         }
+    }
+
+    private void A(Range range)
+    {
+
     }
 
     // todo: when running tests in parallel, similar errors occur, think about how to make it more graceful

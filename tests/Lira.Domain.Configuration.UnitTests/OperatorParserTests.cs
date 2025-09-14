@@ -1,4 +1,5 @@
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Parsing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lira.Domain.Configuration.UnitTests;
@@ -54,6 +55,20 @@ public class OperatorParserTests
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
             "<op name='repeat' pars='(3)'>" +
+            "<t>Content</t>" +
+            "</op>"
+        ));
+    }
+
+    [Test]
+    public void IgnoringStringContent()
+    {
+        var sut = GetSut();
+        var result = sut.Parse("""@repeat(count: 3, splitter: ")")Content@end""");
+
+        string xmlView = result.GetXmlView();
+        Assert.That(xmlView, Is.EqualTo(
+            "<op name='repeat' pars='(count: 3, splitter: \")\")'>" +
             "<t>Content</t>" +
             "</op>"
         ));
@@ -349,7 +364,6 @@ public class OperatorParserTests
         ));
     }
 
-
     [Test]
     public void Parse_IfOperator_WithElseConditions()
     {
@@ -418,7 +432,7 @@ public class OperatorParserTests
         var result = sut.Parse("@repeat()@end");
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
-            "<op name='repeat' pars='()'>" +
+            "<op name='repeat' pars=''>" +
             "</op>"
         ));
     }
@@ -426,7 +440,7 @@ public class OperatorParserTests
     OperatorParser GetSut()
     {
         var services = new ServiceCollection();
-        services.AddDomainConfiguration();
+        services.AddDomainConfiguration(new ConfigurationRoot(new List<IConfigurationProvider>()));
         var provider = services.BuildServiceProvider();
         return provider.GetRequiredService<OperatorParser>();
     }
