@@ -1574,6 +1574,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="fixtures\debug\" />
     <Folder Include="fixtures\rules\action\" />
   </ItemGroup>
 

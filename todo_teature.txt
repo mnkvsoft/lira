@@ -1,18 +1,17 @@
-- clean connected assemblies
 - add log() method
-- git repository
-- fail container start if error in rule
 - delete unused peimage files immediately
 - function start with @
+- comment as @* @// ~~ ~* *~ @//
+- hide dynamic class details on exception
+- clean connected assemblies
+- range [ 100 - 200 ] => [ 100..200 ]
+
+- fail container start if error in rule
 - {{{ escaping
-- comment as @* @//
 - make dic-function
-- line structure for conditions
 - key for conditions
 - cache section
 - type inference for dynamic block
-- hide dynamic class details on exception
-- remove method for json type ??
 - RequestStatisticStorage ttl to config
 - slow network
 - rules index

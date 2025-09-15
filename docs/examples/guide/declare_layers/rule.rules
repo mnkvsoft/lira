@@ -7,7 +7,7 @@ example: guide/declare_layers/rule
 
 ----- declare
 
-#amount = {{ dec: [100 - 10000] }}
+@amount = {{ dec: [100 - 10000] }}
 $$id = {{ seq }}
 
 ----- response
@@ -18,11 +18,11 @@ $$id = {{ seq }}
     "items":[
         {
             "parent_transaction_id": {{ $$id }},
-            "amount": {{ #amount }}
+            "amount": {{ @amount }}
         },
         {
             "parent_transaction_id": {{ $$id }},
-            "amount": {{ #amount }}
+            "amount": {{ @amount }}
         }
     ]
 }

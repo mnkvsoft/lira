@@ -150,6 +150,18 @@ public class StringIterator
         return _source.Substring(NextIndex, value.Length) == value;
     }
 
+    public bool NextIncludeCurrentIs(string value)
+    {
+        if (!HasNext())
+            return false;
+
+        int endIndex = _currentIndex + value.Length - 1;
+        if (endIndex > _lastIndex)
+            return false;
+
+        return _source.Substring(_currentIndex, value.Length) == value;
+    }
+
     /// <summary>
     /// Смещает индек к концу этого значения
     /// </summary>

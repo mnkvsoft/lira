@@ -4,7 +4,7 @@ GET /generating/function/random
 
 ----- declare
 
-#func = 111-{{ echo: 222 }}-333
+@func = 111-{{ echo: 222 }}-333
 $$ruleVar = 111-{{ echo: 222 }}-333
 
 ----- response
@@ -14,4 +14,4 @@ $$ruleVar = 111-{{ echo: 222 }}-333
 
 ~ body
 {{ echo: 111-222-333 >> $localVar }}
-{{ random: #func, $$ruleVar, $localVar }}
+{{ random: @func, $$ruleVar, $localVar }}

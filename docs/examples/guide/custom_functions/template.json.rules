@@ -7,7 +7,7 @@ example: guide/custom_functions/template.json
 
 ----- declare
 
-#order.template:json = 
+@order.template:json = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -23,17 +23,17 @@ example: guide/custom_functions/template.json
 {
     "orders": [
         {{ 
-            #order.template
+            @order.template
                 .replace("$.status", "ok")
                 .replace("$.customer", "vasily pupkin")
         }},
         {{ 
-            #order.template
+            @order.template
                 .replace("$.status", "pending")
                 .replace("$.customer", "john silver")
         }},
         {{ 
-            #order.template
+            @order.template
                 .replace("$.status", "declined")
         }}
     ]

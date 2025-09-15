@@ -6,8 +6,8 @@ GET /variables/local
 {
     "orders":
     [
-        {{ #order  }},
-        {{ #order2 }}
+        {{ @order  }},
+        {{ @order2 }}
     ]
 }
 

@@ -4,7 +4,7 @@ GET /generating/types/json/extension
 
 ----- declare
 
-#person =
+@person =
 {
     "name" : "Mason Power"
 }
@@ -16,7 +16,7 @@ GET /generating/types/json/extension
 
 ~ body
 {{
-     #person
+     @person
         .json()
         .replace("$.name", "John McAllister")
 }}

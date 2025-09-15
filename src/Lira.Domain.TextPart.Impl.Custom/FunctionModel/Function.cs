@@ -2,7 +2,7 @@ namespace Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 
 public class Function : DeclaredItem
 {
-    public const string Prefix = "#";
+    public const string Prefix = "@";
 
     private readonly IReadOnlyCollection<IObjectTextPart> _parts;
     public override ReturnType? ReturnType { get; }

@@ -7,7 +7,7 @@ example: override
 
 ----- declare
 
-#now = {{ DateTime.Now.ToString("yyyy-MM-dd") }}
+@now = {{ DateTime.Now.ToString("yyyy-MM-dd") }}
 
 ----- response
 

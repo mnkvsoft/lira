@@ -6,7 +6,7 @@ GET /generating/types/json/add/to/root
 
 ----- declare
 
-#json_var =
+@json_func =
 {
     "field1" : "value"
 }
@@ -18,6 +18,6 @@ GET /generating/types/json/add/to/root
 
 ~ body
 {{
-     json(#json_var)
+     json(@json_func)
         .add("$", "new_field", "new_value")
 }}

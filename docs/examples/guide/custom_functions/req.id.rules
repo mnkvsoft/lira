@@ -8,15 +8,15 @@ Request-Id: {{ any }}
 
 ----- declare
 
-#req.id = {{ req.header: Request-Id }}
+@req.id = {{ req.header: Request-Id }}
 
 ----- response
 
 ~ headers
-Request-Id: {{ #req.id }}
+Request-Id: {{ @req.id }}
 
 ~ body
 {
     "id": {{ seq }},
-    "request_id": {{ #req.id }}
+    "request_id": {{ @req.id }}
 }

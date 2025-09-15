@@ -1232,7 +1232,7 @@ example: custom_function
 
 ----- declare
 
-#payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
+@payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
 
 ----- response
 
@@ -1241,7 +1241,7 @@ example: custom_function
 
 ~ body
 {
-    "created_at": "{{ #payment.now }}"
+    "created_at": "{{ @payment.now }}"
     
     ## the '#' symbol can be omitted when calling a function
     ## "created_at": "{{ payment.now }}"
@@ -1279,7 +1279,7 @@ curl --location --request POST 'http://localhost/payment' \
 ```
 -------------------- declare
 
-#amount = {{ dec: [1 - 100] }}
+@amount = {{ dec: [1 - 100] }}
 
 -------------------- rule
 
@@ -1351,7 +1351,7 @@ curl --location 'http://localhost/account' \
 [declare.shared.global.declare](docs/examples/quick_start/declare.shared.global.declare)
 
 ```
-#age = {{ int: [1 - 122]}}
+@age = {{ int: [1 - 122]}}
 ```
 
 Создадим правило
@@ -1399,7 +1399,7 @@ curl --location 'http://localhost/person' \
 ```
 -------------------- declare
 
-#template.order = 
+@template.order = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -1576,7 +1576,7 @@ example: repeat_block
 
 ----- declare
 
-#order = 
+@order = 
 {
     "id": {{ int }},
     "status": "{{ random: paid, pending, cancelled }}",
@@ -1591,7 +1591,7 @@ example: repeat_block
 ~ body
 {
     "orders": [
-        {{ repeat(#order, separator: ",", count: 3) }}    
+        {{ repeat(@order, separator: ",", count: 3) }}    
     ]
 }
 ```
@@ -1645,7 +1645,7 @@ curl --location 'http://localhost/orders/123' \
 ```
 -------------------- declare
 
-#template.order:json = 
+@template.order:json = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -1669,7 +1669,7 @@ example: change_json
 
 ~ body
 {{ 
-    #template.order
+    @template.order
         .replace("$.status", "pending")
         .replace("$.customer", "vasily pupkin")
 }}
@@ -1688,7 +1688,7 @@ example: change_json
 
 ~ body
 {{ 
-    #template.order
+    @template.order
         .replace("$.status", "refunded")
         .replace("$.customer", "nikolas john")
 }}
@@ -2011,7 +2011,7 @@ example: charp.class.sign
 
 ----- declare
 
-#response = 
+@response = 
 {
     "id" : {{ int }},
     "created_at": "{{ now }}",
@@ -2025,8 +2025,8 @@ example: charp.class.sign
 
 ~ body
 {{
-    json(#response)
-        .add("sign", SignatureCalculator.Get(#response, "very_secret_key"))
+    json(@response)
+        .add("sign", SignatureCalculator.Get(@response, "very_secret_key"))
 }}
 ```
 Запрос
@@ -2175,7 +2175,7 @@ example: action
 
 $$id = {{ seq }}
 
-#body = 
+@body = 
 {
     "id": {{ $$id }},
     "created_at": "{{ now.utc }}",
@@ -2185,7 +2185,7 @@ $$id = {{ seq }}
 ----- response
 
 ~ body
-{{ #body }}
+{{ @body }}
 
 ----- action
 
@@ -2195,7 +2195,7 @@ $$id = {{ seq }}
 string filePath = "/tmp/" + $$id + ".dat";
 
 ## write file
-File.WriteAllText(filePath, #body);
+File.WriteAllText(filePath, @body);
 
 
 -------------------- rule
@@ -2208,13 +2208,13 @@ example: action
 ----- declare
 
 ## write json body from file
-#body:json = {{ File.ReadAllText($"/tmp/{$$id}.dat") }}
+@body:json = {{ File.ReadAllText($"/tmp/{$$id}.dat") }}
 
 ----- response
 
 ~ body
 {{ 
-    #body.replace("$.status", "processing")
+    @body.replace("$.status", "processing")
 }}
 ```
 
@@ -2570,7 +2570,7 @@ example: override
 
 ----- declare
 
-#now = {{ DateTime.Now.ToString("yyyy-MM-dd") }}
+@now = {{ DateTime.Now.ToString("yyyy-MM-dd") }}
 
 ----- response
 

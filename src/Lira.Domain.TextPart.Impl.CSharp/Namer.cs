@@ -2,7 +2,7 @@ using Lira.Common;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
-class Namer
+class Namer(Namer.State state)
 {
     public class State
     {
@@ -12,12 +12,7 @@ class Namer
         public int RevisionCounter { get; set; }
     }
 
-    public int Revision { get;  }
-
-    public Namer(State state)
-    {
-        Revision = ++state.RevisionCounter;
-    }
+    public int Revision { get;  } = ++state.RevisionCounter;
 
     public readonly string AssemblyPrefix = "__dynamic";
     public string GetAssemblyName(string name) => $"{AssemblyPrefix}_{Revision}_{name}";

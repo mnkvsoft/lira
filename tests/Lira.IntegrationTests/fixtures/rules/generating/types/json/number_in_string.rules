@@ -4,7 +4,7 @@ GET /generating/types/json/replace/number_in_string
 
 ----- declare
 
-#json_var:json =
+@json:json =
 {
     "number_in_string" : ""
 }
@@ -16,5 +16,5 @@ GET /generating/types/json/replace/number_in_string
 
 ~ body
 {{
-     #json_var.replace("$.number_in_string", "12345")
+     @json.replace("$.number_in_string", "12345")
 }}

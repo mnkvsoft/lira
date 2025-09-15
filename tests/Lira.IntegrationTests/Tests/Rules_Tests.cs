@@ -32,7 +32,6 @@ public class Rules_Tests : TestBase
         }
     }
 
-
     [TestCaseSource(nameof(Cases))]
     public async Task RuleIsWork(string prettyTestFileName)
     {

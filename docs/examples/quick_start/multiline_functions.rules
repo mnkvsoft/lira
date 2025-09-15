@@ -1,6 +1,6 @@
 -------------------- declare
 
-#template.order = 
+@template.order = 
 {
     "id": {{ int }},
     "status": "paid",

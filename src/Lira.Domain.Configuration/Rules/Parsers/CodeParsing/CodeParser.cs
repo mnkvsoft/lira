@@ -1,4 +1,5 @@
 using System.Text;
+using Lira.Common;
 using Lira.Common.Exceptions;
 using Lira.Common.Extensions;
 using Lira.Domain.TextPart;
@@ -152,7 +153,7 @@ static class CodeParser
         var tokens = new List<CodeToken>();
         bool enterVariableName = false;
 
-        using var iterator = code.GetEnumerator();
+        var iterator = new StringIterator(code);
         var sbAccessToVariable = new StringBuilder();
         var sbOtherCode = new StringBuilder();
 
@@ -206,7 +207,12 @@ static class CodeParser
             }
             else
             {
-                if (iterator.Current == '$')
+                if (iterator.NextIncludeCurrentIs("@using"))
+                {
+                    sbOtherCode.Append("using");
+                    iterator.MoveToEnd("using");
+                }
+                else if (iterator.Current == '$')
                 {
                     sbAccessToVariable.Append(iterator.Current);
 
@@ -241,7 +247,7 @@ static class CodeParser
                         sbAccessToVariable.Clear();
                     }
                 }
-                else if (iterator.Current == '#')
+                else if (iterator.Current == '@')
                 {
                     sbAccessToVariable.Append(iterator.Current);
 
