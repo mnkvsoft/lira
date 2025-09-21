@@ -19,13 +19,15 @@ class RequestMatchersParser
 {
     private readonly IFunctionFactorySystem _functionFactorySystem;
     private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
+    private readonly CodeParser _codeParser;
 
     public RequestMatchersParser(
         IFunctionFactorySystem functionFactorySystem,
-        IFunctionFactoryCSharpFactory functionFactoryCSharpFactory)
+        IFunctionFactoryCSharpFactory functionFactoryCSharpFactory, CodeParser codeParser)
     {
         _functionFactorySystem = functionFactorySystem;
         _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
+        _codeParser = codeParser;
     }
 
     public async Task<IReadOnlyCollection<IRequestMatcher>> Parse(FileSection ruleSection, ParsingContext context)
@@ -96,7 +98,7 @@ class RequestMatchersParser
 
     private async Task<IRequestMatcher> CreateCustomRequestMatcher(string code, ParsingContext context)
     {
-        var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(code, context.DeclaredItems);
+        var (codeBlock, newRuntimeVariables, localVariables) = _codeParser.Parse(code, context.DeclaredItems);
 
         if (localVariables.Count > 0)
             throw new Exception($"Local variables ({string.Join(", ", localVariables.Select(x => x.Name))}) are not supported for matching function");
@@ -289,7 +291,7 @@ class RequestMatchersParser
         if (context.CustomDicts.TryGetCustomSetFunction(invoke, out var customSetFunction))
             return customSetFunction;
 
-        var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(invoke, context.DeclaredItems);
+        var (codeBlock, newRuntimeVariables, localVariables) = _codeParser.Parse(invoke, context.DeclaredItems);
 
         if (localVariables.Count > 0)
             throw new Exception($"Local variables ({string.Join(", ", localVariables.Select(x => x.Name))}) are not supported for matching function");

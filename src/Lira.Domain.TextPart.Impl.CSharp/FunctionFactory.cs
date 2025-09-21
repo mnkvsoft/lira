@@ -412,7 +412,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         foreach (var line in codeWithVariables.Split(Constants.NewLine))
         {
             var trimmed = line.TrimStart(" ").TrimStart("\t");
-            if (trimmed.StartsWith("@using"))
+            if (trimmed.StartsWith($"@{KeyWord.Using}" ))
             {
                 usings.Add(trimmed[1..]);
             }

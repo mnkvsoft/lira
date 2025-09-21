@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Lira.Domain.Configuration.RangeModel;
 using Lira.Domain.Configuration.Rules;
 using Lira.Domain.Configuration.Rules.Parsers;
+using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing.Operators.Handlers;
@@ -27,6 +28,7 @@ public static class ServiceCollectionExtensions
         services.Configure<GitConfig>(configuration);
 
         return services
+            .AddSingleton<CodeParser>()
             .AddFunctionsSystem()
             .AddFunctionsCSharp()
             .AddTransient<ConditionMatcherParser>()
@@ -37,17 +39,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<OperatorParser>()
             .AddScoped<OperatorPartFactory>()
 
-            .AddScoped<IfOperatorDefinition>()
-            .AddScoped<OperatorDefinition>(provider => provider.GetRequiredService<IfOperatorDefinition>())
-            .AddScoped<IOperatorHandler, IfHandler>()
-
-            .AddScoped<RandomOperatorDefinition>()
-            .AddScoped<OperatorDefinition>(provider => provider.GetRequiredService<RandomOperatorDefinition>())
-            .AddScoped<IOperatorHandler, RandomHandler>()
-
-            .AddScoped<RepeatOperatorDefinition>()
-            .AddScoped<OperatorDefinition>(provider => provider.GetRequiredService<RepeatOperatorDefinition>())
-            .AddScoped<IOperatorHandler, RepeatHandler>()
+            .AddOperators()
 
             .AddScoped<ResponseGenerationHandlerParser>()
             .AddScoped<HandlersParser>()
@@ -83,6 +75,24 @@ public static class ServiceCollectionExtensions
 
             .AddTransient<RulesLoader>()
             .AddSingleton<IRulesProvider>(provider => provider.GetRequiredService<ConfigurationLoader>());
+    }
+
+    private static IServiceCollection AddOperators(this IServiceCollection services)
+    {
+        return services
+            .AddOperator<IfOperatorDefinition, IfHandler>()
+            .AddOperator<RandomOperatorDefinition, RandomHandler>()
+            .AddOperator<RepeatOperatorDefinition, RepeatHandler>();
+    }
+
+    private static IServiceCollection AddOperator<TOperatorDefinition, TOperatorHandler>(this IServiceCollection services)
+        where TOperatorDefinition : OperatorDefinition
+        where TOperatorHandler : class, IOperatorHandler
+    {
+        return services
+            .AddScoped<TOperatorDefinition>()
+            .AddScoped<OperatorDefinition>(provider => provider.GetRequiredService<TOperatorDefinition>())
+            .AddScoped<IOperatorHandler, TOperatorHandler>();
     }
 
     private static IRulesStorageStrategy RulesStorageFactory(IServiceProvider provider)

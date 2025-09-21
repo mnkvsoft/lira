@@ -3,6 +3,7 @@ using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.TextPart.Impl.CSharp.ExternalLibsLoading;
 using Lira.Domain.TextPart.Impl.CSharp.ExternalLibsLoading.Nuget;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
@@ -10,6 +11,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddFunctionsCSharp(this IServiceCollection sc)
     {
+        sc.TryAddEnumerable(new ServiceDescriptor(typeof(IKeyWordInDynamicBlock), typeof(KeyWord), ServiceLifetime.Singleton));
+
         return sc
             .AddTransient<FunctionFactory.Dependencies>()
             .AddTransient<CsFilesCompiler.Dependencies>()
@@ -27,5 +30,6 @@ public static class ServiceCollectionExtensions
             .AddSingleton<NugetLibsProvider>()
             .AddSingleton<ExtLibsProvider>()
             .AddSingleton<Cache>();
+
     }
 }

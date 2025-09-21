@@ -10,9 +10,16 @@ using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 
 namespace Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 
-static class CodeParser
+class CodeParser
 {
-    public static (CodeBlock, IReadOnlyCollection<RuntimeRuleVariable>, IReadOnlyCollection<LocalVariable>) Parse(
+    private readonly IReadOnlyCollection<string> _keyWords;
+
+    public CodeParser(IEnumerable<IKeyWordInDynamicBlock> keyWordProviders)
+    {
+        _keyWords = keyWordProviders.Select(x => x.Word).ToArray();
+    }
+
+    public (CodeBlock, IReadOnlyCollection<RuntimeRuleVariable>, IReadOnlyCollection<LocalVariable>) Parse(
         string code,
         IReadOnlySet<DeclaredItem> declaredItems)
     {
@@ -31,7 +38,7 @@ static class CodeParser
         }
     }
 
-    private static (CodeBlock, IReadOnlyCollection<RuntimeRuleVariable>, IReadOnlyCollection<LocalVariable>) ParseInternal(string code,
+    private (CodeBlock, IReadOnlyCollection<RuntimeRuleVariable>, IReadOnlyCollection<LocalVariable>) ParseInternal(string code,
         IReadOnlySet<DeclaredItem> declaredItems)
     {
         var codeTokens = Parse(code);
@@ -148,7 +155,7 @@ static class CodeParser
         return newResult;
     }
 
-    private static IReadOnlyCollection<CodeToken> Parse(string code)
+    private IReadOnlyCollection<CodeToken> Parse(string code)
     {
         var tokens = new List<CodeToken>();
         bool enterVariableName = false;
@@ -207,10 +214,10 @@ static class CodeParser
             }
             else
             {
-                if (iterator.NextIncludeCurrentIs("@using"))
+                if (iterator.Current == '@' && iterator.NextIsOneOf(_keyWords.Select(x => x + " "), out var word))
                 {
-                    sbOtherCode.Append("using");
-                    iterator.MoveToEnd("using");
+                    sbOtherCode.Append(word);
+                    iterator.MoveToEnd(word);
                 }
                 else if (iterator.Current == '$')
                 {

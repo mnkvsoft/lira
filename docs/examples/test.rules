@@ -2,18 +2,10 @@
 
 GET /test
 
------ declare
-
-#a:json =
-{
-   "a": "{{ now }}"
-}
-
 ----- response
 
 ~ code
 200
 
 ~ body
-{{ range: payment_id/ok }}
-{{ seq }}
+{{ 1 }}

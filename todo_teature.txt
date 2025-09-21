@@ -1,11 +1,12 @@
 - add log() method
 - delete unused peimage files immediately
-- function start with @
 - comment as @* @// ~~ ~* *~ @//
 - hide dynamic class details on exception
 - clean connected assemblies
 - range [ 100 - 200 ] => [ 100..200 ]
+- prohibit . character in a variable name
 
+- set body encoding
 - fail container start if error in rule
 - {{{ escaping
 - make dic-function

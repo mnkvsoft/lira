@@ -1,5 +1,7 @@
 // ReSharper disable ReplaceWithPrimaryConstructorParameter
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Lira.Common;
 
 public class StringIterator
@@ -150,16 +152,20 @@ public class StringIterator
         return _source.Substring(NextIndex, value.Length) == value;
     }
 
-    public bool NextIncludeCurrentIs(string value)
+    public bool NextIsOneOf(IEnumerable<string> values,[MaybeNullWhen(false)] out string value)
     {
-        if (!HasNext())
-            return false;
+        value = null;
 
-        int endIndex = _currentIndex + value.Length - 1;
-        if (endIndex > _lastIndex)
-            return false;
+        foreach (var val in values)
+        {
+            if (NextIs(val))
+            {
+                value = val;
+                return true;
+            }
+        }
 
-        return _source.Substring(_currentIndex, value.Length) == value;
+        return false;
     }
 
     /// <summary>

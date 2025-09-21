@@ -133,11 +133,6 @@ class PeImagesCache : IDisposable
         }
     }
 
-    private void A(Range range)
-    {
-
-    }
-
     // todo: when running tests in parallel, similar errors occur, think about how to make it more graceful
     static void IgnoreIoExceptionForTests(Action action)
     {

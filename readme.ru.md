@@ -2433,7 +2433,7 @@ $$order:json =
 
 ----- action
 
-dynamic state = new System.Dynamic.ExpandoObject();
+var state = new System.Dynamic.ExpandoObject();
 
 state.Order = $$order;
 state.Counter = 1;

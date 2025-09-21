@@ -22,15 +22,16 @@ class TextPartsParserInternal
     private readonly IFunctionFactorySystem _functionFactorySystem;
     private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
     private readonly ILogger _logger;
-
+    private readonly CodeParser _codeParser;
 
     public TextPartsParserInternal(
         IFunctionFactorySystem functionFactorySystem,
         IFunctionFactoryCSharpFactory functionFactoryCSharpFactory,
-        ILoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory, CodeParser codeParser)
     {
         _functionFactorySystem = functionFactorySystem;
         _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
+        _codeParser = codeParser;
         _logger = loggerFactory.CreateLogger(GetType());
     }
 
@@ -176,9 +177,9 @@ class TextPartsParserInternal
         return [pipeline];
     }
 
-    private static CodeBlock GetCodeBlock(ParsingContext context, string value)
+    private CodeBlock GetCodeBlock(ParsingContext context, string value)
     {
-        var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(value, context.DeclaredItems);
+        var (codeBlock, newRuntimeVariables, localVariables) = _codeParser.Parse(value, context.DeclaredItems);
 
         context.DeclaredItems.TryAddRange(newRuntimeVariables);
         context.DeclaredItems.TryAddRange(localVariables);

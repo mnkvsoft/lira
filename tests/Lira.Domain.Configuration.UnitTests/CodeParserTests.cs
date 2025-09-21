@@ -10,6 +10,8 @@ namespace Lira.Domain.Configuration.UnitTests;
 
 public class CodeParserTests
 {
+    private static CodeParser _sut = new(Array.Empty<IKeyWordInDynamicBlock>());
+
     [TestCase(
         "int a = $$read.from.variable;",
         "[:c int a = ][:r $$read.from.variable][:c ;]")]
@@ -37,7 +39,7 @@ public class CodeParserTests
             new RuntimeRuleVariable("$$read.from.variable", valueType: null),
         };
 
-        var (codeBlock, _, _) = CodeParser.Parse(
+        var (codeBlock, _, _) = _sut.Parse(
             code,
             declaredItems);
 
@@ -72,7 +74,7 @@ public class CodeParserTests
             new LocalVariable("$read.from.variable", valueType: null)
         };
 
-        var (codeBlock, _, _) = CodeParser.Parse(
+        var (codeBlock, _, _) = _sut.Parse(
             code,
             declaredItems);
 
@@ -85,7 +87,7 @@ public class CodeParserTests
     {
         var declaredItems = new DeclaredItems { new DeclaredRuleVariable("$$person", [Mock.Of<IObjectTextPart>()], valueType: null) };
 
-        var (codeBlock, _, _) = CodeParser.Parse(
+        var (codeBlock, _, _) = _sut.Parse(
             "$$person.name",
             declaredItems);
 
@@ -98,7 +100,7 @@ public class CodeParserTests
     {
         var declaredItems = new DeclaredItems { new LocalVariable("$person", valueType: null) };
 
-        var (codeBlock, _, _) = CodeParser.Parse(
+        var (codeBlock, _, _) = _sut.Parse(
             "$person.name",
             declaredItems);
 
@@ -133,7 +135,7 @@ public class CodeParserTests
                 Array.Empty<IObjectTextPart>(), valueType: null)
         };
 
-        var (codeBlock, _, _) = CodeParser.Parse(
+        var (codeBlock, _, _) = _sut.Parse(
             code,
             declaredItems);
 
@@ -168,7 +170,7 @@ public class CodeParserTests
         "[:w $write.to.variable][:c =\n   a;]")]
     public void WriteVariable(string code, string expected)
     {
-        var (codeBlock, _, _) = CodeParser.Parse(
+        var (codeBlock, _, _) = _sut.Parse(
             code,
             new DeclaredItems());
 
