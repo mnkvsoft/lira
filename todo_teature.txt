@@ -2,7 +2,7 @@
 - delete unused peimage files immediately
 - comment as @* @// ~~ ~* *~ @//
 - hide dynamic class details on exception
-- clean connected assemblies
+
 - range [ 100 - 200 ] => [ 100..200 ]
 
 - set body encoding
@@ -18,3 +18,4 @@
 - response model in cs-code
 - describe file section format
 - custom parameters in declared function
+- clean connected assemblies

@@ -7,6 +7,7 @@ using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.DataModel;
 using Lira.Domain.Handling.Actions;
+using Microsoft.Extensions.Logging;
 
 // ReSharper disable RedundantExplicitArrayCreation
 
@@ -23,6 +24,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly CsFilesAssembly? _csFilesAssembly;
     private readonly Namer _namer;
     private readonly string? _globalUsingFileContent;
+    private readonly ILoggerFactory _loggerFactory;
 
     public record Dependencies(
         AssembliesLoader AssembliesLoader,
@@ -30,7 +32,8 @@ class FunctionFactory : IFunctionFactoryCSharp
         CompilationStatistic CompilationStatistic,
         Cache Cache,
         IRangesProvider RangesProvider,
-        Namer Namer);
+        Namer Namer,
+        ILoggerFactory LoggerFactory);
 
     public FunctionFactory(Dependencies dependencies,
         IImmutableList<string> assembliesLocations,
@@ -47,6 +50,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         _assembliesLocations = assembliesLocations;
         _csFilesAssembly = csFilesAssembly;
+        _loggerFactory = dependencies.LoggerFactory;
     }
 
     public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(
@@ -472,6 +476,6 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private DynamicObjectBase.DependenciesBase CreateDependenciesBase(IDeclaredItemsProvider declaredItemsProvider)
     {
-        return new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider, declaredItemsProvider);
+        return new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider, declaredItemsProvider, _loggerFactory );
     }
 }

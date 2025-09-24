@@ -1,8 +1,8 @@
 using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.DataModel;
-using Lira.Domain.TextPart.Impl.Custom;
 using Lira.Domain.TextPart.Types;
+using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
@@ -11,10 +11,12 @@ public abstract class DynamicObjectBase
     public record DependenciesBase(
         Cache Cache,
         IRangesProvider RangesProvider,
-        IDeclaredItemsProvider DeclaredItemsProvider);
+        IDeclaredItemsProvider DeclaredItemsProvider,
+        ILoggerFactory LoggerFactory);
 
     protected readonly IDeclaredItemsProvider DeclaredItemsProvider;
     protected readonly Cache Cache;
+    private readonly ILogger _logger;
 
     // ReSharper disable once UnusedMember.Global
     protected const string NewLine = Constants.NewLine;
@@ -26,6 +28,7 @@ public abstract class DynamicObjectBase
         Cache = dependencies.Cache;
         _rangesProvider = dependencies.RangesProvider;
         DeclaredItemsProvider = dependencies.DeclaredItemsProvider;
+        _logger = dependencies.LoggerFactory.CreateLogger("user");
     }
 
     protected DataRange GetRange(string rangeName)
@@ -43,4 +46,6 @@ public abstract class DynamicObjectBase
     {
         return Json.Parse(json);
     }
+
+    public void log(string message) => _logger.LogInformation(message);
 }
