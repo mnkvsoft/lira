@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /variables/short_declaration/with_dot/1001
+GET /variables/short_declaration/path/123_nikolass
 
 ----- expected
 
@@ -8,4 +8,4 @@ GET /variables/short_declaration/with_dot/1001
 200
 
 ~ body
-1001
+nikolass

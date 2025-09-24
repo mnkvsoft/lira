@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /generating/value/path/123_nikolass
+GET /variables/short_declaration/query?phone=7888
 
 ----- expected
 
@@ -8,4 +8,4 @@ GET /generating/value/path/123_nikolass
 200
 
 ~ body
-nikolass
+888

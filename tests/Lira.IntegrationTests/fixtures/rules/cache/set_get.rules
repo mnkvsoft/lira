@@ -4,7 +4,7 @@ GET /cache/set_get/{{ int >> $$id }}?comment={{ any }}
 
 ----- declare
 
-$$response.body =
+$$responseBody =
 {
     "comment": "{{ req.query: comment }}"
 }
@@ -12,10 +12,10 @@ $$response.body =
 ----- response
 
 ~ body
-{{ $$response.body }}
+{{ $$responseBody }}
 
 ----- action
-cache.set("cache_" + $$id, $$response.body, "2 second")
+cache.set("cache_" + $$id, $$responseBody, "2 second")
 
 -------------------- rule
 

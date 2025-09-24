@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /generating/value/body
+GET /variables/short_declaration/body
 
 ~ body
 {

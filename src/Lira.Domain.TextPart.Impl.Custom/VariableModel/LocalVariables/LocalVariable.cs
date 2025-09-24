@@ -5,6 +5,7 @@ namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.LocalVariables;
 public class LocalVariable : Variable
 {
     public const string Prefix = "$";
+    public static readonly NamingStrategy NamingStrategy = CreateNamingStrategy(Prefix);
 
     private static int _counter;
     private readonly int _id;
@@ -23,7 +24,7 @@ public class LocalVariable : Variable
 
     private static readonly object NullValue = new();
 
-    public static bool IsValidName(string name) => CustomItemName.IsValidName(Prefix, name);
+    public static bool IsValidName(string name) => NamingStrategy.IsValidName(name);
 
     private dynamic? GetValue(RuleExecutingContext ctx)
     {

@@ -6,19 +6,21 @@ public abstract class RuleVariable : Variable
 {
     public const string Prefix = "$$";
 
+    public static readonly NamingStrategy NamingStrategy = CreateNamingStrategy(Prefix);
+
     public override string Name { get; }
     public override ReturnType? ReturnType { get; }
 
     protected RuleVariable(string name, ReturnType? valueType)
     {
         if(!IsValidName(name))
-            throw new ArgumentException("Invalid local variable name: " + name, nameof(name));
+            throw new ArgumentException("Invalid rule variable name: " + name, nameof(name));
 
         Name = name;
         ReturnType = valueType;
     }
 
-    public static bool IsValidName(string name) => CustomItemName.IsValidName(Prefix, name);
+    public static bool IsValidName(string name) => NamingStrategy.IsValidName(name);
 
     private static readonly object NullValue = new();
     protected abstract dynamic? GetInitiatedValue(RuleExecutingContext ctx);

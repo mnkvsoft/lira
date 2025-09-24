@@ -6,7 +6,7 @@ public class ObjectTextPartWithSaveVariable(IObjectTextPart objectTextPart, Vari
     {
         var value = objectTextPart.Generate(context);
         variable.SetValue(context, value);
-        yield return  value;
+        yield return value;
     }
 
     public ReturnType? ReturnType => objectTextPart.ReturnType;

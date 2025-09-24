@@ -162,12 +162,6 @@
     <None Update="fixtures\rules\variables\short_declaration\base.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\variables\short_declaration\with_dot_and_method_invoke.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\variables\short_declaration\with_dot_and_method_invoke.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="fixtures\rules\variables\using_in_req_block.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -178,12 +172,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\variables\chain.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\variables\short_declaration\with_dot.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\variables\short_declaration\with_dot.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\variables\short_declaration\with_dot.test">
@@ -507,6 +495,33 @@
     <None Update="fixtures\rules\generating\operators\repeat\full.min_max.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\variables\short_declaration\query.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\variables\short_declaration\query.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\variables\short_declaration\path.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\variables\short_declaration\path.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\variables\short_declaration\header.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\variables\short_declaration\header.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\variables\short_declaration\body.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\variables\short_declaration\body.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\generating\types\obj\base.rule">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -595,30 +610,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\transform\upper\1.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\value\body.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\value\header.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\value\header.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\value\body.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\value\query.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\value\query.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\value\path.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\value\path.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\match\csharp\functions\range.lambda.test">
@@ -1395,12 +1386,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\function_extract\query.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\csharp\access_to_variable_with_dot.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\csharp\access_to_variable_with_dot.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\generating\variable\with_dot.rules">

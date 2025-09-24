@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/value/path/123_{{ any >> $$person }}
+GET /variables/short_declaration/path/123_{{ any >> $$person }}
 
 ----- response
 

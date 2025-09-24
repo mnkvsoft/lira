@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/value/body
+GET /variables/short_declaration/body
 
 ~ body
 {{ jpath: $.phone }} >> 7{{ any >> $$clean_pnone }}

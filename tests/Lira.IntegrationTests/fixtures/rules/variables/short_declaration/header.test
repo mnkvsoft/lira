@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /generating/value/header
+GET /variables/short_declaration/header
 
 ~ headers
 Request-Id: 123_aaa

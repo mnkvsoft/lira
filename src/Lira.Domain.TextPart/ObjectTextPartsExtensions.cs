@@ -1,4 +1,6 @@
+using System.Dynamic;
 using System.Text;
+using System.Text.Json;
 using Lira.Domain.Handling.Generating;
 
 namespace Lira.Domain.TextPart;
@@ -102,6 +104,9 @@ public static class ObjectTextPartsExtensions
 
         if (obj is DateTime date)
             return date.ToString("O");
+
+        if (obj is ExpandoObject)
+            return JsonSerializer.Serialize(obj);
 
         return obj.ToString();
     }
