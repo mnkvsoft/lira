@@ -13,30 +13,30 @@ public class CodeParserTests
     private static CodeParser _sut = new(Array.Empty<IKeyWordInDynamicBlock>());
 
     [TestCase(
-        "int a = $$read.from.variable;",
-        "[:c int a = ][:r $$read.from.variable][:c ;]")]
+        "int a = $$read_from_variable;",
+        "[:c int a = ][:r $$read_from_variable][:c ;]")]
     [TestCase(
-        "var a = $$read.from.variable.ToString();",
-        "[:c var a = ][:r $$read.from.variable][:c .ToString();]")]
+        "var a = $$read_from_variable.ToString();",
+        "[:c var a = ][:r $$read_from_variable][:c .ToString();]")]
     [TestCase(
-        "int a =   $$read.from.variable;",
-        "[:c int a =   ][:r $$read.from.variable][:c ;]")]
+        "int a =   $$read_from_variable;",
+        "[:c int a =   ][:r $$read_from_variable][:c ;]")]
     [TestCase(
-        "int a   =   $$read.from.variable;",
-        "[:c int a   =   ][:r $$read.from.variable][:c ;]")]
+        "int a   =   $$read_from_variable;",
+        "[:c int a   =   ][:r $$read_from_variable][:c ;]")]
     [TestCase(
-        "int a   =\n   $$read.from.variable;",
-        "[:c int a   =\n   ][:r $$read.from.variable][:c ;]")]
+        "int a   =\n   $$read_from_variable;",
+        "[:c int a   =\n   ][:r $$read_from_variable][:c ;]")]
     [TestCase(
-        "if($$read.from.variable == a)",
-        "[:c if(][:r $$read.from.variable][:c == a)]")]
+        "if($$read_from_variable == a)",
+        "[:c if(][:r $$read_from_variable][:c == a)]")]
     [TestCase(
         "$$\"\"\"some string\"\"\"",
         "[:c $$\"\"\"some string\"\"\"]")]
     public void ReadRuleVariable(string code, string expected)
     {
         var declaredItems = new DeclaredItems {
-            new RuntimeRuleVariable("$$read.from.variable", valueType: null),
+            new RuntimeRuleVariable("$$read_from_variable", valueType: null),
         };
 
         var (codeBlock, _, _) = _sut.Parse(
@@ -48,30 +48,30 @@ public class CodeParserTests
     }
 
     [TestCase(
-        "int a = $read.from.variable;",
-        "[:c int a = ][:r $read.from.variable][:c ;]")]
+        "int a = $read_from_variable;",
+        "[:c int a = ][:r $read_from_variable][:c ;]")]
     [TestCase(
-        "var a = $read.from.variable.ToString();",
-        "[:c var a = ][:r $read.from.variable][:c .ToString();]")]
+        "var a = $read_from_variable.ToString();",
+        "[:c var a = ][:r $read_from_variable][:c .ToString();]")]
     [TestCase(
-        "int a =   $read.from.variable;",
-        "[:c int a =   ][:r $read.from.variable][:c ;]")]
+        "int a =   $read_from_variable;",
+        "[:c int a =   ][:r $read_from_variable][:c ;]")]
     [TestCase(
-        "int a   =   $read.from.variable;",
-        "[:c int a   =   ][:r $read.from.variable][:c ;]")]
+        "int a   =   $read_from_variable;",
+        "[:c int a   =   ][:r $read_from_variable][:c ;]")]
     [TestCase(
-        "int a   =\n   $read.from.variable;",
-        "[:c int a   =\n   ][:r $read.from.variable][:c ;]")]
+        "int a   =\n   $read_from_variable;",
+        "[:c int a   =\n   ][:r $read_from_variable][:c ;]")]
     [TestCase(
-        "if($read.from.variable == a)",
-        "[:c if(][:r $read.from.variable][:c == a)]")]
+        "if($read_from_variable == a)",
+        "[:c if(][:r $read_from_variable][:c == a)]")]
     [TestCase(
         "$\"\"\"some string\"\"\"",
         "[:c $\"\"\"some string\"\"\"]")]
     public void ReadLocalVariable(string code, string expected)
     {
         var declaredItems = new DeclaredItems {
-            new LocalVariable("$read.from.variable", valueType: null)
+            new LocalVariable("$read_from_variable", valueType: null)
         };
 
         var (codeBlock, _, _) = _sut.Parse(
@@ -109,20 +109,20 @@ public class CodeParserTests
     }
 
     [TestCase(
-        "int a = #read.from.function;",
-        "[:c int a = ][:r #read.from.function][:c ;]")]
+        "int a = @read.from.function;",
+        "[:c int a = ][:r @read.from.function][:c ;]")]
     [TestCase(
-        "int a =   #read.from.function;",
-        "[:c int a =   ][:r #read.from.function][:c ;]")]
+        "int a =   @read.from.function;",
+        "[:c int a =   ][:r @read.from.function][:c ;]")]
     [TestCase(
-        "int a   =   #read.from.function;",
-        "[:c int a   =   ][:r #read.from.function][:c ;]")]
+        "int a   =   @read.from.function;",
+        "[:c int a   =   ][:r @read.from.function][:c ;]")]
     [TestCase(
-        "int a   =\n   #read.from.function;",
-        "[:c int a   =\n   ][:r #read.from.function][:c ;]")]
+        "int a   =\n   @read.from.function;",
+        "[:c int a   =\n   ][:r @read.from.function][:c ;]")]
     [TestCase(
-        "if(#read.from.function == a)",
-        "[:c if(][:r #read.from.function][:c == a)]")]
+        "if(@read.from.function == a)",
+        "[:c if(][:r @read.from.function][:c == a)]")]
     [TestCase(
         "jpath: $.amount",
         "[:c jpath: $.amount]")]
@@ -131,7 +131,7 @@ public class CodeParserTests
     {
         var declaredItems = new DeclaredItems
         {
-            new Function("#read.from.function",
+            new Function("@read.from.function",
                 Array.Empty<IObjectTextPart>(), valueType: null)
         };
 
@@ -144,30 +144,30 @@ public class CodeParserTests
     }
 
     [TestCase(
-        "$$write.to.variable = a;",
-        "[:w $$write.to.variable][:c = a;]")]
+        "$$write_to_variable = a;",
+        "[:w $$write_to_variable][:c = a;]")]
     [TestCase(
-        "$$write.to.variable   = a;",
-        "[:w $$write.to.variable][:c = a;]")]
+        "$$write_to_variable   = a;",
+        "[:w $$write_to_variable][:c = a;]")]
     [TestCase(
-        "$$write.to.variable =   a;",
-        "[:w $$write.to.variable][:c =   a;]")]
+        "$$write_to_variable =   a;",
+        "[:w $$write_to_variable][:c =   a;]")]
     [TestCase(
-        "$$write.to.variable =\n   a;",
-        "[:w $$write.to.variable][:c =\n   a;]")]
+        "$$write_to_variable =\n   a;",
+        "[:w $$write_to_variable][:c =\n   a;]")]
     // local
     [TestCase(
-        "$write.to.variable = a;",
-        "[:w $write.to.variable][:c = a;]")]
+        "$write_to_variable = a;",
+        "[:w $write_to_variable][:c = a;]")]
     [TestCase(
-        "$write.to.variable   = a;",
-        "[:w $write.to.variable][:c = a;]")]
+        "$write_to_variable   = a;",
+        "[:w $write_to_variable][:c = a;]")]
     [TestCase(
-        "$write.to.variable =   a;",
-        "[:w $write.to.variable][:c =   a;]")]
+        "$write_to_variable =   a;",
+        "[:w $write_to_variable][:c =   a;]")]
     [TestCase(
-        "$write.to.variable =\n   a;",
-        "[:w $write.to.variable][:c =\n   a;]")]
+        "$write_to_variable =\n   a;",
+        "[:w $write_to_variable][:c =\n   a;]")]
     public void WriteVariable(string code, string expected)
     {
         var (codeBlock, _, _) = _sut.Parse(
