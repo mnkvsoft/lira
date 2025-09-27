@@ -13,5 +13,5 @@ example: ranges.csharp.generation
 ~ body
 {
     "status": "ok"
-    "fee": {{ range("amount/ok") * 100 >> format: #. ### without decimals ### }}
+    "fee": {{ range("amount/ok") * 100 >> format: #. @* without decimals *@ }}
 }

@@ -22,7 +22,7 @@ GET /generating/types/json/replace/cs/objects
         .replace("$.objectField", new{b = "value"})
 }}
 
-###
+@*
 Response:
 
 200
@@ -37,5 +37,3 @@ Response:
     "b": "value"
   }
 }
-
-###

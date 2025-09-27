@@ -1,4 +1,4 @@
-## success
+@- success
 
 -------------------- rule
 
@@ -18,7 +18,7 @@ example: manual_payment
     "status": "success"
 }
 
-## pending
+@- pending
 
 -------------------- rule
 
@@ -38,7 +38,7 @@ example: manual_payment
     "status": "pending"
 }
 
-## reject
+@- reject
 
 -------------------- rule
 

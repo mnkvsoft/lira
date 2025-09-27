@@ -1,4 +1,4 @@
-## not cached
+@- not cached
 -------------------- case
 
 GET /cache/set_get/1?comment=first_invoke
@@ -14,7 +14,7 @@ GET /cache/set_get/1?comment=first_invoke
 }
 
 
-## cached
+@- cached
 -------------------- case
 
 GET /cache/set_get/1?comment=second_invoke
@@ -29,12 +29,12 @@ GET /cache/set_get/1?comment=second_invoke
     "comment": "first_invoke"
 }
 
-## cache expired
+@- cache expired
 -------------------- case
 
 GET /cache/set_get/1?comment=third_invoke
 
-~ delay 
+~ delay
 00:00:02
 
 ----- expected

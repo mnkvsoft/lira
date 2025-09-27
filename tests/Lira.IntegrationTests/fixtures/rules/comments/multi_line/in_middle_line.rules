@@ -8,4 +8,4 @@ GET /comments/multi_line/in_middle_line
 200
 
 ~ body
-start ### comment ###text
+start @* comment *@text

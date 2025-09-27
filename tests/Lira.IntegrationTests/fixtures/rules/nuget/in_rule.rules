@@ -6,7 +6,7 @@ GET /nuget/in_rule
 
 {
     "token": "{{
-                ## classes from the System.IdentityModel.Tokens.Jwt package are used
+                @- classes from the System.IdentityModel.Tokens.Jwt package are used
                 @using System.IdentityModel.Tokens.Jwt;
 
                 @using Microsoft.IdentityModel.Tokens;

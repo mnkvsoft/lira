@@ -1,4 +1,4 @@
-## not matched
+@- not matched
 -------------------- case
 
 GET /match/function/path/impl/int/NOT_INT/some
@@ -8,7 +8,7 @@ GET /match/function/path/impl/int/NOT_INT/some
 ~ code
 404
 
-## matched
+@- matched
 -------------------- case
 
 GET /match/function/path/impl/int/123/some

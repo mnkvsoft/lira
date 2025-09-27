@@ -23,25 +23,25 @@ $$id = {{ seq }}
 
 ----- action
 
-## C# code block
+@- C# code block
 
-## create file path
+@- create file path
 string filePath = "/tmp/" + $$id + ".dat";
 
-## write file
+@- write file
 File.WriteAllText(filePath, @body);
 
 
 -------------------- rule
 
-GET /order/{{ File.Exists($"/tmp/{value}.dat") ### if file exists ### >> $$id }}
+GET /order/{{ File.Exists($"/tmp/{value}.dat") @* if file exists *@ >> $$id }}
 
 ~ headers
 example: action
 
 ----- declare
 
-## write json body from file
+@- write json body from file
 @body:json = {{ File.ReadAllText($"/tmp/{$$id}.dat") }}
 
 ----- response

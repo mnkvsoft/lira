@@ -69,7 +69,7 @@
 			},
 			{
 				"name": "entity.name.variable.rules",
-				"match": "#([a-zA-Z]|\\.|_)+"
+				"match": "@([a-zA-Z]|\\.|_)+"
 			}
 			]
 		},
@@ -92,13 +92,13 @@
             "patterns": [
                 {
                     "name": "comment.block.rules",
-                    "begin": "###",
+                    "begin": "@\\*",
                     "beginCaptures": {
                         "0": {
                             "name": "punctuation.definition.comment.rules"
                         }
                     },
-                    "end": "###",
+                    "end": "\\*@",
                     "endCaptures": {
                         "0": {
                             "name": "punctuation.definition.comment.rules"
@@ -107,7 +107,7 @@
                 },
                 {
 					"name": "comment.block.rules",
-                    "begin": "##",
+                    "begin": "@-",
                     "beginCaptures": {
                         "0": {
                             "name": "punctuation.definition.comment.rules"

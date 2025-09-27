@@ -7,7 +7,7 @@ POST /match/sharp/req/read_to_variable/{{ regex:^[0-9]{20}$ >> $$account}}
 
 ~ req
 
-## the account balance is encoded in its number
+@- the account balance is encoded in its number
 
 double balance = double.Parse($$account[^4..]);
 bool enoughMoney = balance >= $$amount;
@@ -20,7 +20,7 @@ return enoughMoney;
     "transactionId": 12345
 }
 
-###
+@*
 Response:
 
 200
@@ -28,4 +28,3 @@ Response:
 {
     "transactionId": 12345
 }
-###

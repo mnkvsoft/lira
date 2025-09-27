@@ -9,11 +9,11 @@ GET /format
 
 ~ body
 
-## short function
+@- short function
 {{ guid >> format: N }}
 
-## raw C# block
+@- raw C# block
 {{ Guid.NewGuid().ToString("D") }}
 
-##  C# block with format function
+@-  C# block with format function
 {{ Guid.NewGuid() >> format: B }}

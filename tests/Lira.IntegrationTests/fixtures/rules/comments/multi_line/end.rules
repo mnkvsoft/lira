@@ -8,4 +8,4 @@ GET /comments/multi_line/end
 200
 
 ~ body
-hello!### comment at the end
+hello!@* comment at the end

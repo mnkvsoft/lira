@@ -9,8 +9,8 @@ GET /generating/transform/format
 
 ~ body
 
-## if format not required then write as is
+@- if format not required then write as is
 {{ req.header: Request-Id }}
 
-## otherwise we try convert to type and formatting
+@- otherwise we try convert to type and formatting
 {{ req.header: Request-Id >> format: N }}

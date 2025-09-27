@@ -9,9 +9,9 @@ GET /comments/multi_line/many_lines
 
 ~ body
 start text
-### 
+@*
 many
 lines
 comment
-###
+*@
 end text

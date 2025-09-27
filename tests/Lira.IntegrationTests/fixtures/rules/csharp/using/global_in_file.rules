@@ -5,9 +5,9 @@
 
 GET /csharp/using/global_in_file/{{
 
-    ## check that the value is an account number
+    @- check that the value is an account number
 
-    ## using System.Text.RegularExpressions
+    @- using System.Text.RegularExpressions
     var regex = new Regex("\\d{20}");
     return regex.IsMatch(value);
 
@@ -15,7 +15,7 @@ GET /csharp/using/global_in_file/{{
 
 ----- action
 
-## using System.IO;
+@- using System.IO;
 
 $$page = "page not found";
 if(File.Exists("page"))

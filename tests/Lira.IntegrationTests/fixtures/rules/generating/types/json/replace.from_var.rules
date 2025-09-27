@@ -34,7 +34,7 @@ $$objectVar    = {"b": "value"}
         .replace("$.objectField", $$objectVar)
 }}
 
-###
+@*
 Response:
 
 200
@@ -52,5 +52,3 @@ Response:
     "b": "value"
   }
 }
-
-###

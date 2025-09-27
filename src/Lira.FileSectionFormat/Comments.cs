@@ -6,9 +6,9 @@ internal static class Comments
 {
     static class CommentChar
     {
-        public const string SingleLine = "##";
-        public const string MultiLineStart = "###";
-        public const string MultiLineEnd = "###";
+        public const string SingleLine = "@-";
+        public const string MultiLineStart = "@*";
+        public const string MultiLineEnd = "*@";
     }
 
     public static string Delete(string text)

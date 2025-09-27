@@ -1,4 +1,4 @@
-## not matched
+@- not matched
 -------------------- case
 
 GET /match/static/header
@@ -9,7 +9,7 @@ GET /match/static/header
 404
 
 
-## matched
+@- matched
 -------------------- case
 
 GET /match/static/header

@@ -1,18 +1,16 @@
-###
+@*
 -------------------- rule
 
 GET /variables/short_declaration/manual_set_type_system_name
 
 ~ body
-{{ form: guidParam }}  >> {{ any  >> $$strVar:System.String   }}
-{{ form: intParam  }}  >> {{ int  >> $$decVar:System.Decimal   }}
-{{ form: guidParam }}  >> {{ any  >> $$guidVar:System.Guid }}
-{{ form: intParam  }}  >> {{ any  >> $$intVar:System.Int64   }}
+{{ form: guidParam }} >> {{ any  >> $$strVar:System.String   }}
+{{ form: intParam  }} >> {{ int  >> $$decVar:System.Decimal   }}
+{{ form: guidParam }} >> {{ any  >> $$guidVar:System.Guid }}
+{{ form: intParam  }} >> {{ any  >> $$intVar:System.Int64   }}
 
 ----- response
 {{ $$strVar.GetType() }}
 {{ $$decVar.GetType() }}
 {{ $$guidVar.GetType() }}
 {{ $$intVar.GetType() }}
-
-
