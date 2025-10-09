@@ -1,12 +1,11 @@
 - delete unused peimage files immediately
-- hide dynamic class details on exception
 - range [ 100 - 200 ] => [ 100..200 ]
 - headers matching: : => >>
+- make dic-function
 
 - set body encoding
 - fail container start if error in rule
 - {{{ escaping
-- make dic-function
 - key for conditions
 - cache section
 - type inference for dynamic block

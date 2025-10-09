@@ -56,7 +56,7 @@ internal static class PatternParser
                             callChain.Append(iterator.Current);
                     }
 
-                    parts.Add(new PatternPart.Dynamic(callChain.ToString().Trim()));
+                    parts.Add(new PatternPart.Dynamic(callChain.ToString()));
                 }
                 else
                 {

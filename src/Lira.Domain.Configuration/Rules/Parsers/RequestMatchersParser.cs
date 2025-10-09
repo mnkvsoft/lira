@@ -285,10 +285,10 @@ class RequestMatchersParser
 
     private async Task<IMatchFunctionTyped> CreateMatchFunction(string invoke, ParsingContext context)
     {
-        if (_functionFactorySystem.TryCreateMatchFunction(invoke, new SystemFunctionContext(new DeclaredItemsProvider(context.DeclaredItems)), out var function))
+        if (_functionFactorySystem.TryCreateMatchFunction(invoke.Trim(), new SystemFunctionContext(new DeclaredItemsProvider(context.DeclaredItems)), out var function))
             return function;
 
-        if (context.CustomDicts.TryGetCustomSetFunction(invoke, out var customSetFunction))
+        if (context.CustomDicts.TryGetCustomSetFunction(invoke.Trim(), out var customSetFunction))
             return customSetFunction;
 
         var (codeBlock, newRuntimeVariables, localVariables) = _codeParser.Parse(invoke, context.DeclaredItems);

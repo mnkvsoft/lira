@@ -25,6 +25,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly Namer _namer;
     private readonly string? _globalUsingFileContent;
     private readonly ILoggerFactory _loggerFactory;
+    private readonly ILogger _logger;
 
     public record Dependencies(
         AssembliesLoader AssembliesLoader,
@@ -51,6 +52,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         _assembliesLocations = assembliesLocations;
         _csFilesAssembly = csFilesAssembly;
         _loggerFactory = dependencies.LoggerFactory;
+        _logger = _loggerFactory.CreateLogger<FunctionFactory>();
     }
 
     public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(
@@ -227,7 +229,10 @@ class FunctionFactory : IFunctionFactoryCSharp
                     Runtime: _csFilesAssembly != null ? [_csFilesAssembly.PeImage] : Array.Empty<PeImage>())));
 
         if (compileResult is CompileResult.Fault fault)
-            return new CreateFunctionResult<TFunction>.Failed(fault.Message, classToCompile);
+        {
+            _logger.LogDebug("An exception occurred while compiling the code:" + Environment.NewLine + classToCompile);
+            return new CreateFunctionResult<TFunction>.Failed(fault.Message);
+        }
 
         var peImage = ((CompileResult.Success)compileResult).PeImage;
 

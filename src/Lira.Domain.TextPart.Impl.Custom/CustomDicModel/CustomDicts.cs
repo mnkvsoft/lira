@@ -6,13 +6,13 @@ namespace Lira.Domain.TextPart.Impl.Custom.CustomDicModel;
 
 public interface IReadOnlyCustomDicts
 {
-    bool TryGetCustomSetFunction(string name, [MaybeNullWhen(false)] out CustomSetFunction function);
+    bool TryGetCustomSetFunction(string name, [MaybeNullWhen(false)] out CustomDicFunction function);
     IReadOnlyCollection<string> GetRegisteredNames();
 }
 
 public class CustomDicts : IReadOnlyCustomDicts
 {
-    private readonly Dictionary<string, CustomSetFunction> _map;
+    private readonly Dictionary<string, CustomDicFunction> _map;
 
     public CustomDicts(IReadOnlyCustomDicts customDicts)
     {
@@ -21,15 +21,15 @@ public class CustomDicts : IReadOnlyCustomDicts
 
     public CustomDicts()
     {
-        _map = new Dictionary<string, CustomSetFunction>();
+        _map = new Dictionary<string, CustomDicFunction>();
     }
 
     public void Add(string name, IReadOnlyList<string> lines)
     {
         if (_map.ContainsKey(name))
-            throw new InvalidOperationException($"Set '{name}' already register");
+            throw new InvalidOperationException($"Dictionary '{name}' already register");
 
-        _map.Add(name, new CustomSetFunction(lines));
+        _map.Add(name, new CustomDicFunction(lines));
     }
 
     public IReadOnlyCollection<string> GetRegisteredNames()
@@ -37,13 +37,13 @@ public class CustomDicts : IReadOnlyCustomDicts
         return _map.Keys;
     }
 
-    public bool TryGetCustomSetFunction(string name, [MaybeNullWhen(false)] out CustomSetFunction function)
+    public bool TryGetCustomSetFunction(string name, [MaybeNullWhen(false)] out CustomDicFunction function)
     {
         return _map.TryGetValue(name, out function);
     }
 }
 
-public class CustomSetFunction(IReadOnlyList<string> list) : IObjectTextPart, IMatchFunctionTyped
+public class CustomDicFunction(IReadOnlyList<string> list) : IObjectTextPart, IMatchFunctionTyped
 {
     private readonly HashSet<string> _hashSet = new(list);
 

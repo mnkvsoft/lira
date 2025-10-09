@@ -21,11 +21,11 @@ class DeclaredItems : HashSet<DeclaredItem>
     {
         var nl = Environment.NewLine;
         return
-            $"Declared functions: {string.Join(", ", this.OfType<Function>().Select(x => x.Name))}" +
+            $"- declared functions: {string.Join(", ", this.OfType<Function>().Select(x => x.Name))}" +
             nl +
-            $"Declared variables: {string.Join(", ", this.OfType<RuleVariable>().Select(x => x.Name))}"+
+            $"- declared variables: {string.Join(", ", this.OfType<RuleVariable>().Select(x => x.Name))}"+
             nl +
-            $"Declared local variables: {string.Join(", ", this.OfType<LocalVariable>().Select(x => x.Name))}"
+            $"- declared local variables: {string.Join(", ", this.OfType<LocalVariable>().Select(x => x.Name))}"
             ;
     }
 }

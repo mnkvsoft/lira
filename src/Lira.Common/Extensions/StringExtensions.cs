@@ -67,10 +67,11 @@ public static class StringExtensions
     public static string WrapBeginEnd(this string value)
     {
         var nl = Environment.NewLine;
+        var replacedNl = value.Replace("\n", nl);
         return
-            "========== begin ==========" + nl + nl +
-            value + nl + nl +
-            "=========== end ===========" + nl + nl;
+            "============== begin ==============" + nl + nl +
+            replacedNl + nl + nl +
+            "=============== end ===============" + nl + nl;
     }
 
     public static object Typed(this string value)

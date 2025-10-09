@@ -82,7 +82,7 @@ internal class RuleFileParser
         bool existsCacheSection = childSections.Any(x => x.Name == Constants.SectionName.Cache);
 
         if (existsConditionSection && existsCacheSection)
-            throw new Exception("Section  and 2 cannot be declared together");
+            throw new Exception("Section and 2 cannot be declared together");
 
         if (existsConditionSection)
         {

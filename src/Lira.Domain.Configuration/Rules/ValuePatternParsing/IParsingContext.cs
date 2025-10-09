@@ -67,7 +67,7 @@ class ParsingContext : IParsingContext
         var nl = Environment.NewLine;
         return
             DeclaredItems + nl +
-            $"Custom dictionaries: {string.Join(", ", CustomDicts.GetRegisteredNames())}";
+            $"- custom dictionaries: {string.Join(", ", CustomDicts.GetRegisteredNames())}";
     }
 }
 

@@ -1,3 +1,5 @@
+using System.Text;
+using Lira.Common.Extensions;
 using Lira.Common.State;
 using Microsoft.Extensions.Logging;
 using Lira.Domain.Configuration.Rules;
@@ -64,6 +66,12 @@ class ConfigurationLoader(
         catch (Exception e)
         {
             _logger.LogError(e, "An unexpected error occured while load rules");
+
+            var sb = new StringBuilder();
+            sb.AppendLine("An unexpected error occured while loading rules.");
+            sb.AppendLine(e.GetMessagesChain());
+
+            _logger.LogInformation(sb.ToString());
             return new ConfigurationState.Error(DateTime.Now, e);
         }
     }

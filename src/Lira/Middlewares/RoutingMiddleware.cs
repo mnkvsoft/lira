@@ -1,12 +1,9 @@
 using System.Diagnostics;
 using System.Text;
 using Lira.Domain;
-using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration;
 using Lira.Domain.Configuration.Rules;
-using HttpContextData = Lira.Domain.HttpContextData;
-using IRuleMatchWeight = Lira.Domain.IRuleMatchWeight;
 using RequestData = Lira.Domain.RequestData;
 using Lira.Configuration;
 
@@ -59,14 +56,14 @@ class RoutingMiddleware : IMiddleware
         if (state is ConfigurationState.Error error)
         {
             context.Response.StatusCode = 500;
-            await context.Response.WriteAsync(error.Exception.ToString());
+            await context.Response.WriteAsync(error.Exception.GetMessagesChain());
             return;
         }
 
         var request = new RequestData(req.Method, req.Path, req.QueryString, req.Headers, req.Query, req.Body);
 
-        Stopwatch swTotal = Stopwatch.StartNew();
-        Stopwatch sw = Stopwatch.StartNew();
+        var swTotal = Stopwatch.StartNew();
+        var sw = Stopwatch.StartNew();
         var executors = await GetRuleExecutors(request);
         var searchMs = sw.GetElapsedDoubleMilliseconds();
         sw.Restart();
@@ -121,7 +118,6 @@ class RoutingMiddleware : IMiddleware
             IRuleExecutor? executor;
             try
             {
-
                 executor = await rule.GetExecutor(context);
             }
             catch (Exception e)
