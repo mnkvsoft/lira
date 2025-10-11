@@ -94,6 +94,7 @@ public class LoggingMiddleware
 
         //...and copy it into a string
         string text = await new StreamReader(response.Body).ReadToEndAsync();
+        text = text.Replace("\r\n", "\n").Replace("\n", Environment.NewLine);
 
         //We need to reset the reader for the response so that the client can read it.
         response.Body.Seek(0, SeekOrigin.Begin);
@@ -103,6 +104,7 @@ public class LoggingMiddleware
         var sb = new StringBuilder();
         sb.AppendLine("Response:");
         sb.AppendLine(response.StatusCode.ToString());
+        sb.AppendLine();
 
         if (response.Headers.Any())
         {

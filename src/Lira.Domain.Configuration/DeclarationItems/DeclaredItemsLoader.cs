@@ -1,4 +1,6 @@
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel;
+using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables;
 using Lira.FileSectionFormat;
 using NuGet.Packaging;
 
@@ -15,7 +17,14 @@ internal class DeclaredItemsLoader(DeclaredItemsLinesParser linesParser, Declare
             try
             {
                 var lines = TextCleaner.DeleteEmptiesAndComments(await File.ReadAllTextAsync(declarationFile));
-                drafts.AddRange(linesParser.Parse(lines));
+                var items = linesParser.Parse(lines);
+
+                var variables = items.Where(i => i.Name.StartsWith(RuleVariable.Prefix)).ToArray();
+
+                if(variables.Length != 0)
+                    throw new Exception($"It is forbidden to declare variables inside .declare. Variables: {string.Join(", ", variables.Select(x => x.Name))}. File: {declarationFile}");
+
+                drafts.AddRange(items);
             }
             catch (Exception exc)
             {

@@ -1,4 +1,3 @@
-- disable variable declarations in .declare files
 - range [ 100 - 200 ] => [ 100..200 ]
 - headers matching: : => >>
 - make dic-function

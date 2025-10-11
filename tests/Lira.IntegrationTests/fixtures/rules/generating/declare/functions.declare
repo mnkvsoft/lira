@@ -1,3 +1,2 @@
 @random.int       = {{ echo: 123 }}
 @random.int.super = {{ @random.int * 2 }}
-$$var_random_int  = {{ random.int.super }}
