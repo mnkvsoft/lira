@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
@@ -10,18 +11,13 @@ class PeImagesCache : IDisposable
     private static readonly string TempPath = Paths.GetTempSubPath("pe_images");
 
     private bool _wasInit;
-    private readonly Dictionary<Hash, PeImageCacheEntry> _hashToEntryMap = new();
+
+    // use concurrent version only for tests
+    private readonly ConcurrentDictionary<Hash, PeImageCacheEntry> _hashToEntryMap = new();
     private readonly ILogger _logger;
-    private readonly State _state;
 
-    public class State
+    public PeImagesCache(ILoggerFactory loggerFactory)
     {
-        public DateTime? LastClean { get; set; }
-    }
-
-    public PeImagesCache(ILoggerFactory loggerFactory, State state)
-    {
-        _state = state;
         _logger = loggerFactory.CreateLogger(GetType());
     }
 
@@ -50,7 +46,7 @@ class PeImagesCache : IDisposable
         if (_hashToEntryMap.ContainsKey(peImage.Hash))
             return;
 
-        _hashToEntryMap.Add(
+        _hashToEntryMap.TryAdd(
             peImage.Hash,
             new PeImageCacheEntry(peImage) { IsNew = true });
     }
@@ -72,7 +68,7 @@ class PeImagesCache : IDisposable
             string strHash = Path.GetFileName(filePath);
             var hash = Hash.Parse(strHash);
             var peImage = new PeImage(hash, new PeBytes(File.ReadAllBytes(filePath)));
-            _hashToEntryMap.Add(hash, new PeImageCacheEntry(peImage));
+            _hashToEntryMap.TryAdd(hash, new PeImageCacheEntry(peImage));
         }
 
         _wasInit = true;
@@ -87,8 +83,6 @@ class PeImagesCache : IDisposable
     {
         try
         {
-            var notUsed = new List<string>(_hashToEntryMap.Keys.Count);
-
             foreach (var pair in _hashToEntryMap)
             {
                 var hash = pair.Key;
@@ -98,53 +92,17 @@ class PeImagesCache : IDisposable
 
                 if (entry.IsNew)
                 {
-                    IgnoreIoExceptionForTests(() => File.WriteAllBytes(filePath, entry.PeImage.Bytes.Value));
-                    continue;
+                    File.WriteAllBytes(filePath, entry.PeImage.Bytes.Value);
                 }
-
-                if (entry.WasUsed)
-                    continue;
-
-                notUsed.Add(filePath);
-            }
-
-            // cleaning
-
-            if (_state.LastClean == null)
-            {
-                _state.LastClean = DateTime.UtcNow;
-                return;
-            }
-
-            // todo: clean immediately
-            if (DateTime.UtcNow - _state.LastClean.Value > TimeSpan.FromDays(1))
-            {
-                foreach (var notUsedFile in notUsed)
+                else if (!entry.WasUsed)
                 {
-                    File.Delete(notUsedFile);
+                    File.Delete(filePath);
                 }
-
-                _state.LastClean = DateTime.UtcNow;
             }
         }
         catch (Exception e)
         {
             _logger.LogError(e, "Error while disposing PE image cache");
-        }
-    }
-
-    // todo: when running tests in parallel, similar errors occur, think about how to make it more graceful
-    static void IgnoreIoExceptionForTests(Action action)
-    {
-        try
-        {
-            action();
-        }
-        catch (IOException e) when (e.Message.Contains("The process cannot access the file"))
-        {
-        }
-        catch (UnauthorizedAccessException e) when (e.Message.Contains("Access to the path"))
-        {
         }
     }
 }

@@ -21,7 +21,7 @@ abstract class PatternPart
 
     public class Dynamic(string value) : PatternPart(value)
     {
-        public override string ToString() => "{{ " + Value + " }}";
+        public override string ToString() => "{{" + Value + "}}";
     }
 }
 

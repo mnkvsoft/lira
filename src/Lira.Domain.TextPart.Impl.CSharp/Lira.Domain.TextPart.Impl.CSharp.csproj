@@ -22,4 +22,7 @@
         <PackageReference Include="NuGet.Resolver" Version="6.12.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <InternalsVisibleTo Include="Lira.IntegrationTests" />
+    </ItemGroup>
 </Project>

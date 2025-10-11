@@ -1,10 +1,17 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using Lira.Common;
 using Moq;
 using Moq.Contrib.HttpClient;
 using Lira.Common.Extensions;
+using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.ExternalCalling.Http.Caller;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging.Console;
 
 namespace Lira.IntegrationTests.Tests;
 
@@ -36,8 +43,13 @@ public class Rules_Tests : TestBase
     public async Task RuleIsWork(string prettyTestFileName)
     {
         string fixturesDirectory = GetFixturesDirectory();
-        var mocks = new AppMocks();
+        var mocks = new AppMocks
+        {
+            PeImagesCache = PeImagesCache
+        };
+
         await using var factory = new TestApplicationFactory(fixturesDirectory, mocks);
+
         var httpClient = factory.CreateDefaultClient();
 
         Console.WriteLine("Execute file: " + prettyTestFileName);
@@ -154,10 +166,10 @@ public class Rules_Tests : TestBase
             string expectedHeaderValue = splitted[1].Trim();
 
             var allHeaders = res.GetAllHeaders();
-            if (!allHeaders.ContainsKey(headerName))
+            if (!allHeaders.TryGetValue(headerName, out var headers))
                 throw new Exception($"Not found header '{headerName}' in response");
 
-            var headerActualValue = allHeaders[headerName].Single();
+            var headerActualValue = headers.Single();
             Assert.That(headerActualValue, Is.EqualTo(expectedHeaderValue));
         }
     }
@@ -186,5 +198,51 @@ public class Rules_Tests : TestBase
         req.Content = new StringContent(caseSection.GetStringValueFromBlockOrEmpty("body"));
 
         return req;
+    }
+
+    readonly static PeImagesCache PeImagesCache = new(new ConsoleLoggerFactory());
+
+    [OneTimeSetUp]
+    public static void OneTimeSetUp()
+    {
+        PeImagesCache.TryGet(new Hash([1]), out _);
+    }
+
+    [OneTimeTearDown]
+    public static void OneTimeTearDown()
+    {
+        PeImagesCache.Dispose();
+    }
+}
+
+class ConsoleLoggerFactory : ILoggerFactory
+{
+    private static readonly Logger _logger = new Logger();
+
+    public void Dispose()
+    {
+
+    }
+
+    public void AddProvider(ILoggerProvider provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ILogger CreateLogger(string categoryName) => _logger;
+
+    class Logger : ILogger
+    {
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+        {
+            return null;
+        }
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+            Console.WriteLine(formatter(state, exception));
+        }
     }
 }

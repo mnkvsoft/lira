@@ -24,7 +24,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<PeImagesCache>()
             .AddScoped<Namer>()
 
-            .AddSingleton<PeImagesCache.State>()
             .AddSingleton<Namer.State>()
             .AddSingleton<DynamicAssembliesUnloader>()
             .AddSingleton<NugetLibsProvider>()
