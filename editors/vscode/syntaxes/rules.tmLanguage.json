@@ -51,6 +51,10 @@
 			{
 				"name": "keyword.pass-to-pipeline.rules",
 				"match": ">>"
+			},
+			{
+				"name": "keyword.operators",
+				"match": "@repeat|@end|@if|@else if|@else"
 			}
 			]
 		},

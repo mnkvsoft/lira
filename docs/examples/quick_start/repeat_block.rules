@@ -1,11 +1,6 @@
 -------------------- rule
 
-GET /orders/{{ int @* ghj gjg jgj gjgh gjj *@ }}
-
-@- its one line commen
-@- its one line commen
-@- its one line commen
-@- its one line commen
+GET /orders/{{ int @* customer id *@ }}
 
 ~ headers
 example: repeat_block

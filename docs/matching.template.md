@@ -10,26 +10,6 @@
 #### Пример
 [static.rules](examples/guide/static.rules)
 
-```
--------------------- rule
-
-POST /payment/card?amount=100
-
-~ headers
-example: static
-
-~ body
-number=1111222233334444
-
------ response
-
-~ code
-200
-
-~ body
-static rules matched
-```
-
 Запрос
 ```
 curl --location 'http://localhost/payment/card?amount=100' \
@@ -137,21 +117,6 @@ range: <имя_диапазона>/<диапазон>
 
 #### C указанием начального и конечного значения в сегменте
 [path_with_start_end.rules](examples/guide/path_with_start_end.rules)
-
-```
-
--------------------- rule
-
-GET /user/ivanov_{{ any }}_petrovich
-
------ response
-
-~ code
-200
-
-~ body
-ivanov user matched
-```
 Запросы подпадающие под правило
 ```
 curl --location 'http://localhost/user/ivanov_petr_petrovich'
@@ -160,20 +125,6 @@ curl --location 'http://localhost/user/ivanov_ivan_petrovich'
 
 #### C ипользованием только функции сопоставления
 [path_with_one_func.rules](examples/guide/path_with_one_func.rules)
-
-```
--------------------- rule
-
-GET /user/{{ any }}
-
------ response
-
-~ code
-200
-
-~ body
-any user matched
-```
 Запросы подпадающие под правило
 ```
 curl --location 'http://localhost/user/123'
@@ -184,20 +135,6 @@ curl --location 'http://localhost/user/ivan_petrovich'
 
 #### C ипользованием функций в разных сегментах
 [path_with_two_func.rules](examples/guide/path_with_two_func.rules)
-
-```
--------------------- rule
-
-GET /user/{{ any }}/{{ int }}
-
------ response
-
-~ code
-200
-
-~ body
-any user with id matched
-```
 Запросы подпадающие под правило
 ```
 curl --location 'http://localhost/user/123/1'
@@ -219,20 +156,6 @@ curl --location 'http://localhost/user/ivan_petrovich/3'
 
 #### C ипользованием только функции сопоставления
 [query_with_one_func.rules](examples/guide/query_with_one_func.rules)
-
-```
--------------------- rule
-
-GET /user?name={{ any }}
-
------ response
-
-~ code
-200
-
-~ body
-any user by query param matched
-```
 Запросы подпадающие под правило
 ```
 curl --location 'http://localhost/user?name=nikolas'
@@ -252,20 +175,6 @@ curl --location 'http://localhost/user?name=silvester?height=177'
 
 #### C указанием начального и конечного значения в параметре строки запроса
 [query_with_start_end.rules](examples/guide/query_with_start_end.rules)
-
-```
--------------------- rule
-
-GET /user?name=a{{ any }}a
-
------ response
-
-~ code
-200
-
-~ body
-user a***a matched
-```
 Запросы подпадающие под правило
 ```
 curl --location 'http://localhost/user?name=anna'
@@ -275,20 +184,6 @@ curl --location 'http://localhost/user?name=alina'
 
 #### C ипользованием функций в разных параметрах
 [query_with_two_func.rules](examples/guide/query_with_two_func.rules)
-
-```
--------------------- rule
-
-GET /user?name={{ any }}&ago={{ int }}
-
------ response
-
-~ code
-200
-
-~ body
-any user with ago matched
-```
 
 Запросы подпадающие под правило
 
@@ -314,23 +209,6 @@ curl --location 'http://localhost/user?name=denis&ago=35&height=180'
 
 #### C ипользованием только функции сопоставления
 [header_with_one_func.rules](examples/guide/header_with_one_func.rules)
-
-```
--------------------- rule
-
-POST /user
-
-~ headers
-Request-Id: {{ guid }}
-
------ response
-
-~ code
-200
-
-~ body
-matches by one header by function 
-```
 Запросы подпадающие под правило
 ```
 curl --location --request POST 'http://localhost/user' \
@@ -356,25 +234,6 @@ curl --location --request POST 'http://localhost/user' \
 
 #### C ипользованием только функций сопоставления и статичного значения
 [header_with_statuc_and_funcs.rules](examples/guide/header_with_statuc_and_funcs.rules)
-
-```
--------------------- rule
-
-POST /user
-
-~ headers
-Token: 11{{ any }}22
-Request-Time: {{ any }}
-No-Cache: true
-
------ response
-
-~ code
-200
-
-~ body
-matches by one header by static and functions 
-```
 Запросы подпадающие под правило
 ```
 curl --location --request POST 'http://localhost/user' \
@@ -405,26 +264,6 @@ curl --location --request POST 'http://localhost/user' \
 
 #### C ипользованием только функции сопоставления
 [body_with_one_func.rules](examples/guide/body_with_one_func.rules)
-
-```
--------------------- rule
-
-POST /user
-
-~ headers
-example: body_with_one_func
-
-~ body
-{{ int }}
-
------ response
-
-~ code
-200
-
-~ body
-matches body by one function
-```
 Запрос подпадающий под правило
 ```
 curl --location 'http://localhost/user' \
@@ -465,27 +304,6 @@ jpath: <JSON_Path_выражение>
 #### Пример
 
 [body_jpath.rules](examples/guide/body_jpath.rules)
-
-```
--------------------- rule
-
-POST /payment/card
-
-~ headers
-example: body_jpath
-
-~ body
-{{ jpath: $.number }} >> {{ int }}
-{{ jpath: $.owner }} >> Rodrygo
-
------ response
-
-~ code
-200
-
-~ body
-payment by card from Rodrygo. Matched by Json Path
-```
 Запрос подпадающий под правило
 ```
 curl --location 'http://localhost/payment/card' \
@@ -512,27 +330,6 @@ xpath: <XPath_выражение>
 #### Пример
 
 [body_xpath.rules](examples/guide/body_xpath.rules)
-
-```
--------------------- rule
-
-POST /payment/card
-
-~ headers
-example: body_xpath
-
-~ body
-{{ xpath: /root/number/text() }} >> {{ int }}
-{{ xpath: /root/owner/text() }} >> Rodrygo
-
------ response
-
-~ code
-200
-
-~ body
-payment by card from Rodrygo. Matched by XPath
-```
 Запрос подпадающий под правило
 ```
 curl --location 'http://localhost/payment/card' \
@@ -560,27 +357,6 @@ form: <наименование_параметра>
 #### Пример
 
 [body_form.rules](examples/guide/body_form.rules)
-
-```
--------------------- rule
-
-POST /payment/card
-
-~ headers
-example: body_form
-
-~ body
-{{ form: number }} >> {{ int }}
-{{ form: owner }} >> Rodrygo
-
------ response
-
-~ code
-200
-
-~ body
-payment by card from Rodrygo. Matched by Form
-```
 Запрос подпадающий под правило
 ```
 curl --location 'http://localhost/payment/card' \
@@ -833,47 +609,6 @@ curl --location 'http://localhost/payment/status' \
 LIRA выберет наиболее частное
 
 [priority.rules](examples/quick_start/priority.rules)
-
-```
--------------------- rule
-
-GET /priority/{{ any }}
-
------ response
-
-~ code
-200
-
-~ body
-rule with ANY
-
--------------------- rule
-
-GET /priority/{{ guid }}
-
------ response
-
-~ code
-200
-
-~ body
-rule with GUID
-
--------------------- rule
-
-GET /priority/{{ guid }}
-
-~ headers
-Request-Id: {{ any }}
-
------ response
-
-~ code
-200
-
-~ body
-rule with GUID and header
-```
 Запрос
 ```
 curl --location 'http://localhost/priority/1'
@@ -919,4 +654,3 @@ rule with GUID and header
 [Полное руководство](guide.md)
 
 [Быстрый старт](../readme.md)
-

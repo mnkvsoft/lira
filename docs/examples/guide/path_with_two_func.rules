@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /user/{{ any }}
+GET /user/{{ any }}/{{ int }}
 
 ----- response
 
@@ -8,4 +8,4 @@ GET /user/{{ any }}
 200
 
 ~ body
-any user matched
+any user with id matched
