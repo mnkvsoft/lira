@@ -1593,7 +1593,7 @@ curl --location 'http://localhost/product/BUGATTI' \
 ```
 -------------------- rule
 
-GET /orders/{{ int }}
+GET /orders/{{ int @* customer id *@ }}
 
 ~ headers
 example: repeat_block

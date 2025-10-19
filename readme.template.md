@@ -73,20 +73,6 @@ You need to create a text file `hello.rules` with the following content in the `
 
 [hello.rules](docs/examples/quick_start/hello.rules)
 
-```
--------------------- rule
-
-GET /hello/{{ any >> $$person }}
-
------ response
-
-~ code
-200
-
-~ body
-hello {{ $$person }}!
-```
-
 Testing the first rule in the browser by making a request to the resource
 
 `http://localhost/hello/Nikolas`
@@ -125,20 +111,6 @@ There is no need to focus on it in the examples.
 ### Static rule
 [static.rules](docs/examples/quick_start/static.rules)
 
-```
--------------------- rule
-
-GET /hi
-
------ response
-
-~ code
-200
-
-~ body
-hello!
-```
-
 Request
 ```
 curl --location 'http://localhost/hi'
@@ -155,23 +127,6 @@ hello!
 ### Response delay
 [delay.rules](docs/examples/quick_start/delay.rules)
 
-```
--------------------- rule
-
-GET /delay
-
------ response
-
-~ delay
-2000 ms
-
-~ code
-200
-
-~ body
-long query
-```
-
 Request
 ```
 curl --location 'http://localhost/delay'
@@ -184,16 +139,6 @@ long query
 
 ### Simulate server failure
 [fault.fault](docs/examples/quick_start/fault.rules)
-
-```
--------------------- rule
-
-GET /fault
-
------ response
-
-~ fault
-```
 Request
 ```
 curl --location 'http://localhost/fault'
@@ -204,29 +149,6 @@ When processing a request, the server will not produce a result (`ERR_EMPTY_RESP
 
 ### Dynamic mapping of query parameters by system functions
 [match_dynamic.rules](docs/examples/quick_start/match_dynamic.rules)
-
-```
--------------------- rule
-
-POST /payment/{{ any }}?fast={{ any }}
-
-~ headers
-Request-Id: {{ guid }}
-
-~ body
-{{ jpath: $.number }} >> 4444{{ int }}
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "id": 12345,
-    "status": "ok"
-}
-```
 Request
 ```
 curl --location 'http://localhost/payment/card?fast=true' \
@@ -260,28 +182,6 @@ Response
 
 ### Dynamic mapping of request parameters with a short C# block
 [match_dynamic_csharp_short.rules](docs/examples/quick_start/match_dynamic_csharp_short.rules)
-
-```
--------------------- rule
-
-POST /payment/{{ value == "card" || value == "account" }}
-
-~ headers
-example: match_dynamic_csharp_short
-Request-Id: {{ Guid.TryParse(value, out _) }}
-
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "id": 12345,
-    "status": "ok"
-}
-```
 Request
 ```
 curl --location --request POST 'http://localhost/payment/account' \
@@ -328,46 +228,6 @@ Response
 
 ### Dynamic matching of query parameters with a full C# block
 [match_dynamic_csharp_full.rules](docs/examples/quick_start/match_dynamic_csharp_full.rules)
-
-```
--------------------- rule
-
-GET /payment/{{ 
-    if(!int.TryParse(value, out var intValue))
-        return false;
-    return intValue < 10;
-}}
-
-~ headers
-example: match_dynamic_csharp_full
-
------ response
-
-~ body
-{
-    "id": 12345,
-    "status": "ok"
-}
-
--------------------- rule
-
-GET /payment/{{ 
-    if(!int.TryParse(value, out var intValue))
-        return false;
-    return intValue >= 10;
-}}
-
-~ headers
-example: match_dynamic_csharp_full
-
------ response
-
-~ body
-{
-    "id": 12345,
-    "status": "pending"
-}
-```
 Request
 ```
 curl --location 'http://localhost/payment/1' \
@@ -413,30 +273,6 @@ Response
 
 ### Dynamic response generation
 [generation_dynamic.rules](docs/examples/quick_start/generation_dynamic.rules)
-
-```
--------------------- rule
-
-GET /order
-
------ response
-
-~ code
-200
-
-~ headers
-Request-Time: {{ now >> format: H:mm:ss }}
-
-~ body
-{
-    "id": {{ int }},
-    "status": "{{ random: paid, pending, cancelled }}",
-    "amount": {{ dec }},
-    "transaction_id": "{{ guid }}",
-    "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
-    "customer": "{{ str }}"
-}
-```
 Request
 ```
 curl --location 'http://localhost/order'
@@ -466,33 +302,6 @@ Request-Time: 12:07:16
 
 ### Extracting request parameters
 [extract_request_data.rules](docs/examples/quick_start/extract_request_data.rules)
-
-```
--------------------- rule
-
-POST /payment/{{ any }}?fast={{ any }}
-
-~ headers
-Id: {{ any }}
-
-~ body
-{{ jpath: $.account }} >> {{ any }}
-
------ response
-
-~ code
-200
-
-~ headers
-Request-Id: {{ req.header: Id}}
-
-~ body
-{
-    "tool": "{{ req.path: 1 }}",
-    "is_fast": "{{ req.query: fast }}",
-    "account": "{{ req.body.jpath: $.account }}"
-}
-```
 Request
 ```
 curl --location 'http://localhost/payment/account?fast=false' \
@@ -524,23 +333,6 @@ Request-Id: 987
 ### Extracting dynamically mapped data
 
 [extract.value.system.rules](docs/examples/quick_start/extract.value.system.rules)
-
-```
--------------------- rule
-
-GET /balance/7{{ int >> $$phone }}
-
-~ headers
-example: extract.value.system
-
------ response
-
-~ body
-{
-    "phone": {{ $$phone }},
-    "balance": {{ dec }}
-}
-```
 Request
 ```
 curl --location 'http://localhost/balance/79161112233' \
@@ -564,32 +356,6 @@ It is used to pass the same calculated dynamic value to different parts of the r
 Often used when implementing callbacks (to be discussed later).
 
 [variables.rules](docs/examples/quick_start/variables.rules)
-
-```
--------------------- rule
-
-POST /payment
-
-~ headers
-example: variables
-
------ declare
-
-$$requestId = {{ guid }}
-
------ response
-
-~ code
-200
-
-~ headers
-Request-Id: {{ $$requestId >> format: N }}
-
-~ body
-{
-    "request_id": "{{ $$requestId }}"
-}
-```
 Request
 ```
 curl --location --request POST 'http://localhost/payment' \
@@ -614,53 +380,6 @@ Request-Id: 1cfc7bc5ea6146a79dc2820fe7c6c63c
 
 ### Callbacks
 [call.rules](docs/examples/quick_start/call.rules)
-
-```
--------------------- rule
-
-POST /payment
-
-~ headers
-example: call
-
------ declare
-
-$$id = {{ seq }}
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "id": {{ $$id }}, 
-    "status": "pending"
-}
-
------ action.call.http
-
-POST http://localhost/api/callback
-
-~ headers
-Content-Type: application/json
-
-~ body
-{
-    "id": {{ $$id }}, 
-    "status": "ok"
-}
-
-
--------------------- rule
-
-POST /api/callback
-
------ response
-
-~ code
-200
-```
 Request
 ```
 curl --location --request POST 'http://localhost/payment' \
@@ -698,26 +417,6 @@ Content-Length: 42
 
 ### Comments
 [comments.rules](docs/examples/quick_start/comments.rules)
-
-```
--------------------- rule
-
-GET /comments
-
------ response
-
-~ code
-200
-
-~ body
-@- single line comment 
-@*
-    it's multiline
-    comment
-*@ 
-hello!@- comment the rest of the line
-hello @* comment in the middle of the line *@ world!
-```
 Request
 ```
 curl --location 'http://localhost/comments'
@@ -737,47 +436,6 @@ One request can match several rules,
 LIRA will choose the most private one (this is the default behavior, it is configurable)
 
 [priority.rules](docs/examples/quick_start/priority.rules)
-
-```
--------------------- rule
-
-GET /priority/{{ any }}
-
------ response
-
-~ code
-200
-
-~ body
-rule with ANY
-
--------------------- rule
-
-GET /priority/{{ guid }}
-
------ response
-
-~ code
-200
-
-~ body
-rule with GUID
-
--------------------- rule
-
-GET /priority/{{ guid }}
-
-~ headers
-Request-Id: {{ any }}
-
------ response
-
-~ code
-200
-
-~ body
-rule with GUID and header
-```
 Request
 ```
 curl --location 'http://localhost/priority/1'
@@ -832,48 +490,6 @@ File `global.ranges.json`
 ```
 
 [ranges.easy.rules](docs/examples/quick_start/ranges.easy.rules)
-
-```
--------------------- rule
-
-POST /payment
-
-~ headers
-example: range.easy
-
-~ body
-{{ jpath: $.amount }} >> {{ range: amount/ok }}
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "status": "ok"
-}
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: range.easy
-
-~ body
-{{ jpath: $.amount }} >> {{ range: amount/reject }}
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "status": "reject"
-}
-```
 
 Getting the value of the `amount` field to receive a response with the status `ok`
 
@@ -940,110 +556,7 @@ Let's look at how this is configured using ranges
 
 Let's change the file as follows [global.ranges.json](docs/examples/quick_start/global.ranges.json)
 
-```
-{
-    "amount": {
-      "type": "dec",
-      "ranges": [
-        "ok",
-        "reject",
-        "refund_reject"
-      ]
-    },
-    "payment_id": {
-      "type": "int",
-      "ranges": [
-        "ok",
-        "refund_reject"
-      ]
-    }
-  }
-  
-```
-
 [ranges.medium.rules](docs/examples/quick_start/ranges.medium.rules)
-
-```
-@- ok refund rule
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: range.medium
-
-~ body
-{{ jpath: $.amount }} >> {{ range: amount/ok }}
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "id": {{ range: payment_id/ok }},
-    "status": "ok"
-}
-
--------------------- rule
-
-POST /payment/refund/{{ range: payment_id/ok}}
-
-~ headers
-example: range.medium
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "status": "ok"
-}
-
-@- reject refund rule
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: range.medium
-
-~ body
-{{ jpath: $.amount }} >> {{ range: amount/refund_reject }}
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "id": {{ range: payment_id/refund_reject }},
-    "status": "ok"
-}
-
--------------------- rule
-
-POST /payment/refund/{{ range: payment_id/refund_reject}}
-
-~ headers
-example: range.medium
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "status": "reject"
-}
-```
 
 ***Scenario for obtaining `ok` status for refund***
 
@@ -1147,55 +660,6 @@ because a new value is written to it with each request
 and the server interprets such requests as different
 
 [conditions.rules](docs/examples/quick_start/conditions.rules)
-
-```
----------------------------- rule
-
-GET /payment/status
-
---------------- condition
-
-elapsed < 2 second
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "status": "registered"
-}
-
---------------- condition
-
-elapsed in [2 second - 4 second]
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "status": "pending"
-}
-
-
---------------- condition
-
-elapsed > 4 second
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "status": "ok"
-}
-```
 Request
 ```
 curl --location 'http://localhost/pay/status'
@@ -1229,32 +693,6 @@ More than 4 seconds have passed since the first request
 ### Defining your own functions
 [custom_function.rules](docs/examples/quick_start/custom_function.rules)
 
-```
--------------------- rule
-
-POST /payment
-
-~ headers
-example: custom_function
-
------ declare
-
-@payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "created_at": "{{ @payment.now }}"
-    
-    @- the '#' symbol can be omitted when calling a function
-    @- "created_at": "{{ payment.now }}"
-}
-```
-
 Request
 ```
 curl --location --request POST 'http://localhost/payment' \
@@ -1283,46 +721,6 @@ or declare it at the global level and use it in any rule
 #### Declaration at the file level
 
 [declare.shared.file.rules](docs/examples/quick_start/declare.shared.file.rules)
-
-```
--------------------- declare
-
-@amount = {{ dec: [1 - 100] }}
-
--------------------- rule
-
-GET /payment
-
-~ headers
-example: declare.shared.file
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "amount": {{ amount }}
-}
-
--------------------- rule
-
-GET /account
-
-~ headers
-example: declare.shared.file
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "balance": {{ amount }}
-}
-```
 
 Request
 ```
@@ -1359,32 +757,9 @@ Declaration at the global level is made in `*.declare` files
 Let's add a file
 [declare.shared.global.declare](docs/examples/quick_start/declare.shared.global.declare)
 
-```
-@age = {{ int: [1 - 122]}}
-```
-
 Let's create a rule
 
 [declare.shared.global.rules](docs/examples/quick_start/declare.shared.global.rules)
-
-```
--------------------- rule
-
-GET /person
-
-~ headers
-example: declare.shared.global
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "age": {{ age }}
-}
-```
 
 Request
 ```
@@ -1405,50 +780,6 @@ Variables and functions support multiline declarations.
 This can be used to create response templates
 
 [multiline_functions.rules](docs/examples/quick_start/multiline_functions.rules)
-
-```
--------------------- declare
-
-@template.order = 
-{
-    "id": {{ int }},
-    "status": "paid",
-    "amount": {{ dec }},
-    "transaction_id": "{{ guid }}",
-    "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
-    "customer": "{{ str }}"
-}
-
--------------------- rule
-
-POST /order
-
-~ headers
-example: multiline_functions
-
------ response
-
-~ code
-200
-
-~ body
-{{ template.order }}
-
--------------------- rule
-
-GET /order
-
-~ headers
-example: multiline_functions
-
------ response
-
-~ code
-200
-
-~ body
-{{ template.order }}
-```
 
 Request
 ```
@@ -1497,39 +828,9 @@ Each line is a directory value.
 #### Data generation
 [name.first.dic](docs/examples/quick_start/name.first.dic)
 
-```
-Nikolay
-John
-Leon
-```
-
 [name.last.dic](docs/examples/quick_start/name.last.dic)
 
-```
-Ivanov
-Müller
-Fischer
-Jones
-```
-
 [dic.generation.rules](docs/examples/quick_start/dic.generation.rules)
-
-```
--------------------- rule
-
-GET /person
-
-~ headers
-example: dic.generation
-
------ response
-
-~ body
-{
-    "name": "{{ name.first }} {{ name.last }}"
-}
-
-```
 
 Request
 ```
@@ -1543,7 +844,7 @@ Response
 }
 ```
 #### Matching
-[car.dic](docs/examples/quick_start/car.dic)
+[car.dic#ignore](docs/examples/quick_start/car.dic)
 ```
 ACURA
 ALFA ROMEO
@@ -1551,24 +852,6 @@ ASTON MARTIN
 ...
 ```
 [dic.match.rules](docs/examples/quick_start/dic.match.rules)
-
-```
--------------------- rule
-
-GET /product/{{ car }}
-
-~ headers
-example: dic.match
-
------ response
-
-~ body
-{
-    "release_date": "{{ date }}"
-    "engine_capacity": {{ dec: [0.5 - 10] }}
-}
-
-```
 
 Request
 ```
@@ -1587,36 +870,6 @@ Response
 ### Repeating blocks
 
 [repeat_block.rules](docs/examples/quick_start/repeat_block.rules)
-
-```
--------------------- rule
-
-GET /orders/{{ int @* customer id *@ }}
-
-~ headers
-example: repeat_block
-
------ declare
-
-@order = 
-{
-    "id": {{ int }},
-    "status": "{{ random: paid, pending, cancelled }}",
-    "amount": {{ dec }},
-    "transaction_id": "{{ guid }}",
-    "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}"
-}
-
-
------ response
-
-~ body
-{
-    "orders": [
-        {{ repeat(@order, separator: ",", count: 3) }}    
-    ]
-}
-```
 
 Request
 ```
@@ -1661,58 +914,6 @@ Often in json response templates (which are simply functions that generate some 
 The ` character used in function declarations cannot be omitted
 
 [change_json.rules](docs/examples/quick_start/change_json.rules)
-
-```
--------------------- declare
-
-@template.order:json = 
-{
-    "id": {{ int }},
-    "status": "paid",
-    "amount": {{ dec }},
-    "transaction_id": "{{ guid }}",
-    "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
-    "customer": "{{ str }}"
-}
-
--------------------- rule
-
-POST /order
-
-~ headers
-example: change_json
-
------ response
-
-~ code
-200
-
-~ body
-{{ 
-    @template.order
-        .replace("$.status", "pending")
-        .replace("$.customer", "vasily pupkin")
-}}
-
--------------------- rule
-
-GET /order
-
-~ headers
-example: change_json
-
------ response
-
-~ code
-200
-
-~ body
-{{ 
-    @template.order
-        .replace("$.status", "refunded")
-        .replace("$.customer", "nikolas john")
-}}
-```
 
 Request
 ```
@@ -1759,22 +960,6 @@ returning **not** `void` value
 
 [charp.short.rules](docs/examples/quick_start/charp.short.rules)
 
-```
--------------------- rule
-
-GET /very/old/event
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "date": {{ DateTime.Now.AddYears(-1000 - Random.Shared.Next(1, 100)) }}
-}
-```
-
 Request
 ```
 curl --location 'http://localhost/very/old/event'
@@ -1790,52 +975,6 @@ Response
 
 #### Full blocks
 [charp.full.rules](docs/examples/quick_start/charp.full.rules)
-
-```
--------------------- rule
-
-POST /payment/card
-
-~ headers
-example: csharp.full
-
-~ body
-{{ jpath: $.number }} >> {{ any }}
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "mnemonic": "{{ 
-        string cardNumber = req.body.jpath("$.number");
-
-        string paymentSystem;
-        switch(cardNumber[0])
-        {
-            
-            case '2':
-                paymentSystem = "MIR";
-                break;
-            case '4':
-                paymentSystem = "VISA";
-                break;
-            case '5':
-                paymentSystem = "MASTERCARD";
-                break;
-            default:
-                paymentSystem = "";
-                break;
-        }
-
-        string last4 = cardNumber[^4..];
-        string result = paymentSystem + " *" + last4;
-        return result;
-     }}"
-}
-```
 
 Request
 ```
@@ -1856,23 +995,6 @@ Response
 #### Extractiong dynamically matched data in blocks in C#
 
 [extract.value.charp.rules](docs/examples/quick_start/extract.value.csharp.rules)
-
-```
--------------------- rule
-
-GET /balance/7{{ int >> $$phone }}
-
-~ headers
-example: extract.value.csharp
-
------ response
-
-~ body
-{
-    "phone": {{ $$phone }},
-    "balance": {{ dec }}
-}
-```
 
 Request
 ```
@@ -1897,82 +1019,7 @@ fields
 
 [CardNumber.cs](docs/examples/quick_start/CardNumber.cs)
 
-```cs
-namespace _my;
-
-public static class CardNumber
-{
-    public static string GetMnemonic(string cardNumber)
-    {
-        string paymentSystem;
-        switch(cardNumber[0])
-        {
-            case '2':
-                paymentSystem = "MIR";
-                break;
-            case '4':
-                paymentSystem = "VISA";
-                break;
-            case '5':
-                paymentSystem = "MASTERCARD";
-                break;
-            default:
-                paymentSystem = "";
-                break;
-        }
-
-        string last4 = cardNumber[^4..];
-        string result = paymentSystem + " *" + last4;
-
-        return result;
-    }
-}
-
-```
-
 [charp.class.mnenonic.rules](docs/examples/quick_start/charp.class.mnenonic.rules)
-
-```
--------------------- rule
-
-POST /payment/card
-
-~ headers
-example: charp.class.mnenonic
-
-~ body
-{{ jpath: $.number }} >> {{ any }}
-
------ response
-
-~ code
-200
-
-~ body
-mnemonic was generated from 'number' field: {{ 
-    CardNumber.GetMnemonic(req.body.jpath("$.number")) 
-}}
-
--------------------- rule
-
-POST /payment/card
-
-~ headers
-example: charp.class.mnenonic
-
-~ body
-{{ jpath: $.pan }} >> {{ any }}
-
------ response
-
-~ code
-200
-
-~ body
-mnemonic was generated from 'pan' field: {{ 
-    CardNumber.GetMnemonic(req.body.jpath("$.pan")) 
-}}
-```
 
 Request
 ```
@@ -2004,63 +1051,7 @@ mnemonic was generated from 'pan' field: MIR *5678
 #### Example of overlaying a signature
 [SignatureCalculator.cs](docs/examples/quick_start/SignatureCalculator.cs)
 
-```cs
-using System.Security.Cryptography;
-using System.Text;
-
-namespace _my;
-
-public static class SignatureCalculator
-{
-    public static string Get(string text, string key)
-    {
-        byte[] bytes = Encoding.UTF8.GetBytes(text + key);
-        using var sha1 = SHA1.Create();
-        byte[] hash = sha1.ComputeHash(bytes);
-
-        var sb = new StringBuilder(bytes.Length * 2);
-
-        foreach (var b in hash)
-        {
-            sb.Append(b.ToString("x2"));
-        }
-
-        return sb.ToString();
-    }
-}
-
-```
-
 [charp.class.sign.rules](docs/examples/quick_start/charp.class.sign.rules)
-
-```
--------------------- rule
-
-POST /payment
-
-~ headers
-example: charp.class.sign
-
------ declare
-
-$$response:json = 
-{
-    "id" : {{ int }},
-    "created_at": "{{ now }}",
-    "status": "ok"
-}
-
------ response
-
-~ code
-200
-
-~ body
-{{
-    $$response
-        .add("sign", SignatureCalculator.Get($$response, "very_secret_key"))
-}}
-```
 
 Request
 ```
@@ -2089,76 +1080,7 @@ The `value` system variable is used to access the current value.
 
 [global.ranges.json](docs/examples/quick_start/global.ranges.json)
 
-```
-{
-    "amount": {
-      "type": "dec",
-      "ranges": [
-        "ok",
-        "reject",
-        "refund_reject"
-      ]
-    },
-    "payment_id": {
-      "type": "int",
-      "ranges": [
-        "ok",
-        "refund_reject"
-      ]
-    }
-  }
-  
-```
-
 [ranges.csharp.match.rules](docs/examples/quick_start/ranges.csharp.match.rules)
-
-```
--------------------- rule
-
-POST /payment
-
-~ headers
-example: ranges.csharp.match
-
-~ body
-{{ jpath: $.amount }} >> {{ 
-
-if(!decimal.TryParse(value, out decimal amountInCents))
-    return false;
-
-decimal amount = amountInCents / 100;
-return range("amount/ok", amount);
-
-}}
-
-@*
-
-@- short version for division
-~ body
-{{ jpath: $.amount }} >> {{ range("amount/ok", value, divide: 100) }}
-
-@- short version for division 2
-~ body
-{{ jpath: $.amount }} >> {{ range("amount/ok", value, x => x / 100) }}
-
-@- short version for multiplication
-~ body
-{{ jpath: $.amount }} >> {{ range("amount/ok", value, multiply: 100) }}
-
-@- short version for multiplication 2
-~ body
-{{ jpath: $.amount }} >> {{ range("amount/ok", value, x => x * 100) }}
-
-*@
-
------ response
-
-~ body
-{
-    "status": "ok"
-}
-
-```
 
 Request
 ```
@@ -2178,26 +1100,6 @@ Response
 
 #### For generation
 [ranges.csharp.generation.rules](docs/examples/quick_start/ranges.csharp.generation.rules)
-
-```
--------------------- rule
-
-GET /payment
-
-~ headers
-example: ranges.csharp.generation
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "status": "ok"
-    "fee": {{ range("amount/ok") * 100 >> format: #. @* without decimals *@ }}
-}
-```
 
 Request
 ```
@@ -2223,61 +1125,6 @@ In the example below, the first rule saves the file, and the second
 a check is made for the existence of the file and, if the file exists, the response body is read from it and one of the fields is changed.
 
 [action.rules](docs/examples/quick_start/action.rules)
-
-```
--------------------- rule
-
-POST /order
-
-~ headers
-example: action
-
------ declare
-
-$$id = {{ seq }}
-
-@body = 
-{
-    "id": {{ $$id }},
-    "created_at": "{{ now.utc }}",
-    "status": "accepted"
-}
-
------ response
-
-~ body
-{{ @body }}
-
------ action
-
-@- C# code block
-
-@- create file path
-string filePath = "/tmp/" + $$id + ".dat";
-
-@- write file
-File.WriteAllText(filePath, @body);
-
-
--------------------- rule
-
-GET /order/{{ File.Exists($"/tmp/{value}.dat") @* if file exists *@ >> $$id }}
-
-~ headers
-example: action
-
------ declare
-
-@- write json body from file
-@body:json = {{ File.ReadAllText($"/tmp/{$$id}.dat") }}
-
------ response
-
-~ body
-{{ 
-    @body.replace("$.status", "processing")
-}}
-```
 
 Request
 ```
@@ -2314,104 +1161,6 @@ Sometimes in complex scenarios you need to save state between requests.
 In this case, the methods of the `cache` class are used.
 
 [cache.rules](docs/examples/quick_start/cache.rules)
-
-```
-@*
-When sending an order, 
-we will save the response body in cache for 5 minutes, 
-using its ID in the caching key
-*@
--------------------- rule
-
-POST /order
-
-~ headers
-example: cache
-
------ declare
-
-$$id = {{ seq }}
-
-$$order:json = 
-{
-    "id": {{ $$id }},
-    "status": "accepted",
-    "created_at": "{{ date }}"
-}
-
------ response
-
-~ body
-{{ $$order }}
-
------ action
-
-cache.set(
-    key: "cache_example_" + $$id, 
-    obj: $$order, 
-    time: "5 minute"
-)
-
-
-@*
-if there is data in the cache, 
-then we send it in the body of the response, 
-changing the value of the 'status' field to 'paid'
-*@
--------------------- rule
-
-GET /order/{{ cache.contains("cache_example_" + value) >> $$id }}
-
-~ headers
-example: cache
-
------ response
-
-~ body
-{{ 
-    cache.get("cache_example_" + $$id)
-            .replace("$.status", "paid")
-}}
-
-@*
-if a request to cancel an order is received, 
-we delete the data from the cache
-*@
--------------------- rule
-
-POST /order/cancel/{{ cache.contains("cache_example_" + value) >> $$id }}
-
-~ headers
-example: cache
-
------ response
-
-~ code: 200
-
------ action
-
-cache.remove("cache_example_" + $$id)
-
-
-@*
-if when requesting an order, 
-the data is not found in the cache, 
-then we issue an appropriate response
-*@
--------------------- rule
-
-GET /order/{{ !cache.contains("cache_example_" + value) }}
-
-~ headers
-example: cache
-
------ response
-
-~ code: 404
-
-~ body
-Order not found
-```
 
 Request
 ```
@@ -2466,120 +1215,6 @@ To implement more complex logic when saving state, you can use an object with mu
 
 [cache.medium.rules](docs/examples/quick_start/cache.medium.rules)
 
-```
-@*
-on the first request, 
-we save the response body 
-and the attempt counter
-*@
--------------------- rule
-
-POST /order
-
-~ headers
-example: cache.medium
-
------ declare
-
-$$id = {{ seq }}
-
-$$order:json = 
-{
-    "id": {{ $$id }},
-    "status": "accepted",
-    "created_at": "{{ date }}"
-}
-
------ response
-
-~ body
-{{ $$order }}
-
------ action
-
-dynamic state = new System.Dynamic.ExpandoObject();
-
-state.Order = $$order;
-state.Counter = 1;
-
-cache.set(
-    key: "cache_example_" + $$id, 
-    obj: state, 
-    time: "5 minute"
-)
-
-@*
-if the attempt counter takes the value 1-3, 
-then in the 'status' field we set the value 'pending' 
-and increment the counter
-*@
--------------------- rule
-
-GET /order/{{
-
-    string key = "cache_example_" + value;
-
-    if(!cache.contains(key))
-        return false;
-
-    var state = cache.get(key);
-    $$id = value;
-    return state.Counter >= 1 && state.Counter <= 3;
-
-}}
-
-~ headers
-example: cache.medium
-
------ response
-
-~ body
-{{ 
-    cache.get("cache_example_" + $$id)
-            .Order
-            .replace("$.status", "pending")
-}}
-
------ action
-
-var state = cache.get("cache_example_" + $$id);
-state.Counter++;
-
-
-@*
-if the attempt counter takes a value greater than 3, 
-then in the 'status' field we set the value 'paid' 
-and do not increment the counter 
-(this no longer makes sense)
-*@
--------------------- rule
-
-GET /order/{{
-
-string key = "cache_example_" + value;
-
-if(!cache.contains(key))
-    return false;
-
-var state = cache.get(key);
-$$id = value;
-return state.Counter > 3;
-
-}}
-
-~ headers
-example: cache.medium
-
------ response
-
-~ body
-{{ 
-    cache.get("cache_example_" + $$id)
-            .Order
-            .replace("$.status", "paid")
-}}
-```
-
 Request
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -2623,30 +1258,6 @@ In the example below, the `now` function generates a date without a time compone
 
 [override.rules](docs/examples/quick_start/override.rules)
 
-```
--------------------- rule
-
-GET /order
-
-~ headers
-example: override
-
------ declare
-
-@now = {{ DateTime.Now.ToString("yyyy-MM-dd") }}
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "created_at": "{{ now }}"
-}
-
-```
-
 Request
 ```
 curl --location 'http://localhost/order' \
@@ -2665,25 +1276,6 @@ Once the value is generated, it can be converted either using built-in functions
 #### Using built-in functions
 [transform.rules](docs/examples/quick_start/transform.rules)
 
-```
--------------------- rule
-
-GET /order
-
-~ headers
-example: transform
-
------ response
-
-~ body
-{
-    "id": {{ int }},
-    "transaction_id": "{{ guid >> upper }}",
-    "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}",
-    "customer": "{{ name >> lower  }}"
-}
-```
-
 Request
 ```
 curl --location 'http://localhost/order' \
@@ -2700,25 +1292,6 @@ Response
 ```
 #### Using the C# language
 [transform.csharp.rules](docs/examples/quick_start/transform.csharp.rules)
-
-```
--------------------- rule
-
-GET /order
-
-~ headers
-example: transform.csharp
-
------ response
-
-~ body
-{
-    "id": {{ int >> value * 2 }},
-    "transaction_id": "{{ guid >> value.ToString("N") }}",
-    "created_at": "{{ date >> value.ToString("yyyy-MM-dd HH:mm:ss") }}",
-    "customer": "{{ name >> value.ToLower()  }}"
-}
-```
 
 Request
 ```
@@ -2746,23 +1319,6 @@ You can determine the data type of built-in functions using the following rule:
 
 [format_gettype.rules](docs/examples/quick_start/format.gettype.rules)
 
-```
--------------------- rule
-
-GET /get_type
-
------ response
-
-~ code
-200
-
-~ body
-{{ guid >> value.GetType() }}
-{{ dec >> value.GetType() }}
-{{ date >> value.GetType() }}
-{{ int >> value.GetType() }}
-```
-
 Request
 ```
 curl --location 'http://localhost/get_type'
@@ -2780,28 +1336,6 @@ the `format` function, or the `ToString()` method in a C# block.
 
 [format.rules](docs/examples/quick_start/format.rules)
 
-```
--------------------- rule
-
-GET /format
-
------ response
-
-~ code
-200
-
-~ body
-
-@- short function
-{{ guid >> format: N }}
-
-@- raw C# block
-{{ Guid.NewGuid().ToString("D") }}
-
-@-  C# block with format function
-{{ Guid.NewGuid() >> format: B }}
-```
-
 Request
 ```
 curl --location 'http://localhost/format'
@@ -2817,4 +1351,3 @@ fccbb0617f8143eebe3a8759570d8859
 ## What's next?
 [Guide](docs/guide.md)
 --->
-
