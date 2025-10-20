@@ -20,20 +20,6 @@ This event happened "{{ date }}" on the street "{{ str }}". It was raining heavi
 
 [body.rules](examples/generating/body.rules)
 
-```
--------------------- rule
-
-GET /story
-
------ response
-
-~ code
-200
-
-~ body
-This event happened "{{ date }}" on the street "{{ str }}". It was raining heavily, it was getting dark...
-```
-
 Запрос
 ```
 curl --location 'http://localhost/story'
@@ -59,24 +45,6 @@ This event happened "2016-09-21T16:11:56.3319249" on the street "0ljk04kwwor93cr
 
 [headers.rules](examples/generating/headers.rules)
 
-```
--------------------- rule
-
-GET /story
-
-~ headers
-example: headers
-
------ response
-
-~ code
-200
-
-~ headers
-Story: This event happened "{{ date }}" on the street "{{ str }}". It was raining heavily, it was getting dark...
-Request-Id: {{ guid }}
-```
-
 Запрос
 ```
 curl --location 'http://localhost/story' \
@@ -100,20 +68,6 @@ Request-Id: 512de6f0-e241-45c3-a012-b21086751e0d
 
 [http_code_in_block.rules](examples/generating/http_code_in_block.rules)
 
-```
--------------------- rule
-
-POST /order
-
-~ headers
-example: http_code_in_block
-
------ response
-
-~ code
-403
-```
-
 Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -129,19 +83,6 @@ curl --location --request POST 'http://localhost/order' \
 
 [http_code_in_section.rules](examples/generating/http_code_in_section.rules)
 
-```
--------------------- rule
-
-POST /order
-
-~ headers
-example: http_code_in_section
-
------ response
-
-403
-```
-
 Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -155,22 +96,6 @@ curl --location --request POST 'http://localhost/order' \
 #### Пример. Не указан
 
 [http_code_default.rules](examples/generating/http_code_default.rules)
-
-```
--------------------- rule
-
-POST /order
-
-~ headers
-example: http_code_default
-
------ response
-
-~ body
-{
-    "status": "ok"
-}
-```
 
 Запрос
 ```
@@ -221,20 +146,6 @@ req.path: <индекс_сегмента>
 #### Пример
 [hello.rules](examples/quick_start/hello.rules)
 
-```
--------------------- rule
-
-GET /hello/{{ any >> $$person }}
-
------ response
-
-~ code
-200
-
-~ body
-hello {{ $$person }}!
-```
-
 
 
 ## req.body.jpath
@@ -247,20 +158,6 @@ req.body.jpath: <JSON_Path_выражение>
 
 #### Пример
 [body.jpath.rules](examples/generating/body.jpath.rules)
-
-```
--------------------- rule
-
-POST /order
-
-~ headers
-example: body.jpath
-
------ response
-
-~ body
-{{ req.body.jpath: $.amount }}
-```
 
 Запрос
 ```
@@ -289,20 +186,6 @@ req.body.xpath: <XPath_выражение>
 #### Пример
 
 [body.xpath.rules](examples/generating/body.xpath.rules)
-
-```
--------------------- rule
-
-POST /order
-
-~ headers
-example: body.xpath
-
------ response
-
-~ body
-{{ req.body.xpath: /order/amount/text() }}
-```
 
 Запрос
 ```
@@ -334,21 +217,6 @@ form: <наименование_параметра>
 
 [body.form.rules](examples/generating/body.form.rules)
 
-```
--------------------- rule
-
-POST /order
-
-~ headers
-example: body.form
-
------ response
-
-~ body
-{{ req.body.form: amount }}
-{{ req.body.form: description }}
-```
-
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -372,20 +240,6 @@ it's very important order
 #### Пример
 
 [body.all.rules](examples/generating/body.all.rules)
-
-```
--------------------- rule
-
-POST /order
-
-~ headers
-example: body.all
-
------ response
-
-~ body
-request body: {{ req.body.all }}
-```
 
 Запрос
 ```
@@ -533,31 +387,6 @@ range: <имя_диапазона>/<диапазон>
 #### Пример. Объединение повторяющегося кода
 [req.id.rules](examples/guide/custom_functions/req.id.rules)
 
-```
--------------------- rule
-
-GET /payment
-
-~ headers
-example: guide/custom_functions/req.id
-Request-Id: {{ any }}
-
------ declare
-
-@req.id = {{ req.header: Request-Id }}
-
------ response
-
-~ headers
-Request-Id: {{ @req.id }}
-
-~ body
-{
-    "id": {{ seq }},
-    "request_id": {{ @req.id }}
-}
-```
-
 Запрос
 ```
 curl --location 'http://localhost/payment' \
@@ -608,38 +437,6 @@ Request-Id: {{ req.id }}
 #### Пример. Определение шаблонов
 [template.rules](examples/guide/custom_functions/template.rules)
 
-```
--------------------- rule
-
-GET /orders
-
-~ headers
-example: guide/custom_functions/template
-
------ declare
-
-@order.template = 
-{
-    "id": {{ int }},
-    "status": "paid",
-    "amount": {{ dec }},
-    "transaction_id": "{{ guid }}",
-    "created_at": "{{ date }}",
-    "customer": "{{ str }}"
-}
-
------ response
-
-~ body
-{
-    "orders": [
-        {{ @order.template }},
-        {{ @order.template }},
-        {{ @order.template }}
-    ]
-}
-```
-
 Запрос
 ```
 curl --location 'http://localhost/orders' \
@@ -683,49 +480,6 @@ curl --location 'http://localhost/orders' \
 #### Пример. Изменения значения в шаблоне
 [template.json.rules](examples/guide/custom_functions/template.json.rules)
 
-```
--------------------- rule
-
-GET /orders
-
-~ headers
-example: guide/custom_functions/template.json
-
------ declare
-
-@order.template:json = 
-{
-    "id": {{ int }},
-    "status": "paid",
-    "amount": {{ dec }},
-    "transaction_id": "{{ guid }}",
-    "created_at": "{{ date }}",
-    "customer": "{{ str }}"
-}
-
------ response
-
-~ body
-{
-    "orders": [
-        {{ 
-            @order.template
-                .replace("$.status", "ok")
-                .replace("$.customer", "vasily pupkin")
-        }},
-        {{ 
-            @order.template
-                .replace("$.status", "pending")
-                .replace("$.customer", "john silver")
-        }},
-        {{ 
-            @order.template
-                .replace("$.status", "declined")
-        }}
-    ]
-}
-```
-
 :triangular_flag_on_post: Блок, в котором используется функция `replace()` является
 блоком `C#` - кода, который будет рассмотрен ниже. При вызовах функций в C# - блоках
 символ `#` используемый при объявлении функций не может быть опущен
@@ -768,26 +522,6 @@ curl --location 'http://localhost/orders' \
 #### Пример. Определения функции для герерации специфичного значения
 [int.big.rules](examples/guide/custom_functions/int.big.rules)
 
-```
--------------------- rule
-
-GET /order
-
-~ headers
-example: guide/custom_functions/int.big
-
------ declare
-
-@int.big = {{ int: [1000000000 - 9999999999] }}
-
------ response
-
-~ body
-{
-    "id": {{ int.big }}
-}
-```
-
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -804,26 +538,6 @@ curl --location 'http://localhost/order' \
 Заменим системную функцию [int](#int), сузив диапазон выдаваемых значений 
 
 [int.override.rules](examples/guide/custom_functions/int.override.rules)
-
-```
--------------------- rule
-
-GET /order
-
-~ headers
-example: guide/custom_functions/int.override
-
------ declare
-
-@int = {{ int: [1 - 10] }}
-
------ response
-
-~ body
-{
-    "items_count": {{ int }}
-}
-```
 
 Запрос
 ```
@@ -851,32 +565,6 @@ curl --location 'http://localhost/order' \
 Переменные регистрируются в секции `declare` с использованием суффикса `$$`
 
 [variables.rules](examples/generating/variables.rules)
-
-```
--------------------- rule
-
-POST /payment
-
-~ headers
-example: generating/variables
-
------ declare
-
-$$requestId = {{ guid }}
-
------ response
-
-~ code
-200
-
-~ headers
-Request-Id: {{ $$requestId }}
-
-~ body
-{
-    "request_id": "{{ $$requestId }}"
-}
-```
 
 Запрос
 ```
@@ -910,37 +598,6 @@ Request-Id: 4af7cf3b-e6c4-43ef-aa43-000c883cd081
 #### Пример
 [rule.rules](examples/guide/declare_layers/rule.rules)
 
-```
--------------------- rule
-
-GET /order
-
-~ headers
-example: guide/declare_layers/rule
-
------ declare
-
-@amount = {{ dec: [100 - 10000] }}
-$$id = {{ seq }}
-
------ response
-
-~ body
-{
-    "transaction_id": {{ $$id }}
-    "items":[
-        {
-            "parent_transaction_id": {{ $$id }},
-            "amount": {{ @amount }}
-        },
-        {
-            "parent_transaction_id": {{ $$id }},
-            "amount": {{ @amount }}
-        }
-    ]
-}
-```
-
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -968,51 +625,6 @@ curl --location 'http://localhost/order' \
 
 #### Пример
 [file.rules](examples/guide/declare_layers/file.rules)
-
-```
--------------------- declare
-
-@amount = {{ dec: [100 - 10000] }}
-$$id = {{ seq }}
-@template = 
-{
-    "id": {{ $$id }}
-    "items":[
-        {
-            "parent_id": {{ $$id }},
-            "amount": {{ @amount }}
-        },
-        {
-            "parent_id": {{ $$id }},
-            "amount": {{ @amount }}
-        }
-    ]
-}
-
--------------------- rule
-
-GET /order/1
-
-~ headers
-example: guide/declare_layers/file
-
------ response
-
-~ body
-{{ @template }}
-
--------------------- rule
-
-GET /order/2
-
-~ headers
-example: guide/declare_layers/file
-
------ response
-
-~ body
-{{ @template }}
-```
 
 Запрос для 1 правила
 ```
@@ -1063,30 +675,7 @@ curl --location 'http://localhost/order/2' \
 #### Пример
 [declare.shared.global.declare](examples/quick_start/declare.shared.global.declare)
 
-```
-@age = {{ int: [1 - 122]}}
-```
-
 [global.rules](examples/quick_start/declare.shared.global.rules)
-
-```
--------------------- rule
-
-GET /person
-
-~ headers
-example: declare.shared.global
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "age": {{ age }}
-}
-```
 
 Запрос
 ```
@@ -1137,22 +726,6 @@ curl --location 'http://localhost/person' \
 
 [short.rules](examples/quick_start/csharp.short.rules)
 
-```
--------------------- rule
-
-GET /very/old/event
-
------ response
-
-~ code
-200
-
-~ body
-{
-    "date": {{ DateTime.Now.AddYears(-1000 - Random.Shared.Next(1, 100)) }}
-}
-```
-
 Запрос
 ```
 curl --location 'http://localhost/very/old/event'
@@ -1172,31 +745,6 @@ curl --location 'http://localhost/very/old/event'
 
 [full.rules](examples/guide/csharp/full.rules)
 
-```
--------------------- rule
-
-GET /order
-
-~ headers
-example: guide/charp/full
-
------ response
-
-~ body
-{
-    "customer": "{{ 
-        var firstNames = new []{"Vasily", "Nikolas", "Ivan", "John"};
-        var lastNames = new []{"Pupkin", "Stallone", "Norris", "Ivanov"};
-
-        var firstName = firstNames[Random.Shared.Next(0, firstNames.Length - 1)];
-        var lastName = lastNames[Random.Shared.Next(0, lastNames.Length - 1)];
-
-        var name = firstName + " " + lastName;
-        return name;
-     }}"
-}
-```
-
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -1212,34 +760,6 @@ curl --location 'http://localhost/order' \
 #### Пример. Блок C# - кода в пользовательской функции
 
 [full.function.rules](examples/guide/csharp/full.function.rules)
-
-```
--------------------- rule
-
-GET /order
-
-~ headers
-example: guide/charp/full.function
-
------ declare
-@name = 
-{{
-     var firstNames = new []{"Vasily", "Nikolas", "Ivan", "John"};
-        var lastNames = new []{"Pupkin", "Stallone", "Norris", "Ivanov"};
-
-        var firstName = firstNames[Random.Shared.Next(0, firstNames.Length - 1)];
-        var lastName = lastNames[Random.Shared.Next(0, lastNames.Length - 1)];
-
-        var name = firstName + " " + lastName;
-        return name;
-}}
------ response
-
-~ body
-{
-    "customer": "{{ @name }}"
-}
-```
 
 Запрос
 ```
@@ -1350,19 +870,6 @@ req.body.all()
 #### Пример
 [format.rules](examples/generating/format.rules)
 
-```
--------------------- rule
-
-GET /generating/format
-
------ response
-
-~ body
-{{ date >> format: MM/dd/yyyy }}
-{{ int >> format: #.00# }}
-{{ guid >> format: N }}
-```
-
 Оператор `>>` передает значение полученное динамической функцией на вход функции
 `format`, которая выполняет форматирование. Оператор `>>` подробнее рассматривается в разделе 
 [Модель передачи значения по цепочки функций](#модель-передачи-значения-по-цепочки-функций).
@@ -1399,4 +906,3 @@ d953d01ce7f640119f36ad7cae1668ba
 - переменные
 - пользовательские функции
 - блоки кода на языке C#
-

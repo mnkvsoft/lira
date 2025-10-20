@@ -21,7 +21,7 @@
 Для описания запросов к серверу используется синтаксис утилиты `curl`
 
 Все примеры запросов к серверу можно импортировать в `postman` из
-[файла](examples.postman_collection.json)
+[файла#ignore](examples.postman_collection.json)
 
 ## Запуск
 
@@ -189,33 +189,6 @@ dec: [1.01 - 10.22]
 
 [comments.rules](examples/guide/comments.rules)
 
-```
--------------------- rule
-
-GET /comments
-
-~ headers
-example: guide/comments
-
------ response
-
-~ code
-200
-
-~ body
-@- single line comment 
-@*
-    it's multiline
-    comment
-*@ 
-hello!@- comment the rest of the line
-hello @* comment in the middle of the line *@ world!
-@*
-it's 
-not closed
-multiline comment
-```
-
 Запрос
 ```
 curl --location 'http://localhost/comments' \
@@ -233,4 +206,3 @@ hello  world!
 
 ## Что дальше?
 [Cопоставление запросов](matching.md)
-

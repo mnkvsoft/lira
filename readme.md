@@ -455,13 +455,10 @@ Request-Time: 12:07:16
     "customer": "eyshxbdiwf1d6991nhjd"
 }
 ```
-<!---
+
 #### References
 
 [Guide](docs/guide.md)
-
-[Generation functions](docs/generation_functions.md)
---->
 
 
 ### Extracting request parameters
@@ -513,13 +510,10 @@ Request-Id: 987
     "account": "9876543210"
 }
 ```
-<!---
+
 #### References
 
 [Guide](docs/guide.md)
-
-[Generation functions](docs/generation_functions.md)
---->
 
 ### Extracting dynamically mapped data
 
@@ -1757,7 +1751,7 @@ In some cases, the functionality of the built-in functions is not enough to desc
 Imply instructions without the use of additional variables and
 returning **not** `void` value
 
-[charp.short.rules](docs/examples/quick_start/charp.short.rules)
+[csharp.short.rules](docs/examples/quick_start/csharp.short.rules)
 
 ```
 -------------------- rule
@@ -1789,7 +1783,7 @@ Response
 
 
 #### Full blocks
-[charp.full.rules](docs/examples/quick_start/charp.full.rules)
+[csharp.full.rules](docs/examples/quick_start/csharp.full.rules)
 
 ```
 -------------------- rule
@@ -1930,7 +1924,7 @@ public static class CardNumber
 
 ```
 
-[charp.class.mnenonic.rules](docs/examples/quick_start/charp.class.mnenonic.rules)
+[csharp.class.mnenonic.rules](docs/examples/quick_start/csharp.class.mnenonic.rules)
 
 ```
 -------------------- rule
@@ -2031,7 +2025,7 @@ public static class SignatureCalculator
 
 ```
 
-[charp.class.sign.rules](docs/examples/quick_start/charp.class.sign.rules)
+[csharp.class.sign.rules](docs/examples/quick_start/csharp.class.sign.rules)
 
 ```
 -------------------- rule

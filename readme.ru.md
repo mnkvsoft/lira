@@ -457,8 +457,6 @@ Request-Time: 12:07:16
 
 [Полное руководство](docs/guide.md)
 
-[Функции генерации](docs/generation_functions.md)
-
 
 
 ### Извлечение параметров запроса
@@ -514,8 +512,6 @@ Request-Id: 987
 #### Ссылки
 
 [Полное руководство](docs/guide.md)
-
-[Функции генерации](docs/generation_functions.md)
 
 
 ### Извлечение динамически сопоставленных данных
@@ -1764,7 +1760,7 @@ curl --location 'http://localhost/order' \
 Подразумевают инструцию без использования дополнительных переменных и 
 возвращающую **не** `void` значение
 
-[charp.short.rules](docs/examples/quick_start/charp.short.rules)
+[csharp.short.rules](docs/examples/quick_start/csharp.short.rules)
 
 ```
 -------------------- rule
@@ -1796,7 +1792,7 @@ curl --location 'http://localhost/very/old/event'
 
 
 #### Полные блоки
-[charp.full.rules](docs/examples/quick_start/charp.full.rules)
+[csharp.full.rules](docs/examples/quick_start/csharp.full.rules)
 
 ```
 -------------------- rule
@@ -1937,7 +1933,7 @@ public static class CardNumber
 
 ```
 
-[charp.class.mnenonic.rules](docs/examples/quick_start/charp.class.mnenonic.rules)
+[csharp.class.mnenonic.rules](docs/examples/quick_start/csharp.class.mnenonic.rules)
 
 ```
 -------------------- rule
@@ -2038,7 +2034,7 @@ public static class SignatureCalculator
 
 ```
 
-[charp.class.sign.rules](docs/examples/quick_start/charp.class.sign.rules)
+[csharp.class.sign.rules](docs/examples/quick_start/csharp.class.sign.rules)
 
 ```
 -------------------- rule
