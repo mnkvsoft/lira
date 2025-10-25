@@ -47,23 +47,6 @@
 
 [success_always](examples/guide/ranges/success_always.rules)
 
-```
--------------------- rule
-
-POST /payment
-
-~ headers
-example: success_always
-
------ response
-
-~ body
-{
-    "id": {{ seq }},
-    "status": "success"
-}
-```
-
 Функция [seq](generating.md#seq) последовательно возвращает целочисленный идентификатор
 
 
@@ -95,68 +78,6 @@ example: success_always
 Напишем соответствующие правила.
 
 [manual_payment](examples/guide/ranges/manual_payment.rules)
-
-```
-@- success
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: manual_payment
-
-~ body
-{{ jpath: $.amount }} >> {{ dec: [0.01 - 10.00] }}
-
------ response
-
-~ body
-{
-    "id": {{ seq }},
-    "status": "success"
-}
-
-@- pending
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: manual_payment
-
-~ body
-{{ jpath: $.amount }} >> {{ dec: [10.01 - 20.00] }}
-
------ response
-
-~ body
-{
-    "id": {{ seq }},
-    "status": "pending"
-}
-
-@- reject
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: manual_payment
-
-~ body
-{{ jpath: $.amount }} >> {{ dec: [20.01 - 30.00] }}
-
------ response
-
-~ body
-{
-    "id": {{ seq }},
-    "status": "reject"
-}
-```
 
 **Запрос возвращающий статус `success`**
 ```
@@ -232,177 +153,6 @@ curl --location 'http://localhost/payment' \
 Напишем соответствующие правила.
 
 [manual_payment_with_reversal](examples/guide/ranges/manual_payment_with_reversal.rules)
-
-```
-@- PAYMENT
-
-@- success
-@- Правило №1
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: manual_payment_with_reversal
-
-~ body
-{{ jpath: $.amount }} >> {{ dec: [0.01 - 10.00] }}
-
------ response
-
-~ body
-{
-    @- reversal по этому id вернет success
-    "id": {{ int: [1 - 1000000] }}, 
-    "status": "success"
-}
-
-
-@- success with pending reversal
-@- Правило №2
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: manual_payment_with_reversal
-
-~ body
-{{ jpath: $.amount }} >> {{ dec: [30.01 - 40.00] }}
-
------ response
-
-~ body
-{
-    @- reversal по этому id вернет pending
-    "id": {{ int: [1000001 - 2000000] }}, 
-    "status": "success"
-}
-
-
-@- success with reject reversal
-@- Правило №3
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: manual_payment_with_reversal
-
-~ body
-{{ jpath: $.amount }} >> {{ dec: [40.01 - 50.00] }}
-
------ response
-
-~ body
-{
-    @- reversal по этому id вернет reject
-    "id": {{ int: [2000001 - 3000000] }}, 
-    "status": "success"
-}
-
-
-@- pending
-@- Правило №4
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: manual_payment_with_reversal
-
-~ body
-{{ jpath: $.amount }} >> {{ dec: [10.01 - 20.00] }}
-
------ response
-
-~ body
-{
-    @- reversal по этому id вернет success
-    "id": {{ int: [1 - 1000000] }}, 
-    "status": "pending"
-}
-
-
-@- reject
-@- Правило №5
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: manual_payment_with_reversal
-
-~ body
-{{ jpath: $.amount }} >> {{ dec: [20.01 - 30.00] }}
-
------ response
-
-~ body
-{
-    @- reversal по этому id вернет success
-    "id": {{ int: [1 - 1000000] }}, 
-    "status": "reject"
-}
-
-@- REVERSAL
-
-@- success
-@- Правило №6
-
--------------------- rule
-
-POST /payment/reversal/{{ int: [1 - 1000000] }}
-
-~ headers
-example: manual_payment_with_reversal
-
------ response
-
-~ body
-{
-    "status": "success"
-}
-
-@- pending
-@- Правило №7
-
--------------------- rule
-
-POST /payment/reversal/{{ int: [1000001 - 2000000] }}
-
-~ headers
-example: manual_payment_with_reversal
-
------ response
-
-~ body
-{
-    "status": "pending"
-}
-
-@- reject
-@- Правило №8
-
--------------------- rule
-
-POST /payment/reversal/{{ int: [2000001 - 3000000] }}
-
-~ headers
-example: manual_payment_with_reversal
-
------ response
-
-~ body
-{
-    "status": "reject"
-}
-```
 
 Рассмотрим примеры последовательности вызовов.
 
@@ -503,36 +253,6 @@ curl --location --request POST 'http://localhost/payment/reversal/1448743' \
 
 [payment.ranges.json](examples/guide/ranges/payment.ranges.json)
 
-```
-{
-    "payment.amount": {
-      "type": "dec",
-      "start": "0.01",
-      "capacity": "10",
-      "unit": 0.01,
-      "ranges": [
-        "success",
-        "pending",
-        "reject",
-        "success.reversal.pending",
-        "success.reversal.reject"
-      ]
-    },
-    "payment.id": {
-        "type": "int",
-        "start": "1",
-        "capacity": "1_000_000",
-        "mode": "seq",
-        "ranges": [
-          "default",
-          "reversal.pending",
-          "reversal.reject"
-        ]
-      }
-  }
-  
-```
-
 Рассмотрим указанный json. 
 
 - `payment.amount`, `reversal.id` - названия интервалов, которые будут использоваться
@@ -585,181 +305,10 @@ reversal.reject   [2000001 - 3000000]
 ```
 Видно, что разбиение на диапазоны получилось таким же, как и в ручном режиме.
 
-Опишем правила, которые ранее были написаны в ручном режиме [manual_payment_with_reversal](examples/guide/ranges/manual_payment_with_reversal.rules)
+Опишем правила, которые ранее были написаны в ручном режиме [manual_payment_with_reversal#ignore](examples/guide/ranges/manual_payment_with_reversal.rules)
 с помощью диапазонов
 
 [ranges_payment_with_reversal](examples/guide/ranges/ranges_payment_with_reversal.rules)
-
-```
-@- PAYMENT
-
-@- success
-@- Правило №1
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: ranges_payment_with_reversal
-
-~ body
-{{ jpath: $.amount }} >> {{ range: payment.amount/success }}
-
------ response
-
-~ body
-{
-    @- reversal по этому id вернет success
-    "id": {{ range: payment.id/default }}, 
-    "status": "success"
-}
-
-
-@- success with pending reversal
-@- Правило №2
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: ranges_payment_with_reversal
-
-~ body
-{{ jpath: $.amount }} >> {{ range: payment.amount/success.reversal.pending }}
-
------ response
-
-~ body
-{
-    @- reversal по этому id вернет pending
-    "id": {{ range: payment.id/reversal.pending }}, 
-    "status": "success"
-}
-
-
-@- success with reject reversal
-@- Правило №3
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: ranges_payment_with_reversal
-
-~ body
-{{ jpath: $.amount }} >> {{ range: payment.amount/success.reversal.reject }}
-
------ response
-
-~ body
-{
-    @- reversal по этому id вернет reject
-    "id": {{ range: payment.id/reversal.pending  }}, 
-    "status": "success"
-}
-
-
-@- pending
-@- Правило №4
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: ranges_payment_with_reversal
-
-~ body
-{{ jpath: $.amount }} >> {{ range: payment.amount/pending }}
-
------ response
-
-~ body
-{
-    @- reversal по этому id вернет success
-    "id": {{ range: payment.id/default }}, 
-    "status": "pending"
-}
-
-
-@- reject
-@- Правило №5
-
--------------------- rule
-
-POST /payment
-
-~ headers
-example: ranges_payment_with_reversal
-
-~ body
-{{ jpath: $.amount }} >> {{ range: payment.amount/pending }}
-
------ response
-
-~ body
-{
-    @- reversal по этому id вернет success
-    "id": {{ range: payment.id/default }}, 
-    "status": "reject"
-}
-
-@- REVERSAL
-
-@- success
-@- Правило №6
-
--------------------- rule
-
-POST /payment/reversal/{{ range: payment.id/default }}
-
-~ headers
-example: ranges_payment_with_reversal
-
------ response
-
-~ body
-{
-    "status": "success"
-}
-
-@- pending
-@- Правило №7
-
--------------------- rule
-
-POST /payment/reversal/{{ range: payment.id/reversal.pending }}
-
-~ headers
-example: ranges_payment_with_reversal
-
------ response
-
-~ body
-{
-    "status": "pending"
-}
-
-@- reject
-@- Правило №8
-
--------------------- rule
-
-POST /payment/reversal/{{ range: payment.id/reversal.reject }}
-
-~ headers
-example: ranges_payment_with_reversal
-
------ response
-
-~ body
-{
-    "status": "reject"
-}
-```
 
 Протестируем написанные правила, убедимся, что результат не отличается от 
 ручного написания диапазонов. Проверим сценарий [Reversal со статусом pending](#reversal-со-статусом-pending).  
@@ -803,35 +352,11 @@ curl --location --request POST 'http://localhost/payment/reversal/1000001' \
 }
 ```
 
-В файле [payment.ranges.json](examples/guide/ranges/payment.ranges.json) мы вручную
+В файле [payment.ranges.json#ignore](examples/guide/ranges/payment.ranges.json) мы вручную
 задали параметры разбиения на диапазоны, но можно было бы позволить **LIRA** 
 автоматически создать нужные диапазоны
 
 [short.payment.ranges.json](examples/guide/ranges/short.payment.ranges.json)
-
-```
-{
-    "short.payment.amount": {
-      "type": "dec",
-      "ranges": [
-        "success",
-        "pending",
-        "reject",
-        "success.reversal.pending",
-        "success.reversal.reject"
-      ]
-    },
-    "short.payment.id": {
-        "type": "int",
-        "ranges": [
-          "default",
-          "reversal.pending",
-          "reversal.reject"
-        ]
-      }
-  }
-  
-```
 
 Префикс *short* был использован, чтобы не было конфликта 
 с ранее определенными интервалами. 
@@ -1311,5 +836,4 @@ curl --location 'http://localhost/sys/range/val/short.payment.amount/success/5'
   }
 }
 ```
-
 
