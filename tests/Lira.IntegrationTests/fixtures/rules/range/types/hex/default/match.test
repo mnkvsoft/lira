@@ -12,7 +12,7 @@ GET /range/types/hex/default/match/50d43561ba000080fa5ae228981cf5184e7189707279d
 ~ body
 first
 
-@- hex valus in range [-1 - 9223372036854775807]
+@- hex valus in range [-1..9223372036854775807]
 
 -------------------- case
 

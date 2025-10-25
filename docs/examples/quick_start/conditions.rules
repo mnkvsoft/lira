@@ -18,7 +18,7 @@ elapsed < 2 second
 
 --------------- condition
 
-elapsed in [2 second - 4 second]
+elapsed in [2 second..4 second]
 
 ----- response
 
