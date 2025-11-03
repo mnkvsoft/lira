@@ -3,12 +3,9 @@
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
 // ReSharper disable once UnusedType.Global
-public abstract class DynamicObjectBaseGenerate : DynamicObjectWithDeclaredPartsBase
+public abstract class DynamicObjectBaseGenerate(DynamicObjectBase.DependenciesBase dependencies)
+    : DynamicObjectWithDeclaredPartsBase(dependencies)
 {
-    protected DynamicObjectBaseGenerate(DependenciesBase dependencies) : base(dependencies)
-    {
-    }
-
     protected IReadonlyCache cache => Cache;
 
     protected dynamic range(string rangeName)
