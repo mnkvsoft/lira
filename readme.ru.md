@@ -1166,7 +1166,7 @@ elapsed < 2 second
 
 --------------- condition
 
-elapsed in [2 second - 4 second]
+elapsed in [2 second..4 second]
 
 ----- response
 
@@ -1285,7 +1285,7 @@ curl --location --request POST 'http://localhost/payment' \
 ```
 -------------------- declare
 
-@amount = {{ dec: [1 - 100] }}
+@amount = {{ dec: [1..100] }}
 
 -------------------- rule
 
@@ -1358,7 +1358,7 @@ curl --location 'http://localhost/account' \
 [declare.shared.global.declare](docs/examples/quick_start/declare.shared.global.declare)
 
 ```
-@age = {{ int: [1 - 122]}}
+@age = {{ int: [1..122]}}
 ```
 
 Создадим правило
@@ -1563,7 +1563,7 @@ example: dic.match
 ~ body
 {
     "release_date": "{{ date }}"
-    "engine_capacity": {{ dec: [0.5 - 10] }}
+    "engine_capacity": {{ dec: [0.5..10] }}
 }
 
 ```
@@ -2489,7 +2489,7 @@ cache.set(
 )
 
 @*
-if the attempt counter takes the value 1-3, 
+if the attempt counter takes the value 1..3, 
 then in the 'status' field we set the value 'pending' 
 and increment the counter
 *@

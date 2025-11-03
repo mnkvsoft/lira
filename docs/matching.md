@@ -607,7 +607,7 @@ curl --location 'http://localhost/payment/card' \
 
 #### Пример
 ```
-attempt in [1 - 3]
+attempt in [1..3]
 ```
 
 Оператор `in` может представлен с помощью опереторов `>=` и `<=`
@@ -666,7 +666,7 @@ attempt < 2
 
 --------------- condition
 
-attempt in [2 - 4]
+attempt in [2..4]
 
 ----- response
 
@@ -770,7 +770,7 @@ elapsed < 2 seconds
 
 --------------- condition
 
-elapsed in [2 second - 4 second]
+elapsed in [2 second..4 second]
 
 ----- response
 

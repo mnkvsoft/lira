@@ -21,7 +21,7 @@ attempt < 2
 
 --------------- condition
 
-attempt in [2 - 4]
+attempt in [2..4]
 
 ----- response
 

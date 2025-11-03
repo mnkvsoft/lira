@@ -1,6 +1,6 @@
 -------------------- declare
 
-@amount = {{ dec: [100 - 10000] }}
+@amount = {{ dec: [100..10000] }}
 $$id = {{ seq }}
 @template = 
 {

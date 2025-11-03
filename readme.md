@@ -1163,7 +1163,7 @@ elapsed < 2 second
 
 --------------- condition
 
-elapsed in [2 second - 4 second]
+elapsed in [2 second..4 second]
 
 ----- response
 
@@ -1281,7 +1281,7 @@ or declare it at the global level and use it in any rule
 ```
 -------------------- declare
 
-@amount = {{ dec: [1 - 100] }}
+@amount = {{ dec: [1..100] }}
 
 -------------------- rule
 
@@ -1354,7 +1354,7 @@ Let's add a file
 [declare.shared.global.declare](docs/examples/quick_start/declare.shared.global.declare)
 
 ```
-@age = {{ int: [1 - 122]}}
+@age = {{ int: [1..122]}}
 ```
 
 Let's create a rule
@@ -1559,7 +1559,7 @@ example: dic.match
 ~ body
 {
     "release_date": "{{ date }}"
-    "engine_capacity": {{ dec: [0.5 - 10] }}
+    "engine_capacity": {{ dec: [0.5..10] }}
 }
 
 ```
@@ -2503,7 +2503,7 @@ cache.set(
 )
 
 @*
-if the attempt counter takes the value 1-3, 
+if the attempt counter takes the value 1..3, 
 then in the 'status' field we set the value 'pending' 
 and increment the counter
 *@

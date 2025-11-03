@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /http_code_block/{{ int:200-599 >> $$response_code }}
+GET /http_code_block/{{ int: 200..599 >> $$response_code }}
 
 ----- response
 

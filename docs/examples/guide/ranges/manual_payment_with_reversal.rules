@@ -11,14 +11,14 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-{{ jpath: $.amount }} >> {{ dec: [0.01 - 10.00] }}
+{{ jpath: $.amount }} >> {{ dec: [0.01..10.00] }}
 
 ----- response
 
 ~ body
 {
     @- reversal по этому id вернет success
-    "id": {{ int: [1 - 1000000] }}, 
+    "id": {{ int: [1..1000000] }}, 
     "status": "success"
 }
 
@@ -34,14 +34,14 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-{{ jpath: $.amount }} >> {{ dec: [30.01 - 40.00] }}
+{{ jpath: $.amount }} >> {{ dec: [30.01..40.00] }}
 
 ----- response
 
 ~ body
 {
     @- reversal по этому id вернет pending
-    "id": {{ int: [1000001 - 2000000] }}, 
+    "id": {{ int: [1000001..2000000] }}, 
     "status": "success"
 }
 
@@ -57,14 +57,14 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-{{ jpath: $.amount }} >> {{ dec: [40.01 - 50.00] }}
+{{ jpath: $.amount }} >> {{ dec: [40.01..50.00] }}
 
 ----- response
 
 ~ body
 {
     @- reversal по этому id вернет reject
-    "id": {{ int: [2000001 - 3000000] }}, 
+    "id": {{ int: [2000001..3000000] }}, 
     "status": "success"
 }
 
@@ -80,14 +80,14 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-{{ jpath: $.amount }} >> {{ dec: [10.01 - 20.00] }}
+{{ jpath: $.amount }} >> {{ dec: [10.01..20.00] }}
 
 ----- response
 
 ~ body
 {
     @- reversal по этому id вернет success
-    "id": {{ int: [1 - 1000000] }}, 
+    "id": {{ int: [1..1000000] }}, 
     "status": "pending"
 }
 
@@ -103,14 +103,14 @@ POST /payment
 example: manual_payment_with_reversal
 
 ~ body
-{{ jpath: $.amount }} >> {{ dec: [20.01 - 30.00] }}
+{{ jpath: $.amount }} >> {{ dec: [20.01..30.00] }}
 
 ----- response
 
 ~ body
 {
     @- reversal по этому id вернет success
-    "id": {{ int: [1 - 1000000] }}, 
+    "id": {{ int: [1..1000000] }}, 
     "status": "reject"
 }
 
@@ -121,7 +121,7 @@ example: manual_payment_with_reversal
 
 -------------------- rule
 
-POST /payment/reversal/{{ int: [1 - 1000000] }}
+POST /payment/reversal/{{ int: [1..1000000] }}
 
 ~ headers
 example: manual_payment_with_reversal
@@ -138,7 +138,7 @@ example: manual_payment_with_reversal
 
 -------------------- rule
 
-POST /payment/reversal/{{ int: [1000001 - 2000000] }}
+POST /payment/reversal/{{ int: [1000001..2000000] }}
 
 ~ headers
 example: manual_payment_with_reversal
@@ -155,7 +155,7 @@ example: manual_payment_with_reversal
 
 -------------------- rule
 
-POST /payment/reversal/{{ int: [2000001 - 3000000] }}
+POST /payment/reversal/{{ int: [2000001..3000000] }}
 
 ~ headers
 example: manual_payment_with_reversal

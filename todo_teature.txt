@@ -1,4 +1,3 @@
-- range [ 100 - 200 ] => [ 100..200 ]
 - make dic-function
 - json() in base class to extension method
 

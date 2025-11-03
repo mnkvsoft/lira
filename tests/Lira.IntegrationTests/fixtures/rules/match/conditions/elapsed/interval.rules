@@ -16,7 +16,7 @@ elapsed < 100 ms
 
 -------------------- condition
 
-elapsed in [100 ms - 200 ms]
+elapsed in [100 ms..200 ms]
 
 ----- response
 
@@ -24,4 +24,4 @@ elapsed in [100 ms - 200 ms]
 200
 
 ~ body
-elapsed in [100 ms - 200 ms]
+elapsed in [100 ms..200 ms]

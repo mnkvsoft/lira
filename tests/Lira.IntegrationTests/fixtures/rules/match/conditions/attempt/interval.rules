@@ -4,7 +4,7 @@ GET /match/conditions/attempt/interval
 
 -------------------- condition
 
-attempt in [1-2]
+attempt in [1..2]
 
 ----- response
 
@@ -12,11 +12,11 @@ attempt in [1-2]
 200
 
 ~ body
-attempt [1-2]
+attempt [1..2]
 
 -------------------- condition
 
-attempt in [3-4]
+attempt in [3..4]
 
 ----- response
 
@@ -24,4 +24,4 @@ attempt in [3-4]
 200
 
 ~ body
-attempt [3-4]
+attempt [3..4]
