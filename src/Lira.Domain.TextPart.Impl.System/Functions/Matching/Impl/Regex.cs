@@ -13,9 +13,9 @@ internal class Regex : WithArgumentFunction<string>, IMatchFunctionTyped
     private global::System.Text.RegularExpressions.Regex _regex = null!;
 
 
-    public Task<bool> IsMatch(RuleExecutingContext context, string? value)
+    public bool IsMatch(RuleExecutingContext context, string? value)
     {
-        return Task.FromResult(_regex.IsMatch(value ?? ""));
+        return _regex.IsMatch(value ?? "");
     }
 
     public override void SetArgument(string arguments)

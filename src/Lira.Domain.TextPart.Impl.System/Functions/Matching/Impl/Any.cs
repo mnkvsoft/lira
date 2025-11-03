@@ -10,12 +10,12 @@ internal class Any : FunctionBase, IMatchFunctionTyped
 
     public ReturnType ValueType => ReturnType.String;
 
-    public Task<bool> IsMatch(RuleExecutingContext context, string? value)
+    public bool IsMatch(RuleExecutingContext context, string? value)
     {
         // means that there is no such node in json when checking the body
         if (value == null)
-            return Task.FromResult(false);
+            return false;
 
-        return Task.FromResult(true);
+        return true;
     }
 }

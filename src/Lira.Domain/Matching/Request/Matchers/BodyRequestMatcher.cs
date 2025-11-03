@@ -32,7 +32,7 @@ public class BodyRequestMatcher : IRequestMatcher
 
             var value = extractor.Extract(body);
 
-            if (await matcher.Match(context, value) is not TextPatternPart.MatchResult.Matched matched)
+            if (matcher.Match(context, value) is not TextPatternPart.MatchResult.Matched)
                 return RequestMatchResult.NotMatched;
 
             weight += TextPatternPartWeightCalculator.Calculate(matcher);

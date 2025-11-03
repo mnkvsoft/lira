@@ -15,15 +15,13 @@ internal class Range : RangeBase, IMatchFunctionTyped
     public ReturnType ValueType => ReturnType.String;
 
 
-    public Task<bool> IsMatch(RuleExecutingContext context, string? value)
+    public bool IsMatch(RuleExecutingContext context, string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            return Task.FromResult(false);
+            return false;
 
         var range = GetRange();
 
-        var isMatch = range.ValueIsBelong(value);
-
-        return Task.FromResult(isMatch);
+        return range.ValueIsBelong(value);
     }
 }

@@ -9,11 +9,11 @@ internal class Dic(ICustomDictsProvider customDictsProviderProvider) : DicBase(c
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
     public ReturnType ValueType => ReturnType.String;
 
-    public Task<bool> IsMatch(RuleExecutingContext _, string? value)
+    public bool IsMatch(RuleExecutingContext _, string? value)
     {
         if (value is null)
-            return Task.FromResult(false);
+            return false;
 
-        return Task.FromResult(CustomDic.ValueIsBelong(value));
+        return CustomDic.ValueIsBelong(value);
     }
 }

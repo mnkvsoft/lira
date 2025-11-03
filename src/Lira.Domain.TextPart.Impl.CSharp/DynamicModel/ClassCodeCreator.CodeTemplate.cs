@@ -92,7 +92,7 @@ static partial class ClassCodeCreator
                 }
 
                 public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
-                public async Task<bool> IsMatch(RuleExecutingContext __ctx, string? [input])
+                public bool IsMatch(RuleExecutingContext __ctx, string? [input])
                 {
                     var __variablesWriter = GetVariablesWriter(__ctx, readOnly: false);
                     [code]
@@ -131,7 +131,7 @@ static partial class ClassCodeCreator
                 {
                 }
 
-                protected override async Task<bool> IsMatchInternal(RuleExecutingContext __ctx)
+                protected override bool IsMatchInternal(RuleExecutingContext __ctx)
                 {
                     var [externalRequestVariableName] = new RequestModel(__ctx.RequestContext.RequestData);
                     var __variablesWriter = GetVariablesWriter(__ctx, readOnly: false);

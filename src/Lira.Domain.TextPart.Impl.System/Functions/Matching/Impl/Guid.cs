@@ -9,8 +9,8 @@ internal class Guid : FunctionBase, IMatchFunctionTyped
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Type;
     public ReturnType ValueType => ReturnType.Guid;
 
-    public Task<bool> IsMatch(RuleExecutingContext context, string? value)
+    public bool IsMatch(RuleExecutingContext context, string? value)
     {
-        return Task.FromResult(global::System.Guid.TryParse(value, out _));
+        return global::System.Guid.TryParse(value, out _);
     }
 }
