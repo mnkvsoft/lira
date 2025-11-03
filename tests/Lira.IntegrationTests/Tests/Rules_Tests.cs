@@ -1,6 +1,4 @@
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using Lira.Common;
 using Moq;
 using Moq.Contrib.HttpClient;
@@ -10,8 +8,6 @@ using Lira.ExternalCalling.Http.Caller;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Logging.Console;
 
 namespace Lira.IntegrationTests.Tests;
 

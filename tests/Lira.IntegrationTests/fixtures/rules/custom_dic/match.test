@@ -1,6 +1,6 @@
 -------------------- case
 
-GET /match/custom_dictionary/7775555555
+GET /custom_dic/match/red
 
 ----- expected
 

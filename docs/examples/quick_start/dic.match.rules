@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /product/{{ car }}
+GET /product/{{ dic: car }}
 
 ~ headers
 example: dic.match

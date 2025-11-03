@@ -206,8 +206,6 @@ class TextPartsParserInternal
             .OfType<Function>()
             .SingleOrDefault(x => x.Name == Function.Prefix + rawText);
 
-        context.CustomDicts.TryGetCustomSetFunction(rawText, out var customSetFunction);
-
         if (_functionFactorySystem.TryCreateGeneratingFunction(rawText,
                 new SystemFunctionContext(new DeclaredItemsProvider(declaredItems)), out var function))
         {
@@ -217,20 +215,11 @@ class TextPartsParserInternal
                 return declaredFunction;
             }
 
-            if (customSetFunction != null)
-            {
-                _logger.LogInformation($"System function '{rawText}' was replaced by custom set");
-                return customSetFunction;
-            }
-
             return function;
         }
 
         if (declaredFunction != null)
             return declaredFunction;
-
-        if (customSetFunction != null)
-            return customSetFunction;
 
         var declaredItem = declaredItems
             .SingleOrDefault(x => x.Name == rawText);
@@ -245,58 +234,4 @@ class TextPartsParserInternal
 
         return createFunctionResult.GetFunctionOrThrow(rawText, context);
     }
-
-    // private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadParts(
-    //     IReadonlyParsingContext context, string invoke)
-    // {
-    //     var (wasRead, parts) = await TryReadPartsFromFile(context, invoke);
-    //
-    //     if (wasRead)
-    //         return (true, parts!);
-    //
-    //     (wasRead, parts) = await TryReadPartsFromTemplate(context, invoke);
-    //
-    //     if (wasRead)
-    //         return (true, parts!);
-    //
-    //     return (false, null);
-    // }
-
-    // private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadPartsFromTemplate(
-    //     IReadonlyParsingContext context, string invoke)
-    // {
-    //     if (invoke.StartsWith(Consts.ControlChars.TemplatePrefix))
-    //     {
-    //         var templateName = invoke.TrimStart(Consts.ControlChars.TemplatePrefix);
-    //
-    //         var template = context.Templates.GetOrThrow(templateName);
-    //
-    //         var parts = await Parse(template.Value, context);
-    //         return (true, parts);
-    //     }
-    //
-    //     return (false, null);
-    // }
-
-    // private async Task<(bool wasRead, IReadOnlyCollection<IObjectTextPart>? parts)> TryReadPartsFromFile(
-    //     IReadonlyParsingContext context, string invoke)
-    // {
-    //     if (!invoke.StartsWith("read.file:"))
-    //         return (false, null);
-    //
-    //     var args = invoke.TrimStart("read.file:");
-    //     var (fileName, encodingName) = args.SplitToTwoParts(" encoding:").Trim();
-    //
-    //     string filePath;
-    //     if (fileName.StartsWith('/'))
-    //         filePath = context.RootPath + fileName;
-    //     else
-    //         filePath = Path.Combine(context.CurrentPath, fileName);
-    //
-    //     var encoding = encodingName == null ? Encoding.UTF8 : Encoding.GetEncoding(encodingName);
-    //
-    //     string pattern = await File.ReadAllTextAsync(filePath, encoding);
-    //     var parts = await Parse(pattern.Replace("\r\n", "\n"), context);
-    //     return (true, parts);
-    // }
 }

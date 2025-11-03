@@ -19,6 +19,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly Compiler _compiler;
     private readonly Cache _cache;
     private readonly IRangesProvider _rangesProvider;
+    private readonly ICustomDictsProvider _customDictsProvider;
     private readonly IImmutableList<string> _assembliesLocations;
     private readonly AssembliesLoader _assembliesLoader;
     private readonly CsFilesAssembly? _csFilesAssembly;
@@ -33,6 +34,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         CompilationStatistic CompilationStatistic,
         Cache Cache,
         IRangesProvider RangesProvider,
+        ICustomDictsProvider CustomDictsProvider,
         Namer Namer,
         ILoggerFactory LoggerFactory);
 
@@ -45,6 +47,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         _compilationStatistic = dependencies.CompilationStatistic;
         _cache = dependencies.Cache;
         _rangesProvider = dependencies.RangesProvider;
+        _customDictsProvider = dependencies.CustomDictsProvider;
         _assembliesLoader = dependencies.AssembliesLoader;
         _namer = dependencies.Namer;
         _globalUsingFileContent = globalUsingFileContent;
@@ -481,6 +484,6 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private DynamicObjectBase.DependenciesBase CreateDependenciesBase(IDeclaredItemsProvider declaredItemsProvider)
     {
-        return new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider, declaredItemsProvider, _loggerFactory );
+        return new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider, _customDictsProvider, declaredItemsProvider, _loggerFactory );
     }
 }

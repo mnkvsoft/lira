@@ -1,11 +1,8 @@
 -------------------- case
 
-GET /generating/custom_dictionary
+GET /custom_dic/match.cs/red
 
 ----- expected
 
 ~ code
 200
-
-~ body
-red

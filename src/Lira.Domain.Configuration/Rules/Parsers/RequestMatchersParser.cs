@@ -288,9 +288,6 @@ class RequestMatchersParser
         if (_functionFactorySystem.TryCreateMatchFunction(invoke.Trim(), new SystemFunctionContext(new DeclaredItemsProvider(context.DeclaredItems)), out var function))
             return function;
 
-        if (context.CustomDicts.TryGetCustomSetFunction(invoke.Trim(), out var customSetFunction))
-            return customSetFunction;
-
         var (codeBlock, newRuntimeVariables, localVariables) = _codeParser.Parse(invoke, context.DeclaredItems);
 
         if (localVariables.Count > 0)

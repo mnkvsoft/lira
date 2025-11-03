@@ -4,4 +4,5 @@ public interface IMatchFunction
 {
     MatchFunctionRestriction Restriction { get; }
     Task<bool> IsMatch(RuleExecutingContext context, string? value);
+    // todo: remove Task
 }
