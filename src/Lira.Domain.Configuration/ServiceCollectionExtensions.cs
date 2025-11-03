@@ -74,7 +74,10 @@ public static class ServiceCollectionExtensions
             .AddScoped<IRangesProvider>(provider => provider.GetRequiredService<RangesProvider>())
 
             .AddTransient<RulesLoader>()
-            .AddSingleton<IRulesProvider>(provider => provider.GetRequiredService<ConfigurationLoader>());
+            .AddSingleton<IRulesProvider>(provider => provider.GetRequiredService<ConfigurationLoader>())
+
+            .AddScoped<CustomDictsProvider>()
+            .AddScoped<ICustomDictsProvider>(provider => provider.GetRequiredService<CustomDictsProvider>());
     }
 
     private static IServiceCollection AddOperators(this IServiceCollection services)

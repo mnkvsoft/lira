@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /match/custom_dictionary/{{ phone.vip }}
+GET /custom_dic/match/{{ dic: color }}
 
 ----- response
 

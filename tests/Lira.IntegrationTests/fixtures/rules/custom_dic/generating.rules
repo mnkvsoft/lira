@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /generating/custom_dictionary
+GET /custom_dic/generating
 
 ----- response
 
@@ -8,4 +8,4 @@ GET /generating/custom_dictionary
 200
 
 ~ body
-{{ color }}
+{{ dic: color }}

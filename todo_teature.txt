@@ -1,6 +1,6 @@
 - range [ 100 - 200 ] => [ 100..200 ]
-- headers matching: : => >>
 - make dic-function
+- json() in base class to extension method
 
 - set body encoding
 - fail container start if error in rule

@@ -16,6 +16,11 @@ public abstract class DynamicObjectBaseGenerate : DynamicObjectWithDeclaredParts
         return GetRange(rangeName).NextValue();
     }
 
+    protected dynamic dic(string dicName)
+    {
+        return GetDic(dicName).NextValue();
+    }
+
     protected IEnumerable<dynamic?> Repeat(RuleExecutingContext context, IObjectTextPart part, string separator, int count)
     {
         for (var i = 0; i < count; i++)
