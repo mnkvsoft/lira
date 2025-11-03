@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
 
@@ -43,11 +44,12 @@ class CsFilesCompiler
 
         var compileResult = _compiler.Compile(
             new CompileUnit(
-                _namer.GetAssemblyName(_namer.GetClassName("CustomType", codes)),
-                codes.ToImmutableArray(),
+                _namer.GetNames(prefix: "CustomType", codes).Assembly,
+                codes.Select(code => CSharpSyntaxTree.ParseText(code)).ToImmutableArray(),
                 new References(
                     Runtime: Array.Empty<PeImage>(),
-                    AssembliesLocations: _assembliesLocations)));
+                    AssembliesLocations: _assembliesLocations)),
+            extractAdditionInfo: null);
 
         var nl = Constants.NewLine;
 

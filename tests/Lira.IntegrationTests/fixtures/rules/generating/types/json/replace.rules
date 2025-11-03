@@ -4,7 +4,7 @@ GET /generating/types/json/replace
 
 ----- declare
 
-@json_func =
+@json_func:json =
 {
     "stringField" : "value",
     "intField" : 0,
@@ -21,7 +21,7 @@ GET /generating/types/json/replace
 
 ~ body
 {{
-     json(@json_func)
+     @json_func
         .replace("$.stringField", "new_value")
         .replace("$.intField", 1)
         .replace("$.boolField", true)

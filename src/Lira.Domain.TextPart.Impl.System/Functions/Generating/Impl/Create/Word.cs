@@ -6,14 +6,11 @@ internal class Word : FunctionBase, IObjectTextPart
 {
     public override string Name => "word";
 
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
-    {
-        yield return Next();
-    }
+    public dynamic Get(RuleExecutingContext context) => Next();
 
-    public ReturnType ReturnType => ReturnType.String;
+    public Type Type => DotNetType.String;
 
-    public static string Next() => Words.Random();
+    private static string Next() => Words.Random();
 
     private static readonly string[] Words =
     [

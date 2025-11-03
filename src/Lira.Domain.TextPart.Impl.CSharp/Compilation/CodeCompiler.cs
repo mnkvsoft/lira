@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Emit;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
@@ -9,15 +10,13 @@ static class CodeCompiler
 {
     public abstract record Result
     {
-        public record Success(PeBytes PeBytes) : Result;
+        public record Success(PeBytes PeBytes, string? AdditionInfo) : Result;
         public record Fault(string Message) : Result;
     }
 
-    public static Result Compile(string assemblyName, IReadOnlyCollection<MetadataReference> references, IEnumerable<string> codes)
+    public static Result Compile(string assemblyName, IReadOnlyCollection<MetadataReference> references, IEnumerable<SyntaxTree> syntaxTrees, Func<CSharpCompilation, string>? extractAdditionInfo = null)
     {
-        var syntaxTrees = codes.Select(code => CSharpSyntaxTree.ParseText(code)).ToArray();
-
-        var compilation = CSharpCompilation.Create(
+        CSharpCompilation compilation = CSharpCompilation.Create(
             assemblyName,
             syntaxTrees: syntaxTrees,
             references: references,
@@ -34,7 +33,7 @@ static class CodeCompiler
 
         var bytes = ms.ToArray();
 
-        return new Result.Success(new PeBytes(bytes));
+        return new Result.Success(new PeBytes(bytes), AdditionInfo: extractAdditionInfo?.Invoke(compilation));
     }
 
     private static string CreateFaultMessage(EmitResult result)

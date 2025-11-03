@@ -3,13 +3,13 @@ namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Extract;
 internal class Path : WithArgumentFunction<int>, IObjectTextPart
 {
     public override string Name => "req.path";
-    public ReturnType ReturnType => ReturnType.String;
+    public Type Type => DotNetType.String;
     public override bool ArgumentIsRequired => true;
     private int _index;
 
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public dynamic? Get(RuleExecutingContext context)
     {
-        yield return context.RequestContext.RequestData.GetPath(_index);
+        return context.RequestContext.RequestData.GetPath(_index);
     }
 
 

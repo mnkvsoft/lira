@@ -3,8 +3,8 @@ namespace Lira.Domain.TextPart.Impl.Custom;
 public abstract class DeclaredItem : IObjectTextPart, IEquatable<DeclaredItem>
 {
     public abstract string Name { get; }
-    public abstract IEnumerable<dynamic?> Get(RuleExecutingContext context);
-    public abstract ReturnType? ReturnType { get; }
+    public abstract dynamic? Get(RuleExecutingContext context);
+    public abstract Type Type { get; }
 
     public bool Equals(DeclaredItem? other)
     {

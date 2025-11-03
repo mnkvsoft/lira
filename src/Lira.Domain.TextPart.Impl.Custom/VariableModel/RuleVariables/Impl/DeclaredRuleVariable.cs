@@ -2,11 +2,12 @@ namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 
 public class DeclaredRuleVariable : RuleVariable
 {
-    private readonly IReadOnlyCollection<IObjectTextPart> _parts;
+    private readonly IObjectTextPart _part;
 
-    public DeclaredRuleVariable(string name, IReadOnlyCollection<IObjectTextPart> parts, ReturnType? valueType) : base(name, valueType)
+    public DeclaredRuleVariable(string name, IObjectTextPart part, TypeInfo typeInfo) : base(name, typeInfo)
     {
-        _parts = parts;
+        _part = part;
     }
-    protected override dynamic? GetInitiatedValue(RuleExecutingContext ctx) => _parts.Generate(ctx);
+
+    protected override dynamic? GetInitiatedValue(RuleExecutingContext ctx) => _part.Get(ctx);
 }

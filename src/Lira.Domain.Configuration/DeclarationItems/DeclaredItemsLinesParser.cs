@@ -58,7 +58,7 @@ class DeclaredItemsLinesParser
 
             var (name, typeStr) = s.SplitToTwoParts(Consts.ControlChars.SetType).Trim();
 
-            ReturnType? type = typeStr != null ? ReturnType.Parse(typeStr) : null;
+            ExplicitType? type = typeStr != null ? ExplicitType.Parse(typeStr) : null;
 
             result.AddOrThrowIfContains(new DeclaredItemDraft(name, p, type));
         }

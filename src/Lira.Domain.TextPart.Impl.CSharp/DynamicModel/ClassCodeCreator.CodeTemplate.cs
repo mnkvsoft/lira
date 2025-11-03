@@ -35,30 +35,18 @@ static partial class ClassCodeCreator
             """
             public sealed class [className] : DynamicObjectBaseGenerate, IObjectTextPart
             {
-                ReturnType? IObjectTextPart.ReturnType => null;
+                Type IObjectTextPart.Type => [type];
 
                 public [className](DependenciesBase dependencies) : base(dependencies)
                 {
                 }
 
-                public IEnumerable<dynamic?> Get(RuleExecutingContext [context])
+                public dynamic? Get(RuleExecutingContext [context])
                 {
                     var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
                     var __variablesWriter = GetVariablesWriter([context], readOnly: false);
 
                     [code]
-
-                    IEnumerable<dynamic?> [repeat](IObjectTextPart part, string separator = ",", int? count = null, int? from = null, int? to = null)
-                    {
-                        int cnt;
-                        if(count != null)
-                            cnt = count.Value;
-                        else if(from != null)
-                            cnt = Random.Shared.Next(from.Value, to.Value + 1);
-                        else
-                            cnt = Random.Shared.Next(3, 9);
-                        return Repeat([context], part, separator, cnt);
-                    }
                 }
             }
             """;
@@ -69,7 +57,7 @@ static partial class ClassCodeCreator
             """
             public sealed class [className] : ITransformFunction
             {
-                ReturnType? ITransformFunction.ReturnType => null;
+                Type ITransformFunction.Type => DotNetType.Unknown;
 
                 public dynamic? Transform(dynamic? [input])
                 {
@@ -85,17 +73,22 @@ static partial class ClassCodeCreator
             """
             public sealed class [className] : DynamicObjectBaseMatch, IMatchFunctionTyped
             {
-                public ReturnType? ValueType => null;
+                public Type ValueType => DotNetType.Unknown;
 
                 public [className](DependenciesBase dependencies) : base(dependencies)
                 {
                 }
 
                 public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
-                public async Task<bool> IsMatch(RuleExecutingContext __ctx, string? [input])
+
+                public bool IsMatch(RuleExecutingContext context, string? value) => IsMatchTyped(context, value, out _);
+
+                public bool IsMatchTyped(RuleExecutingContext __ctx, string? [input], out dynamic? typedValue)
                 {
+                    typedValue = value;
+
                     var __variablesWriter = GetVariablesWriter(__ctx, readOnly: false);
-                    [code]
+                   [code]
                 }
             }
             """;
@@ -131,7 +124,7 @@ static partial class ClassCodeCreator
                 {
                 }
 
-                protected override async Task<bool> IsMatchInternal(RuleExecutingContext __ctx)
+                protected override bool IsMatchInternal(RuleExecutingContext __ctx)
                 {
                     var [externalRequestVariableName] = new RequestModel(__ctx.RequestContext.RequestData);
                     var __variablesWriter = GetVariablesWriter(__ctx, readOnly: false);

@@ -6,13 +6,13 @@ class DeclaredItemDraft : IEquatable<DeclaredItemDraft>
 {
     public string Name { get; }
     public string Pattern { get; }
-    public ReturnType? ReturnType { get; }
+    public ExplicitType? CastTo { get; }
 
-    public DeclaredItemDraft(string name, string pattern, ReturnType? returnType)
+    public DeclaredItemDraft(string name, string pattern, ExplicitType? castTo)
     {
         Name = name;
         Pattern = pattern;
-        ReturnType = returnType;
+        CastTo = castTo;
     }
 
     public bool Equals(DeclaredItemDraft? other)

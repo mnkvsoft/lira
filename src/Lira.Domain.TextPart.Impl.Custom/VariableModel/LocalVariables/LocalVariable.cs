@@ -10,23 +10,25 @@ public class LocalVariable : Variable
     private static int _counter;
     private readonly int _id;
     public override string Name { get; }
-    public override ReturnType? ReturnType { get; }
+    public override Type Type { get; }
+    private readonly TypeInfo _typeInfo;
 
-    public LocalVariable(string name, ReturnType? valueType)
+    public LocalVariable(string name, TypeInfo typeInfo)
     {
         if(!IsValidName(name))
             throw new ArgumentException("Invalid local variable name: " + name, nameof(name));
 
         Name = name;
-        ReturnType = valueType;
+        Type = typeInfo.TargetType;
         _id = Interlocked.Increment(ref _counter);
+        _typeInfo = typeInfo;
     }
 
     private static readonly object NullValue = new();
 
     public static bool IsValidName(string name) => NamingStrategy.IsValidName(name);
 
-    private dynamic? GetValue(RuleExecutingContext ctx)
+    public override dynamic? Get(RuleExecutingContext ctx)
     {
         var values = GetVariableValues(ctx);
 
@@ -48,29 +50,21 @@ public class LocalVariable : Variable
 
     private dynamic? GetValueTyped(dynamic? value)
     {
-        if (ReturnType == null)
-            return value;
-
-        if (!TypedValueCreator.TryCreate(ReturnType, value, out dynamic? valueTyped, out Exception exc))
+        if (!_typeInfo.TryGet(value, out dynamic? result, out Exception exc))
         {
             throw new Exception(
-                $"Can't cast value '{value}' " +
+                $"Can't explicitly cast value '{value}' " +
                 $"of type '{value?.GetType()}' " +
-                $"to type '{ReturnType}'" +
+                $"to type '{Type}'" +
                 $"for write to variable '{Name}'",
                 exc);
         }
 
-        return valueTyped;
+        return result;
     }
 
     private static Dictionary<int, dynamic?> GetVariableValues(RuleExecutingContext ctx)
     {
         return ctx.Items.GetOrCreate(key: typeof(LocalVariable), () => new Dictionary<int, dynamic?>());
-    }
-
-    public override IEnumerable<dynamic?> Get(RuleExecutingContext context)
-    {
-        yield return GetValue(context);
     }
 }

@@ -9,16 +9,13 @@ internal class RandomCustom : WithArgumentFunction<string[]>, IObjectTextPart, I
 
     public override bool ArgumentIsRequired => true;
 
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public dynamic? Get(RuleExecutingContext context)
     {
         var part = _parts.Random();
-        foreach (var value in part.Get(context))
-        {
-            yield return value;
-        }
+        return part.Get(context);
     }
 
-    public ReturnType? ReturnType { get; private set; }
+    public Type Type { get; private set; } = null!;
 
     public override void SetArgument(string[] arguments)
     {
@@ -35,8 +32,8 @@ internal class RandomCustom : WithArgumentFunction<string[]>, IObjectTextPart, I
                 : new StaticPart(arg));
         }
 
-        var types = parts.Select(x => x.ReturnType).Distinct().ToArray();
-        ReturnType = SameTypes(types) ? types.First() : null;
+        var types = parts.Select(x => x.Type).Distinct().ToArray();
+        Type = SameTypes(types) ? types.First() : DotNetType.Unknown;
         _parts = parts;
     }
 
@@ -45,7 +42,7 @@ internal class RandomCustom : WithArgumentFunction<string[]>, IObjectTextPart, I
         _context = context;
     }
 
-    private bool SameTypes(IReadOnlyCollection<ReturnType?> types)
+    private bool SameTypes(IReadOnlyCollection<Type> types)
     {
         var current = types.First();
         foreach (var type in types.Skip(1))

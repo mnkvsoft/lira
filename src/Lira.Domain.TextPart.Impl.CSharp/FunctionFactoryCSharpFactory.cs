@@ -4,6 +4,8 @@ using Lira.Domain.DataModel;
 using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.ExternalLibsLoading;
 using Lira.Domain.TextPart.Types;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Newtonsoft.Json.Linq;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
@@ -91,7 +93,7 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
         return _factory;
     }
 
-    async Task<string?> GetGlobalUsingFileContent()
+    async Task<SyntaxTree?> GetGlobalUsingFileContent()
     {
         var files = Directory.GetFiles(_rulesPath, Consts.GlobalUsingsRulesFileName, SearchOption.AllDirectories);
 
@@ -101,7 +103,6 @@ class FunctionFactoryCSharpFactory : IFunctionFactoryCSharpFactory
         if(files.Length > 1)
             throw new Exception($"More than one global using files {Consts.GlobalUsingsRulesFileName} are not supported");
 
-        var result = await File.ReadAllTextAsync(files.Single());
-        return result;
+        return CSharpSyntaxTree.ParseText(await File.ReadAllTextAsync(files.Single()));
     }
 }

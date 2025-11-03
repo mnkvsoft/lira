@@ -1,37 +1,35 @@
 using System.Diagnostics.CodeAnalysis;
-using Lira.Domain.TextPart.Types;
 
 namespace Lira.Domain.TextPart;
 
-public record ReturnType
+public record ExplicitType
 {
-    public readonly static ReturnType Json = new("json", typeof(Json), needTyped: false);
-    public readonly static ReturnType String = new("str", typeof(string), needTyped: true);
-    public readonly static ReturnType Int = new("int", typeof(Int64), needTyped: true);
-    public readonly static ReturnType Guid = new("guid", typeof(Guid), needTyped: true);
-    public readonly static ReturnType Decimal = new("dec", typeof(double), needTyped: true);
-    public readonly static ReturnType Date = new("date", typeof(DateTime), needTyped: true);
-    public readonly static ReturnType Bool = new("bool", typeof(bool), needTyped: true);
+    public readonly static ExplicitType Json = new("json", DotNetType.Dynamic);
+    public readonly static ExplicitType String = new("str", DotNetType.String);
+    public readonly static ExplicitType Int = new("int", DotNetType.Int64);
+    public readonly static ExplicitType Guid = new("guid", DotNetType.Guid);
+    public readonly static ExplicitType Decimal = new("dec", DotNetType.Double);
+    public readonly static ExplicitType Date = new("date", DotNetType.DateTime);
+    public readonly static ExplicitType Bool = new("bool", DotNetType.Bool);
+
 
     private readonly string _value;
     public readonly Type DotnetType;
-    public readonly bool NeedTyped;
 
-    private ReturnType(string value, Type dotnetType, bool needTyped)
+    private ExplicitType(string value, Type dotnetType)
     {
         _value = value;
         DotnetType = dotnetType;
-        NeedTyped = needTyped;
     }
 
-    public static ReturnType Parse(string value)
+    public static ExplicitType Parse(string value)
     {
         if(!TryParse(value, out var type))
             throw new FormatException($"Unknown type: '{value}'");
         return type;
     }
 
-    public static bool TryParse(string value, [MaybeNullWhen(false)]out ReturnType type)
+    private static bool TryParse(string value, [MaybeNullWhen(false)]out ExplicitType type)
     {
         type = null;
 

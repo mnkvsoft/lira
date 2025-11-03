@@ -1,0 +1,13 @@
+@using extensions;
+
+-------------------- rule
+
+GET /csharp/type_inference/declare_block
+
+----- declare
+
+@customClassInstance = {{ new CustomClass() }}
+
+----- response
+
+{{ @customClassInstance.ExtensionMethodInvoke() }}

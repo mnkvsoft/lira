@@ -220,6 +220,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Remove="fixtures\rules\nuget\jwt.cs" />
+    <None Include="fixtures\rules\csharp\CustomClass.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="fixtures\rules\csharp\using\cs\GlobalUsings.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -553,6 +556,13 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\custom_dic\generating.cs.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Remove="fixtures\rules\csharp\using\cs\CustomClass.cs" />
+    <None Update="fixtures\rules\csharp\type_inference.declare_block.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\csharp\type_inference.declare_block.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

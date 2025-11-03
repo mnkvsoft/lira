@@ -6,12 +6,12 @@ public class MatchFunctionWithSaveVariable(IMatchFunctionTyped matchFunction, Ru
 {
     public MatchFunctionRestriction Restriction { get; } = matchFunction.Restriction;
 
-    public async Task<bool> IsMatch(RuleExecutingContext context, string? value)
+    public bool IsMatch(RuleExecutingContext context, string? value)
     {
-        var isMatch = await matchFunction.IsMatch(context, value);
+        var isMatch = matchFunction.IsMatchTyped(context, value, out dynamic? typedValue);
 
         if (isMatch)
-            ruleVariable.SetValue(context, value);
+            ruleVariable.SetValue(context, typedValue);
 
         return isMatch;
     }

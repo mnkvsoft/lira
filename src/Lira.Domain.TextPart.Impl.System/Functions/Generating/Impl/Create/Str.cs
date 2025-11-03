@@ -9,12 +9,9 @@ internal class Str : WithArgumentFunction<int>, IObjectTextPart
 
     private int _length = 20;
 
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
-    {
-        yield return GetRandomString(_length);
-    }
+    public dynamic Get(RuleExecutingContext context) => GetRandomString(_length);
 
-    public ReturnType ReturnType => ReturnType.String;
+    public Type Type => DotNetType.String;
 
     public override void SetArgument(int arguments)
     {

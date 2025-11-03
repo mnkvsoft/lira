@@ -7,12 +7,9 @@ internal class Echo : WithArgumentFunction<string>, IObjectTextPart
 
     private object? _value;
 
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
-    {
-        yield return _value;
-    }
+    public dynamic? Get(RuleExecutingContext context) => _value;
 
-    public ReturnType ReturnType => ReturnType.String;
+    public Type Type => DotNetType.Unknown;
 
 
     public override void SetArgument(string? arguments)

@@ -23,11 +23,10 @@ class GetDelayParser(ITextPartsParser partsParser)
             return _ => delay;
         }
 
-        var parts = await partsParser.Parse(delayStr, parsingContext);
-        var textParts = parts.WrapToTextParts();
+        var part = await partsParser.Parse(delayStr, parsingContext);
 
         return GetDelay;
 
-        TimeSpan GetDelay(RuleExecutingContext ctx) =>  PrettyTimespanParser.Parse(textParts.GetSingleString(ctx));
+        TimeSpan GetDelay(RuleExecutingContext ctx) => PrettyTimespanParser.Parse(part.GenerateString(ctx));
     }
 }

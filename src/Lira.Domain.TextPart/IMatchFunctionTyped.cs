@@ -4,5 +4,6 @@ namespace Lira.Domain.TextPart;
 
 public interface IMatchFunctionTyped : IMatchFunction
 {
-    ReturnType? ValueType { get; }
+    Type ValueType { get; }
+    bool IsMatchTyped(RuleExecutingContext context, string? value, out dynamic? typedValue);
 }

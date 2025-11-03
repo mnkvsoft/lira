@@ -1,6 +1,9 @@
 using Lira.Common;
+using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
 namespace Lira.Domain.TextPart.Impl.CSharp;
+
+record DynamicNames(string Class, string Assembly);
 
 class Namer(Namer.State state)
 {
@@ -14,12 +17,18 @@ class Namer(Namer.State state)
 
     public int Revision { get;  } = ++state.RevisionCounter;
 
+    public DynamicNames GetNames(string prefix, IEnumerable<string> codes)
+    {
+        string className = GetClassName(prefix, codes);
+        return new DynamicNames(className, GetAssemblyName(className));
+    }
+
+    public DynamicNames GetNames(string prefix, params ClassWithoutName[] codes) => GetNames(prefix, codes.Select(x => x.SetClassName("UnknownYet")));
+
     public readonly string AssemblyPrefix = "__dynamic";
-    public string GetAssemblyName(string name) => $"{AssemblyPrefix}_{Revision}_{name}";
+    private string GetAssemblyName(string name) => $"{AssemblyPrefix}_{Revision}_{name}";
 
-    public string GetClassName(string prefix, CodeBlock code) => GetClassName(prefix, code.ToString());
-
-    public string GetClassName(string prefix, params string[] codes)
+    private string GetClassName(string prefix, IEnumerable<string> codes)
     {
         return prefix + "_" + Sha1.Create(string.Concat(codes));
     }

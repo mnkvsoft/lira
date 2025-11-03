@@ -7,13 +7,23 @@ internal class Dic(ICustomDictsProvider customDictsProviderProvider) : DicBase(c
     public override string Name => "dic";
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
-    public ReturnType ValueType => ReturnType.String;
+    public Type ValueType => DotNetType.String;
 
-    public Task<bool> IsMatch(RuleExecutingContext _, string? value)
+    public bool IsMatch(RuleExecutingContext _, string? value) => IsMatchTyped(_, value, out var _);
+
+    public bool IsMatchTyped(RuleExecutingContext context, string? value, out dynamic? typedValue)
     {
-        if (value is null)
-            return Task.FromResult(false);
+        typedValue = value;
 
-        return Task.FromResult(CustomDic.ValueIsBelong(value));
+        if (value is null)
+            return false;
+
+        if (CustomDic.ValueIsBelong(value))
+        {
+            typedValue = value;
+            return true;
+        }
+
+        return false;
     }
 }

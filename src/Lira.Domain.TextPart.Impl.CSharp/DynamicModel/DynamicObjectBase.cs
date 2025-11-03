@@ -50,11 +50,5 @@ public abstract class DynamicObjectBase
         return new VariablesWriter(context, DeclaredItemsProvider, readOnly);
     }
 
-    // todo: as extension method
-    public static Json json(string json)
-    {
-        return Json.Parse(json);
-    }
-
     public void log(string message) => _logger.LogInformation(message);
 }

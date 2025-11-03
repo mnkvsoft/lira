@@ -2,99 +2,95 @@ using Lira.Common;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 
+class ClassWithoutName(string value)
+{
+    public string SetClassName(string name)
+    {
+        return value.Replace("[className]", name);
+    }
+}
+
 static partial class ClassCodeCreator
 {
-    public static string CreateIObjectTextPart(string className,
+    public static ClassWithoutName CreateIObjectTextPart(
+        string returnType,
         string code,
         string contextParameterName,
         string externalRequestVariableName,
-        string repeatFunctionName,
         IReadOnlyCollection<string> usings,
         IReadOnlyCollection<string> namespaces,
         IReadOnlyCollection<string> usingStaticTypes)
     {
-        return CodeTemplate.IObjectTextPart
-            .Replace("[className]", className)
+        return new ClassWithoutName(CodeTemplate.IObjectTextPart
+            .Replace("[type]", returnType)
             .Replace("[code]", code)
             .Replace("[context]", contextParameterName)
-            .Replace("[repeat]", repeatFunctionName)
             .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
             .Replace("[namespaces]", GetNamespaces(namespaces))
             .Replace("[usings]", GetUsings(usings))
-            .Replace("[externalRequestVariableName]", externalRequestVariableName);
+            .Replace("[externalRequestVariableName]", externalRequestVariableName));
     }
 
-    public static string CreateTransformFunction(
-        string className,
+    public static ClassWithoutName CreateTransformFunction(
         string code,
         string inputArgumentName,
         IReadOnlyCollection<string> usings,
         IReadOnlyCollection<string> namespaces,
         IReadOnlyCollection<string> usingStaticTypes)
     {
-        return CodeTemplate.ITransformFunction
+        return new ClassWithoutName(CodeTemplate.ITransformFunction
             .Replace("[namespaces]", GetNamespaces(namespaces))
             .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
             .Replace("[usings]", GetUsings(usings))
-            .Replace("[className]", className)
             .Replace("[input]", inputArgumentName)
-            .Replace("[code]", code);
+            .Replace("[code]", code));
     }
 
-    public static string CreateMatchFunction(
-        string className,
+    public static ClassWithoutName CreateMatchFunction(
         string code,
         string inputArgumentName,
         IReadOnlyCollection<string> usings,
         IReadOnlyCollection<string> namespaces,
         IReadOnlyCollection<string> usingStaticTypes)
     {
-        return CodeTemplate.IMatchFunction
+        return new ClassWithoutName(CodeTemplate.IMatchFunction
             .Replace("[namespaces]", GetNamespaces(namespaces))
             .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
             .Replace("[usings]", GetUsings(usings))
-            .Replace("[className]", className)
             .Replace("[input]", inputArgumentName)
-            .Replace("[code]", code);
+            .Replace("[code]", code));
     }
 
-    public static string CreateRequestMatcher(
-        string className,
+    public static ClassWithoutName CreateRequestMatcher(
         string code,
         string externalRequestVariableName,
         IReadOnlyCollection<string> usings,
         IReadOnlyCollection<string> namespaces,
         IReadOnlyCollection<string> usingStaticTypes)
     {
-        return CodeTemplate.IRequestMatcher
+        return new ClassWithoutName(CodeTemplate.IRequestMatcher
             .Replace("[namespaces]", GetNamespaces(namespaces))
             .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
             .Replace("[usings]", GetUsings(usings))
-            .Replace("[className]", className)
             .Replace("[externalRequestVariableName]", externalRequestVariableName)
-            .Replace("[code]", code);
+            .Replace("[code]", code));
     }
 
-
-
-    public static string CreatePredicateFunction(
-        string className,
+    public static ClassWithoutName CreatePredicateFunction(
         string code,
         string externalRequestVariableName,
         IReadOnlyCollection<string> namespaces,
         IReadOnlyCollection<string> usingStaticTypes)
     {
-        return CodeTemplate.IPredicateFunction
+        return new ClassWithoutName(CodeTemplate.IPredicateFunction
             .Replace("[namespaces]", GetNamespaces(namespaces))
             .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
             .Replace("[usings]", "")
-            .Replace("[className]", className)
             .Replace("[externalRequestVariableName]", externalRequestVariableName)
-            .Replace("[code]", code);
+            .Replace("[code]", code));
     }
 
-    public static string CreateAction(
-        string className,
+    public static ClassWithoutName CreateAction(
         string code,
         string contextParameterName,
         string externalRequestVariableName,
@@ -102,14 +98,13 @@ static partial class ClassCodeCreator
         IReadOnlyCollection<string> namespaces,
         IReadOnlyCollection<string> usingStaticTypes)
     {
-        return CodeTemplate.IAction
+        return new ClassWithoutName(CodeTemplate.IAction
             .Replace("[namespaces]", GetNamespaces(namespaces))
             .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
             .Replace("[usings]", GetUsings(usings))
             .Replace("[context]", contextParameterName)
-            .Replace("[className]", className)
             .Replace("[externalRequestVariableName]", externalRequestVariableName)
-            .Replace("[code]", code);
+            .Replace("[code]", code));
     }
 
     private static string GetNamespaces(IReadOnlyCollection<string> namespaces)

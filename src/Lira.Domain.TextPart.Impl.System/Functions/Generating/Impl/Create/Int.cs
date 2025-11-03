@@ -11,12 +11,9 @@ internal class Int : WithRangeArgumentFunction<long>, IObjectTextPart
 
     private Interval<long> _range = new(1, int.MaxValue);
 
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
-    {
-        yield return Random.Shared.NextInt64(_range);
-    }
+    public dynamic Get(RuleExecutingContext context) => Random.Shared.NextInt64(_range);
 
-    public ReturnType ReturnType => ReturnType.Int;
+    public Type Type => ExplicitType.Int.DotnetType;
 
 
     public override void SetArgument(Interval<long> argument)

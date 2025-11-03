@@ -3,11 +3,11 @@
 GET /variables/short_declaration/auto_resolve_type
 
 ~ body
-{{ form: strParam }}  >> {{ any      >> $$strVar   }}
-{{ form: strParam }}  >> {{ regex:.* >> $$regexVar }}
-{{ form: intParam }}  >> {{ int      >> $$intVar   }}
+{{ form: strParam  }} >> {{ any      >> $$strVar   }}
+{{ form: strParam  }} >> {{ regex:.* >> $$regexVar }}
+{{ form: intParam  }} >> {{ int      >> $$intVar   }}
 {{ form: guidParam }} >> {{ guid     >> $$guidVar  }}
-{{ form: decParam }}  >> {{ dec      >> $$decVar   }}
+{{ form: decParam  }} >> {{ dec      >> $$decVar   }}
 
 ----- response
 {{ $$strVar.GetType() }}

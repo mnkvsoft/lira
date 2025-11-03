@@ -14,13 +14,13 @@ public abstract class DynamicObjectBaseRequestMatcher : DynamicObjectWithDeclare
     {
     }
 
-    public async Task<RequestMatchResult> IsMatch(RuleExecutingContext ctx)
+    public Task<RequestMatchResult> IsMatch(RuleExecutingContext ctx)
     {
-        bool isMatch = await IsMatchInternal(ctx);
-        return isMatch
-            ? RequestMatchResult.Matched(name: "custom_code", WeightValue.CustomCode)
-            : RequestMatchResult.NotMatched;
+        bool isMatch = IsMatchInternal(ctx);
+        return Task.FromResult(isMatch
+                                ? RequestMatchResult.Matched(name: "custom_code", WeightValue.CustomCode)
+                                : RequestMatchResult.NotMatched);
     }
 
-    protected abstract Task<bool> IsMatchInternal(RuleExecutingContext ctx);
+    protected abstract bool IsMatchInternal(RuleExecutingContext ctx);
 }

@@ -44,11 +44,11 @@ class ResponseGenerationHandlerParser
             }
 
             string text = responseSection.GetLinesWithoutBlockAsString();
-            var parts = await _partsParser.Parse(text, parsingContext);
+            var part = await _partsParser.Parse(text, parsingContext);
 
             return new ResponseGenerationHandler.Normal(
                 StaticHttCodeGenerator.Code200,
-                new BodyGenerator(parts.WrapToTextParts()),
+                new BodyGenerator(part.WrapToTextParts()),
                 HeadersGenerator: null);
         }
 

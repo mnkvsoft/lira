@@ -61,3 +61,30 @@ docker run -p 80:8080 -e LibsPath=/tmp/lira/libs -v c:/lira/rules:/app/rules -v 
 - [response body without blocks](tests/Lira.IntegrationTests/fixtures/rules/generating/simplified_notation/response_body_without_blocks.rules)
 
 ## Disabled certificate validation in section `action.call.http`
+
+# 2.0
+
+rename float => dec
+add local variables
+add write local and rule variables
+add pan type for ranges
+add ordered actions
+nuget
+add global usings
+rename function prefix: $ => @
+unorder declaration variables and functions
+add declared items in random function
+add operators support
+add support remote git repository for download rules
+forbid . character in a variable name
+add log() function
+comments: ## => @- ### ### => @* *@
+improved readability of error messages
+intervals: - => ..
+dic() method for access from c# code
+
+json:
+- add json() extensions
+- add read value property
+- add transform methods
+- add remove() method

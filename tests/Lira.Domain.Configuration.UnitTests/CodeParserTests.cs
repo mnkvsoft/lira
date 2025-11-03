@@ -10,7 +10,7 @@ namespace Lira.Domain.Configuration.UnitTests;
 
 public class CodeParserTests
 {
-    private static CodeParser _sut = new(Array.Empty<IKeyWordInDynamicBlock>());
+    private static readonly CodeParser Sut = new(Array.Empty<IKeyWordInDynamicBlock>());
 
     [TestCase(
         "int a = $$read_from_variable;",
@@ -36,15 +36,20 @@ public class CodeParserTests
     public void ReadRuleVariable(string code, string expected)
     {
         var declaredItems = new DeclaredItems {
-            new RuntimeRuleVariable("$$read_from_variable", valueType: null),
+            new RuntimeRuleVariable("$$read_from_variable", CreateTypeInfo()),
         };
 
-        var (codeBlock, _, _) = _sut.Parse(
+        var (codeBlock, _, _) = Sut.Parse(
             code,
             declaredItems);
 
         var result = string.Concat(codeBlock.Tokens);
         Assert.That(result, Is.EqualTo(expected));
+    }
+
+    private static TypeInfo CreateTypeInfo()
+    {
+        return new TypeInfo(typeof(string), castTo: null);
     }
 
     [TestCase(
@@ -71,10 +76,10 @@ public class CodeParserTests
     public void ReadLocalVariable(string code, string expected)
     {
         var declaredItems = new DeclaredItems {
-            new LocalVariable("$read_from_variable", valueType: null)
+            new LocalVariable("$read_from_variable", CreateTypeInfo())
         };
 
-        var (codeBlock, _, _) = _sut.Parse(
+        var (codeBlock, _, _) = Sut.Parse(
             code,
             declaredItems);
 
@@ -85,9 +90,9 @@ public class CodeParserTests
     [Test]
     public void ReadRuleVariableWithPropertyAccess()
     {
-        var declaredItems = new DeclaredItems { new DeclaredRuleVariable("$$person", [Mock.Of<IObjectTextPart>()], valueType: null) };
+        var declaredItems = new DeclaredItems { new DeclaredRuleVariable("$$person", Mock.Of<IObjectTextPart>(), CreateTypeInfo()) };
 
-        var (codeBlock, _, _) = _sut.Parse(
+        var (codeBlock, _, _) = Sut.Parse(
             "$$person.name",
             declaredItems);
 
@@ -98,9 +103,9 @@ public class CodeParserTests
     [Test]
     public void ReadLocalVariableWithPropertyAccess()
     {
-        var declaredItems = new DeclaredItems { new LocalVariable("$person", valueType: null) };
+        var declaredItems = new DeclaredItems { new LocalVariable("$person", CreateTypeInfo()) };
 
-        var (codeBlock, _, _) = _sut.Parse(
+        var (codeBlock, _, _) = Sut.Parse(
             "$person.name",
             declaredItems);
 
@@ -131,11 +136,13 @@ public class CodeParserTests
     {
         var declaredItems = new DeclaredItems
         {
-            new Function("@read.from.function",
-                Array.Empty<IObjectTextPart>(), valueType: null)
+            new Function(
+                "@read.from.function",
+                Mock.Of<IObjectTextPart>(),
+                CreateTypeInfo())
         };
 
-        var (codeBlock, _, _) = _sut.Parse(
+        var (codeBlock, _, _) = Sut.Parse(
             code,
             declaredItems);
 
@@ -170,7 +177,7 @@ public class CodeParserTests
         "[:w $write_to_variable][:c =\n   a;]")]
     public void WriteVariable(string code, string expected)
     {
-        var (codeBlock, _, _) = _sut.Parse(
+        var (codeBlock, _, _) = Sut.Parse(
             code,
             new DeclaredItems());
 

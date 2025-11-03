@@ -1,16 +1,19 @@
 namespace Lira.Domain.TextPart;
 
+public interface IObjectTextPartCasted
+{
+    dynamic? Get(RuleExecutingContext context);
+}
+
 public interface IObjectTextPart
 {
-    IEnumerable<dynamic?> Get(RuleExecutingContext context);
-    ReturnType? ReturnType { get; }
+    dynamic? Get(RuleExecutingContext context);
+    Type Type { get; }
 }
 
 public record StaticPart(string Value) : IObjectTextPart
 {
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
-    {
-        yield return Value;
-    }
-    public ReturnType ReturnType => ReturnType.String;
+    public dynamic Get(RuleExecutingContext context) => Value;
+    public Type Type => typeof(string);
 }
+

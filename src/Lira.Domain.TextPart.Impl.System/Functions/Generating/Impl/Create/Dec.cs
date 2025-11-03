@@ -10,12 +10,9 @@ internal class Dec : WithRangeArgumentFunction<decimal>, IObjectTextPart
 
     private Interval<decimal> _interval = new(0.01m, 10_000);
 
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
-    {
-        yield return Math.Round(Random.Shared.NextDecimal(_interval), 2);
-    }
+    public dynamic Get(RuleExecutingContext context) => Math.Round(Random.Shared.NextDecimal(_interval), 2);
 
-    public ReturnType ReturnType => ReturnType.Decimal;
+    public Type Type => ExplicitType.Decimal.DotnetType;
 
 
     public override void SetArgument(Interval<decimal> argument)

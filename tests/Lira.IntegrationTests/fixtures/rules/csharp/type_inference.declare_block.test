@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /csharp/type_inference/declare_block
+
+----- expected
+
+~ code
+200
+
+~ body
+Hello from extension method!

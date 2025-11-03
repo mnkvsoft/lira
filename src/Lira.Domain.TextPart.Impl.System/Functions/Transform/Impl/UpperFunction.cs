@@ -2,7 +2,7 @@
 
 record UpperFunction : ITransformFunction
 {
-    public ReturnType ReturnType => ReturnType.String;
+    public Type Type => DotNetType.String;
 
     public dynamic? Transform(dynamic? input)
     {

@@ -3,10 +3,10 @@ internal class Dic(ICustomDictsProvider customDictsProviderProvider) :  DicBase(
 {
     public override string Name => "dic";
     public override bool ArgumentIsRequired => true;
-    public ReturnType ReturnType => ReturnType.String;
+    public Type Type => DotNetType.String;
 
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public dynamic Get(RuleExecutingContext context)
     {
-        yield return CustomDic.NextValue();
+        return CustomDic.NextValue();
     }
 }

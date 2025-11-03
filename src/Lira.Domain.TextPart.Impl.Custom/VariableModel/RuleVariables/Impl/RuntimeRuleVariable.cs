@@ -2,7 +2,7 @@ namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 
 public class RuntimeRuleVariable : RuleVariable
 {
-    public RuntimeRuleVariable(string name, ReturnType? valueType) : base(name, valueType)
+    public RuntimeRuleVariable(string name, TypeInfo typeInfo) : base(name, typeInfo)
     {
     }
 

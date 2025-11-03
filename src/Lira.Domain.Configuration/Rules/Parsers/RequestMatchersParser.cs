@@ -312,11 +312,11 @@ class RequestMatchersParser
 
             var (name, typeStr) = maybeVariableDeclaration.SplitToTwoParts(Consts.ControlChars.SetType);
 
-            var type = typeStr == null ? null : ReturnType.Parse(typeStr);
+            var castToType = typeStr == null ? null : ExplicitType.Parse(typeStr);
 
             var matchFunction = await CreateMatchFunction(invoke, context);
 
-            var variable = new RuntimeRuleVariable(name, type ?? matchFunction.ValueType);
+            var variable = new RuntimeRuleVariable(name, new TypeInfo(matchFunction.ValueType, castToType));
             context.DeclaredItems.Add(variable);
             return new MatchFunctionWithSaveVariable(matchFunction, variable);
         }

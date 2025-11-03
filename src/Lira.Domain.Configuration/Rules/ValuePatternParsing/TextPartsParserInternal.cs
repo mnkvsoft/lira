@@ -132,7 +132,7 @@ class TextPartsParserInternal
                     {
                         var variable = new RuntimeRuleVariable(
                             maybeVariableDeclaration,
-                            startFunction.ReturnType);
+                            new TypeInfo(startFunction.Type, castTo: null));
 
                         context.DeclaredItems.Add(variable);
                         return [new ObjectTextPartWithSaveVariable(startFunction, variable)];
@@ -157,7 +157,7 @@ class TextPartsParserInternal
                     {
                         var variable = new LocalVariable(
                             maybeVariableDeclaration,
-                            startFunction.ReturnType);
+                            new TypeInfo(startFunction.Type, castTo: null));
 
                         context.DeclaredItems.Add(variable);
                         return [new ObjectTextPartWithSaveVariable(startFunction, variable)];

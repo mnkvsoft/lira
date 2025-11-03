@@ -9,43 +9,39 @@ public class Function : DeclaredItem
         IsAllowedFirstChar: c => char.IsLetter(c) || c == '_',
         IsAllowedChar: c => char.IsLetter(c) || char.IsDigit(c) || c == '_' || c == '.');
 
-    private readonly IReadOnlyCollection<IObjectTextPart> _parts;
-    public override ReturnType? ReturnType { get; }
+    private readonly IObjectTextPart _part;
+    private readonly TypeInfo _typeInfo;
+    public override Type Type { get; }
 
     public override string Name { get; }
 
-    public Function(string name, IReadOnlyCollection<IObjectTextPart> parts, ReturnType? valueType)
+    public Function(string name, IObjectTextPart part, TypeInfo typeInfo)
     {
         if(!IsValidName(name))
             throw new ArgumentException("Invalid function name: " + name, nameof(name));
 
-        _parts = parts;
-        ReturnType = valueType;
+        _part = part;
+        _typeInfo = typeInfo;
+        Type = typeInfo.TargetType;
         Name = name;
     }
 
     public static bool IsValidName(string name) => NamingStrategy.IsValidName(name);
 
-    public override IEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public override dynamic? Get(RuleExecutingContext context)
     {
-        var value = _parts.Generate(context);
-        dynamic? valueToReturn = value;
+        var value = _part.Get(context);
 
-        if (ReturnType != null)
+        if (!_typeInfo.TryGet(value, out dynamic? result, out Exception exc))
         {
-            if (!TypedValueCreator.TryCreate(ReturnType, value, out dynamic? valueTyped, out Exception exc))
-            {
-                throw new Exception(
-                    $"Can't cast value '{value}' " +
-                    $"of type '{value?.GetType()}' " +
-                    $"to type '{ReturnType}'" +
-                    $"for return from function '{Name}'",
-                    exc);
-            }
-
-            valueToReturn = valueTyped;
+            throw new Exception(
+                $"Can't explicitly cast value '{value}' " +
+                $"of type '{value?.GetType()}' " +
+                $"to type '{Type}'" +
+                $"for write to variable '{Name}'",
+                exc);
         }
 
-        yield return valueToReturn;
+        return result;
     }
 }

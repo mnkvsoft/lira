@@ -9,15 +9,18 @@ public abstract class RuleVariable : Variable
     public static readonly NamingStrategy NamingStrategy = CreateNamingStrategy(Prefix);
 
     public override string Name { get; }
-    public override ReturnType? ReturnType { get; }
+    public override Type Type { get; }
 
-    protected RuleVariable(string name, ReturnType? valueType)
+    private readonly TypeInfo _typeInfo;
+
+    protected RuleVariable(string name, TypeInfo typeInfo)
     {
-        if(!IsValidName(name))
+        if (!IsValidName(name))
             throw new ArgumentException("Invalid rule variable name: " + name, nameof(name));
 
         Name = name;
-        ReturnType = valueType;
+        Type = typeInfo.TargetType;
+        _typeInfo = typeInfo;
     }
 
     public static bool IsValidName(string name) => NamingStrategy.IsValidName(name);
@@ -25,7 +28,7 @@ public abstract class RuleVariable : Variable
     private static readonly object NullValue = new();
     protected abstract dynamic? GetInitiatedValue(RuleExecutingContext ctx);
 
-    private dynamic? GetValue(RuleExecutingContext ctx)
+    public override dynamic? Get(RuleExecutingContext ctx)
     {
         var values = GetVariableValues(ctx);
 
@@ -54,30 +57,21 @@ public abstract class RuleVariable : Variable
 
     private dynamic? GetValueTyped(dynamic? value)
     {
-        if (ReturnType == null)
-            return value;
-
-        if (!TypedValueCreator.TryCreate(ReturnType, value, out dynamic? valueTyped, out Exception exc))
+        if (!_typeInfo.TryGet(value, out dynamic? result, out Exception exc))
         {
             throw new Exception(
-                $"Can't cast value '{value}' " +
+                $"Can't explicitly cast value '{value}' " +
                 $"of type '{value?.GetType()}' " +
-                $"to type '{ReturnType}'" +
+                $"to type '{Type}'" +
                 $"for write to variable '{Name}'",
                 exc);
         }
 
-        return valueTyped;
+        return result;
     }
 
     private static Dictionary<string, dynamic?> GetVariableValues(RuleExecutingContext ctx)
     {
         return ctx.Items.GetOrCreate(key: typeof(RuleVariable), () => new Dictionary<string, dynamic?>());
-    }
-
-    public override IEnumerable<dynamic?> Get(RuleExecutingContext context)
-    {
-        var value = GetValue(context);
-        yield return value;
     }
 }

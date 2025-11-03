@@ -18,26 +18,33 @@ internal class DeclaredItemDraftsParser(ITextPartsParser textPartsParser)
 
         foreach (var draft in drafts.OrderByDependencies())
         {
-            var parts = await textPartsParser.Parse(draft.Pattern, newContext);
+            try
+            {
+                var part = await textPartsParser.Parse(draft.Pattern, newContext);
 
-            ReturnType? type = draft.ReturnType ?? (parts.IsString ? ReturnType.String : null);
+                var name = draft.Name;
 
-            var name = draft.Name;
-            if (name.StartsWith(RuleVariable.Prefix))
-            {
-                var variable = new DeclaredRuleVariable(name, parts, type);
-                all.AddOrThrowIfContains(variable);
-                onlyNew.AddOrThrowIfContains(variable);
+                var typeInfo = new TypeInfo(part.Type, draft.CastTo);
+                if (name.StartsWith(RuleVariable.Prefix))
+                {
+                    var variable = new DeclaredRuleVariable(name, part, typeInfo);
+                    all.AddOrThrowIfContains(variable);
+                    onlyNew.AddOrThrowIfContains(variable);
+                }
+                else if (name.StartsWith(Function.Prefix))
+                {
+                    var function = new Function(name, part, typeInfo);
+                    all.AddOrThrowIfContains(function);
+                    onlyNew.AddOrThrowIfContains(function);
+                }
+                else
+                {
+                    throw new Exception($"Unknown declaration type: '{name}'");
+                }
             }
-            else if (name.StartsWith(Function.Prefix))
+            catch (Exception e)
             {
-                var function = new Function(name, parts, type);
-                all.AddOrThrowIfContains(function);
-                onlyNew.AddOrThrowIfContains(function);
-            }
-            else
-            {
-                throw new Exception($"Unknown declaration type: '{name}'");
+                throw new Exception($"An error while parse {draft.Name}", e);
             }
         }
 

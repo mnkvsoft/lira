@@ -13,8 +13,4 @@
       <ProjectReference Include="..\Lira.Domain\Lira.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="CustomDicModel\" />
-    </ItemGroup>
-
 </Project>

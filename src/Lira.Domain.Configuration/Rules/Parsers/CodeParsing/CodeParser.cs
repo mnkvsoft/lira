@@ -87,7 +87,7 @@ class CodeParser
             {
                 if (writeItem.ItemName.StartsWith(RuleVariable.Prefix))
                 {
-                    var variable = new RuntimeRuleVariable(writeItem.ItemName, valueType: null);
+                    var variable = new RuntimeRuleVariable(writeItem.ItemName, TypeInfo.UnknownWithoutCast);
 
                     onlyNewVariables.Add(variable);
                     withNewVariables.Add(variable);
@@ -96,7 +96,7 @@ class CodeParser
                 }
                 else if (writeItem.ItemName.StartsWith(LocalVariable.Prefix))
                 {
-                    var variable = new LocalVariable(writeItem.ItemName, valueType: null);
+                    var variable = new LocalVariable(writeItem.ItemName, TypeInfo.UnknownWithoutCast);
 
                     newLocalVariables.Add(variable);
                     withNewVariables.Add(variable);

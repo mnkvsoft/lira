@@ -7,12 +7,12 @@ namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
 public interface ITextPartsParser
 {
-    Task<ObjectTextParts> Parse(string pattern, IParsingContext parsingContext);
+    Task<IObjectTextPart> Parse(string pattern, IParsingContext parsingContext);
 }
 
 class TextPartsParser(OperatorParser operatorParser, TextPartsParserInternal parserInternal, OperatorPartFactory operatorPartFactory) : ITextPartsParser
 {
-    public async Task<ObjectTextParts> Parse(string pattern, IParsingContext parsingContext)
+    public async Task<IObjectTextPart> Parse(string pattern, IParsingContext parsingContext)
     {
         // with local variables context
         var localContext = new ParsingContext(parsingContext.ToImpl());
@@ -26,15 +26,33 @@ class TextPartsParser(OperatorParser operatorParser, TextPartsParserInternal par
         ctx.DeclaredItems.TryAddRange(localContext.DeclaredItems);
 
         if (tokens.Any(x => x is Token.Operator))
-            return new ObjectTextParts([new AddIndentsWrapper(result)], isString: true);
+            return new AddIndentsWrapper(result);
 
-        bool isString = tokens.Count == 0 || tokens.Count > 1 || (tokens[0] is Token.StaticData sd && sd.Content[0] is PatternPart.Static);
-        return new ObjectTextParts(result, isString);
+        if (tokens.Count == 0)
+            throw new Exception($"Pattern '{pattern}' is empty");
+
+        if (result.Count == 1)
+            return result[0];
+
+        return new EnumerableObjectTextPart(result);
     }
 
-    class AddIndentsWrapper(List<IObjectTextPart> parts) : IObjectTextPart
+    class EnumerableObjectTextPart(IEnumerable<IObjectTextPart> parts) : IObjectTextPart
     {
-        public IEnumerable<dynamic?> Get(RuleExecutingContext context)
+        public dynamic Get(RuleExecutingContext context) => GetInternal(context);
+
+        private IEnumerable<dynamic?> GetInternal(RuleExecutingContext context) => parts.GetEnumerable(context);
+
+        public Type Type => DotNetType.EnumerableDynamic;
+    }
+
+    class AddIndentsWrapper(IEnumerable<IObjectTextPart> parts) : IObjectTextPart
+    {
+        public dynamic Get(RuleExecutingContext context) => GetInternal(context);
+
+        public Type Type => DotNetType.EnumerableDynamic;
+
+        private IEnumerable<string?> GetInternal(RuleExecutingContext context)
         {
             int countIndent = 0;
             string? lastStr = null;
@@ -44,7 +62,7 @@ class TextPartsParser(OperatorParser operatorParser, TextPartsParserInternal par
                 if (part is OperatorPart)
                 {
                     bool isFirst = true;
-                    foreach (var obj in part.Get(context))
+                    foreach (var obj in part.GetEnumerable(context))
                     {
                         string? str = ObjectTextPartsExtensions.GetStringValue(obj);
 
@@ -68,7 +86,7 @@ class TextPartsParser(OperatorParser operatorParser, TextPartsParserInternal par
                 }
                 else
                 {
-                    foreach (var obj in part.Get(context))
+                    foreach (var obj in part.GetEnumerable(context))
                     {
                         string? str = ObjectTextPartsExtensions.GetStringValue(obj);
 
@@ -92,6 +110,5 @@ class TextPartsParser(OperatorParser operatorParser, TextPartsParserInternal par
             }
         }
 
-        public ReturnType ReturnType => ReturnType.String;
     }
 }

@@ -6,28 +6,28 @@ namespace Lira.Domain.TextPart;
 
 public static class TypedValueCreator
 {
-    public static bool TryCreate(ReturnType type, dynamic? value, out dynamic? result, out Exception? exception)
+    public static bool TryCreate(ExplicitType type, dynamic? value, [MaybeNullWhen(false)] out dynamic result, out Exception? exception)
     {
         exception = null;
-        if (type == ReturnType.Json)
+        if (type == ExplicitType.Json)
             return TryCreateJson(value, out result, out exception);
 
-        if (type == ReturnType.String)
+        if (type == ExplicitType.String)
             return TryCreateString(value, out result);
 
-        if (type == ReturnType.Int)
+        if (type == ExplicitType.Int)
             return TryCreateInt(value, out result);
 
-        if (type == ReturnType.Date)
+        if (type == ExplicitType.Date)
             return TryCreateDate(value, out result);
 
-        if (type == ReturnType.Guid)
+        if (type == ExplicitType.Guid)
             return TryCreateGuid(value, out result);
 
-        if (type == ReturnType.Decimal)
+        if (type == ExplicitType.Decimal)
             return TryCreateDecimal(value, out result);
 
-        if (type == ReturnType.Bool)
+        if (type == ExplicitType.Bool)
             return TryCreateBool(value, out result);
 
         throw new ArgumentOutOfRangeException(nameof(type), type, null);

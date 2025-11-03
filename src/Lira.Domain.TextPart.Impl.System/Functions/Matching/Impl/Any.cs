@@ -8,14 +8,17 @@ internal class Any : FunctionBase, IMatchFunctionTyped
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Any;
 
-    public ReturnType ValueType => ReturnType.String;
+    public Type ValueType => DotNetType.String;
 
-    public Task<bool> IsMatch(RuleExecutingContext context, string? value)
+    public bool IsMatch(RuleExecutingContext context, string? value) => IsMatchTyped(context, value, out _);
+
+    public bool IsMatchTyped(RuleExecutingContext context, string? value, out dynamic? typedValue)
     {
-        // means that there is no such node in json when checking the body
+        typedValue = null;
         if (value == null)
-            return Task.FromResult(false);
+            return false;
 
-        return Task.FromResult(true);
+        typedValue = value;
+        return true;
     }
 }

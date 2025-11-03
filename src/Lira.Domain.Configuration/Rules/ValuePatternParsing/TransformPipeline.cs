@@ -6,9 +6,16 @@ record TransformPipeline(IObjectTextPart ObjectTextPart) : IObjectTextPart
 {
     private readonly List<ITransformFunction> _transformFunctions = new();
 
-    public ReturnType? ReturnType => _transformFunctions.Count == 0
-        ? ObjectTextPart.ReturnType
-        : _transformFunctions.Last().ReturnType;
+    public Type Type
+    {
+        get
+        {
+            var type = _transformFunctions.Count == 0
+                ? ObjectTextPart.Type
+                : _transformFunctions.Last().Type;
+            return type;
+        }
+    }
 
     private dynamic? ExecutePipeline(dynamic? startValue)
     {
@@ -29,9 +36,10 @@ record TransformPipeline(IObjectTextPart ObjectTextPart) : IObjectTextPart
         _transformFunctions.Add(transform);
     }
 
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public dynamic Get(RuleExecutingContext context)
     {
-        dynamic? value = ObjectTextPart.Generate(context);
-        yield return ExecutePipeline(value);
+        var value = ObjectTextPart.Get(context);
+        dynamic result = ExecutePipeline(value);
+        return result;
     }
 }

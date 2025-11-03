@@ -5,23 +5,19 @@ GET /orders/{{ int @* customer id *@ }}
 ~ headers
 example: repeat_block
 
------ declare
-
-@order = 
-{
-    "id": {{ int }},
-    "status": "{{ random: paid, pending, cancelled }}",
-    "amount": {{ dec }},
-    "transaction_id": "{{ guid }}",
-    "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}"
-}
-
-
 ----- response
 
 ~ body
 {
     "orders": [
-        {{ repeat(@order, separator: ",", count: 3) }}    
+        @repeat(count: 3, separator: "\n, ")
+            {
+                "id": {{ int }},
+                "status": "{{ random: paid, pending, cancelled }}",
+                "amount": {{ dec }},
+                "transaction_id": "{{ guid }}",
+                "created_at": "{{ date >> format: yyyy-MM-dd HH:mm:ss }}"
+            }
+        @end    
     ]
 }

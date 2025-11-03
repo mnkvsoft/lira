@@ -8,10 +8,7 @@ internal class Seq : FunctionBase, IObjectTextPart
 
     public override string Name => "seq";
 
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
-    {
-        yield return _sequence.Next();
-    }
+    public dynamic Get(RuleExecutingContext context) => _sequence.Next();
 
-    public ReturnType ReturnType => ReturnType.Int;
+    public Type Type => DotNetType.String;
 }

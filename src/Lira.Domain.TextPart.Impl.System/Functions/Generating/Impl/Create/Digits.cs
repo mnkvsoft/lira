@@ -7,7 +7,9 @@ internal class Digits : WithArgumentFunction<int>, IObjectTextPart
 
     private int _length = 10;
 
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public dynamic Get(RuleExecutingContext context) => GetInternal();
+
+    private IEnumerable<dynamic> GetInternal()
     {
         for (int i = 0; i < _length; i++)
         {
@@ -15,7 +17,7 @@ internal class Digits : WithArgumentFunction<int>, IObjectTextPart
         }
     }
 
-    public ReturnType ReturnType => ReturnType.String;
+    public Type Type => DotNetType.EnumerableDynamic;
 
     public override void SetArgument(int arguments)
     {

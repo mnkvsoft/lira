@@ -1,30 +1,23 @@
 namespace Lira.Domain.Matching.Request.Matchers;
 
-public class QueryStringRequestMatcher : IRequestMatcher
+public class QueryStringRequestMatcher(IReadOnlyDictionary<string, TextPatternPart> queryParamToPatternMap) : IRequestMatcher
 {
-    private readonly IReadOnlyDictionary<string, TextPatternPart> _queryParamToPatternMap;
-
-    public QueryStringRequestMatcher(IReadOnlyDictionary<string, TextPatternPart> queryParamToPatternMap)
-    {
-        _queryParamToPatternMap = queryParamToPatternMap;
-    }
-
-    async Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext context)
+    Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext context)
     {
         int weight = 0;
 
-        foreach (var pair in _queryParamToPatternMap)
+        foreach (var pair in queryParamToPatternMap)
         {
             var parName = pair.Key;
             if (!context.RequestContext.RequestData.Query.TryGetValue(parName, out var value))
-                return RequestMatchResult.NotMatched;
+                return Task.FromResult(RequestMatchResult.NotMatched);
 
             var pattern = pair.Value;
-            if (await pattern.Match(context, value) is not TextPatternPart.MatchResult.Matched matched)
-                return RequestMatchResult.NotMatched;
+            if (pattern.Match(context, value) is not TextPatternPart.MatchResult.Matched)
+                return Task.FromResult(RequestMatchResult.NotMatched);
 
             weight += TextPatternPartWeightCalculator.Calculate(pattern);
         }
-        return RequestMatchResult.Matched(name: "query", weight);
+        return Task.FromResult(RequestMatchResult.Matched(name: "query", weight));
     }
 }

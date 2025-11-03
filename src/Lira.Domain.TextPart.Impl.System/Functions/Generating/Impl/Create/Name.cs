@@ -4,12 +4,14 @@ internal class Name_ : FunctionBase, IObjectTextPart
 {
     public override string Name => "name";
 
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public dynamic Get(RuleExecutingContext _) => GetInternal();
+
+    private IEnumerable<dynamic> GetInternal()
     {
         yield return NameFirst.Next();
         yield return " ";
         yield return NameLast.Next();
     }
 
-    public ReturnType ReturnType => ReturnType.String;
+    public Type Type => DotNetType.EnumerableDynamic;
 }

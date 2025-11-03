@@ -36,7 +36,17 @@ class AssembliesLoader : IDisposable
         if (_loadedAssembliesHashes.TryGetValue(hash, out var assembly))
             return assembly;
 
-        var result = _context.LoadFromStream(stream);
+        Assembly result;
+        try
+        {
+            result = _context.LoadFromStream(stream);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+
 
         _compilationStatistic.AddLoadAssemblyTime(sw.Elapsed);
         _loadedAssembliesHashes.Add(hash, result);
@@ -59,6 +69,7 @@ class AssembliesLoader : IDisposable
         _logger.LogDebug($"Dynamic csharp compilation statistic: " + nl +
                          $"Revision: {_namer.Revision}" + nl +
                          $"Total time: {(int)stat.TotalTime.TotalMilliseconds} ms. " + nl +
+                         $"Syntax trees: {(int)stat.SyntaxTreesTime.TotalMilliseconds} ms. " + nl +
                          $"Assembly load time: {(int)stat.TotalLoadAssemblyTime.TotalMilliseconds} ms. " + nl +
                          $"Count load assemblies: {stat.CountLoadAssemblies}." + nl +
                          $"Count functions: {stat.CountFunctionsTotal} (compile: {stat.CountFunctionsCompiled}, cache: {stat.CountFunctionsTotalFromCache})." + nl +

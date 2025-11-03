@@ -20,8 +20,8 @@ public class HeadersParser(ITextPartsParser textPartsParser)
             if (headerPattern == null)
                 throw new Exception($"Empty matching for header '{headerPattern}' in line: '{line}'");
 
-            var headerParts = await textPartsParser.Parse(headerPattern.ToString(), parsingContext);
-            headers.Add(new GeneratingHeader(headerName.SingleStaticValueToString(), headerParts.WrapToTextParts()));
+            var part = await textPartsParser.Parse(headerPattern.ToString(), parsingContext);
+            headers.Add(new GeneratingHeader(headerName.SingleStaticValueToString(), part.WrapToTextParts()));
         }
 
         return headers;

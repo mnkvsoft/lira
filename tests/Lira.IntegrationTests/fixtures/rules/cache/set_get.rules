@@ -15,7 +15,10 @@ $$responseBody =
 {{ $$responseBody }}
 
 ----- action
+
 cache.set("cache_" + $$id, $$responseBody, "2 second")
+
+
 
 -------------------- rule
 

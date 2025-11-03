@@ -3,14 +3,14 @@ namespace Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Create.Date
 internal class Date : FunctionBase, IObjectTextPart
 {
     public override string Name => "date";
-    public ReturnType ReturnType => ReturnType.Date;
+    public Type Type => ExplicitType.Date.DotnetType;
 
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
+    public dynamic Get(RuleExecutingContext context)
     {
         var now = DateTime.Now;
         var from = now.AddYears(-1);
         var ticks = Random.Shared.NextInt64(from.Ticks, now.Ticks);
 
-        yield return new DateTime(ticks);
+        return new DateTime(ticks);
     }
 }

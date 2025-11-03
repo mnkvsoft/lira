@@ -3,27 +3,31 @@ using Lira.Domain.Matching.Request;
 
 namespace Lira.Domain.TextPart.Impl.System.Functions.Matching.Impl;
 
-internal class Range : RangeBase, IMatchFunctionTyped
+internal class Range(IRangesProvider dataProvider) : RangeBase(dataProvider), IMatchFunctionTyped
 {
-    public Range(IRangesProvider dataProvider) : base(dataProvider)
-    {
-    }
-
     public override string Name => "range";
 
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Range;
-    public ReturnType ValueType => ReturnType.String;
+    public Type ValueType => DotNetType.String;
 
 
-    public Task<bool> IsMatch(RuleExecutingContext context, string? value)
+    public bool IsMatch(RuleExecutingContext context, string? value) => IsMatchTyped(context, value, out _);
+
+    public bool IsMatchTyped(RuleExecutingContext context, string? value, out dynamic? typedValue)
     {
+        typedValue = null;
+
         if (string.IsNullOrWhiteSpace(value))
-            return Task.FromResult(false);
+            return false;
 
         var range = GetRange();
 
-        var isMatch = range.ValueIsBelong(value);
+        if (range.ValueIsBelong(value))
+        {
+            typedValue = value;
+            return true;
+        }
 
-        return Task.FromResult(isMatch);
+        return false;
     }
 }

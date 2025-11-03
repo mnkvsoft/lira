@@ -8,14 +8,23 @@ internal class Regex : WithArgumentFunction<string>, IMatchFunctionTyped
     public override string Name => "regex";
     public override bool ArgumentIsRequired => true;
     public MatchFunctionRestriction Restriction => MatchFunctionRestriction.Custom;
-    public ReturnType ValueType => ReturnType.String;
+    public Type ValueType => DotNetType.String;
 
     private global::System.Text.RegularExpressions.Regex _regex = null!;
 
+   public bool IsMatch(RuleExecutingContext context, string? value) => IsMatchTyped(context, value, out _);
 
-    public Task<bool> IsMatch(RuleExecutingContext context, string? value)
+    public bool IsMatchTyped(RuleExecutingContext context, string? value, out dynamic? typedValue)
     {
-        return Task.FromResult(_regex.IsMatch(value ?? ""));
+        typedValue = null;
+
+        if(_regex.IsMatch(value ?? ""))
+        {
+            typedValue = value;
+            return true;
+        }
+
+        return false;
     }
 
     public override void SetArgument(string arguments)

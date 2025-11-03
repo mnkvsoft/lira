@@ -9,10 +9,7 @@ internal class Range : RangeBase, IObjectTextPart
 
     public override string Name => "range";
     public override bool ArgumentIsRequired => true;
-    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
-    {
-        yield return GetRange().NextValue().ToString();
-    }
+    public dynamic Get(RuleExecutingContext context) => GetRange().NextValue().ToString();
 
-    public ReturnType ReturnType => ReturnType.String;
+    public Type Type => DotNetType.String;
 }
