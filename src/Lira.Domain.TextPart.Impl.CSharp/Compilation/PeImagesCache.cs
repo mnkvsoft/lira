@@ -9,6 +9,8 @@ namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
 class PeImagesCache : IDisposable
 {
     private static readonly string TempPath = Paths.GetTempSubPath("pe_images");
+    private static readonly string ImageExtension = "image";
+    private static readonly string AdditionInfoExtension = "ai";
 
     private bool _wasInit;
 
@@ -61,13 +63,23 @@ class PeImagesCache : IDisposable
         if (!Directory.Exists(TempPath))
             Directory.CreateDirectory(TempPath);
 
-        var files = Directory.GetFiles(TempPath);
+        var imageFiles = Directory.GetFiles(TempPath, $"*.{ImageExtension}");
 
-        foreach (string filePath in files)
+        foreach (string imageFilePath in imageFiles)
         {
-            string strHash = Path.GetFileName(filePath);
+            string fileName = Path.GetFileName(imageFilePath);
+            var strHash = Path.GetFileNameWithoutExtension(fileName);
+
+            var typeFileName = strHash + "." + AdditionInfoExtension;
+
+            string? type = null;
+            if (File.Exists(Path.Combine(TempPath, typeFileName)))
+            {
+                type = File.ReadAllText(Path.Combine(TempPath, typeFileName));
+            }
+
             var hash = Hash.Parse(strHash);
-            var peImage = new PeImage(hash, new PeBytes(File.ReadAllBytes(filePath)));
+            var peImage = new PeImage(hash, new PeBytes(File.ReadAllBytes(imageFilePath)), type);
             _hashToEntryMap.TryAdd(hash, new PeImageCacheEntry(peImage));
         }
 
@@ -75,7 +87,7 @@ class PeImagesCache : IDisposable
         var nl = Constants.NewLine;
         _logger.LogDebug("PE image cache." + nl +
                          $"Directory: {TempPath}" + nl +
-                         $"Count: {files.Length}" + nl +
+                         $"Count: {imageFiles.Length}" + nl +
                          $"Duration: {(int)sw.ElapsedMilliseconds} ms");
     }
 
@@ -97,6 +109,10 @@ class PeImagesCache : IDisposable
                 else if (!entry.WasUsed)
                 {
                     File.Delete(filePath);
+
+                    var typeFileName = Path.Combine(TempPath, hash + "." + AdditionInfoExtension);
+                    if (Directory.Exists(typeFileName))
+                        File.Delete(typeFileName);
                 }
             }
         }

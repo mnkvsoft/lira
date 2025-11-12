@@ -7,6 +7,9 @@ using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.DataModel;
 using Lira.Domain.Handling.Actions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 
 // ReSharper disable RedundantExplicitArrayCreation
@@ -24,7 +27,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly AssembliesLoader _assembliesLoader;
     private readonly CsFilesAssembly? _csFilesAssembly;
     private readonly Namer _namer;
-    private readonly string? _globalUsingFileContent;
+    private readonly SyntaxTree? _globalUsingFileContent;
     private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger _logger;
 
@@ -41,7 +44,7 @@ class FunctionFactory : IFunctionFactoryCSharp
     public FunctionFactory(Dependencies dependencies,
         IImmutableList<string> assembliesLocations,
         CsFilesAssembly? csFilesAssembly,
-        string? globalUsingFileContent)
+        SyntaxTree? globalUsingFileContent)
     {
         _compiler = dependencies.Compiler;
         _compilationStatistic = dependencies.CompilationStatistic;
@@ -66,18 +69,152 @@ class FunctionFactory : IFunctionFactoryCSharp
         string prefix = "GeneratingFunction";
         var className = _namer.GetClassName(prefix, code);
 
-        var classToCompile =
-            CreateGeneratingFunctionClassCode(className, ruleContext, code);
+        const string resultVariableName = "__result";
+        var (syntaxTree, extractAdditionInfo) =
+            CreateGeneratingFunctionClassCode(className, ruleContext, code, resultVariableName);
 
         var result = CreateFunctionResult<IObjectTextPart>(
             assemblyPrefixName: prefix,
-            classToCompile,
+            syntaxTree,
             className,
+            extractAdditionInfo,
             CreateDependenciesBase(ruleContext.DeclaredItemsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
         return result;
+    }
+
+     private (SyntaxTree, Func<CSharpCompilation, string>? extractAdditionInfo) CreateGeneratingFunctionClassCode(
+        string className,
+        FunctionFactoryRuleContext ruleContext,
+        CodeBlock code,
+        string resultVariableName)
+    {
+        const string repeatFunctionName = "repeat";
+
+        var sourceCode = code.ToString();
+        string toCompile;
+        IReadOnlyCollection<string> usings;
+        if (sourceCode.StartsWith(repeatFunctionName))
+        {
+            toCompile = ReplaceVariableNamesForRepeat(code);
+            usings = Array.Empty<string>();
+        }
+        else
+        {
+            (toCompile, usings) = PrepareCode(code, ruleContext);
+        }
+
+        (toCompile, bool returnSingleValue) = EnrichReturnOperator(toCompile);
+
+        toCompile =
+            $$"""
+              {{WrapToTryCatch(new Code("return GetInternal();", sourceCode))}}
+
+              IEnumerable<dynamic?> GetInternal()
+              {
+                    {{toCompile}}
+              }
+              """;
+
+        string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
+            className,
+            GetMethodBody(new Code(
+                ForCompile: toCompile,
+                Source: code.ToString())),
+            ContextParameterName,
+            ReservedVariable.Req,
+            repeatFunctionName,
+            usings,
+            GetNamespaces(),
+            GetUsingStatic());
+
+        var syntaxTree = CSharpSyntaxTree.ParseText(classToCompile);
+        return (syntaxTree, semanticModel => returnSingleValue ? GetReturnType(semanticModel, syntaxTree) : "System.");
+
+        (string, bool returnSingleValue) EnrichReturnOperator(string c)
+        {
+            if (c.Contains("yield"))
+                return (c, false);
+
+            if (c.Contains("return"))
+                return (c.Replace("return", "yield return"), true);
+
+            return ($"var {resultVariableName} = {c};" + Constants.NewLine +
+                   $"; yield return {resultVariableName};", true);
+        }
+
+        static string ReplaceVariableNamesForRepeat(CodeBlock code)
+        {
+            var sbCodeWithLiraItems = new StringBuilder();
+
+            foreach (var token in code.Tokens)
+            {
+                if (token is CodeToken.OtherCode otherCode)
+                {
+                    sbCodeWithLiraItems.Append(otherCode.Code);
+                }
+                else if (token is CodeToken.ReadItem readItem)
+                {
+                    sbCodeWithLiraItems.Append($"GetDeclaredPart(\"{readItem.ItemName}\")");
+                }
+                else
+                {
+                    throw new Exception($"Unexpected token type: {token.GetType()}");
+                }
+            }
+
+            return sbCodeWithLiraItems.ToString();
+        }
+    }
+
+    string GetReturnType(CSharpCompilation compilation, SyntaxTree syntaxTree)
+    {
+        var semanticModel = compilation.GetSemanticModel(syntaxTree, ignoreAccessibility: true);
+
+        var getMethod = syntaxTree.GetRoot().DescendantNodes()
+            .OfType<MethodDeclarationSyntax>()
+            .Single(x => x.Identifier.ValueText == nameof(IObjectTextPart.Get));
+
+        var nodes = getMethod.DescendantNodes().ToArray();
+        var innerMethods = nodes.OfType<LocalFunctionStatementSyntax>().ToArray();
+        var method = innerMethods.Single(x => x.Identifier.ValueText == "GetInternal");
+
+        var symbols = GetActualReturnTypes(semanticModel, method);
+        var returnTypes = symbols.Select(x => x.ToDisplayString(Format)).ToArray();
+
+        var returnTypesUnique = returnTypes.ToHashSet();
+        if (returnTypesUnique.Count != 1)
+            throw new Exception(
+                $"All returns should only contain one return type, but: {string.Join(", ", returnTypesUnique)}");
+
+        return returnTypesUnique.First();
+    }
+
+    private static readonly SymbolDisplayFormat Format =
+        new(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
+
+    private static IReadOnlyCollection<ITypeSymbol> GetActualReturnTypes(SemanticModel semanticModel,
+        LocalFunctionStatementSyntax method)
+    {
+        var returnTypes = new List<ITypeSymbol>();
+
+        var returnStatements = method.DescendantNodes().OfType<YieldStatementSyntax>().ToArray();
+
+        foreach (var returnStatement in returnStatements)
+        {
+            if (returnStatement.Expression != null)
+            {
+                var typeInfo = semanticModel.GetTypeInfo(returnStatement.Expression);
+                if (typeInfo.Type != null)
+                {
+                    returnTypes.Add(typeInfo.Type);
+                }
+            }
+        }
+
+        return returnTypes;
     }
 
     public CreateFunctionResult<ITransformFunction> TryCreateTransformFunction(CodeBlock code)
@@ -99,15 +236,17 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         var result = CreateFunctionResult<ITransformFunction>(
             assemblyPrefixName: prefix,
-            classToCompile,
-            className);
+            CSharpSyntaxTree.ParseText(classToCompile),
+            className,
+            extractAdditionInfo: null);
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
         return result;
     }
 
-    public CreateFunctionResult<IPredicateFunction> TryCreatePredicateFunction(FunctionFactoryRuleContext ruleContext, string code)
+    public CreateFunctionResult<IPredicateFunction> TryCreatePredicateFunction(FunctionFactoryRuleContext ruleContext,
+        string code)
     {
         var sw = Stopwatch.StartNew();
 
@@ -123,8 +262,9 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         var result = CreateFunctionResult<IPredicateFunction>(
             assemblyPrefixName: prefix,
-            classToCompile,
+            CSharpSyntaxTree.ParseText(classToCompile),
             className,
+            extractAdditionInfo: null,
             CreateDependenciesBase(ruleContext.DeclaredItemsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
@@ -152,8 +292,9 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         var result = CreateFunctionResult<IMatchFunctionTyped>(
             assemblyPrefixName: prefix,
-            classToCompile,
+            CSharpSyntaxTree.ParseText(classToCompile),
             className,
+            extractAdditionInfo: null,
             CreateDependenciesBase(ruleContext.DeclaredItemsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
@@ -179,8 +320,9 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         var result = CreateFunctionResult<IRequestMatcher>(
             assemblyPrefixName: prefix,
-            classToCompile,
+            CSharpSyntaxTree.ParseText(classToCompile),
             className,
+            extractAdditionInfo: null,
             CreateDependenciesBase(ruleContext.DeclaredItemsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
@@ -201,8 +343,9 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         var result = CreateFunctionResult<IAction>(
             assemblyPrefixName: prefix,
-            classToCompile,
+            CSharpSyntaxTree.ParseText(classToCompile),
             className,
+            extractAdditionInfo: null,
             CreateDependenciesBase(ruleContext.DeclaredItemsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
@@ -212,24 +355,26 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private CreateFunctionResult<TFunction> CreateFunctionResult<TFunction>(
         string assemblyPrefixName,
-        string classToCompile,
+        SyntaxTree classToCompile,
         string className,
+        Func<CSharpCompilation, string>? extractAdditionInfo,
         params object[] dependencies)
     {
         var assemblyName = _namer.GetAssemblyName(assemblyPrefixName + className);
 
-        var classesToCompiles = new List<string>(2) { classToCompile };
+        var syntaxTrees = new List<SyntaxTree>(2) { classToCompile };
 
-        if(_globalUsingFileContent != null)
-            classesToCompiles.Add(_globalUsingFileContent);
+        if (_globalUsingFileContent != null)
+            syntaxTrees.Add(_globalUsingFileContent);
 
         var compileResult = _compiler.Compile(
             new CompileUnit(
                 AssemblyName: assemblyName,
-                classesToCompiles.ToImmutableArray(),
+                syntaxTrees.ToImmutableArray(),
                 new References(
                     AssembliesLocations: _assembliesLocations,
-                    Runtime: _csFilesAssembly != null ? [_csFilesAssembly.PeImage] : Array.Empty<PeImage>())));
+                    Runtime: _csFilesAssembly != null ? [_csFilesAssembly.PeImage] : Array.Empty<PeImage>())),
+            extractAdditionInfo);
 
         if (compileResult is CompileResult.Fault fault)
         {
@@ -249,87 +394,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     const string ContextParameterName = "__ctx";
 
-    private string CreateGeneratingFunctionClassCode(
-        string className,
-        FunctionFactoryRuleContext ruleContext,
-        CodeBlock code)
-    {
-        const string repeatFunctionName = "repeat";
 
-        var sourceCode = code.ToString();
-        string toCompile;
-        IReadOnlyCollection<string> usings;
-        if (sourceCode.StartsWith(repeatFunctionName))
-        {
-            toCompile = ReplaceVariableNamesForRepeat(code);
-            usings = Array.Empty<string>();
-        }
-        else
-        {
-            (toCompile, usings) = PrepareCode(code, ruleContext);
-        }
-
-        toCompile = EnrichReturnOperator(toCompile);
-
-        toCompile =
-            $$"""
-              {{WrapToTryCatch(new Code("return GetInternal();", sourceCode))}}
-
-              IEnumerable<dynamic?> GetInternal()
-              {
-                    {{toCompile}}
-              }
-              """;
-
-        string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
-            className,
-            GetMethodBody(new Code(
-                ForCompile: toCompile,
-                Source: code.ToString())),
-            ContextParameterName,
-            ReservedVariable.Req,
-            repeatFunctionName,
-            usings,
-            GetNamespaces(),
-            GetUsingStatic());
-
-        return classToCompile;
-
-        string EnrichReturnOperator(string c)
-        {
-            if (c.Contains("yield"))
-                return c;
-
-            if (c.Contains("return"))
-                return c.Replace("return", "yield return");
-
-            return $"var __result = {c};" + Constants.NewLine +
-                   "; yield return __result;";
-        }
-    }
-
-    private static string ReplaceVariableNamesForRepeat(CodeBlock code)
-    {
-        var sbCodeWithLiraItems = new StringBuilder();
-
-        foreach (var token in code.Tokens)
-        {
-            if (token is CodeToken.OtherCode otherCode)
-            {
-                sbCodeWithLiraItems.Append(otherCode.Code);
-            }
-            else if (token is CodeToken.ReadItem readItem)
-            {
-                sbCodeWithLiraItems.Append($"GetDeclaredPart(\"{readItem.ItemName}\")");
-            }
-            else
-            {
-                throw new Exception($"Unexpected token type: {token.GetType()}");
-            }
-        }
-
-        return sbCodeWithLiraItems.ToString();
-    }
 
     private static string ReplaceVariableNames(CodeBlock code, IDeclaredItemsProvider declaredItemsProvider)
     {
@@ -385,7 +450,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private string[] GetNamespaces()
     {
-        if(_csFilesAssembly == null)
+        if (_csFilesAssembly == null)
             return [];
 
         return _csFilesAssembly.Loaded.GetTypes()
@@ -397,7 +462,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private string[] GetUsingStatic()
     {
-        if(_csFilesAssembly == null)
+        if (_csFilesAssembly == null)
             return [];
 
         return _csFilesAssembly.Loaded.GetTypes()
@@ -424,7 +489,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         foreach (var line in codeWithVariables.Split(Constants.NewLine))
         {
             var trimmed = line.TrimStart(" ").TrimStart("\t");
-            if (trimmed.StartsWith($"@{KeyWord.Using}" ))
+            if (trimmed.StartsWith($"@{KeyWord.Using}"))
             {
                 usings.Add(trimmed[1..]);
             }
@@ -470,20 +535,21 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         return
             $$"""
-            try
-            {
-                {{code.ForCompile}}
-            }
-            catch (Exception e)
-            {
-                var nl = Lira.Common.Constants.NewLine;
-                throw new Exception("An error has occurred while execute code block: " + nl + "{{escapedCode}}", e);
-            }
-            """;
+              try
+              {
+                  {{code.ForCompile}}
+              }
+              catch (Exception e)
+              {
+                  var nl = Lira.Common.Constants.NewLine;
+                  throw new Exception("An error has occurred while execute code block: " + nl + "{{escapedCode}}", e);
+              }
+              """;
     }
 
     private DynamicObjectBase.DependenciesBase CreateDependenciesBase(IDeclaredItemsProvider declaredItemsProvider)
     {
-        return new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider, _customDictsProvider, declaredItemsProvider, _loggerFactory );
+        return new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider, _customDictsProvider,
+            declaredItemsProvider, _loggerFactory);
     }
 }

@@ -59,6 +59,7 @@ class AssembliesLoader : IDisposable
         _logger.LogDebug($"Dynamic csharp compilation statistic: " + nl +
                          $"Revision: {_namer.Revision}" + nl +
                          $"Total time: {(int)stat.TotalTime.TotalMilliseconds} ms. " + nl +
+                         $"Syntax trees: {(int)stat.SyntaxTreesTime.TotalMilliseconds} ms. " + nl +
                          $"Assembly load time: {(int)stat.TotalLoadAssemblyTime.TotalMilliseconds} ms. " + nl +
                          $"Count load assemblies: {stat.CountLoadAssemblies}." + nl +
                          $"Count functions: {stat.CountFunctionsTotal} (compile: {stat.CountFunctionsCompiled}, cache: {stat.CountFunctionsTotalFromCache})." + nl +

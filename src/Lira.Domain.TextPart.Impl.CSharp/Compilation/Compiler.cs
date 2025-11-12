@@ -3,11 +3,11 @@ using System.Text;
 using Lira.Common;
 using Lira.Common.Exceptions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain.TextPart.Impl.CSharp.Compilation;
 
-// make static?
 class Compiler
 {
     private readonly CompilationStatistic _compilationStatistic;
@@ -21,9 +21,12 @@ class Compiler
         _logger = logger;
     }
 
-    public CompileResult Compile(CompileUnit compileUnit)
+    public CompileResult Compile(CompileUnit compileUnit, Func<CSharpCompilation, string>? extractAdditionInfo = null)
     {
         var sw = Stopwatch.StartNew();
+
+        _compilationStatistic.AddSyntaxTreesTime(sw.Elapsed);
+        sw.Restart();
 
         var hash = GetHash(compileUnit);
 
@@ -37,11 +40,12 @@ class Compiler
         var compileResult = CodeCompiler.Compile(
             compileUnit.AssemblyName,
             GetMetadataReferences(compileUnit.References),
-            compileUnit.Codes);
+            compileUnit.SyntaxTrees,
+            extractAdditionInfo);
 
         if (compileResult is CodeCompiler.Result.Success success)
         {
-            var image = new PeImage(hash, success.PeBytes);
+            var image = new PeImage(hash, success.PeBytes, success.AdditionInfo);
             _peImagesCache.Add(image);
             _compilationStatistic.AddCompilationTime(sw.Elapsed);
             return new CompileResult.Success(image);
@@ -68,12 +72,12 @@ class Compiler
         sw.Write(compileUnit.AssemblyName);
         sb.AppendLine("Assembly name: " + compileUnit.AssemblyName);
 
-        foreach (var code in compileUnit.Codes)
+        foreach (var code in compileUnit.SyntaxTrees)
         {
             sw.Write(code);
         }
 
-        sb.AppendLine("Codes: " + Sha1.Create(string.Concat(compileUnit.Codes)));
+        sb.AppendLine("Codes: " + Sha1.Create(string.Concat(compileUnit.SyntaxTrees)));
 
         var usageAssemblies = compileUnit.References;
         foreach (var peImage in usageAssemblies.Runtime)

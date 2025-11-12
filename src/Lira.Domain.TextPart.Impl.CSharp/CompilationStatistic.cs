@@ -4,6 +4,7 @@ class CompilationStatistic
 {
     public TimeSpan TotalCompilationTime { get; private set; } = TimeSpan.Zero;
     public TimeSpan TotalLoadAssemblyTime { get; private set; } = TimeSpan.Zero;
+    public TimeSpan SyntaxTreesTime { get; private set; } = TimeSpan.Zero;
     public TimeSpan TotalTime { get; private set; } = TimeSpan.Zero;
 
     public int CountLoadAssemblies { get; private set; }
@@ -15,6 +16,10 @@ class CompilationStatistic
     {
         CountFunctionsCompiled++;
         TotalCompilationTime = TotalCompilationTime.Add(elapsed);
+    }
+    public void AddSyntaxTreesTime(TimeSpan elapsed)
+    {
+        SyntaxTreesTime = SyntaxTreesTime.Add(elapsed);
     }
 
     public void AddTotalTime(TimeSpan elapsed)
