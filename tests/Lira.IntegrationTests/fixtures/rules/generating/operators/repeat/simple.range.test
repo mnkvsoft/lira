@@ -1,0 +1,10 @@
+-------------------- case
+
+GET /generating/operators/repeat/simple/range
+
+----- expected
+
+~ code
+200
+
+@- body eye check

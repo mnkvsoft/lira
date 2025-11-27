@@ -76,7 +76,7 @@ You need to create a text file `hello.rules` with the following content in the `
 ```
 -------------------- rule
 
-GET /hello/{{ any >> $$person}}
+GET /hello/{{ any >> $$person }}
 
 ----- response
 
@@ -184,6 +184,7 @@ long query
 
 ### Simulate server failure
 [fault.fault](docs/examples/quick_start/fault.rules)
+
 ```
 -------------------- rule
 
@@ -267,7 +268,7 @@ POST /payment/{{ value == "card" || value == "account" }}
 
 ~ headers
 example: match_dynamic_csharp_short
-Request-Id: {{ Guid.TryParse(value, out var ) }}
+Request-Id: {{ Guid.TryParse(value, out _) }}
 
 
 ----- response
@@ -367,7 +368,6 @@ example: match_dynamic_csharp_full
     "status": "pending"
 }
 ```
-
 Request
 ```
 curl --location 'http://localhost/payment/1' \
@@ -455,13 +455,10 @@ Request-Time: 12:07:16
     "customer": "eyshxbdiwf1d6991nhjd"
 }
 ```
-<!---
+
 #### References
 
 [Guide](docs/guide.md)
-
-[Generation functions](docs/generation_functions.md)
---->
 
 
 ### Extracting request parameters
@@ -513,13 +510,10 @@ Request-Id: 987
     "account": "9876543210"
 }
 ```
-<!---
+
 #### References
 
 [Guide](docs/guide.md)
-
-[Generation functions](docs/generation_functions.md)
---->
 
 ### Extracting dynamically mapped data
 
@@ -564,6 +558,7 @@ It is used to pass the same calculated dynamic value to different parts of the r
 Often used when implementing callbacks (to be discussed later).
 
 [variables.rules](docs/examples/quick_start/variables.rules)
+
 ```
 -------------------- rule
 
@@ -641,9 +636,6 @@ $$id = {{ seq }}
 
 POST http://localhost/api/callback
 
-~ delay 
-100 ms
-
 ~ headers
 Content-Type: application/json
 
@@ -700,6 +692,7 @@ Content-Length: 42
 
 ### Comments
 [comments.rules](docs/examples/quick_start/comments.rules)
+
 ```
 -------------------- rule
 
@@ -711,13 +704,13 @@ GET /comments
 200
 
 ~ body
-## single line comment 
-###
+@- single line comment 
+@*
     it's multiline
     comment
-### 
-hello!## comment the rest of the line
-hello ### comment in the middle of the line ### world!
+*@ 
+hello!@- comment the rest of the line
+hello @* comment in the middle of the line *@ world!
 ```
 Request
 ```
@@ -738,6 +731,7 @@ One request can match several rules,
 LIRA will choose the most private one (this is the default behavior, it is configurable)
 
 [priority.rules](docs/examples/quick_start/priority.rules)
+
 ```
 -------------------- rule
 
@@ -858,6 +852,9 @@ example: range.easy
 
 POST /payment
 
+~ headers
+example: range.easy
+
 ~ body
 {{ jpath: $.amount }} >> {{ range: amount/reject }}
 
@@ -935,9 +932,9 @@ Let's assume that when making a payment, we return its identifier `payment_id` t
 
 Let's look at how this is configured using ranges
 
-Let's change the file [global.ranges.json](docs/examples/quick_start/global.ranges.json) as follows
+Let's change the file as follows [global.ranges.json](docs/examples/quick_start/global.ranges.json)
 
-```json
+```
 {
     "amount": {
       "type": "dec",
@@ -961,7 +958,7 @@ Let's change the file [global.ranges.json](docs/examples/quick_start/global.rang
 [ranges.medium.rules](docs/examples/quick_start/ranges.medium.rules)
 
 ```
-## ok refund rule
+@- ok refund rule
 
 -------------------- rule
 
@@ -1001,7 +998,7 @@ example: range.medium
     "status": "ok"
 }
 
-## reject refund rule
+@- reject refund rule
 
 -------------------- rule
 
@@ -1144,6 +1141,7 @@ because a new value is written to it with each request
 and the server interprets such requests as different
 
 [conditions.rules](docs/examples/quick_start/conditions.rules)
+
 ```
 ---------------------------- rule
 
@@ -1165,7 +1163,7 @@ elapsed < 2 second
 
 --------------- condition
 
-elapsed in [2 second - 4 second]
+elapsed in [2 second..4 second]
 
 ----- response
 
@@ -1235,7 +1233,7 @@ example: custom_function
 
 ----- declare
 
-#payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
+@payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
 
 ----- response
 
@@ -1244,12 +1242,13 @@ example: custom_function
 
 ~ body
 {
-    "created_at": "{{ #payment.now }}"
+    "created_at": "{{ @payment.now }}"
     
-    ## the '#' symbol can be omitted when calling a function
-    ## "created_at": "{{ payment.now }}"
+    @- the '#' symbol can be omitted when calling a function
+    @- "created_at": "{{ payment.now }}"
 }
 ```
+
 Request
 ```
 curl --location --request POST 'http://localhost/payment' \
@@ -1282,7 +1281,7 @@ or declare it at the global level and use it in any rule
 ```
 -------------------- declare
 
-#amount = {{ dec: [1 - 100] }}
+@amount = {{ dec: [1..100] }}
 
 -------------------- rule
 
@@ -1318,6 +1317,7 @@ example: declare.shared.file
     "balance": {{ amount }}
 }
 ```
+
 Request
 ```
 curl --location 'http://localhost/payment' \
@@ -1354,7 +1354,7 @@ Let's add a file
 [declare.shared.global.declare](docs/examples/quick_start/declare.shared.global.declare)
 
 ```
-#age = {{ int: [1 - 122]}}
+@age = {{ int: [1..122]}}
 ```
 
 Let's create a rule
@@ -1399,10 +1399,11 @@ Variables and functions support multiline declarations.
 This can be used to create response templates
 
 [multiline_functions.rules](docs/examples/quick_start/multiline_functions.rules)
+
 ```
 -------------------- declare
 
-#template.order = 
+@template.order = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -1442,6 +1443,7 @@ example: multiline_functions
 ~ body
 {{ template.order }}
 ```
+
 Request
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -1488,19 +1490,24 @@ Each line is a directory value.
 
 #### Data generation
 [name.first.dic](docs/examples/quick_start/name.first.dic)
+
 ```
 Nikolay
 John
 Leon
 ```
+
 [name.last.dic](docs/examples/quick_start/name.last.dic)
+
 ```
 Ivanov
 Müller
 Fischer
 Jones
 ```
+
 [dic.generation.rules](docs/examples/quick_start/dic.generation.rules)
+
 ```
 -------------------- rule
 
@@ -1515,7 +1522,9 @@ example: dic.generation
 {
     "name": "{{ name.first }} {{ name.last }}"
 }
+
 ```
+
 Request
 ```
 curl --location 'http://localhost/person' \
@@ -1536,6 +1545,7 @@ ASTON MARTIN
 ...
 ```
 [dic.match.rules](docs/examples/quick_start/dic.match.rules)
+
 ```
 -------------------- rule
 
@@ -1549,9 +1559,11 @@ example: dic.match
 ~ body
 {
     "release_date": "{{ date }}"
-    "engine_capacity": {{ dec: [0.5 - 10] }}
+    "engine_capacity": {{ dec: [0.5..10] }}
 }
+
 ```
+
 Request
 ```
 curl --location 'http://localhost/product/ACURA' \
@@ -1569,17 +1581,18 @@ Response
 ### Repeating blocks
 
 [repeat_block.rules](docs/examples/quick_start/repeat_block.rules)
+
 ```
 -------------------- rule
 
-GET /orders/{{ int ### customer id ### }}
+GET /orders/{{ int @* customer id *@ }}
 
 ~ headers
 example: repeat_block
 
 ----- declare
 
-#order = 
+@order = 
 {
     "id": {{ int }},
     "status": "{{ random: paid, pending, cancelled }}",
@@ -1594,10 +1607,11 @@ example: repeat_block
 ~ body
 {
     "orders": [
-        {{ repeat(#order, separator: ",", count: 3) }}    
+        {{ repeat(@order, separator: ",", count: 3) }}    
     ]
 }
 ```
+
 Request
 ```
 curl --location 'http://localhost/orders/123' \
@@ -1641,10 +1655,11 @@ Often in json response templates (which are simply functions that generate some 
 The ` character used in function declarations cannot be omitted
 
 [change_json.rules](docs/examples/quick_start/change_json.rules)
+
 ```
 -------------------- declare
 
-#template.order:json = 
+@template.order:json = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -1668,7 +1683,7 @@ example: change_json
 
 ~ body
 {{ 
-    #template.order
+    @template.order
         .replace("$.status", "pending")
         .replace("$.customer", "vasily pupkin")
 }}
@@ -1687,11 +1702,12 @@ example: change_json
 
 ~ body
 {{ 
-    #template.order
+    @template.order
         .replace("$.status", "refunded")
         .replace("$.customer", "nikolas john")
 }}
 ```
+
 Request
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -1735,7 +1751,8 @@ In some cases, the functionality of the built-in functions is not enough to desc
 Imply instructions without the use of additional variables and
 returning **not** `void` value
 
-[charp.short.rules](docs/examples/quick_start/charp.short.rules)
+[csharp.short.rules](docs/examples/quick_start/csharp.short.rules)
+
 ```
 -------------------- rule
 
@@ -1748,9 +1765,10 @@ GET /very/old/event
 
 ~ body
 {
-    "date": {{ DateTime.Now.AddYears(-100 - Random.Shared.Next(1, 100)) }}
+    "date": {{ DateTime.Now.AddYears(-1000 - Random.Shared.Next(1, 100)) }}
 }
 ```
+
 Request
 ```
 curl --location 'http://localhost/very/old/event'
@@ -1765,14 +1783,15 @@ Response
 
 
 #### Full blocks
-[charp.full.rules](docs/examples/quick_start/charp.full.rules)
-```cs
+[csharp.full.rules](docs/examples/quick_start/csharp.full.rules)
+
+```
 -------------------- rule
 
 POST /payment/card
 
 ~ headers
-example: csharp.full 
+example: csharp.full
 
 ~ body
 {{ jpath: $.number }} >> {{ any }}
@@ -1784,7 +1803,7 @@ example: csharp.full
 
 ~ body
 {
-    "mnemonic": {{ 
+    "mnemonic": "{{ 
         string cardNumber = req.body.jpath("$.number");
 
         string paymentSystem;
@@ -1808,9 +1827,10 @@ example: csharp.full
         string last4 = cardNumber[^4..];
         string result = paymentSystem + " *" + last4;
         return result;
-     }}
+     }}"
 }
 ```
+
 Request
 ```
 curl --location 'http://localhost/payment/card' \
@@ -1829,7 +1849,7 @@ Response
 
 #### Extractiong dynamically matched data in blocks in C#
 
-[extract.value.charp.rules](docs/examples/quick_start/extract.value.charp.rules)
+[extract.value.charp.rules](docs/examples/quick_start/extract.value.csharp.rules)
 
 ```
 -------------------- rule
@@ -1837,16 +1857,17 @@ Response
 GET /balance/7{{ int >> $$phone }}
 
 ~ headers
-example: extract.value.charp
+example: extract.value.csharp
 
 ----- response
 
 ~ body
 {
-    "phone": {{ $$phone }}
+    "phone": {{ $$phone }},
     "balance": {{ dec }}
 }
 ```
+
 Request
 ```
 curl --location 'http://localhost/balance/79161112233' \
@@ -1869,8 +1890,9 @@ It should be noted that in the example, the data for calculating the card mnemon
 fields
 
 [CardNumber.cs](docs/examples/quick_start/CardNumber.cs)
+
 ```cs
-namespace _;
+namespace _my;
 
 public static class CardNumber
 {
@@ -1895,12 +1917,15 @@ public static class CardNumber
 
         string last4 = cardNumber[^4..];
         string result = paymentSystem + " *" + last4;
-        
+
         return result;
     }
 }
+
 ```
-[charp.class.mnenonic.rules](docs/examples/quick_start/charp.class.mnenonic.rules)
+
+[csharp.class.mnenonic.rules](docs/examples/quick_start/csharp.class.mnenonic.rules)
+
 ```
 -------------------- rule
 
@@ -1922,7 +1947,6 @@ mnemonic was generated from 'number' field: {{
     CardNumber.GetMnemonic(req.body.jpath("$.number")) 
 }}
 
-
 -------------------- rule
 
 POST /payment/card
@@ -1943,6 +1967,7 @@ mnemonic was generated from 'pan' field: {{
     CardNumber.GetMnemonic(req.body.jpath("$.pan")) 
 }}
 ```
+
 Request
 ```
 curl --location 'http://localhost/payment/card' \
@@ -1972,6 +1997,7 @@ mnemonic was generated from 'pan' field: MIR *5678
 
 #### Example of overlaying a signature
 [SignatureCalculator.cs](docs/examples/quick_start/SignatureCalculator.cs)
+
 ```cs
 using System.Security.Cryptography;
 using System.Text;
@@ -1998,7 +2024,9 @@ public static class SignatureCalculator
 }
 
 ```
-[charp.class.sign.rules](docs/examples/quick_start/charp.class.sign.rules)
+
+[csharp.class.sign.rules](docs/examples/quick_start/csharp.class.sign.rules)
+
 ```
 -------------------- rule
 
@@ -2009,7 +2037,7 @@ example: charp.class.sign
 
 ----- declare
 
-#response = 
+$$response:json = 
 {
     "id" : {{ int }},
     "created_at": "{{ now }}",
@@ -2023,10 +2051,11 @@ example: charp.class.sign
 
 ~ body
 {{
-    json(#response)
-        .add("sign", SignatureCalculator.Get(#response, "very_secret_key"))
+    $$response
+        .add("sign", SignatureCalculator.Get($$response, "very_secret_key"))
 }}
 ```
+
 Request
 ```
 curl --location --request POST 'http://localhost/payment' \
@@ -2054,7 +2083,29 @@ The `value` system variable is used to access the current value.
 
 [global.ranges.json](docs/examples/quick_start/global.ranges.json)
 
+```
+{
+    "amount": {
+      "type": "dec",
+      "ranges": [
+        "ok",
+        "reject",
+        "refund_reject"
+      ]
+    },
+    "payment_id": {
+      "type": "int",
+      "ranges": [
+        "ok",
+        "refund_reject"
+      ]
+    }
+  }
+  
+```
+
 [ranges.csharp.match.rules](docs/examples/quick_start/ranges.csharp.match.rules)
+
 ```
 -------------------- rule
 
@@ -2074,25 +2125,25 @@ return range("amount/ok", amount);
 
 }}
 
-###
+@*
 
-## short version for division
+@- short version for division
 ~ body
 {{ jpath: $.amount }} >> {{ range("amount/ok", value, divide: 100) }}
 
-## short version for division 2
+@- short version for division 2
 ~ body
 {{ jpath: $.amount }} >> {{ range("amount/ok", value, x => x / 100) }}
 
-## short version for multiplication
+@- short version for multiplication
 ~ body
 {{ jpath: $.amount }} >> {{ range("amount/ok", value, multiply: 100) }}
 
-## short version for multiplication 2
+@- short version for multiplication 2
 ~ body
 {{ jpath: $.amount }} >> {{ range("amount/ok", value, x => x * 100) }}
 
-###
+*@
 
 ----- response
 
@@ -2100,7 +2151,9 @@ return range("amount/ok", amount);
 {
     "status": "ok"
 }
+
 ```
+
 Request
 ```
 curl --location 'http://localhost/payment' \
@@ -2118,6 +2171,8 @@ Response
 ```
 
 #### For generation
+[ranges.csharp.generation.rules](docs/examples/quick_start/ranges.csharp.generation.rules)
+
 ```
 -------------------- rule
 
@@ -2134,9 +2189,10 @@ example: ranges.csharp.generation
 ~ body
 {
     "status": "ok"
-    "fee": {{ range("amount/ok") * 100 >> format: #. ### without decimals ### }}
+    "fee": {{ range("amount/ok") * 100 >> format: #. @* without decimals *@ }}
 }
 ```
+
 Request
 ```
 curl --location --request GET 'http://localhost/payment' \
@@ -2161,6 +2217,7 @@ In the example below, the first rule saves the file, and the second
 a check is made for the existence of the file and, if the file exists, the response body is read from it and one of the fields is changed.
 
 [action.rules](docs/examples/quick_start/action.rules)
+
 ```
 -------------------- rule
 
@@ -2173,7 +2230,7 @@ example: action
 
 $$id = {{ seq }}
 
-#body = 
+@body = 
 {
     "id": {{ $$id }},
     "created_at": "{{ now.utc }}",
@@ -2183,36 +2240,36 @@ $$id = {{ seq }}
 ----- response
 
 ~ body
-{{ #body }}
+{{ @body }}
 
 ----- action
 
-## C# code block
+@- C# code block
 
-## create file path
+@- create file path
 string filePath = "/tmp/" + $$id + ".dat";
 
-## write file
-File.WriteAllText(filePath, #body);
+@- write file
+File.WriteAllText(filePath, @body);
 
 
 -------------------- rule
 
-GET /order/{{ File.Exists($"/tmp/{value}.dat") ### if file exists ### >> $$id }}
+GET /order/{{ File.Exists($"/tmp/{value}.dat") @* if file exists *@ >> $$id }}
 
 ~ headers
 example: action
 
 ----- declare
 
-## write json body from file
-#body:json = {{ File.ReadAllText($"/tmp/{$$id}.dat") }}
+@- write json body from file
+@body:json = {{ File.ReadAllText($"/tmp/{$$id}.dat") }}
 
 ----- response
 
 ~ body
 {{ 
-    #body.replace("$.status", "processing")
+    @body.replace("$.status", "processing")
 }}
 ```
 
@@ -2251,12 +2308,13 @@ Sometimes in complex scenarios you need to save state between requests.
 In this case, the methods of the `cache` class are used.
 
 [cache.rules](docs/examples/quick_start/cache.rules)
+
 ```
-###
+@*
 When sending an order, 
 we will save the response body in cache for 5 minutes, 
 using its ID in the caching key
-###
+*@
 -------------------- rule
 
 POST /order
@@ -2268,7 +2326,7 @@ example: cache
 
 $$id = {{ seq }}
 
-#order:json = 
+$$order:json = 
 {
     "id": {{ $$id }},
     "status": "accepted",
@@ -2278,22 +2336,22 @@ $$id = {{ seq }}
 ----- response
 
 ~ body
-{{ #order }}
+{{ $$order }}
 
 ----- action
 
 cache.set(
     key: "cache_example_" + $$id, 
-    obj: #order, 
+    obj: $$order, 
     time: "5 minute"
 )
 
 
-###
+@*
 if there is data in the cache, 
 then we send it in the body of the response, 
 changing the value of the 'status' field to 'paid'
-###
+*@
 -------------------- rule
 
 GET /order/{{ cache.contains("cache_example_" + value) >> $$id }}
@@ -2309,13 +2367,13 @@ example: cache
             .replace("$.status", "paid")
 }}
 
-###
+@*
 if a request to cancel an order is received, 
 we delete the data from the cache
-###
+*@
 -------------------- rule
 
-POST /order/cancel/{{cache.contains("cache_example_" + value) >> $$id }}
+POST /order/cancel/{{ cache.contains("cache_example_" + value) >> $$id }}
 
 ~ headers
 example: cache
@@ -2329,14 +2387,14 @@ example: cache
 cache.remove("cache_example_" + $$id)
 
 
-###
+@*
 if when requesting an order, 
 the data is not found in the cache, 
 then we issue an appropriate response
-###
+*@
 -------------------- rule
 
-GET /order/{{ !cache.contains("cache_example_" + value) >> $$id }}
+GET /order/{{ !cache.contains("cache_example_" + value) }}
 
 ~ headers
 example: cache
@@ -2348,6 +2406,7 @@ example: cache
 ~ body
 Order not found
 ```
+
 Request
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -2400,12 +2459,13 @@ Order not found
 To implement more complex logic when saving state, you can use an object with multiple fields. Let's consider an example with saving the first response body and an attempt counter that is incremented to a certain value.
 
 [cache.medium.rules](docs/examples/quick_start/cache.medium.rules)
+
 ```
-###
+@*
 on the first request, 
 we save the response body 
 and the attempt counter
-###
+*@
 -------------------- rule
 
 POST /order
@@ -2417,7 +2477,7 @@ example: cache.medium
 
 $$id = {{ seq }}
 
-#order:json = 
+$$order:json = 
 {
     "id": {{ $$id }},
     "status": "accepted",
@@ -2427,13 +2487,13 @@ $$id = {{ seq }}
 ----- response
 
 ~ body
-{{ #order }}
+{{ $$order }}
 
 ----- action
 
 dynamic state = new System.Dynamic.ExpandoObject();
 
-state.Order = #order;
+state.Order = $$order;
 state.Counter = 1;
 
 cache.set(
@@ -2442,14 +2502,14 @@ cache.set(
     time: "5 minute"
 )
 
-###
-if the attempt counter takes the value 1-3, 
+@*
+if the attempt counter takes the value 1..3, 
 then in the 'status' field we set the value 'pending' 
 and increment the counter
-###
+*@
 -------------------- rule
 
-GET /order/{{ 
+GET /order/{{
 
     string key = "cache_example_" + value;
 
@@ -2458,7 +2518,6 @@ GET /order/{{
 
     var state = cache.get(key);
     $$id = value;
-
     return state.Counter >= 1 && state.Counter <= 3;
 
 }}
@@ -2481,15 +2540,15 @@ var state = cache.get("cache_example_" + $$id);
 state.Counter++;
 
 
-###
+@*
 if the attempt counter takes a value greater than 3, 
 then in the 'status' field we set the value 'paid' 
 and do not increment the counter 
 (this no longer makes sense)
-###
+*@
 -------------------- rule
 
-GET /order/{{ 
+GET /order/{{
 
 string key = "cache_example_" + value;
 
@@ -2514,6 +2573,7 @@ example: cache.medium
             .replace("$.status", "paid")
 }}
 ```
+
 Request
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -2556,6 +2616,7 @@ Those. if for some reason the logic for generating the value of the system funct
 In the example below, the `now` function generates a date without a time component
 
 [override.rules](docs/examples/quick_start/override.rules)
+
 ```
 -------------------- rule
 
@@ -2566,7 +2627,7 @@ example: override
 
 ----- declare
 
-#now = {{ DateTime.Now.ToString("yyyy-MM-dd") }}
+@now = {{ DateTime.Now.ToString("yyyy-MM-dd") }}
 
 ----- response
 
@@ -2577,6 +2638,7 @@ example: override
 {
     "created_at": "{{ now }}"
 }
+
 ```
 
 Request
@@ -2596,6 +2658,7 @@ Once the value is generated, it can be converted either using built-in functions
 
 #### Using built-in functions
 [transform.rules](docs/examples/quick_start/transform.rules)
+
 ```
 -------------------- rule
 
@@ -2614,6 +2677,7 @@ example: transform
     "customer": "{{ name >> lower  }}"
 }
 ```
+
 Request
 ```
 curl --location 'http://localhost/order' \
@@ -2630,6 +2694,7 @@ Response
 ```
 #### Using the C# language
 [transform.csharp.rules](docs/examples/quick_start/transform.csharp.rules)
+
 ```
 -------------------- rule
 
@@ -2648,6 +2713,7 @@ example: transform.csharp
     "customer": "{{ name >> value.ToLower()  }}"
 }
 ```
+
 Request
 ```
 curl --location 'http://localhost/order' \
@@ -2672,7 +2738,8 @@ A detailed description of formats for different data types can be found at
 
 You can determine the data type of built-in functions using the following rule:
 
-[format_gettype.rules](docs/examples/quick_start/format_gettype.rules)
+[format_gettype.rules](docs/examples/quick_start/format.gettype.rules)
+
 ```
 -------------------- rule
 
@@ -2689,6 +2756,7 @@ GET /get_type
 {{ date >> value.GetType() }}
 {{ int >> value.GetType() }}
 ```
+
 Request
 ```
 curl --location 'http://localhost/get_type'
@@ -2705,6 +2773,7 @@ Formatting can be done either using the built-in
 the `format` function, or the `ToString()` method in a C# block.
 
 [format.rules](docs/examples/quick_start/format.rules)
+
 ```
 -------------------- rule
 
@@ -2717,13 +2786,13 @@ GET /format
 
 ~ body
 
-## short function
+@- short function
 {{ guid >> format: N }}
 
-## raw C# block
+@- raw C# block
 {{ Guid.NewGuid().ToString("D") }}
 
-##  C# block with format function
+@-  C# block with format function
 {{ Guid.NewGuid() >> format: B }}
 ```
 
@@ -2742,3 +2811,4 @@ fccbb0617f8143eebe3a8759570d8859
 ## What's next?
 [Guide](docs/guide.md)
 --->
+

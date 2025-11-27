@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /variables/short_declaration/query?phone=7{{ int >> $$only_phone }}
+
+----- response
+
+~ code
+200
+
+~ body
+{{ $$only_phone }}

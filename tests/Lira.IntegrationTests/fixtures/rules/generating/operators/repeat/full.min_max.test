@@ -1,0 +1,10 @@
+-------------------- case
+
+GET /generating/operators/repeat/full/min_max
+
+----- expected
+
+~ code
+200
+
+@- body eye check

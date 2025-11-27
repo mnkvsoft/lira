@@ -1,6 +1,6 @@
 -------------------- rule
 
-GET /product/{{ car }}
+GET /product/{{ dic: car }}
 
 ~ headers
 example: dic.match
@@ -10,5 +10,5 @@ example: dic.match
 ~ body
 {
     "release_date": "{{ date }}"
-    "engine_capacity": {{ dec: [0.5 - 10] }}
+    "engine_capacity": {{ dec: [0.5..10] }}
 }

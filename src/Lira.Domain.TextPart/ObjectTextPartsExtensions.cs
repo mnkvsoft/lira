@@ -1,50 +1,112 @@
+using System.Dynamic;
+using System.Text;
+using System.Text.Json;
 using Lira.Domain.Handling.Generating;
 
 namespace Lira.Domain.TextPart;
 
 public static class ObjectTextPartsExtensions
 {
-    public static async Task<dynamic?> Generate(this IReadOnlyCollection<IObjectTextPart> parts, RuleExecutingContext context)
+    public static dynamic? Generate(this IReadOnlyCollection<IObjectTextPart> parts,
+        RuleExecutingContext context)
     {
-        if (parts.Count == 1)
-        {
-            var first = parts.First();
-            dynamic? o = await first.Get(context);
-            return o;
-        }
+        int counter = 0;
+        StringBuilder? sb = null;
+        dynamic? firstObj = null;
 
-        var results = new List<string>(parts.Count);
         foreach (var part in parts)
         {
-            var obj = await part.Get(context);
-            var str = GetStringValue(obj);
-            if (str != null)
-                results.Add(str);
+            foreach (var obj in part.Get(context))
+            {
+                if (counter == 0)
+                {
+                    firstObj = obj;
+                }
+                else if (counter == 1)
+                {
+                    sb = new StringBuilder();
+                    sb.Append(GetStringValue(firstObj));
+                    sb.Append(GetStringValue(obj));
+                }
+                else
+                {
+                    sb!.Append(GetStringValue(obj));
+                }
+
+                counter++;
+            }
         }
 
-        return string.Concat(results);
+        return sb?.ToString() ?? firstObj;
     }
 
-    public static TextParts WrapToTextParts(this IReadOnlyCollection<IObjectTextPart> parts)
+    public static dynamic? Generate(this IObjectTextPart part, RuleExecutingContext context)
     {
-        return new TextParts(parts.Select(x => new TextPartAdapter(x)).ToArray());
-    }
+        int counter = 0;
+        StringBuilder? sb = null;
+        dynamic? firstObj = null;
 
-    private record TextPartAdapter(IObjectTextPart ObjectTextPart) : ITextPart
-    {
-        public async Task<string?> Get(RuleExecutingContext context)
+        foreach (var obj in part.Get(context))
         {
-            return GetStringValue(await ObjectTextPart.Get(context));
+            if (counter == 0)
+            {
+                firstObj = obj;
+            }
+            else if (counter == 1)
+            {
+                sb = new StringBuilder();
+                sb.Append(GetStringValue(firstObj));
+                sb.Append(GetStringValue(obj));
+            }
+            else
+            {
+                sb!.Append(GetStringValue(obj));
+            }
+
+            counter++;
+        }
+
+        return sb?.ToString() ?? firstObj;
+    }
+
+    public static IEnumerable<dynamic?> GetAllObjects(this IEnumerable<IObjectTextPart> parts,
+        RuleExecutingContext context)
+    {
+        foreach (var part in parts)
+        {
+            foreach (var obj in part.Get(context))
+            {
+                yield return obj;
+            }
         }
     }
 
-    private static string? GetStringValue(dynamic? obj)
+    public static TextPartsProvider WrapToTextParts(this IReadOnlyCollection<IObjectTextPart> parts)
+    {
+        return new TextPartsProvider(parts.Select(x => new TextPartsAdapter(x)).ToArray());
+    }
+
+    private record TextPartsAdapter(IObjectTextPart ObjectTextPart) : ITextParts
+    {
+        public IEnumerable<string> Get(RuleExecutingContext context)
+        {
+            foreach (var objPart in ObjectTextPart.Get(context))
+            {
+                yield return GetStringValue(objPart);
+            }
+        }
+    }
+
+    public static string? GetStringValue(dynamic? obj)
     {
         if (obj == null)
             return null;
 
         if (obj is DateTime date)
             return date.ToString("O");
+
+        if (obj is ExpandoObject)
+            return JsonSerializer.Serialize(obj);
 
         return obj.ToString();
     }

@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /variables/short_declaration/path/123_nikolass
+
+----- expected
+
+~ code
+200
+
+~ body
+nikolass

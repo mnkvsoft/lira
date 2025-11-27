@@ -7,7 +7,7 @@ GET /range/types/dec/default/gen/first
 ~ code
 200
 
-## todo: need implementation body check
+@- todo: need implementation body check
 
 -------------------- case
 
@@ -18,7 +18,7 @@ GET /range/types/dec/default/gen/first
 ~ code
 200
 
-## todo: need implementation body check
+@- todo: need implementation body check
 
 -------------------- case
 
@@ -29,7 +29,7 @@ GET /range/types/dec/default/gen/second
 ~ code
 200
 
-## todo: need implementation body check
+@- todo: need implementation body check
 
 -------------------- case
 
@@ -40,4 +40,4 @@ GET /range/types/dec/default/gen/second
 ~ code
 200
 
-## todo: need implementation body check
+@- todo: need implementation body check

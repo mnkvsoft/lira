@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /variables/short_declaration/path/123_{{ any >> $$person }}
+
+----- response
+
+~ code
+200
+
+~ body
+{{ $$person }}

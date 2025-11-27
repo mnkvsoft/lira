@@ -9,6 +9,7 @@
 
 #### Пример
 [static.rules](examples/guide/static.rules)
+
 ```
 -------------------- rule
 
@@ -136,7 +137,9 @@ range: <имя_диапазона>/<диапазон>
 
 #### C указанием начального и конечного значения в сегменте
 [path_with_start_end.rules](examples/guide/path_with_start_end.rules)
+
 ```
+
 -------------------- rule
 
 GET /user/ivanov_{{ any }}_petrovich
@@ -157,6 +160,7 @@ curl --location 'http://localhost/user/ivanov_ivan_petrovich'
 
 #### C ипользованием только функции сопоставления
 [path_with_one_func.rules](examples/guide/path_with_one_func.rules)
+
 ```
 -------------------- rule
 
@@ -180,6 +184,7 @@ curl --location 'http://localhost/user/ivan_petrovich'
 
 #### C ипользованием функций в разных сегментах
 [path_with_two_func.rules](examples/guide/path_with_two_func.rules)
+
 ```
 -------------------- rule
 
@@ -214,6 +219,7 @@ curl --location 'http://localhost/user/ivan_petrovich/3'
 
 #### C ипользованием только функции сопоставления
 [query_with_one_func.rules](examples/guide/query_with_one_func.rules)
+
 ```
 -------------------- rule
 
@@ -246,6 +252,7 @@ curl --location 'http://localhost/user?name=silvester?height=177'
 
 #### C указанием начального и конечного значения в параметре строки запроса
 [query_with_start_end.rules](examples/guide/query_with_start_end.rules)
+
 ```
 -------------------- rule
 
@@ -266,9 +273,9 @@ curl --location 'http://localhost/user?name=alina'
 ```
 
 
-
 #### C ипользованием функций в разных параметрах
 [query_with_two_func.rules](examples/guide/query_with_two_func.rules)
+
 ```
 -------------------- rule
 
@@ -307,6 +314,7 @@ curl --location 'http://localhost/user?name=denis&ago=35&height=180'
 
 #### C ипользованием только функции сопоставления
 [header_with_one_func.rules](examples/guide/header_with_one_func.rules)
+
 ```
 -------------------- rule
 
@@ -365,7 +373,7 @@ No-Cache: true
 200
 
 ~ body
-matches by one header by static and functions  
+matches by one header by static and functions 
 ```
 Запросы подпадающие под правило
 ```
@@ -397,6 +405,7 @@ curl --location --request POST 'http://localhost/user' \
 
 #### C ипользованием только функции сопоставления
 [body_with_one_func.rules](examples/guide/body_with_one_func.rules)
+
 ```
 -------------------- rule
 
@@ -456,6 +465,7 @@ jpath: <JSON_Path_выражение>
 #### Пример
 
 [body_jpath.rules](examples/guide/body_jpath.rules)
+
 ```
 -------------------- rule
 
@@ -502,6 +512,7 @@ xpath: <XPath_выражение>
 #### Пример
 
 [body_xpath.rules](examples/guide/body_xpath.rules)
+
 ```
 -------------------- rule
 
@@ -511,8 +522,8 @@ POST /payment/card
 example: body_xpath
 
 ~ body
-xpath: /root/number/text() >> {{ int }}
-xpath: /root/owner/text() >> Rodrygo
+{{ xpath: /root/number/text() }} >> {{ int }}
+{{ xpath: /root/owner/text() }} >> Rodrygo
 
 ----- response
 
@@ -548,7 +559,8 @@ form: <наименование_параметра>
 
 #### Пример
 
-[body_form.rules](examples/guide/body_xpath.rules)
+[body_form.rules](examples/guide/body_form.rules)
+
 ```
 -------------------- rule
 
@@ -558,8 +570,8 @@ POST /payment/card
 example: body_form
 
 ~ body
-form: number >> {{ int }}
-form: owner  >> Rodrygo
+{{ form: number }} >> {{ int }}
+{{ form: owner }} >> Rodrygo
 
 ----- response
 
@@ -595,7 +607,7 @@ curl --location 'http://localhost/payment/card' \
 
 #### Пример
 ```
-attempt in [1 - 3]
+attempt in [1..3]
 ```
 
 Оператор `in` может представлен с помощью опереторов `>=` и `<=`
@@ -654,7 +666,7 @@ attempt < 2
 
 --------------- condition
 
-attempt in [2 - 4]
+attempt in [2..4]
 
 ----- response
 
@@ -758,7 +770,7 @@ elapsed < 2 seconds
 
 --------------- condition
 
-elapsed in [2 second - 4 second]
+elapsed in [2 second..4 second]
 
 ----- response
 
@@ -820,7 +832,8 @@ curl --location 'http://localhost/payment/status' \
 Одному запросу может соответствовать несколько правил,
 LIRA выберет наиболее частное
 
-[priority.rules](docs/examples/quick_start/priority.rules)
+[priority.rules](examples/quick_start/priority.rules)
+
 ```
 -------------------- rule
 
@@ -906,3 +919,4 @@ rule with GUID and header
 [Полное руководство](guide.md)
 
 [Быстрый старт](../readme.md)
+

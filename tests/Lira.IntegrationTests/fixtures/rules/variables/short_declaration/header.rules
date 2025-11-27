@@ -1,0 +1,14 @@
+-------------------- rule
+
+GET /variables/short_declaration/header
+
+~ headers
+Request-Id: 123_{{ any >> $$clean_request_id }}
+
+----- response
+
+~ code
+200
+
+~ body
+{{ $$clean_request_id }}

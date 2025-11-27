@@ -2,14 +2,24 @@
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
-abstract record PatternPart
+abstract class PatternPart
 {
-    public record Static(string Value) : PatternPart
+    public string Value { get; }
+
+    private PatternPart(string value) => Value = value;
+
+    public class Static : PatternPart
     {
+        public Static(string value) : base(value)
+        {
+            if(string.IsNullOrEmpty(value))
+                throw new ArgumentException("Value cannot be null or empty", nameof(value));
+        }
+
         public override string ToString() => Value;
     }
 
-    public record Dynamic(string Value) : PatternPart
+    public class Dynamic(string value) : PatternPart(value)
     {
         public override string ToString() => "{{" + Value + "}}";
     }

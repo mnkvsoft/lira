@@ -4,10 +4,23 @@ GET /test
 
 ----- declare
 
-#a:json =
-{
-   "a": "{{ now }}"
-}
+@order = {{
+
+dynamic employer = new System.Dynamic.ExpandoObject();
+
+employer.hobbies_super = new List<string>();
+employer.age = 56;
+
+employer.hobbies_super.Add("hunting");
+employer.hobbies_super.Add("fishing");
+
+++employer.age;
+
+return employer;
+
+
+
+}}
 
 ----- response
 
@@ -15,5 +28,4 @@ GET /test
 200
 
 ~ body
-{{ range: payment_id/ok }}
-{{ seq }}
+{{ @order }}

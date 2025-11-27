@@ -9,5 +9,5 @@ GET /comments/multi_line/full_line
 
 ~ body
 start text
-### middle text ###
+@* middle text *@
 end text

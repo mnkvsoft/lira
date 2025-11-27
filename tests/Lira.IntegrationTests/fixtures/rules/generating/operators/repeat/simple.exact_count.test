@@ -1,0 +1,27 @@
+-------------------- case
+
+GET /generating/operators/repeat/simple/exact_count
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "products": [
+        {
+            "type": "card"
+            "alias": "JPMorganChase card",
+            "masked_pan": "4***1234"
+        },{
+            "type": "card"
+            "alias": "JPMorganChase card",
+            "masked_pan": "4***1234"
+        },{
+            "type": "card"
+            "alias": "JPMorganChase card",
+            "masked_pan": "4***1234"
+        }
+    ]
+}

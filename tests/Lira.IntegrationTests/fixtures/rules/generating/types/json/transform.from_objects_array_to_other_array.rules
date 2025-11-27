@@ -20,7 +20,7 @@ $$req:json =
     ]
 }
 
-#new_operation:json =
+@new_operation:json =
 {
     "identifier": "",
     "sum": ""
@@ -35,7 +35,7 @@ $$res:json =
 {{
     foreach(var operation in $$req.operations)
     {
-        var op = #new_operation
+        var op = @new_operation
                     .replace("$.identifier", operation.id.ToString())
                     .replace("$.sum", operation.amount);
 

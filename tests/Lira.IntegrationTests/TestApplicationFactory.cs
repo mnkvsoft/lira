@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lira.IntegrationTests;
 
-public class TestApplicationFactory : WebApplicationFactory<Startup>
+class TestApplicationFactory : WebApplicationFactory<Startup>
 {
     private readonly string _rulesPath;
     private readonly AppMocks? _appMocks;
@@ -20,6 +20,7 @@ public class TestApplicationFactory : WebApplicationFactory<Startup>
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseEnvironment("Testing");
         var settings = new Dictionary<string, string?>
         {
             {"RulesPath", _rulesPath},
@@ -27,6 +28,7 @@ public class TestApplicationFactory : WebApplicationFactory<Startup>
 
         var cfgBuilder = new ConfigurationBuilder();
         cfgBuilder.AddInMemoryCollection(settings);
+        cfgBuilder.AddJsonFile("appsettings.Testing.json", optional: false);
         IConfiguration cfg = cfgBuilder.Build();
 
         builder.UseConfiguration(cfg);

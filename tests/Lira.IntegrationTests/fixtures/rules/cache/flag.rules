@@ -1,6 +1,6 @@
 -------------------- declare
 
-#response:json =
+@response:json =
 {
   "status": ""
 }
@@ -9,7 +9,7 @@
 
 POST /cache/flag/{{ int >> $$id }}
 
-## the first request has a header
+@- the first request has a header
 ~ headers
 Request-Id: reject_scenario
 
@@ -20,7 +20,7 @@ Request-Id: reject_scenario
 
 ~ body
 {{
-    #response
+    @response
         .replace("status", "pending")
 }}
 
@@ -33,7 +33,7 @@ cache.setFlag("reject_scenario_" + $$id)
 
 GET /cache/flag/{{ cache.contains("reject_scenario_" + value) }}
 
-## there is no header in the second request
+@- there is no header in the second request
 
 ----- response
 
@@ -42,6 +42,6 @@ GET /cache/flag/{{ cache.contains("reject_scenario_" + value) }}
 
 ~ body
 {{
-    #response
+    @response
         .replace("status", "reject")
 }}

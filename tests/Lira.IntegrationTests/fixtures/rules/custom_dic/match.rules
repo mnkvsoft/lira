@@ -1,0 +1,8 @@
+-------------------- rule
+
+GET /custom_dic/match/{{ dic: color }}
+
+----- response
+
+~ code
+200

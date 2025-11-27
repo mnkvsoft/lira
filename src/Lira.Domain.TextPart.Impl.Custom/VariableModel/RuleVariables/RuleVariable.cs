@@ -6,31 +6,33 @@ public abstract class RuleVariable : Variable
 {
     public const string Prefix = "$$";
 
+    public static readonly NamingStrategy NamingStrategy = CreateNamingStrategy(Prefix);
+
     public override string Name { get; }
     public override ReturnType? ReturnType { get; }
 
     protected RuleVariable(string name, ReturnType? valueType)
     {
         if(!IsValidName(name))
-            throw new ArgumentException("Invalid local variable name: " + name, nameof(name));
+            throw new ArgumentException("Invalid rule variable name: " + name, nameof(name));
 
         Name = name;
         ReturnType = valueType;
     }
 
-    public static bool IsValidName(string name) => CustomItemName.IsValidName(Prefix, name);
+    public static bool IsValidName(string name) => NamingStrategy.IsValidName(name);
 
     private static readonly object NullValue = new();
-    protected abstract Task<dynamic?> GetInitiatedValue(RuleExecutingContext ctx);
+    protected abstract dynamic? GetInitiatedValue(RuleExecutingContext ctx);
 
-    private async Task<dynamic?> GetValue(RuleExecutingContext ctx)
+    private dynamic? GetValue(RuleExecutingContext ctx)
     {
         var values = GetVariableValues(ctx);
 
         if (values.TryGetValue(Name, out var value))
             return ReferenceEquals(value, NullValue) ? null : value;
 
-        var initValue = GetValueTyped(await GetInitiatedValue(ctx));
+        var initValue = GetValueTyped(GetInitiatedValue(ctx));
         SetValueInternal(ctx, initValue);
         return initValue;
     }
@@ -73,5 +75,9 @@ public abstract class RuleVariable : Variable
         return ctx.Items.GetOrCreate(key: typeof(RuleVariable), () => new Dictionary<string, dynamic?>());
     }
 
-    public override Task<dynamic?> Get(RuleExecutingContext context) => GetValue(context);
+    public override IEnumerable<dynamic?> Get(RuleExecutingContext context)
+    {
+        var value = GetValue(context);
+        yield return value;
+    }
 }

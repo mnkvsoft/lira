@@ -3,7 +3,6 @@ using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Handling.Actions;
 using Lira.Domain.TextPart.Impl.CSharp;
-using Lira.Domain.TextPart.Impl.Custom;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;
 
@@ -15,13 +14,15 @@ class HandlersParser
     private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
     private readonly GetDelayParser _getDelayParser;
     private readonly ResponseGenerationHandlerParser _responseGenerationHandlerParser;
+    private readonly CodeParser _codeParser;
 
-    public HandlersParser(IEnumerable<ISystemActionRegistrator> externalCallerRegistrators, IFunctionFactoryCSharpFactory functionFactoryCSharpFactory, GetDelayParser getDelayParser, ResponseGenerationHandlerParser responseGenerationHandlerParser)
+    public HandlersParser(IEnumerable<ISystemActionRegistrator> externalCallerRegistrators, IFunctionFactoryCSharpFactory functionFactoryCSharpFactory, GetDelayParser getDelayParser, ResponseGenerationHandlerParser responseGenerationHandlerParser, CodeParser codeParser)
     {
         _externalCallerRegistrators = externalCallerRegistrators;
         _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
         _getDelayParser = getDelayParser;
         _responseGenerationHandlerParser = responseGenerationHandlerParser;
+        _codeParser = codeParser;
     }
 
     public IReadOnlySet<string> GetAllSectionNames(IReadOnlyCollection<FileSection> sections)
@@ -86,7 +87,7 @@ class HandlersParser
         else
         {
             var code = GetActionCode(section);
-            var (codeBlock, newRuntimeVariables, newLocalVariables) = CodeParser.Parse(code, parsingContext.DeclaredItems);
+            var (codeBlock, newRuntimeVariables, newLocalVariables) = _codeParser.Parse(code, parsingContext.DeclaredItems);
 
             parsingContext.DeclaredItems.TryAddRange(newRuntimeVariables);
             parsingContext.DeclaredItems.TryAddRange(newLocalVariables);

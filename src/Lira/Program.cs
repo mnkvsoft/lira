@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Reflection;
 using Lira;
+using Lira.Common;
 using Lira.Domain.Configuration;
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -20,5 +21,6 @@ var loader = app.Services.GetRequiredService<IConfigurationLoader>();
 loader.BeginLoading();
 var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Application");
 logger.LogInformation("App version: " + Assembly.GetEntryAssembly()!.GetName().Version);
+logger.LogInformation("Temp files path: " + Paths.GetTempPath);
 
 app.Run();

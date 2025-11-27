@@ -1,0 +1,14 @@
+-------------------- rule
+
+GET /variables/local
+
+----- response
+{
+    "orders":
+    [
+        {{ @order  }},
+        {{ @order2 }}
+    ]
+}
+
+

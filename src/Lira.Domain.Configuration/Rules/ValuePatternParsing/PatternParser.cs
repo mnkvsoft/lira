@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Lira.Common;
 
 namespace Lira.Domain.Configuration.Rules.ValuePatternParsing;
 
@@ -12,30 +13,30 @@ internal static class PatternParser
     public static PatternParts Parse(string pattern)
     {
         var parts = new List<PatternPart>();
-        var sb = new StringBuilder();
+        var staticPart = new StringBuilder();
 
-        using var iterator = pattern.GetEnumerator();
+        var iterator = new StringIterator(pattern);
         var writeCallChain = false;
 
         while (iterator.MoveNext())
         {
             if (iterator.Current != BeginChar)
             {
-                sb.Append(iterator.Current);
+                staticPart.Append(iterator.Current);
             }
             else
             {
                 iterator.MoveNext();
                 if (iterator.Current == BeginChar)
                 {
-                    if (sb.Length > 0)
+                    if (staticPart.Length > 0)
                     {
-                        parts.Add(new PatternPart.Static(sb.ToString()));
-                        sb.Clear();
+                        parts.Add(new PatternPart.Static(staticPart.ToString()));
+                        staticPart.Clear();
                     }
 
                     writeCallChain = true;
-                    var callChain = new StringBuilder();
+                    var dynamicPart = new StringBuilder();
                     while (iterator.MoveNext())
                     {
                         if (iterator.Current == EndChar)
@@ -48,20 +49,20 @@ internal static class PatternParser
                             }
                             else
                             {
-                                callChain.Append(EndChar);
-                                callChain.Append(iterator.Current);
+                                dynamicPart.Append(EndChar);
+                                dynamicPart.Append(iterator.Current);
                             }
                         }
                         else
-                            callChain.Append(iterator.Current);
+                            dynamicPart.Append(iterator.Current);
                     }
 
-                    parts.Add(new PatternPart.Dynamic(callChain.ToString().Trim()));
+                    parts.Add(new PatternPart.Dynamic(dynamicPart.ToString()));
                 }
                 else
                 {
-                    sb.Append(BeginChar);
-                    sb.Append(iterator.Current);
+                    staticPart.Append(BeginChar);
+                    staticPart.Append(iterator.Current);
                 }
             }
         }
@@ -69,8 +70,8 @@ internal static class PatternParser
         if (writeCallChain)
             throw new Exception($"Open block {{{{ not close in pattern '{pattern}'");
 
-        if(sb.Length > 0)
-            parts.Add(new PatternPart.Static(sb.ToString()));
+        if(staticPart.Length > 0)
+            parts.Add(new PatternPart.Static(staticPart.ToString()));
 
         return new PatternParts(parts);
     }

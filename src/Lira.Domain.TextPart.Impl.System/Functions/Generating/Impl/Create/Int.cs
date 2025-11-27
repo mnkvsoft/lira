@@ -11,7 +11,11 @@ internal class Int : WithRangeArgumentFunction<long>, IObjectTextPart
 
     private Interval<long> _range = new(1, int.MaxValue);
 
-    public Task<dynamic?> Get(RuleExecutingContext context) => Task.FromResult<dynamic?>(Random.Shared.NextInt64(_range));
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
+    {
+        yield return Random.Shared.NextInt64(_range);
+    }
+
     public ReturnType ReturnType => ReturnType.Int;
 
 

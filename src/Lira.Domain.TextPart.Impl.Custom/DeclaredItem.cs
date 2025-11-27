@@ -3,7 +3,7 @@ namespace Lira.Domain.TextPart.Impl.Custom;
 public abstract class DeclaredItem : IObjectTextPart, IEquatable<DeclaredItem>
 {
     public abstract string Name { get; }
-    public abstract Task<dynamic?> Get(RuleExecutingContext context);
+    public abstract IEnumerable<dynamic?> Get(RuleExecutingContext context);
     public abstract ReturnType? ReturnType { get; }
 
     public bool Equals(DeclaredItem? other)
@@ -44,5 +44,10 @@ public abstract class DeclaredItem : IObjectTextPart, IEquatable<DeclaredItem>
     public override int GetHashCode()
     {
         return Name.GetHashCode();
+    }
+
+    public override string ToString()
+    {
+        return Name;
     }
 }

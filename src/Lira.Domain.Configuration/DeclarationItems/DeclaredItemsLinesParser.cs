@@ -17,22 +17,6 @@ class DeclaredItemsLinesParser
 
         var result = new HashSet<DeclaredItemDraft>();
 
-        void AddDeclaration(string? s, StringBuilder stringBuilder)
-        {
-            if (string.IsNullOrEmpty(s))
-                throw new Exception("Declaration name not defined");
-
-            string p = stringBuilder.ToString();
-            if (string.IsNullOrEmpty(p))
-                throw new Exception($"Declaration '{s}' not initialized");
-
-            var (name, typeStr) = s.SplitToTwoParts(Consts.ControlChars.SetType).Trim();
-
-            ReturnType? type = typeStr != null ? ReturnType.Parse(typeStr) : null;
-
-            result.AddOrThrowIfContains(new DeclaredItemDraft(name, p, type));
-        }
-
         string? variableName = null;
         var declarePattern = new StringBuilder();
 
@@ -62,6 +46,22 @@ class DeclaredItemsLinesParser
         AddDeclaration(variableName, declarePattern);
 
         return result;
+
+        void AddDeclaration(string? s, StringBuilder stringBuilder)
+        {
+            if (string.IsNullOrEmpty(s))
+                throw new Exception("Declaration name not defined");
+
+            string p = stringBuilder.ToString();
+            if (string.IsNullOrEmpty(p))
+                throw new Exception($"Declaration '{s}' not initialized");
+
+            var (name, typeStr) = s.SplitToTwoParts(Consts.ControlChars.SetType).Trim();
+
+            ReturnType? type = typeStr != null ? ReturnType.Parse(typeStr) : null;
+
+            result.AddOrThrowIfContains(new DeclaredItemDraft(name, p, type));
+        }
     }
 
     private static bool IsDefineDeclaration(string line, string[] namePrefixes)

@@ -4,7 +4,7 @@ GET /generating/types/json/add/to/obj
 
 ----- declare
 
-#json_var:json =
+@json_func:json =
 {
     "persons": [
         {
@@ -20,7 +20,7 @@ GET /generating/types/json/add/to/obj
 
 ~ body
 {{
-     #json_var
+     @json_func
         .add("$.persons[0]", "age", 37)
         .add("$.persons[0]", "hobby", "['sport', 'fishing']")
 }}

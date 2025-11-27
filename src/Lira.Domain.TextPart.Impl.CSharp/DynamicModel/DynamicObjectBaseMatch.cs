@@ -41,4 +41,17 @@ public abstract class DynamicObjectBaseMatch : DynamicObjectWithDeclaredPartsBas
 
         return GetRange(rangeName).ValueIsBelong(value.ToString() ?? "");
     }
+
+    protected bool dic(string dicName, object? value)
+    {
+        if (value == null)
+            return false;
+
+        if(value is string str)
+        {
+            return GetDic(dicName).ValueIsBelong(str);
+        }
+
+        return GetRange(dicName).ValueIsBelong(value.ToString() ?? "");
+    }
 }

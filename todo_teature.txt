@@ -1,16 +1,16 @@
-- global usings
-- line structure for conditions
+- make dic-function
+- json() in base class to extension method
+
+- set body encoding
+- fail container start if error in rule
+- {{{ escaping
 - key for conditions
-- local variables in functions
-- inline repeat block
-- random: using dynamic blocks (random: $$var1, $$var2)
 - cache section
 - type inference for dynamic block
-- hide dynamic class details on exception
-- json() extension for object
-- remove method for json type
-- dynamic block in ~ delay block
-- describe file section format
 - RequestStatisticStorage ttl to config
-- network latency
+- slow network
 - rules index
+- response model in cs-code
+- describe file section format
+- custom parameters in declared function
+- clean connected assemblies

@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /variables/short_declaration/query?phone=7888
+
+----- expected
+
+~ code
+200
+
+~ body
+888

@@ -1,0 +1,26 @@
+-------------------- rule
+
+POST /payment
+
+~ headers
+example: charp.class.sign
+
+----- declare
+
+$$response:json = 
+{
+    "id" : {{ int }},
+    "created_at": "{{ now }}",
+    "status": "ok"
+}
+
+----- response
+
+~ code
+200
+
+~ body
+{{
+    $$response
+        .add("sign", SignatureCalculator.Get($$response, "very_secret_key"))
+}}

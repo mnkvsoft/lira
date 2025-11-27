@@ -4,12 +4,12 @@ internal class DateUtc : FunctionBase, IObjectTextPart
 {
     public override string Name => "date.utc";
     public ReturnType ReturnType => ReturnType.Date;
-    public Task<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
         var now = DateTime.UtcNow;
         var from = now.AddYears(-10);
         var ticks = Random.Shared.NextInt64(from.Ticks, now.Ticks);
 
-        return Task.FromResult<dynamic?>(new DateTime(ticks, DateTimeKind.Utc));
+        yield return new DateTime(ticks, DateTimeKind.Utc);
     }
 }

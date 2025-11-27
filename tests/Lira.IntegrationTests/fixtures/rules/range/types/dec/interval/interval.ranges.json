@@ -1,7 +1,7 @@
 {
   "dec_interval": {
     "type": "dec",
-    "interval": "1.01 - 10_000.01",
+    "interval": "1.01..10_000.01",
     "ranges": [
       "first",
       "second",

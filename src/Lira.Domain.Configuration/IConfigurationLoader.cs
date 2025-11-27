@@ -1,9 +1,7 @@
+using System.Text;
+using Lira.Common.Extensions;
 using Lira.Common.State;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
-using Lira.Configuration;
 using Lira.Domain.Configuration.Rules;
 
 namespace Lira.Domain.Configuration;
@@ -14,54 +12,38 @@ public interface IConfigurationLoader
     void BeginLoading();
 }
 
-class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoader
+class ConfigurationLoader(
+    IRulesStorageStrategy rulesStorageStrategy,
+    IStateRepository stateRepository,
+    ILogger<ConfigurationLoader> logger, ConfigurationReader configurationReader) : IAsyncDisposable, IRulesProvider, IConfigurationLoader
 {
-    private readonly string _path;
-    private readonly ILogger<ConfigurationLoader> _logger;
-    private readonly ConfigurationReader _configurationReader;
-    private readonly PhysicalFileProvider _fileProvider;
-    private IChangeToken? _fileChangeToken;
+    private readonly ILogger<ConfigurationLoader> _logger = logger;
+    private readonly ConfigurationReader _configurationReader = configurationReader;
+    private readonly IRulesStorageStrategy _rulesStorageStrategy = rulesStorageStrategy;
+    private readonly IStateRepository _stateRepository = stateRepository;
 
     private Task<ConfigurationState>? _configurationLoadingTask;
-
     private ConfigurationState.Ok? _lastOkConfiguration;
-
-    private readonly IStateRepository _stateRepository;
-
-    public ConfigurationLoader(
-        IConfiguration configuration,
-        IStateRepository stateRepository,
-        ILogger<ConfigurationLoader> logger, ConfigurationReader configurationReader)
-    {
-        _stateRepository = stateRepository;
-        _logger = logger;
-        _configurationReader = configurationReader;
-        _path = configuration.GetRulesPath();
-
-        _fileProvider = new PhysicalFileProvider(_path);
-        _fileProvider.UsePollingFileWatcher = true;
-        _fileProvider.UseActivePolling = true;
-    }
 
     public void BeginLoading()
     {
-        _configurationLoadingTask = LoadConfiguration(_path);
-        _logger.LogInformation($"Rules path for watching: {_path}");
+        _rulesStorageStrategy.OnChanged += OnChange;
+        _configurationLoadingTask = LoadConfiguration();
     }
 
     private async Task OnChange()
     {
-        _logger.LogInformation($"Change was detected in {_path}");
-        var loadConfigurationTask = LoadConfiguration(_path);
+        var loadConfigurationTask = LoadConfiguration();
         await loadConfigurationTask;
         _configurationLoadingTask = loadConfigurationTask;
     }
 
-    private async Task<ConfigurationState> LoadConfiguration(string path)
+    private async Task<ConfigurationState> LoadConfiguration()
     {
         try
         {
-            var (rules, newStates) = await _configurationReader.Read(path);
+            _rulesStorageStrategy.InitIfNeed();
+            var (rules, newStates) = await _configurationReader.Read(_rulesStorageStrategy.Path);
 
             if (_lastOkConfiguration != null)
             {
@@ -84,11 +66,13 @@ class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoad
         catch (Exception e)
         {
             _logger.LogError(e, "An unexpected error occured while load rules");
+
+            var sb = new StringBuilder();
+            sb.AppendLine("An unexpected error occured while loading rules.");
+            sb.AppendLine(e.GetMessagesChain());
+
+            _logger.LogInformation(sb.ToString());
             return new ConfigurationState.Error(DateTime.Now, e);
-        }
-        finally
-        {
-            WatchForFileChanges();
         }
     }
 
@@ -107,11 +91,6 @@ class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoad
         throw new Exception("An error occured while loading configuration: " + error.Exception.Message);
     }
 
-    private void WatchForFileChanges()
-    {
-        _fileChangeToken = _fileProvider.Watch("**/*.*");
-        _fileChangeToken.RegisterChangeCallback(state => _ = OnChange(), default);
-    }
 
     private async Task SaveStates(IReadOnlyCollection<IStateful> currentStates)
     {
@@ -160,7 +139,7 @@ class ConfigurationLoader : IAsyncDisposable, IRulesProvider, IConfigurationLoad
 
         try
         {
-            _fileProvider.Dispose();
+            _rulesStorageStrategy.OnChanged -= OnChange;
             if (_lastOkConfiguration != null)
             {
                 foreach (var stateful in _lastOkConfiguration.Statefuls)

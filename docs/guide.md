@@ -143,8 +143,8 @@ lira:
 
 #### Примеры использования в функциях
 ```
-int: 1 - 10
-dec: 1.01 - 10.22
+int: 1..10
+dec: 1.01..10.22
 ```
 
 Определение интервала может быть взято в квадратные скобки, 
@@ -152,8 +152,8 @@ dec: 1.01 - 10.22
 примеру
 
 ```
-int: [1 - 10]
-dec: [1.01 - 10.22]
+int: [1..10]
+dec: [1.01..10.22]
 ```
 
 
@@ -188,6 +188,7 @@ dec: [1.01 - 10.22]
 то комментарий распространяется до конца файла
 
 [comments.rules](examples/guide/comments.rules)
+
 ```
 -------------------- rule
 
@@ -202,18 +203,19 @@ example: guide/comments
 200
 
 ~ body
-## single line comment 
-###
+@- single line comment 
+@*
     it's multiline
     comment
-### 
-hello!## comment the rest of the line
-hello ### comment in the middle of the line ### world!
-###
+*@ 
+hello!@- comment the rest of the line
+hello @* comment in the middle of the line *@ world!
+@*
 it's 
 not closed
 multiline comment
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/comments' \
@@ -231,3 +233,4 @@ hello  world!
 
 ## Что дальше?
 [Cопоставление запросов](matching.md)
+

@@ -7,7 +7,7 @@ example: custom_function
 
 ----- declare
 
-#payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
+@payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
 
 ----- response
 
@@ -16,8 +16,8 @@ example: custom_function
 
 ~ body
 {
-    "created_at": "{{ #payment.now }}"
+    "created_at": "{{ @payment.now }}"
     
-    ## the '#' symbol can be omitted when calling a function
-    ## "created_at": "{{ payment.now }}"
+    @- the '#' symbol can be omitted when calling a function
+    @- "created_at": "{{ payment.now }}"
 }

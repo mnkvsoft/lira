@@ -1,0 +1,8 @@
+-------------------- rule
+
+GET /custom_dic/match.cs/{{ dic("color", value) }}
+
+----- response
+
+~ code
+200

@@ -73,7 +73,7 @@
 ```
 -------------------- rule
 
-GET /hello/{{ any >> $$person}}
+GET /hello/{{ any >> $$person }}
 
 ----- response
 
@@ -182,6 +182,7 @@ long query
 
 ### Имитация сбоя сервера
 [fault.fault](docs/examples/quick_start/fault.rules)
+
 ```
 -------------------- rule
 
@@ -263,7 +264,7 @@ POST /payment/{{ value == "card" || value == "account" }}
 
 ~ headers
 example: match_dynamic_csharp_short
-Request-Id: {{ Guid.TryParse(value, out var ) }}
+Request-Id: {{ Guid.TryParse(value, out _) }}
 
 
 ----- response
@@ -456,8 +457,6 @@ Request-Time: 12:07:16
 
 [Полное руководство](docs/guide.md)
 
-[Функции генерации](docs/generation_functions.md)
-
 
 
 ### Извлечение параметров запроса
@@ -514,8 +513,6 @@ Request-Id: 987
 
 [Полное руководство](docs/guide.md)
 
-[Функции генерации](docs/generation_functions.md)
-
 
 ### Извлечение динамически сопоставленных данных
 
@@ -560,6 +557,7 @@ curl --location 'http://localhost/balance/79161112233' \
 Часто используется при осуществлении обратных вызовов (будут рассмотрены далее).
 
 [variables.rules](docs/examples/quick_start/variables.rules)
+
 ```
 -------------------- rule
 
@@ -637,9 +635,6 @@ $$id = {{ seq }}
 
 POST http://localhost/api/callback
 
-~ delay 
-100 ms
-
 ~ headers
 Content-Type: application/json
 
@@ -659,6 +654,7 @@ POST /api/callback
 ~ code
 200
 ```
+
 Запрос
 ```
 curl --location --request POST 'http://localhost/payment' \
@@ -696,6 +692,7 @@ Content-Length: 42
 
 ### Комментарии
 [comments.rules](docs/examples/quick_start/comments.rules)
+
 ```
 -------------------- rule
 
@@ -707,14 +704,15 @@ GET /comments
 200
 
 ~ body
-## single line comment 
-###
+@- single line comment 
+@*
     it's multiline
     comment
-### 
-hello!## comment the rest of the line
-hello ### comment in the middle of the line ### world!
+*@ 
+hello!@- comment the rest of the line
+hello @* comment in the middle of the line *@ world!
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/comments'
@@ -734,6 +732,7 @@ http://hello
 LIRA выберет наиболее частное (это поведение по умолчанию, оно конфигурируется)
 
 [priority.rules](docs/examples/quick_start/priority.rules)
+
 ```
 -------------------- rule
 
@@ -774,6 +773,7 @@ Request-Id: {{ any }}
 ~ body
 rule with GUID and header
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/priority/1'
@@ -854,6 +854,9 @@ example: range.easy
 
 POST /payment
 
+~ headers
+example: range.easy
+
 ~ body
 {{ jpath: $.amount }} >> {{ range: amount/reject }}
 
@@ -933,9 +936,9 @@ curl --location 'http://localhost/payment' \
 
 Рассмотрим как это настраивается с помощью диапазонов
 
-Изменим файл [global.ranges.json](docs/examples/quick_start/global.ranges.json) следующим образом
+Изменим следующим образом файл [global.ranges.json](docs/examples/quick_start/global.ranges.json)
 
-```json
+```
 {
     "amount": {
       "type": "dec",
@@ -959,7 +962,7 @@ curl --location 'http://localhost/payment' \
 [ranges.medium.rules](docs/examples/quick_start/ranges.medium.rules)
 
 ```
-## ok refund rule
+@- ok refund rule
 
 -------------------- rule
 
@@ -999,7 +1002,7 @@ example: range.medium
     "status": "ok"
 }
 
-## reject refund rule
+@- reject refund rule
 
 -------------------- rule
 
@@ -1141,6 +1144,7 @@ curl --location --request POST 'http://localhost/payment/refund/4611686018427387
 и сервер интерпретирует такие запросы как разные
 
 [conditions.rules](docs/examples/quick_start/conditions.rules)
+
 ```
 ---------------------------- rule
 
@@ -1162,7 +1166,7 @@ elapsed < 2 second
 
 --------------- condition
 
-elapsed in [2 second - 4 second]
+elapsed in [2 second..4 second]
 
 ----- response
 
@@ -1189,6 +1193,7 @@ elapsed > 4 second
     "status": "ok"
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/pay/status'
@@ -1232,7 +1237,7 @@ example: custom_function
 
 ----- declare
 
-#payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
+@payment.now = {{ now >> format: dd MMM yyyy hh:mm tt }}
 
 ----- response
 
@@ -1241,12 +1246,13 @@ example: custom_function
 
 ~ body
 {
-    "created_at": "{{ #payment.now }}"
+    "created_at": "{{ @payment.now }}"
     
-    ## the '#' symbol can be omitted when calling a function
-    ## "created_at": "{{ payment.now }}"
+    @- the '#' symbol can be omitted when calling a function
+    @- "created_at": "{{ payment.now }}"
 }
 ```
+
 Запрос
 ```
 curl --location --request POST 'http://localhost/payment' \
@@ -1279,7 +1285,7 @@ curl --location --request POST 'http://localhost/payment' \
 ```
 -------------------- declare
 
-#amount = {{ dec: [1 - 100] }}
+@amount = {{ dec: [1..100] }}
 
 -------------------- rule
 
@@ -1315,6 +1321,7 @@ example: declare.shared.file
     "balance": {{ amount }}
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/payment' \
@@ -1351,7 +1358,7 @@ curl --location 'http://localhost/account' \
 [declare.shared.global.declare](docs/examples/quick_start/declare.shared.global.declare)
 
 ```
-#age = {{ int: [1 - 122]}}
+@age = {{ int: [1..122]}}
 ```
 
 Создадим правило
@@ -1396,10 +1403,11 @@ curl --location 'http://localhost/person' \
 Это может использоваться для создания шаблонов ответов
 
 [multiline_functions.rules](docs/examples/quick_start/multiline_functions.rules)
+
 ```
 -------------------- declare
 
-#template.order = 
+@template.order = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -1439,6 +1447,7 @@ example: multiline_functions
 ~ body
 {{ template.order }}
 ```
+
 Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -1485,19 +1494,24 @@ curl --location 'http://localhost/order' \
 
 #### Генерация данных
 [name.first.dic](docs/examples/quick_start/name.first.dic)
+
 ```
 Nikolay
 John
 Leon
 ```
+
 [name.last.dic](docs/examples/quick_start/name.last.dic)
+
 ```
 Ivanov
 Müller
 Fischer
 Jones
 ```
+
 [dic.generation.rules](docs/examples/quick_start/dic.generation.rules)
+
 ```
 -------------------- rule
 
@@ -1512,7 +1526,9 @@ example: dic.generation
 {
     "name": "{{ name.first }} {{ name.last }}"
 }
+
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/person' \
@@ -1533,6 +1549,7 @@ ASTON MARTIN
 ...
 ```
 [dic.match.rules](docs/examples/quick_start/dic.match.rules)
+
 ```
 -------------------- rule
 
@@ -1546,9 +1563,11 @@ example: dic.match
 ~ body
 {
     "release_date": "{{ date }}"
-    "engine_capacity": {{ dec: [0.5 - 10] }}
+    "engine_capacity": {{ dec: [0.5..10] }}
 }
+
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/product/BUGATTI' \
@@ -1566,17 +1585,18 @@ curl --location 'http://localhost/product/BUGATTI' \
 ### Повторение блоков
 
 [repeat_block.rules](docs/examples/quick_start/repeat_block.rules)
+
 ```
 -------------------- rule
 
-GET /orders/{{ int ### customer id ### }}
+GET /orders/{{ int @* customer id *@ }}
 
 ~ headers
 example: repeat_block
 
 ----- declare
 
-#order = 
+@order = 
 {
     "id": {{ int }},
     "status": "{{ random: paid, pending, cancelled }}",
@@ -1591,10 +1611,11 @@ example: repeat_block
 ~ body
 {
     "orders": [
-        {{ repeat(#order, separator: ",", count: 3) }}    
+        {{ repeat(@order, separator: ",", count: 3) }}    
     ]
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/orders/123' \
@@ -1642,10 +1663,11 @@ curl --location 'http://localhost/orders/123' \
 символ ` используемый при объявлении функций не может быть опущен
 
 [change_json.rules](docs/examples/quick_start/change_json.rules)
+
 ```
 -------------------- declare
 
-#template.order:json = 
+@template.order:json = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -1669,7 +1691,7 @@ example: change_json
 
 ~ body
 {{ 
-    #template.order
+    @template.order
         .replace("$.status", "pending")
         .replace("$.customer", "vasily pupkin")
 }}
@@ -1688,11 +1710,12 @@ example: change_json
 
 ~ body
 {{ 
-    #template.order
+    @template.order
         .replace("$.status", "refunded")
         .replace("$.customer", "nikolas john")
 }}
 ```
+
 Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -1737,7 +1760,8 @@ curl --location 'http://localhost/order' \
 Подразумевают инструцию без использования дополнительных переменных и 
 возвращающую **не** `void` значение
 
-[charp.short.rules](docs/examples/quick_start/charp.short.rules)
+[csharp.short.rules](docs/examples/quick_start/csharp.short.rules)
+
 ```
 -------------------- rule
 
@@ -1750,9 +1774,10 @@ GET /very/old/event
 
 ~ body
 {
-    "date": {{ DateTime.Now.AddYears(-100 - Random.Shared.Next(1, 100)) }}
+    "date": {{ DateTime.Now.AddYears(-1000 - Random.Shared.Next(1, 100)) }}
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/very/old/event'
@@ -1767,17 +1792,18 @@ curl --location 'http://localhost/very/old/event'
 
 
 #### Полные блоки
-[charp.full.rules](docs/examples/quick_start/charp.full.rules)
-```cs
+[csharp.full.rules](docs/examples/quick_start/csharp.full.rules)
+
+```
 -------------------- rule
 
 POST /payment/card
 
 ~ headers
-example: csharp.full 
+example: csharp.full
 
 ~ body
-jpath: $.number >> {{ any }}
+{{ jpath: $.number }} >> {{ any }}
 
 ----- response
 
@@ -1786,7 +1812,7 @@ jpath: $.number >> {{ any }}
 
 ~ body
 {
-    "mnemonic": {{ 
+    "mnemonic": "{{ 
         string cardNumber = req.body.jpath("$.number");
 
         string paymentSystem;
@@ -1810,9 +1836,10 @@ jpath: $.number >> {{ any }}
         string last4 = cardNumber[^4..];
         string result = paymentSystem + " *" + last4;
         return result;
-     }}
+     }}"
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/payment/card' \
@@ -1831,7 +1858,7 @@ curl --location 'http://localhost/payment/card' \
 
 #### Извлечение динамически сопоставленных данных в блоках на C#
 
-[extract.value.charp.rules](docs/examples/quick_start/extract.value.charp.rules)
+[extract.value.charp.rules](docs/examples/quick_start/extract.value.csharp.rules)
 
 ```
 -------------------- rule
@@ -1839,16 +1866,17 @@ curl --location 'http://localhost/payment/card' \
 GET /balance/7{{ int >> $$phone }}
 
 ~ headers
-example: extract.value.charp
+example: extract.value.csharp
 
 ----- response
 
 ~ body
 {
-    "phone": {{ $$phone }}
+    "phone": {{ $$phone }},
     "balance": {{ dec }}
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/balance/79161112233' \
@@ -1871,8 +1899,9 @@ curl --location 'http://localhost/balance/79161112233' \
 полей
 
 [CardNumber.cs](docs/examples/quick_start/CardNumber.cs)
+
 ```cs
-namespace _;
+namespace _my;
 
 public static class CardNumber
 {
@@ -1897,12 +1926,15 @@ public static class CardNumber
 
         string last4 = cardNumber[^4..];
         string result = paymentSystem + " *" + last4;
-        
+
         return result;
     }
 }
+
 ```
-[charp.class.mnenonic.rules](docs/examples/quick_start/charp.class.mnenonic.rules)
+
+[csharp.class.mnenonic.rules](docs/examples/quick_start/csharp.class.mnenonic.rules)
+
 ```
 -------------------- rule
 
@@ -1912,7 +1944,7 @@ POST /payment/card
 example: charp.class.mnenonic
 
 ~ body
-jpath: $.number >> {{ any }}
+{{ jpath: $.number }} >> {{ any }}
 
 ----- response
 
@@ -1924,7 +1956,6 @@ mnemonic was generated from 'number' field: {{
     CardNumber.GetMnemonic(req.body.jpath("$.number")) 
 }}
 
-
 -------------------- rule
 
 POST /payment/card
@@ -1933,7 +1964,7 @@ POST /payment/card
 example: charp.class.mnenonic
 
 ~ body
-jpath: $.pan >> {{ any }}
+{{ jpath: $.pan }} >> {{ any }}
 
 ----- response
 
@@ -1945,6 +1976,7 @@ mnemonic was generated from 'pan' field: {{
     CardNumber.GetMnemonic(req.body.jpath("$.pan")) 
 }}
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/payment/card' \
@@ -1974,6 +2006,7 @@ mnemonic was generated from 'pan' field: MIR *5678
 
 #### Пример накладывания подписи
 [SignatureCalculator.cs](docs/examples/quick_start/SignatureCalculator.cs)
+
 ```cs
 using System.Security.Cryptography;
 using System.Text;
@@ -2000,7 +2033,9 @@ public static class SignatureCalculator
 }
 
 ```
-[charp.class.sign.rules](docs/examples/quick_start/charp.class.sign.rules)
+
+[csharp.class.sign.rules](docs/examples/quick_start/csharp.class.sign.rules)
+
 ```
 -------------------- rule
 
@@ -2011,7 +2046,7 @@ example: charp.class.sign
 
 ----- declare
 
-#response = 
+$$response:json = 
 {
     "id" : {{ int }},
     "created_at": "{{ now }}",
@@ -2025,10 +2060,11 @@ example: charp.class.sign
 
 ~ body
 {{
-    json(#response)
-        .add("sign", SignatureCalculator.Get(#response, "very_secret_key"))
+    $$response
+        .add("sign", SignatureCalculator.Get($$response, "very_secret_key"))
 }}
 ```
+
 Запрос
 ```
 curl --location --request POST 'http://localhost/payment' \
@@ -2054,9 +2090,8 @@ curl --location --request POST 'http://localhost/payment' \
 
 Для доступа к текущему значению используется системная переменная `value`.
 
-[global.ranges.json](docs/examples/quick_start/global.ranges.json)
-
 [ranges.csharp.match.rules](docs/examples/quick_start/ranges.csharp.match.rules)
+
 ```
 -------------------- rule
 
@@ -2076,25 +2111,25 @@ return range("amount/ok", amount);
 
 }}
 
-###
+@*
 
-## short version for division
+@- short version for division
 ~ body
 {{ jpath: $.amount }} >> {{ range("amount/ok", value, divide: 100) }}
 
-## short version for division 2
+@- short version for division 2
 ~ body
 {{ jpath: $.amount }} >> {{ range("amount/ok", value, x => x / 100) }}
 
-## short version for multiplication
+@- short version for multiplication
 ~ body
 {{ jpath: $.amount }} >> {{ range("amount/ok", value, multiply: 100) }}
 
-## short version for multiplication 2
+@- short version for multiplication 2
 ~ body
 {{ jpath: $.amount }} >> {{ range("amount/ok", value, x => x * 100) }}
 
-###
+*@
 
 ----- response
 
@@ -2102,8 +2137,9 @@ return range("amount/ok", amount);
 {
     "status": "ok"
 }
+
 ```
-Запрос
+
 ```
 curl --location 'http://localhost/payment' \
 --header 'example: range.csharp' \
@@ -2120,6 +2156,9 @@ curl --location 'http://localhost/payment' \
 ```
 
 #### Для генерации
+
+[ranges.csharp.generation.rules](docs/examples/quick_start/ranges.csharp.generation.rules)
+
 ```
 -------------------- rule
 
@@ -2136,9 +2175,10 @@ example: ranges.csharp.generation
 ~ body
 {
     "status": "ok"
-    "fee": {{ range("amount/ok") * 100 >> format: #. ### without decimals ### }}
+    "fee": {{ range("amount/ok") * 100 >> format: #. @* without decimals *@ }}
 }
 ```
+
 Запрос
 ```
 curl --location --request GET 'http://localhost/payment' \
@@ -2163,6 +2203,7 @@ curl --location --request GET 'http://localhost/payment' \
 выполняется проверка на существование файла и, если файл существует, то тело ответа считывается из него и выполняется изменение одного из полей.
 
 [action.rules](docs/examples/quick_start/action.rules)
+
 ```
 -------------------- rule
 
@@ -2175,7 +2216,7 @@ example: action
 
 $$id = {{ seq }}
 
-#body = 
+@body = 
 {
     "id": {{ $$id }},
     "created_at": "{{ now.utc }}",
@@ -2185,36 +2226,36 @@ $$id = {{ seq }}
 ----- response
 
 ~ body
-{{ #body }}
+{{ @body }}
 
 ----- action
 
-## C# code block
+@- C# code block
 
-## create file path
+@- create file path
 string filePath = "/tmp/" + $$id + ".dat";
 
-## write file
-File.WriteAllText(filePath, #body);
+@- write file
+File.WriteAllText(filePath, @body);
 
 
 -------------------- rule
 
-GET /order/{{ File.Exists($"/tmp/{value}.dat") ### if file exists ### >> $$id }}
+GET /order/{{ File.Exists($"/tmp/{value}.dat") @* if file exists *@ >> $$id }}
 
 ~ headers
 example: action
 
 ----- declare
 
-## write json body from file
-#body:json = {{ File.ReadAllText($"/tmp/{$$id}.dat") }}
+@- write json body from file
+@body:json = {{ File.ReadAllText($"/tmp/{$$id}.dat") }}
 
 ----- response
 
 ~ body
 {{ 
-    #body.replace("$.status", "processing")
+    @body.replace("$.status", "processing")
 }}
 ```
 
@@ -2253,12 +2294,13 @@ curl --location 'http://localhost/order/62' \
 В этом случае используются методы класса `cache`.
 
 [cache.rules](docs/examples/quick_start/cache.rules)
+
 ```
-###
+@*
 When sending an order, 
 we will save the response body in cache for 5 minutes, 
 using its ID in the caching key
-###
+*@
 -------------------- rule
 
 POST /order
@@ -2291,11 +2333,11 @@ cache.set(
 )
 
 
-###
+@*
 if there is data in the cache, 
 then we send it in the body of the response, 
 changing the value of the 'status' field to 'paid'
-###
+*@
 -------------------- rule
 
 GET /order/{{ cache.contains("cache_example_" + value) >> $$id }}
@@ -2311,10 +2353,10 @@ example: cache
             .replace("$.status", "paid")
 }}
 
-###
+@*
 if a request to cancel an order is received, 
 we delete the data from the cache
-###
+*@
 -------------------- rule
 
 POST /order/cancel/{{ cache.contains("cache_example_" + value) >> $$id }}
@@ -2331,11 +2373,11 @@ example: cache
 cache.remove("cache_example_" + $$id)
 
 
-###
+@*
 if when requesting an order, 
 the data is not found in the cache, 
 then we issue an appropriate response
-###
+*@
 -------------------- rule
 
 GET /order/{{ !cache.contains("cache_example_" + value) }}
@@ -2350,6 +2392,7 @@ example: cache
 ~ body
 Order not found
 ```
+
 Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -2402,12 +2445,13 @@ Order not found
 Для реализации более сложной логики при сохранении состояния можно использовать объект с несколькими полями. Рассмотрим пример с сохранением первого тела ответа и счетчиком попыток, который инкрементируется до определенного значения.
 
 [cache.medium.rules](docs/examples/quick_start/cache.medium.rules)
+
 ```
-###
+@*
 on the first request, 
 we save the response body 
 and the attempt counter
-###
+*@
 -------------------- rule
 
 POST /order
@@ -2444,11 +2488,11 @@ cache.set(
     time: "5 minute"
 )
 
-###
-if the attempt counter takes the value 1-3, 
+@*
+if the attempt counter takes the value 1..3, 
 then in the 'status' field we set the value 'pending' 
 and increment the counter
-###
+*@
 -------------------- rule
 
 GET /order/{{
@@ -2458,9 +2502,8 @@ GET /order/{{
     if(!cache.contains(key))
         return false;
 
-    $$id = value;
-
     var state = cache.get(key);
+    $$id = value;
     return state.Counter >= 1 && state.Counter <= 3;
 
 }}
@@ -2483,12 +2526,12 @@ var state = cache.get("cache_example_" + $$id);
 state.Counter++;
 
 
-###
+@*
 if the attempt counter takes a value greater than 3, 
 then in the 'status' field we set the value 'paid' 
 and do not increment the counter 
 (this no longer makes sense)
-###
+*@
 -------------------- rule
 
 GET /order/{{
@@ -2498,9 +2541,8 @@ string key = "cache_example_" + value;
 if(!cache.contains(key))
     return false;
 
-$$id = value;
-
 var state = cache.get(key);
+$$id = value;
 return state.Counter > 3;
 
 }}
@@ -2517,6 +2559,7 @@ example: cache.medium
             .replace("$.status", "paid")
 }}
 ```
+
 Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -2560,6 +2603,7 @@ curl --location 'http://localhost/order/15' \
 В примере ниже фукция `now` генерирует дату без составляющей времени 
 
 [override.rules](docs/examples/quick_start/override.rules)
+
 ```
 -------------------- rule
 
@@ -2570,7 +2614,7 @@ example: override
 
 ----- declare
 
-#now = {{ DateTime.Now.ToString("yyyy-MM-dd") }}
+@now = {{ DateTime.Now.ToString("yyyy-MM-dd") }}
 
 ----- response
 
@@ -2581,6 +2625,7 @@ example: override
 {
     "created_at": "{{ now }}"
 }
+
 ```
 
 Запрос
@@ -2601,6 +2646,7 @@ curl --location 'http://localhost/order' \
 
 #### Использование строенных функций
 [transform.rules](docs/examples/quick_start/transform.rules)
+
 ```
 -------------------- rule
 
@@ -2619,6 +2665,7 @@ example: transform
     "customer": "{{ name >> lower  }}"
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -2635,6 +2682,7 @@ curl --location 'http://localhost/order' \
 ```
 #### Использование языка C#
 [transform.csharp.rules](docs/examples/quick_start/transform.csharp.rules)
+
 ```
 -------------------- rule
 
@@ -2653,6 +2701,7 @@ example: transform.csharp
     "customer": "{{ name >> value.ToLower()  }}"
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -2677,7 +2726,8 @@ curl --location 'http://localhost/order' \
 
 Определить тип данных встроенных функций можно следующим правилом
 
-[format_gettype.rules](docs/examples/quick_start/format_gettype.rules)
+[format_gettype.rules](docs/examples/quick_start/format.gettype.rules)
+
 ```
 -------------------- rule
 
@@ -2694,6 +2744,7 @@ GET /get_type
 {{ date >> value.GetType() }}
 {{ int >> value.GetType() }}
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/get_type'
@@ -2710,6 +2761,7 @@ System.Int64
 функции `format`, либо методом `ToString()` в C# - блоке
 
 [format.rules](docs/examples/quick_start/format.rules)
+
 ```
 -------------------- rule
 
@@ -2722,13 +2774,13 @@ GET /format
 
 ~ body
 
-## short function
+@- short function
 {{ guid >> format: N }}
 
-## raw C# block
+@- raw C# block
 {{ Guid.NewGuid().ToString("D") }}
 
-##  C# block with format function
+@-  C# block with format function
 {{ Guid.NewGuid() >> format: B }}
 ```
 
@@ -2745,3 +2797,4 @@ fccbb0617f8143eebe3a8759570d8859
 
 ## Что дальше?
 [Полное руководство](docs/guide.md)
+

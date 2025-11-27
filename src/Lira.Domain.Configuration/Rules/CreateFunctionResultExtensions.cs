@@ -19,8 +19,7 @@ internal static class CreateFunctionResultExtensions
         throw new Exception(
             "Failed create dynamic block:" + nl + nl +
             invoke.WrapBeginEnd() +
-            "Attempt compile C# code failed. " + failed.Message  + nl + "Code:" + nl + nl +
-            failed.Code.WrapBeginEnd() +
+            "Attempt compile C# code failed. " + failed.Message  + nl +
             "Context: " + nl +
             context);
     }

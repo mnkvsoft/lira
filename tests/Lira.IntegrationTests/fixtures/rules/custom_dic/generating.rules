@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /custom_dic/generating
+
+----- response
+
+~ code
+200
+
+~ body
+{{ dic: color }}

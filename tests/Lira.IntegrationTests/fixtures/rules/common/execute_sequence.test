@@ -1,4 +1,4 @@
-## not cached
+@- not cached
 -------------------- case
 
 POST /common/execute_sequence/key?a=1
@@ -18,7 +18,7 @@ Id: 1
 1>2>3>4>5>6>7
 
 
-## cached
+@- cached
 -------------------- case
 
 GET /common/utils/cache/key

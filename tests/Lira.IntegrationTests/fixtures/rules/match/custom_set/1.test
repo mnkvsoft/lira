@@ -1,8 +1,0 @@
--------------------- case
-
-GET /match/custom_dictionary/7775555555
-
------ expected
-
-~ code
-200

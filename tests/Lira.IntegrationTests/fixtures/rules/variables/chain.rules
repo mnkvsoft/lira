@@ -2,14 +2,14 @@
 
 GET /variables/chain/{{
 
-    ## verify that phone number
+    @- verify that phone number
     if(!long.TryParse(value, out var phone))
         return false;
 
-    ## the account balance is encoded in its number
+    @- the account balance is encoded in its number
     var balance = double.Parse(value[^4..]);
 
-    ## save for use in Action section
+    @- save for use in Action section
     $$balance = balance;
 
     return true;
@@ -22,7 +22,7 @@ GET /variables/chain/{{
 
 int code = $$balance >= $$amount ? 200 : 400;
 
-## save for use in Response section
+@- save for use in Response section
 $$code = code;
 
 ----- response
@@ -30,8 +30,7 @@ $$code = code;
 ~ code
 {{ $$code }}
 
-###
+@*
 Response:
 
 200
-###

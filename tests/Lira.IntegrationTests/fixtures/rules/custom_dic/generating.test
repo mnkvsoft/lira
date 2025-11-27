@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /custom_dic/generating
+
+----- expected
+
+~ code
+200
+
+~ body
+red

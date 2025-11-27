@@ -1,7 +1,7 @@
-## PAYMENT
+@- PAYMENT
 
-## success
-## Правило №1
+@- success
+@- Правило №1
 
 -------------------- rule
 
@@ -17,14 +17,14 @@ example: ranges_payment_with_reversal
 
 ~ body
 {
-    ## reversal по этому id вернет success
+    @- reversal по этому id вернет success
     "id": {{ range: payment.id/default }}, 
     "status": "success"
 }
 
 
-## success with pending reversal
-## Правило №2
+@- success with pending reversal
+@- Правило №2
 
 -------------------- rule
 
@@ -40,14 +40,14 @@ example: ranges_payment_with_reversal
 
 ~ body
 {
-    ## reversal по этому id вернет pending
+    @- reversal по этому id вернет pending
     "id": {{ range: payment.id/reversal.pending }}, 
     "status": "success"
 }
 
 
-## success with reject reversal
-## Правило №3
+@- success with reject reversal
+@- Правило №3
 
 -------------------- rule
 
@@ -63,14 +63,14 @@ example: ranges_payment_with_reversal
 
 ~ body
 {
-    ## reversal по этому id вернет reject
+    @- reversal по этому id вернет reject
     "id": {{ range: payment.id/reversal.pending  }}, 
     "status": "success"
 }
 
 
-## pending
-## Правило №4
+@- pending
+@- Правило №4
 
 -------------------- rule
 
@@ -86,14 +86,14 @@ example: ranges_payment_with_reversal
 
 ~ body
 {
-    ## reversal по этому id вернет success
+    @- reversal по этому id вернет success
     "id": {{ range: payment.id/default }}, 
     "status": "pending"
 }
 
 
-## reject
-## Правило №5
+@- reject
+@- Правило №5
 
 -------------------- rule
 
@@ -109,15 +109,15 @@ example: ranges_payment_with_reversal
 
 ~ body
 {
-    ## reversal по этому id вернет success
+    @- reversal по этому id вернет success
     "id": {{ range: payment.id/default }}, 
     "status": "reject"
 }
 
-## REVERSAL
+@- REVERSAL
 
-## success
-## Правило №6
+@- success
+@- Правило №6
 
 -------------------- rule
 
@@ -133,8 +133,8 @@ example: ranges_payment_with_reversal
     "status": "success"
 }
 
-## pending
-## Правило №7
+@- pending
+@- Правило №7
 
 -------------------- rule
 
@@ -150,8 +150,8 @@ example: ranges_payment_with_reversal
     "status": "pending"
 }
 
-## reject
-## Правило №8
+@- reject
+@- Правило №8
 
 -------------------- rule
 

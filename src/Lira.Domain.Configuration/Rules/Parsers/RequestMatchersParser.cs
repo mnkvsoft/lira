@@ -19,13 +19,15 @@ class RequestMatchersParser
 {
     private readonly IFunctionFactorySystem _functionFactorySystem;
     private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
+    private readonly CodeParser _codeParser;
 
     public RequestMatchersParser(
         IFunctionFactorySystem functionFactorySystem,
-        IFunctionFactoryCSharpFactory functionFactoryCSharpFactory)
+        IFunctionFactoryCSharpFactory functionFactoryCSharpFactory, CodeParser codeParser)
     {
         _functionFactorySystem = functionFactorySystem;
         _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
+        _codeParser = codeParser;
     }
 
     public async Task<IReadOnlyCollection<IRequestMatcher>> Parse(FileSection ruleSection, ParsingContext context)
@@ -96,7 +98,7 @@ class RequestMatchersParser
 
     private async Task<IRequestMatcher> CreateCustomRequestMatcher(string code, ParsingContext context)
     {
-        var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(code, context.DeclaredItems);
+        var (codeBlock, newRuntimeVariables, localVariables) = _codeParser.Parse(code, context.DeclaredItems);
 
         if (localVariables.Count > 0)
             throw new Exception($"Local variables ({string.Join(", ", localVariables.Select(x => x.Name))}) are not supported for matching function");
@@ -232,7 +234,7 @@ class RequestMatchersParser
             if (!parts.Any(x => x is PatternPart.Static))
                 throw new Exception($"'{parts}' must contains one static part");
 
-            if (!parts.Any(x => x is PatternPart.Static))
+            if (!parts.Any(x => x is PatternPart.Dynamic))
                 throw new Exception($"'{parts}' must contains one dynamic part");
 
             if (parts[0] is PatternPart.Static @static)
@@ -245,7 +247,7 @@ class RequestMatchersParser
                     await CreateMatchFunctionWithSaveVariable(dyn.Value, context));
             }
 
-            if (parts[0] is PatternPart.Static dynamic)
+            if (parts[0] is PatternPart.Dynamic dynamic)
             {
                 return new TextPatternPart.Dynamic(
                     Start: null,
@@ -283,13 +285,10 @@ class RequestMatchersParser
 
     private async Task<IMatchFunctionTyped> CreateMatchFunction(string invoke, ParsingContext context)
     {
-        if (_functionFactorySystem.TryCreateMatchFunction(invoke, new SystemFunctionContext(new DeclaredItemsProvider(context.DeclaredItems)), out var function))
+        if (_functionFactorySystem.TryCreateMatchFunction(invoke.Trim(), new SystemFunctionContext(new DeclaredItemsProvider(context.DeclaredItems)), out var function))
             return function;
 
-        if (context.CustomDicts.TryGetCustomSetFunction(invoke, out var customSetFunction))
-            return customSetFunction;
-
-        var (codeBlock, newRuntimeVariables, localVariables) = CodeParser.Parse(invoke, context.DeclaredItems);
+        var (codeBlock, newRuntimeVariables, localVariables) = _codeParser.Parse(invoke, context.DeclaredItems);
 
         if (localVariables.Count > 0)
             throw new Exception($"Local variables ({string.Join(", ", localVariables.Select(x => x.Name))}) are not supported for matching function");

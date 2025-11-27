@@ -2,7 +2,7 @@
 
 POST /csharp/using/matching/{{
 
-    ## check that the value is an account number
+    @- check that the value is an account number
     @using System.Text.RegularExpressions;
 
     var regex = new Regex("\\d{20}");
@@ -10,7 +10,7 @@ POST /csharp/using/matching/{{
 
 }}?amount={{
 
-    ## check that the amount is decimal
+    @- check that the amount is decimal
     @using System.Text.RegularExpressions;
 
     var regex = new Regex("[0-9]*\\.?[0-9]*");
@@ -20,7 +20,7 @@ POST /csharp/using/matching/{{
 ~ body
 {{ jpath: $.destination }} >> {{
 
-    ## check that the value is an account number
+    @- check that the value is an account number
     @using System.Text.RegularExpressions;
 
     var regex = new Regex("\\d{20}");
@@ -30,7 +30,7 @@ POST /csharp/using/matching/{{
 ~ headers
 Request-Id: {{
 
-    ## check that the value is uuid
+    @- check that the value is uuid
     @using System.Text.RegularExpressions;
 
     var regex = new Regex("^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$");

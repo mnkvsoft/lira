@@ -1,8 +1,8 @@
-###
+@*
 When sending an order, 
 we will save the response body in cache for 5 minutes, 
 using its ID in the caching key
-###
+*@
 -------------------- rule
 
 POST /order
@@ -35,11 +35,11 @@ cache.set(
 )
 
 
-###
+@*
 if there is data in the cache, 
 then we send it in the body of the response, 
 changing the value of the 'status' field to 'paid'
-###
+*@
 -------------------- rule
 
 GET /order/{{ cache.contains("cache_example_" + value) >> $$id }}
@@ -55,10 +55,10 @@ example: cache
             .replace("$.status", "paid")
 }}
 
-###
+@*
 if a request to cancel an order is received, 
 we delete the data from the cache
-###
+*@
 -------------------- rule
 
 POST /order/cancel/{{ cache.contains("cache_example_" + value) >> $$id }}
@@ -75,11 +75,11 @@ example: cache
 cache.remove("cache_example_" + $$id)
 
 
-###
+@*
 if when requesting an order, 
 the data is not found in the cache, 
 then we issue an appropriate response
-###
+*@
 -------------------- rule
 
 GET /order/{{ !cache.contains("cache_example_" + value) }}

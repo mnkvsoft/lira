@@ -1,17 +1,26 @@
 using System.Text;
+using Lira.Common;
 using Lira.Common.Exceptions;
 using Lira.Common.Extensions;
 using Lira.Domain.TextPart;
 using Lira.Domain.TextPart.Impl.Custom;
+using Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel.LocalVariables;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables;
 using Lira.Domain.TextPart.Impl.Custom.VariableModel.RuleVariables.Impl;
 
 namespace Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 
-static class CodeParser
+class CodeParser
 {
-    public static (CodeBlock, IReadOnlyCollection<RuntimeRuleVariable>, IReadOnlyCollection<LocalVariable>) Parse(
+    private readonly IReadOnlyCollection<string> _keyWords;
+
+    public CodeParser(IEnumerable<IKeyWordInDynamicBlock> keyWordProviders)
+    {
+        _keyWords = keyWordProviders.Select(x => x.Word).ToArray();
+    }
+
+    public (CodeBlock, IReadOnlyCollection<RuntimeRuleVariable>, IReadOnlyCollection<LocalVariable>) Parse(
         string code,
         IReadOnlySet<DeclaredItem> declaredItems)
     {
@@ -30,7 +39,7 @@ static class CodeParser
         }
     }
 
-    private static (CodeBlock, IReadOnlyCollection<RuntimeRuleVariable>, IReadOnlyCollection<LocalVariable>) ParseInternal(string code,
+    private (CodeBlock, IReadOnlyCollection<RuntimeRuleVariable>, IReadOnlyCollection<LocalVariable>) ParseInternal(string code,
         IReadOnlySet<DeclaredItem> declaredItems)
     {
         var codeTokens = Parse(code);
@@ -147,21 +156,21 @@ static class CodeParser
         return newResult;
     }
 
-    private static IReadOnlyCollection<CodeToken> Parse(string code)
+    private IReadOnlyCollection<CodeToken> Parse(string code)
     {
         var tokens = new List<CodeToken>();
-        bool enterVariableName = false;
+        NamingStrategy? itemNamingStrategy = null;
 
-        using var iterator = code.GetEnumerator();
+        var iterator = new StringIterator(code);
         var sbAccessToVariable = new StringBuilder();
         var sbOtherCode = new StringBuilder();
 
         while (iterator.MoveNext())
         {
             sbOtherCode.Append(iterator.Current);
-            if (enterVariableName)
+            if (itemNamingStrategy != null)
             {
-                if (CustomItemName.IsAllowedCharInName(iterator.Current))
+                if (itemNamingStrategy.IsAllowedChar(iterator.Current))
                 {
                     sbAccessToVariable.Append(iterator.Current);
                 }
@@ -206,8 +215,14 @@ static class CodeParser
             }
             else
             {
-                if (iterator.Current == '$')
+                if (iterator.Current == '@' && iterator.NextIsOneOf(_keyWords.Select(x => x + " "), out var word))
                 {
+                    sbOtherCode.Append(word);
+                    iterator.MoveToEnd(word);
+                }
+                else if (iterator.Current == '$')
+                {
+                    var namingStrategy = LocalVariable.NamingStrategy;
                     sbAccessToVariable.Append(iterator.Current);
 
                     iterator.MoveNext();
@@ -215,15 +230,16 @@ static class CodeParser
 
                     if (iterator.Current == '$')
                     {
+                        namingStrategy = RuleVariable.NamingStrategy;
                         sbAccessToVariable.Append(iterator.Current);
 
                         iterator.MoveNext();
                         sbOtherCode.Append(iterator.Current);
                     }
 
-                    if (CustomItemName.IsAllowedFirstCharInName(iterator.Current))
+                    if (namingStrategy.IsAllowedFirstChar(iterator.Current))
                     {
-                        enterVariableName = true;
+                        itemNamingStrategy = namingStrategy;
                         sbAccessToVariable.Append(iterator.Current);
                         if (sbOtherCode.Length > 0)
                         {
@@ -241,16 +257,17 @@ static class CodeParser
                         sbAccessToVariable.Clear();
                     }
                 }
-                else if (iterator.Current == '#')
+                else if (iterator.Current == '@')
                 {
+                    var namingStrategy = Function.NamingStrategy;
                     sbAccessToVariable.Append(iterator.Current);
 
                     iterator.MoveNext();
                     sbOtherCode.Append(iterator.Current);
 
-                    if (CustomItemName.IsAllowedFirstCharInName(iterator.Current))
+                    if (namingStrategy.IsAllowedFirstChar(iterator.Current))
                     {
-                        enterVariableName = true;
+                        itemNamingStrategy = namingStrategy;
                         sbAccessToVariable.Append(iterator.Current);
                         if (sbOtherCode.Length > 0)
                         {
@@ -271,7 +288,7 @@ static class CodeParser
             }
         }
 
-        if (enterVariableName)
+        if (itemNamingStrategy != null)
             tokens.Add(new CodeToken.ReadItem(sbAccessToVariable.ToString()));
         else
             tokens.Add(new CodeToken.OtherCode(sbOtherCode.ToString()));
@@ -298,7 +315,7 @@ static class CodeParser
                 sbOtherCode.Remove(0, sbOtherCode.Length - 2);
             }
 
-            enterVariableName = false;
+            itemNamingStrategy = null;
         }
 
         void AddReadVariableToken()
@@ -306,7 +323,7 @@ static class CodeParser
             tokens.Add(new CodeToken.ReadItem(sbAccessToVariable.ToString()));
             sbAccessToVariable.Clear();
             sbOtherCode.Clear().Append(iterator.Current);
-            enterVariableName = false;
+            itemNamingStrategy = null;
         }
     }
 }

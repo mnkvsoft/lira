@@ -19,6 +19,7 @@ This event happened "{{ date }}" on the street "{{ str }}". It was raining heavi
 #### Пример
 
 [body.rules](examples/generating/body.rules)
+
 ```
 -------------------- rule
 
@@ -32,6 +33,7 @@ GET /story
 ~ body
 This event happened "{{ date }}" on the street "{{ str }}". It was raining heavily, it was getting dark...
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/story'
@@ -56,6 +58,7 @@ This event happened "2016-09-21T16:11:56.3319249" on the street "0ljk04kwwor93cr
 #### Пример
 
 [headers.rules](examples/generating/headers.rules)
+
 ```
 -------------------- rule
 
@@ -73,6 +76,7 @@ example: headers
 Story: This event happened "{{ date }}" on the street "{{ str }}". It was raining heavily, it was getting dark...
 Request-Id: {{ guid }}
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/story' \
@@ -95,6 +99,7 @@ Request-Id: 512de6f0-e241-45c3-a012-b21086751e0d
 #### Пример. В блоке `code`
 
 [http_code_in_block.rules](examples/generating/http_code_in_block.rules)
+
 ```
 -------------------- rule
 
@@ -108,6 +113,7 @@ example: http_code_in_block
 ~ code
 403
 ```
+
 Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -122,6 +128,7 @@ curl --location --request POST 'http://localhost/order' \
 #### Пример. В секции `response`
 
 [http_code_in_section.rules](examples/generating/http_code_in_section.rules)
+
 ```
 -------------------- rule
 
@@ -134,6 +141,7 @@ example: http_code_in_section
 
 403
 ```
+
 Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -147,6 +155,7 @@ curl --location --request POST 'http://localhost/order' \
 #### Пример. Не указан
 
 [http_code_default.rules](examples/generating/http_code_default.rules)
+
 ```
 -------------------- rule
 
@@ -162,6 +171,7 @@ example: http_code_default
     "status": "ok"
 }
 ```
+
 Запрос
 ```
 curl --location --request POST 'http://localhost/order' \
@@ -210,10 +220,11 @@ req.path: <индекс_сегмента>
 ```
 #### Пример
 [hello.rules](examples/quick_start/hello.rules)
+
 ```
 -------------------- rule
 
-GET /hello/{{ name=person any }}
+GET /hello/{{ any >> $$person }}
 
 ----- response
 
@@ -221,7 +232,7 @@ GET /hello/{{ name=person any }}
 200
 
 ~ body
-hello {{ req.path: person }}!
+hello {{ $$person }}!
 ```
 
 
@@ -236,6 +247,7 @@ req.body.jpath: <JSON_Path_выражение>
 
 #### Пример
 [body.jpath.rules](examples/generating/body.jpath.rules)
+
 ```
 -------------------- rule
 
@@ -249,6 +261,7 @@ example: body.jpath
 ~ body
 {{ req.body.jpath: $.amount }}
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -276,6 +289,7 @@ req.body.xpath: <XPath_выражение>
 #### Пример
 
 [body.xpath.rules](examples/generating/body.xpath.rules)
+
 ```
 -------------------- rule
 
@@ -289,6 +303,7 @@ example: body.xpath
 ~ body
 {{ req.body.xpath: /order/amount/text() }}
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -318,6 +333,7 @@ form: <наименование_параметра>
 #### Пример
 
 [body.form.rules](examples/generating/body.form.rules)
+
 ```
 -------------------- rule
 
@@ -332,6 +348,7 @@ example: body.form
 {{ req.body.form: amount }}
 {{ req.body.form: description }}
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -355,6 +372,7 @@ it's very important order
 #### Пример
 
 [body.all.rules](examples/generating/body.all.rules)
+
 ```
 -------------------- rule
 
@@ -368,6 +386,7 @@ example: body.all
 ~ body
 request body: {{ req.body.all }}
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -394,22 +413,22 @@ request body: some description
 Возвращает текущую дату в UTC
 
 ## date
-Возвращает дату в локальном времени в интервале `[текущая дата - 1 год] - [текущая дата]` 
+Возвращает дату в локальном времени в интервале `[текущая дата - 1 год]..[текущая дата]` 
 
 ## date.past
-Возвращает дату в локальном времени в интервале `[текущая дата - 11 лет] - [текущая дата - 1 год]`
+Возвращает дату в локальном времени в интервале `[текущая дата - 11 лет]..[текущая дата - 1 год]`
 
 ## date.future
-Возвращает дату в локальном времени в интервале `[текущая дата + 1 год] - [текущая дата + 11 лет]`
+Возвращает дату в локальном времени в интервале `[текущая дата + 1 год]..[текущая дата + 11 лет]`
 
 ## date.utc
-Возвращает текущую дату в UTC в интервале `[текущая дата - 1 год] - [текущая дата]`
+Возвращает текущую дату в UTC в интервале `[текущая дата - 1 год]..[текущая дата]`
 
 ## date.utc.past
-Возвращает дату в UTC в интервале `[текущая дата - 11 лет] - [текущая дата - 1 год]`
+Возвращает дату в UTC в интервале `[текущая дата - 11 лет]..[текущая дата - 1 год]`
 
 ## date.utc.future
-Возвращает дату в UTC в интервале `[текущая дата + 1 год] - [текущая дата + 11 лет]`
+Возвращает дату в UTC в интервале `[текущая дата + 1 год]..[текущая дата + 11 лет]`
 
 
 
@@ -421,7 +440,7 @@ request body: some description
 int[: <интервал>]
 ```
 
-Если интервал не указан, то по умолчанию используется `1 - 2 147 483 647`.
+Если интервал не указан, то по умолчанию используется `1..2_147_483_647`.
 
 Подробнее об определении интервалов в [разделе](guide.md#описание-интервалов)
 
@@ -435,7 +454,7 @@ int[: <интервал>]
 dec[: <интервал>]
 ```
 
-Если интервал не указан, то по умолчанию используется `0.01 - 10000`.
+Если интервал не указан, то по умолчанию используется `0.01..10000`.
 
 Подробнее об определении интервалов в [разделе](guide.md#описание-интервалов)
 
@@ -462,12 +481,12 @@ str[: <длина строки>]
 Если длина строки не указана, то по умолчанию используется значение `20`
 
 ## seq
-Последовательно возвращает значения в диапазоне `1 - 9 223 372 036 854 775 807`
+Последовательно возвращает значения в диапазоне `1..9_223_372_036 854_775_807`
 
 ## random
 Возвращает случайное значение из указанного списка значений
 ```
-random: [значение_1],..[значение_N]
+random: [значение_1],...[значение_N]
 ```
 
 ## name.first
@@ -513,6 +532,7 @@ range: <имя_диапазона>/<диапазон>
 
 #### Пример. Объединение повторяющегося кода
 [req.id.rules](examples/guide/custom_functions/req.id.rules)
+
 ```
 -------------------- rule
 
@@ -524,17 +544,17 @@ Request-Id: {{ any }}
 
 ----- declare
 
-#req.id = {{ req.header: Request-Id }}
+@req.id = {{ req.header: Request-Id }}
 
 ----- response
 
 ~ headers
-Request-Id: {{ #req.id }}
+Request-Id: {{ @req.id }}
 
 ~ body
 {
     "id": {{ seq }},
-    "request_id": {{ #req.id }}
+    "request_id": {{ @req.id }}
 }
 ```
 
@@ -556,7 +576,7 @@ Request-Id: 12345
 
 
 
-При вызове пользовательских функций символ `#` может быть опущен.
+При вызове пользовательских функций символ `@` может быть опущен.
 
 В этом случае правило будет выглядеть следующим образом:
 
@@ -571,7 +591,7 @@ Request-Id: {{ any }}
 
 ----- declare
 
-#req.id = {{ req.header: Request-Id }}
+@req.id = {{ req.header: Request-Id }}
 
 ----- response
 
@@ -587,6 +607,7 @@ Request-Id: {{ req.id }}
 
 #### Пример. Определение шаблонов
 [template.rules](examples/guide/custom_functions/template.rules)
+
 ```
 -------------------- rule
 
@@ -597,7 +618,7 @@ example: guide/custom_functions/template
 
 ----- declare
 
-#order.template = 
+@order.template = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -612,12 +633,13 @@ example: guide/custom_functions/template
 ~ body
 {
     "orders": [
-        {{ #order.template }},
-        {{ #order.template }},
-        {{ #order.template }}
+        {{ @order.template }},
+        {{ @order.template }},
+        {{ @order.template }}
     ]
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/orders' \
@@ -660,6 +682,7 @@ curl --location 'http://localhost/orders' \
 
 #### Пример. Изменения значения в шаблоне
 [template.json.rules](examples/guide/custom_functions/template.json.rules)
+
 ```
 -------------------- rule
 
@@ -670,7 +693,7 @@ example: guide/custom_functions/template.json
 
 ----- declare
 
-#order.template:json = 
+@order.template:json = 
 {
     "id": {{ int }},
     "status": "paid",
@@ -686,22 +709,23 @@ example: guide/custom_functions/template.json
 {
     "orders": [
         {{ 
-            #order.template
+            @order.template
                 .replace("$.status", "ok")
                 .replace("$.customer", "vasily pupkin")
         }},
         {{ 
-            #order.template
+            @order.template
                 .replace("$.status", "pending")
                 .replace("$.customer", "john silver")
         }},
         {{ 
-            #order.template
+            @order.template
                 .replace("$.status", "declined")
         }}
     ]
 }
 ```
+
 :triangular_flag_on_post: Блок, в котором используется функция `replace()` является
 блоком `C#` - кода, который будет рассмотрен ниже. При вызовах функций в C# - блоках
 символ `#` используемый при объявлении функций не может быть опущен
@@ -743,6 +767,7 @@ curl --location 'http://localhost/orders' \
 
 #### Пример. Определения функции для герерации специфичного значения
 [int.big.rules](examples/guide/custom_functions/int.big.rules)
+
 ```
 -------------------- rule
 
@@ -753,7 +778,7 @@ example: guide/custom_functions/int.big
 
 ----- declare
 
-#int.big = {{ int: [1000000000 - 9999999999] }}
+@int.big = {{ int: [1000000000..9999999999] }}
 
 ----- response
 
@@ -762,6 +787,7 @@ example: guide/custom_functions/int.big
     "id": {{ int.big }}
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -778,6 +804,7 @@ curl --location 'http://localhost/order' \
 Заменим системную функцию [int](#int), сузив диапазон выдаваемых значений 
 
 [int.override.rules](examples/guide/custom_functions/int.override.rules)
+
 ```
 -------------------- rule
 
@@ -788,7 +815,7 @@ example: guide/custom_functions/int.override
 
 ----- declare
 
-#int = {{ int: [1 - 10] }}
+@int = {{ int: [1..10] }}
 
 ----- response
 
@@ -797,6 +824,7 @@ example: guide/custom_functions/int.override
     "items_count": {{ int }}
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -823,6 +851,7 @@ curl --location 'http://localhost/order' \
 Переменные регистрируются в секции `declare` с использованием суффикса `$$`
 
 [variables.rules](examples/generating/variables.rules)
+
 ```
 -------------------- rule
 
@@ -848,6 +877,7 @@ Request-Id: {{ $$requestId }}
     "request_id": "{{ $$requestId }}"
 }
 ```
+
 Запрос
 ```
 curl --location --request POST 'http://localhost/payment' \
@@ -879,6 +909,7 @@ Request-Id: 4af7cf3b-e6c4-43ef-aa43-000c883cd081
 
 #### Пример
 [rule.rules](examples/guide/declare_layers/rule.rules)
+
 ```
 -------------------- rule
 
@@ -889,7 +920,7 @@ example: guide/declare_layers/rule
 
 ----- declare
 
-#amount = {{ dec: [100 - 10000] }}
+@amount = {{ dec: [100..10000] }}
 $$id = {{ seq }}
 
 ----- response
@@ -900,15 +931,16 @@ $$id = {{ seq }}
     "items":[
         {
             "parent_transaction_id": {{ $$id }},
-            "amount": {{ #amount }}
+            "amount": {{ @amount }}
         },
         {
             "parent_transaction_id": {{ $$id }},
-            "amount": {{ #amount }}
+            "amount": {{ @amount }}
         }
     ]
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -936,22 +968,23 @@ curl --location 'http://localhost/order' \
 
 #### Пример
 [file.rules](examples/guide/declare_layers/file.rules)
+
 ```
 -------------------- declare
 
-#amount = {{ dec: [100 - 10000] }}
+@amount = {{ dec: [100..10000] }}
 $$id = {{ seq }}
-#template = 
+@template = 
 {
     "id": {{ $$id }}
     "items":[
         {
             "parent_id": {{ $$id }},
-            "amount": {{ #amount }}
+            "amount": {{ @amount }}
         },
         {
             "parent_id": {{ $$id }},
-            "amount": {{ #amount }}
+            "amount": {{ @amount }}
         }
     ]
 }
@@ -966,7 +999,7 @@ example: guide/declare_layers/file
 ----- response
 
 ~ body
-{{ #template }}
+{{ @template }}
 
 -------------------- rule
 
@@ -978,8 +1011,9 @@ example: guide/declare_layers/file
 ----- response
 
 ~ body
-{{ #template }}
+{{ @template }}
 ```
+
 Запрос для 1 правила
 ```
 curl --location 'http://localhost/order/1' \
@@ -1028,9 +1062,11 @@ curl --location 'http://localhost/order/2' \
 
 #### Пример
 [declare.shared.global.declare](examples/quick_start/declare.shared.global.declare)
+
 ```
-#age = {{ int: [1 - 122]}}
+@age = {{ int: [1..122]}}
 ```
+
 [global.rules](examples/quick_start/declare.shared.global.rules)
 
 ```
@@ -1099,7 +1135,8 @@ curl --location 'http://localhost/person' \
 Подразумевают инструцию без использования дополнительных переменных и
 возвращающую **не** `void` значение
 
-[short.rules](examples/quick_start/charp.short.rules)
+[short.rules](examples/quick_start/csharp.short.rules)
+
 ```
 -------------------- rule
 
@@ -1115,6 +1152,7 @@ GET /very/old/event
     "date": {{ DateTime.Now.AddYears(-1000 - Random.Shared.Next(1, 100)) }}
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/very/old/event'
@@ -1133,7 +1171,8 @@ curl --location 'http://localhost/very/old/event'
 #### Пример. Блок C# - кода при генерации тела сообщения 
 
 [full.rules](examples/guide/csharp/full.rules)
-```cs
+
+```
 -------------------- rule
 
 GET /order
@@ -1157,6 +1196,7 @@ example: guide/charp/full
      }}"
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -1172,7 +1212,8 @@ curl --location 'http://localhost/order' \
 #### Пример. Блок C# - кода в пользовательской функции
 
 [full.function.rules](examples/guide/csharp/full.function.rules)
-```cs
+
+```
 -------------------- rule
 
 GET /order
@@ -1181,7 +1222,7 @@ GET /order
 example: guide/charp/full.function
 
 ----- declare
-#name = 
+@name = 
 {{
      var firstNames = new []{"Vasily", "Nikolas", "Ivan", "John"};
         var lastNames = new []{"Pupkin", "Stallone", "Norris", "Ivanov"};
@@ -1196,9 +1237,10 @@ example: guide/charp/full.function
 
 ~ body
 {
-    "customer": "{{ #name }}"
+    "customer": "{{ @name }}"
 }
 ```
+
 Запрос
 ```
 curl --location 'http://localhost/order' \
@@ -1306,12 +1348,12 @@ req.body.all()
 с помощью функции `format`, если возвращенный тип поддерживает форматирование
 
 #### Пример
-[format.rules](examples/generating/transform/format.rules)
+[format.rules](examples/generating/format.rules)
 
 ```
 -------------------- rule
 
-GET /generating/transform/format
+GET /generating/format
 
 ----- response
 
@@ -1320,6 +1362,7 @@ GET /generating/transform/format
 {{ int >> format: #.00# }}
 {{ guid >> format: N }}
 ```
+
 Оператор `>>` передает значение полученное динамической функцией на вход функции
 `format`, которая выполняет форматирование. Оператор `>>` подробнее рассматривается в разделе 
 [Модель передачи значения по цепочки функций](#модель-передачи-значения-по-цепочки-функций).
@@ -1328,7 +1371,7 @@ GET /generating/transform/format
 
 Запрос
 ```
-curl --location 'http://localhost/generating/transform/format'
+curl --location 'http://localhost/generating/format'
 ```
 Ответ
 ```
@@ -1356,3 +1399,4 @@ d953d01ce7f640119f36ad7cae1668ba
 - переменные
 - пользовательские функции
 - блоки кода на языке C#
+

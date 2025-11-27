@@ -2,7 +2,12 @@ namespace Lira.Domain.TextPart.Impl.Custom.FunctionModel;
 
 public class Function : DeclaredItem
 {
-    public const string Prefix = "#";
+    public const string Prefix = "@";
+
+    public static readonly NamingStrategy NamingStrategy = new(
+        Prefix,
+        IsAllowedFirstChar: c => char.IsLetter(c) || c == '_',
+        IsAllowedChar: c => char.IsLetter(c) || char.IsDigit(c) || c == '_' || c == '.');
 
     private readonly IReadOnlyCollection<IObjectTextPart> _parts;
     public override ReturnType? ReturnType { get; }
@@ -19,11 +24,11 @@ public class Function : DeclaredItem
         Name = name;
     }
 
-    public static bool IsValidName(string name) => CustomItemName.IsValidName(Prefix, name);
+    public static bool IsValidName(string name) => NamingStrategy.IsValidName(name);
 
-    public override async Task<dynamic?> Get(RuleExecutingContext context)
+    public override IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
-        var value = await _parts.Generate(context);
+        var value = _parts.Generate(context);
         dynamic? valueToReturn = value;
 
         if (ReturnType != null)
@@ -41,6 +46,6 @@ public class Function : DeclaredItem
             valueToReturn = valueTyped;
         }
 
-        return valueToReturn;
+        yield return valueToReturn;
     }
 }

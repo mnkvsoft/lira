@@ -1,16 +1,17 @@
 ﻿using System.Collections.Immutable;
-using System.Security.Claims;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration;
+using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Moq.Contrib.HttpClient;
 
 namespace Lira.IntegrationTests;
 
-public class AppMocks
+class AppMocks
 {
+    public PeImagesCache? PeImagesCache { get; set; }
+
     public Mock<HttpMessageHandler> HttpMessageHandler = new Mock<HttpMessageHandler>()
         .Apply(mock =>
         {
@@ -27,12 +28,6 @@ public class AppMocks
 
     public IServiceCollection Configure(IServiceCollection services)
     {
-        var claims = new List<Claim>
-        {
-            new("phone", "9161112233"),
-        };
-
-
         var mock = new Mock<ExternalCalling.Http.Configuration.IHttpMessageHandlerFactory>();
         mock
             .Setup(x => x.Create())
@@ -40,6 +35,9 @@ public class AppMocks
 
         services.Replace(mock.Object);
         services.Replace(StateRepository.Object);
+
+        if(PeImagesCache != null)
+            services.Replace(PeImagesCache);
 
         return services;
     }

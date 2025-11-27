@@ -2,11 +2,11 @@ namespace Lira.Domain.TextPart.Impl.Custom.VariableModel;
 
 public class ObjectTextPartWithSaveVariable(IObjectTextPart objectTextPart, Variable variable) : IObjectTextPart
 {
-    public async Task<dynamic?> Get(RuleExecutingContext context)
+    public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
-        var value = await objectTextPart.Get(context);
+        var value = objectTextPart.Generate(context);
         variable.SetValue(context, value);
-        return value;
+        yield return value;
     }
 
     public ReturnType? ReturnType => objectTextPart.ReturnType;

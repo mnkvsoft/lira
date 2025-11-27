@@ -6,5 +6,5 @@ GET /csharp/using/global_cs_files
 
 ----- response
 
-## namespaces in stringUtils was added from GlobalUsings.cs
+@- namespaces in stringUtils was added from GlobalUsings.cs
 {{ stringUtils.digits(10) }}

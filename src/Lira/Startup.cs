@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using Lira.Common;
 using Lira.Domain;
 using Lira.Common.Exceptions;
@@ -26,7 +25,7 @@ public class Startup
         services
             .AddLogging(x => { x.AddConsole(); })
             .AddSingleton<RoutingMiddleware>()
-            .AddDomainConfiguration()
+            .AddDomainConfiguration(_configuration)
             .AddDomain()
             .AddHttpCalling(_configuration)
             .AddControllers();

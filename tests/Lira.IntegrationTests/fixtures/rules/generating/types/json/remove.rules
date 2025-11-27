@@ -4,7 +4,7 @@ GET /generating/types/json/remove
 
 ----- declare
 
-#person:json =
+@person:json =
 {
   "name": "John",
   "age": 30,
@@ -24,7 +24,7 @@ GET /generating/types/json/remove
 
 ~ body
 {{
-     #person
+     @person
         .remove("$.name")
         .remove("$.address")
         .remove("$.phones[0]")

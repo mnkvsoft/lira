@@ -17,7 +17,7 @@ public record Interval<T> where T : struct, IComparable<T>
         To = to;
     }
 
-    public override string ToString() => $"[{From} - {To}]";
+    public override string ToString() => $"[{From}..{To}]";
     public bool InRange(T value) => From.CompareTo(value) <= 0 && (value.CompareTo(To) <= 0);
     public bool IsIntersect(Interval<T> interval)
     {
@@ -54,7 +54,7 @@ public record Interval<T> where T : struct, IComparable<T>
         result = null;
 
         str = str.TrimStart('[').TrimEnd(']');
-        var (fromStr, toStr) = str.SplitToTwoParts("-").Trim();
+        var (fromStr, toStr) = str.SplitToTwoParts("..").Trim();
         if (toStr == null)
             return false;
 

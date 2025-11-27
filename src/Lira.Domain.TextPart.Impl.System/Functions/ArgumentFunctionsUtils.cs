@@ -59,7 +59,7 @@ static class FunctionBaseExtensions
             var argumentType = withRangeArgumentInterface.GetGenericArguments().Single();
             argument = argument.Trim().TrimStart("[").TrimEnd("]");
 
-            var (fromStr, toStr) = argument.SplitToTwoPartsRequired("-").Trim();
+            var (fromStr, toStr) = argument.SplitToTwoPartsRequired("..").Trim();
 
             if (!StringConverter.TryConvert(argumentType, fromStr, out object? objFrom))
                 throw new Exception(

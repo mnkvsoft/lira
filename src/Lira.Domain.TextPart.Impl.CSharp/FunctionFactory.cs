@@ -7,7 +7,7 @@ using Lira.Domain.TextPart.Impl.CSharp.Compilation;
 using Lira.Domain.TextPart.Impl.CSharp.DynamicModel;
 using Lira.Domain.DataModel;
 using Lira.Domain.Handling.Actions;
-using Lira.Domain.TextPart.Impl.Custom;
+using Microsoft.Extensions.Logging;
 
 // ReSharper disable RedundantExplicitArrayCreation
 
@@ -19,11 +19,14 @@ class FunctionFactory : IFunctionFactoryCSharp
     private readonly Compiler _compiler;
     private readonly Cache _cache;
     private readonly IRangesProvider _rangesProvider;
+    private readonly ICustomDictsProvider _customDictsProvider;
     private readonly IImmutableList<string> _assembliesLocations;
     private readonly AssembliesLoader _assembliesLoader;
     private readonly CsFilesAssembly? _csFilesAssembly;
     private readonly Namer _namer;
     private readonly string? _globalUsingFileContent;
+    private readonly ILoggerFactory _loggerFactory;
+    private readonly ILogger _logger;
 
     public record Dependencies(
         AssembliesLoader AssembliesLoader,
@@ -31,7 +34,9 @@ class FunctionFactory : IFunctionFactoryCSharp
         CompilationStatistic CompilationStatistic,
         Cache Cache,
         IRangesProvider RangesProvider,
-        Namer Namer);
+        ICustomDictsProvider CustomDictsProvider,
+        Namer Namer,
+        ILoggerFactory LoggerFactory);
 
     public FunctionFactory(Dependencies dependencies,
         IImmutableList<string> assembliesLocations,
@@ -42,12 +47,15 @@ class FunctionFactory : IFunctionFactoryCSharp
         _compilationStatistic = dependencies.CompilationStatistic;
         _cache = dependencies.Cache;
         _rangesProvider = dependencies.RangesProvider;
+        _customDictsProvider = dependencies.CustomDictsProvider;
         _assembliesLoader = dependencies.AssembliesLoader;
         _namer = dependencies.Namer;
         _globalUsingFileContent = globalUsingFileContent;
 
         _assembliesLocations = assembliesLocations;
         _csFilesAssembly = csFilesAssembly;
+        _loggerFactory = dependencies.LoggerFactory;
+        _logger = _loggerFactory.CreateLogger<FunctionFactory>();
     }
 
     public CreateFunctionResult<IObjectTextPart> TryCreateGeneratingFunction(
@@ -83,7 +91,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         string classToCompile = ClassCodeCreator.CreateTransformFunction(
             className,
-            WrapToTryCatch(new Code(ForCompile: $"return {withoutUsings};", Source: code)),
+            WrapToTryCatch(new Code(ForCompile: $"return {withoutUsings};", Source: code.ToString())),
             ReservedVariable.Value,
             usings,
             GetNamespaces(),
@@ -93,6 +101,31 @@ class FunctionFactory : IFunctionFactoryCSharp
             assemblyPrefixName: prefix,
             classToCompile,
             className);
+
+        _compilationStatistic.AddTotalTime(sw.Elapsed);
+
+        return result;
+    }
+
+    public CreateFunctionResult<IPredicateFunction> TryCreatePredicateFunction(FunctionFactoryRuleContext ruleContext, string code)
+    {
+        var sw = Stopwatch.StartNew();
+
+        string prefix = "PredicateFunction";
+        string className = _namer.GetClassName(prefix, code);
+
+        string classToCompile = ClassCodeCreator.CreatePredicateFunction(
+            className,
+            WrapToTryCatch(new Code(ForCompile: $"return {code};", Source: code)),
+            ReservedVariable.Req,
+            GetNamespaces(),
+            GetUsingStatic());
+
+        var result = CreateFunctionResult<IPredicateFunction>(
+            assemblyPrefixName: prefix,
+            classToCompile,
+            className,
+            CreateDependenciesBase(ruleContext.DeclaredItemsProvider));
 
         _compilationStatistic.AddTotalTime(sw.Elapsed);
 
@@ -111,7 +144,7 @@ class FunctionFactory : IFunctionFactoryCSharp
 
         string classToCompile = ClassCodeCreator.CreateMatchFunction(
             className,
-            GetMethodBody(new Code(ForCompile: withoutUsings, Source: code)),
+            GetMethodBody(new Code(ForCompile: withoutUsings, Source: code.ToString())),
             ReservedVariable.Value,
             usings,
             GetNamespaces(),
@@ -138,7 +171,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         var (withoutUsings, usings) = PrepareCode(code, ruleContext);
         string classToCompile = ClassCodeCreator.CreateRequestMatcher(
             className,
-            GetMethodBody(new Code(ForCompile: withoutUsings, Source: code)),
+            GetMethodBody(new Code(ForCompile: withoutUsings, Source: code.ToString())),
             ReservedVariable.Req,
             usings,
             GetNamespaces(),
@@ -199,7 +232,10 @@ class FunctionFactory : IFunctionFactoryCSharp
                     Runtime: _csFilesAssembly != null ? [_csFilesAssembly.PeImage] : Array.Empty<PeImage>())));
 
         if (compileResult is CompileResult.Fault fault)
-            return new CreateFunctionResult<TFunction>.Failed(fault.Message, classToCompile);
+        {
+            _logger.LogDebug("An exception occurred while compiling the code:" + Environment.NewLine + classToCompile);
+            return new CreateFunctionResult<TFunction>.Failed(fault.Message);
+        }
 
         var peImage = ((CompileResult.Success)compileResult).PeImage;
 
@@ -225,8 +261,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         IReadOnlyCollection<string> usings;
         if (sourceCode.StartsWith(repeatFunctionName))
         {
-            toCompile = ReplaceVariableNamesForRepeat(code)
-                .Replace(repeatFunctionName, "await " + repeatFunctionName);
+            toCompile = ReplaceVariableNamesForRepeat(code);
             usings = Array.Empty<string>();
         }
         else
@@ -234,11 +269,23 @@ class FunctionFactory : IFunctionFactoryCSharp
             (toCompile, usings) = PrepareCode(code, ruleContext);
         }
 
+        toCompile = EnrichReturnOperator(toCompile);
+
+        toCompile =
+            $$"""
+              {{WrapToTryCatch(new Code("return GetInternal();", sourceCode))}}
+
+              IEnumerable<dynamic?> GetInternal()
+              {
+                    {{toCompile}}
+              }
+              """;
+
         string classToCompile = ClassCodeCreator.CreateIObjectTextPart(
             className,
             GetMethodBody(new Code(
                 ForCompile: toCompile,
-                Source: code)),
+                Source: code.ToString())),
             ContextParameterName,
             ReservedVariable.Req,
             repeatFunctionName,
@@ -247,6 +294,18 @@ class FunctionFactory : IFunctionFactoryCSharp
             GetUsingStatic());
 
         return classToCompile;
+
+        string EnrichReturnOperator(string c)
+        {
+            if (c.Contains("yield"))
+                return c;
+
+            if (c.Contains("return"))
+                return c.Replace("return", "yield return");
+
+            return $"var __result = {c};" + Constants.NewLine +
+                   "; yield return __result;";
+        }
     }
 
     private static string ReplaceVariableNamesForRepeat(CodeBlock code)
@@ -287,8 +346,8 @@ class FunctionFactory : IFunctionFactoryCSharp
                 var type = declaredItemsProvider.Get(readItem.ItemName).ReturnType;
 
                 sbCodeWithLiraItems.Append(
-                    $"({(type == null || !type.NeedTyped ? "" : "(" + type.DotnetType.FullName + ")")}(await GetDeclaredPart(" +
-                    $"\"{readItem.ItemName}\", {ContextParameterName})))");
+                    $"({(type == null || !type.NeedTyped ? "" : "(" + type.DotnetType.FullName + ")")}GetDeclaredPart(" +
+                    $"\"{readItem.ItemName}\", {ContextParameterName}))");
             }
             else if (token is CodeToken.WriteItem writeItem)
             {
@@ -314,7 +373,7 @@ class FunctionFactory : IFunctionFactoryCSharp
             className,
             WrapToTryCatch(new Code(
                 ForCompile: withoutUsings + ";",
-                Source: code)),
+                Source: code.ToString())),
             ContextParameterName,
             ReservedVariable.Req,
             usings,
@@ -365,7 +424,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         foreach (var line in codeWithVariables.Split(Constants.NewLine))
         {
             var trimmed = line.TrimStart(" ").TrimStart("\t");
-            if (trimmed.StartsWith("@using"))
+            if (trimmed.StartsWith($"@{KeyWord.Using}" ))
             {
                 usings.Add(trimmed[1..]);
             }
@@ -378,7 +437,7 @@ class FunctionFactory : IFunctionFactoryCSharp
         return (newCode.ToString(), usings);
     }
 
-    record Code(string ForCompile, CodeBlock Source);
+    record Code(string ForCompile, string Source);
 
     private static string GetMethodBody(Code code)
     {
@@ -403,27 +462,28 @@ class FunctionFactory : IFunctionFactoryCSharp
 
     private static string WrapToTryCatch(Code code)
     {
-        string escapedCode = code.Source.ToString()
+        string escapedCode = code.Source
             .Replace("\\", "\\\\")
             .Replace("\"", "\\\"")
             .Replace("\r\n", "\" + nl + \"")
             .Replace("\n", "\" + nl + \"");
 
-        return @"try
+        return
+            $$"""
+            try
             {
-                " + code.ForCompile + @"
+                {{code.ForCompile}}
             }
             catch (Exception e)
             {
                 var nl = Lira.Common.Constants.NewLine;
-                throw new Exception(" + "\"An error has occurred while execute code block: \" + nl + \"" +
-               escapedCode +
-               "\", e);" + @"
-            }";
+                throw new Exception("An error has occurred while execute code block: " + nl + "{{escapedCode}}", e);
+            }
+            """;
     }
 
     private DynamicObjectBase.DependenciesBase CreateDependenciesBase(IDeclaredItemsProvider declaredItemsProvider)
     {
-        return new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider, declaredItemsProvider);
+        return new DynamicObjectBase.DependenciesBase(_cache, _rangesProvider, _customDictsProvider, declaredItemsProvider, _loggerFactory );
     }
 }

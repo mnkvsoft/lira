@@ -5,6 +5,7 @@ namespace Lira.Domain.TextPart.Impl.Custom.VariableModel.LocalVariables;
 public class LocalVariable : Variable
 {
     public const string Prefix = "$";
+    public static readonly NamingStrategy NamingStrategy = CreateNamingStrategy(Prefix);
 
     private static int _counter;
     private readonly int _id;
@@ -23,14 +24,14 @@ public class LocalVariable : Variable
 
     private static readonly object NullValue = new();
 
-    public static bool IsValidName(string name) => CustomItemName.IsValidName(Prefix, name);
+    public static bool IsValidName(string name) => NamingStrategy.IsValidName(name);
 
-    private Task<dynamic?> GetValue(RuleExecutingContext ctx)
+    private dynamic? GetValue(RuleExecutingContext ctx)
     {
         var values = GetVariableValues(ctx);
 
         if (values.TryGetValue(_id, out var value))
-            return Task.FromResult<dynamic?>(ReferenceEquals(value, NullValue) ? null : value);
+            return ReferenceEquals(value, NullValue) ? null : value;
 
         throw new InvalidOperationException($"Attempt to read from uninitialized variable '{Name}'");
     }
@@ -68,5 +69,8 @@ public class LocalVariable : Variable
         return ctx.Items.GetOrCreate(key: typeof(LocalVariable), () => new Dictionary<int, dynamic?>());
     }
 
-    public override Task<dynamic?> Get(RuleExecutingContext context) => GetValue(context);
+    public override IEnumerable<dynamic?> Get(RuleExecutingContext context)
+    {
+        yield return GetValue(context);
+    }
 }

@@ -75,6 +75,24 @@ static partial class ClassCodeCreator
             .Replace("[code]", code);
     }
 
+
+
+    public static string CreatePredicateFunction(
+        string className,
+        string code,
+        string externalRequestVariableName,
+        IReadOnlyCollection<string> namespaces,
+        IReadOnlyCollection<string> usingStaticTypes)
+    {
+        return CodeTemplate.IPredicateFunction
+            .Replace("[namespaces]", GetNamespaces(namespaces))
+            .Replace("[usingstatic]", GetUsingStatic(usingStaticTypes))
+            .Replace("[usings]", "")
+            .Replace("[className]", className)
+            .Replace("[externalRequestVariableName]", externalRequestVariableName)
+            .Replace("[code]", code);
+    }
+
     public static string CreateAction(
         string className,
         string code,

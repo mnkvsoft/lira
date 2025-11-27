@@ -23,7 +23,7 @@ GET /match/conditions/elapsed/interval
 200
 
 ~ body
-elapsed in [100 ms - 200 ms]
+elapsed in [100 ms..200 ms]
 
 -------------------- case
 

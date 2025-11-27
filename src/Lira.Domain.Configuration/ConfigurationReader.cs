@@ -22,17 +22,17 @@ class ConfigurationReader(
         logger.LogInformation("Loading rules...");
         var sw = Stopwatch.StartNew();
 
-        var customDicts = await CustomDictsLoader.Load(path);
-
         var context = new ParsingContext(
             new DeclaredItems(),
             FunctionFactoryUsingContext.Empty,
-            customDicts,
             rootPath: path,
             currentPath: path);
 
         using var scope = serviceScopeFactory.CreateScope();
         var provider = scope.ServiceProvider;
+
+        var dictsProvider = provider.GetRequiredService<CustomDictsProvider>();
+        dictsProvider.Dicts = await CustomDictsLoader.Load(path);
 
         var ranges = await rangesLoader.Load(path);
         var rulesProvider = provider.GetRequiredService<RangesProvider>();

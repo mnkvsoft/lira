@@ -4,9 +4,9 @@ GET /generating/declare/unorder/rule_layer
 
 ----- declare
 
-#func.1 = 1{{ #func.3 }}
-#func.2 = 2{{ #func.3 }}
-#func.3 = 3
+@func.1 = 1{{ @func.3 }}
+@func.2 = 2{{ @func.3 }}
+@func.3 = 3
 
 ----- response
 
@@ -14,6 +14,6 @@ GET /generating/declare/unorder/rule_layer
 200
 
 ~ body
-{{ #func.1 }}
-{{ #func.2 }}
-{{ #func.3 }}
+{{ @func.1 }}
+{{ @func.2 }}
+{{ @func.3 }}

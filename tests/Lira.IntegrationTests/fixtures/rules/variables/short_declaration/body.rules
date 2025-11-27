@@ -1,0 +1,14 @@
+-------------------- rule
+
+GET /variables/short_declaration/body
+
+~ body
+{{ jpath: $.phone }} >> 7{{ any >> $$clean_pnone }}
+
+----- response
+
+~ code
+200
+
+~ body
+{{ $$clean_pnone }}

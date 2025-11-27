@@ -9,7 +9,7 @@ with range
 
 -------------------- rule
 
-## code block has higher priority
+@- code block has higher priority
 GET /match/priority/static_range_static_vs_code/{{ return true; }}
 
 ----- response

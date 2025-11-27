@@ -1,14 +1,9 @@
 namespace Lira.Domain.DataModel;
 
-public abstract class DataRange
+public abstract class DataRange(DataName name)
 {
-    public DataName Name { get; }
+    public DataName Name => name;
     public abstract dynamic NextValue();
 
     public abstract bool ValueIsBelong(string value);
-
-    protected DataRange(DataName name)
-    {
-        Name = name;
-    }
 }

@@ -1,0 +1,34 @@
+-------------------- rule
+
+GET /logging/base/{{
+    log("hello from path: " + value);
+    return true;
+}}?param={{
+    log("hello from query: " + value);
+    return true;
+}}
+
+~ body
+{{ all }} >> {{
+    log("hello from body: " + value);
+    return true;
+}}
+
+~ req
+
+log("hello from req");
+return true;
+
+----- response
+
+~ code
+{{
+    log("hello from code");
+    return 200;
+}}
+
+~ body
+{{
+    log("hello from response body");
+    return "hello";
+}}

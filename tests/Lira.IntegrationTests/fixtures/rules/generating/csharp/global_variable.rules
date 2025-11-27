@@ -8,4 +8,4 @@ GET /generating/csharp/global_variable
 200
 
 ~ body
-{{ $$global_csharp_var }}
+{{ @global_csharp_fund }}

@@ -1,0 +1,8 @@
+-------------------- case
+
+GET /custom_dic/match/red
+
+----- expected
+
+~ code
+200

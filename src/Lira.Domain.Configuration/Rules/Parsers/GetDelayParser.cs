@@ -1,6 +1,5 @@
 using Lira.Common.PrettyParsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
-using Lira.Domain.Handling.Generating;
 using Lira.Domain.TextPart;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;
@@ -21,7 +20,7 @@ class GetDelayParser(ITextPartsParser partsParser)
         if (!delayStr.Contains("{{"))
         {
             var delay = PrettyTimespanParser.Parse(delayStr);
-            return _ => Task.FromResult(delay);
+            return _ => delay;
         }
 
         var parts = await partsParser.Parse(delayStr, parsingContext);
@@ -29,6 +28,6 @@ class GetDelayParser(ITextPartsParser partsParser)
 
         return GetDelay;
 
-        async Task<TimeSpan> GetDelay(RuleExecutingContext ctx) => PrettyTimespanParser.Parse(await textParts.Generate(ctx));
+        TimeSpan GetDelay(RuleExecutingContext ctx) =>  PrettyTimespanParser.Parse(textParts.GetSingleString(ctx));
     }
 }

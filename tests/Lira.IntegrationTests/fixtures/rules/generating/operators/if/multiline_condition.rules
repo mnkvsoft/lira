@@ -1,0 +1,22 @@
+-------------------- rule
+
+GET /generating/operators/if/multiline_condition
+
+----- response
+{
+    "products": [
+        @if(req.query("with-accounts") == "1" &&
+            req.query("with-deposit") == "1")
+            {
+                "type": "account"
+                "alias": "head",
+                "number": "08895519584330798354"
+            },
+            {
+                "type": "deposit"
+                "alias": "hand",
+                "number": "08895519584330798355"
+            }
+        @end
+    ]
+}

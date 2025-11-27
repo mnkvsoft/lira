@@ -1,0 +1,17 @@
+-------------------- rule
+
+GET /generating/operators/repeat/simple/range
+
+----- response
+
+{
+    "products": [
+        @repeat: [2..5]
+            {
+                "type": "card"
+                "alias": "{{ word }}",
+                "masked_pan": "{{ random: 2, 4, 5 }}***{{ int: [1000..9999] }}"
+            }
+        @end
+    ]
+}
