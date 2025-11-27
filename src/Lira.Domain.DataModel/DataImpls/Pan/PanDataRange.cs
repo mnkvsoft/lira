@@ -14,7 +14,7 @@ public class PanDataRange : DataRange<string>
     private readonly int _binLength;
     private const int CountRangeDigits = 6;
 
-    public PanDataRange(DataName name, Interval<int> interval, int[] bins) : base(name, format: null)
+    public PanDataRange(DataName name, Interval<int> interval, int[] bins, string? description) : base(name, format: null, description)
     {
         Arg.Validate(bins, nameof(bins))
             .NotNull()

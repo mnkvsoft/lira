@@ -6,7 +6,7 @@ public class IntSeqDataRange : IntDataRange
 {
     private readonly SequenceStateful _seq;
 
-    public IntSeqDataRange(DataName name, SequenceStateful seq) : base(name)
+    public IntSeqDataRange(DataName name, SequenceStateful seq, string? description) : base(name, description)
     {
         _seq = seq;
     }

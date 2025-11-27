@@ -10,7 +10,7 @@ public class HexDataRange : DataRange<string>
     private readonly int _bytesCount;
     private readonly int _stringLength;
 
-    public HexDataRange(DataName name, Interval<long> interval, int bytesCount) : base(name, format: null)
+    public HexDataRange(DataName name, Interval<long> interval, int bytesCount, string? description) : base(name, format: null, description)
     {
         Arg.Validate(bytesCount, nameof(bytesCount))
             .Min(8);

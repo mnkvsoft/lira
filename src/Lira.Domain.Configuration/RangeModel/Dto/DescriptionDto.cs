@@ -6,6 +6,9 @@ record DataOptionsDto(
     [property: JsonPropertyName("type")]
     string Type,
 
+    [property: JsonPropertyName("description")]
+    string? Description,
+
     [property: JsonPropertyName("mode")]
     string? Mode,
 

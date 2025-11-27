@@ -70,8 +70,8 @@ public static class ServiceCollectionExtensions
 
             .AddSingleton<ConfigurationReader>()
             .AddSingleton<RangesLoader>()
-            .AddScoped<RangesProvider>()
-            .AddScoped<IRangesProvider>(provider => provider.GetRequiredService<RangesProvider>())
+            .AddSingleton<RangesProvider>()
+            .AddSingleton<IRangesProvider>(provider => provider.GetRequiredService<RangesProvider>())
 
             .AddTransient<RulesLoader>()
             .AddSingleton<IRulesProvider>(provider => provider.GetRequiredService<ConfigurationLoader>())

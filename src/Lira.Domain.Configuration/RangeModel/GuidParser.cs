@@ -40,7 +40,8 @@ class GuidParser
                 return new GuidDataRange(
                     subRangeName,
                     new SequenceStateful(seq, stateId),
-                    dto.Format);
+                    dto.Format,
+                    dto.Description);
             }),
             new StringBuilder().AddInfo(fullInfo, intervals).ToString());
     }

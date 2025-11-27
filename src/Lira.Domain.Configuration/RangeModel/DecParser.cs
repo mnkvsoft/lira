@@ -32,7 +32,7 @@ class DecParser
 
         return new DecData(
             name,
-            intervals.ToDictionary(p => p.Key, p => (DataRange<decimal>)new DecSetIntervalDataRange(p.Key, p.Value, GetDecimals(unit))),
+            intervals.ToDictionary(p => p.Key, p => (DataRange<decimal>)new DecSetIntervalDataRange(p.Key, p.Value, GetDecimals(unit), dto.Description)),
             new StringBuilder().AddInfo(fullInfo, intervals).ToString());
     }
 

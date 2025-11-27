@@ -1,21 +1,37 @@
 using System.Globalization;
 using System.Reflection;
-using Lira;
 using Lira.Common;
+using Lira.Configuration;
+using Lira.Domain;
 using Lira.Domain.Configuration;
+using Lira.ExternalCalling.Http.Configuration;
+using Lira.Middlewares;
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 var builder = WebApplication.CreateBuilder(args);
-
 var configuration = builder.Configuration;
 
-var startup = new Startup(configuration);
-startup.ConfigureServices(builder.Services);
+builder.Services
+    .AddLogging(x => { x.AddConsole(); })
+    .AddSingleton<RoutingMiddleware>()
+    .AddDomainConfiguration(configuration)
+    .AddDomain()
+    .AddHttpCalling(configuration)
+    .AddControllers();
+
 var app = builder.Build();
 
-startup.Configure(app);
+if (configuration.IsLoggingEnabled())
+    app.UseMiddleware<LoggingMiddleware>();
+
+app.UseMiddleware<RoutingMiddleware>();
+
+app.UsePathBase(configuration.GetValue<string>("SystemEndpointStartSegment"));
+
+app.UseRouting();
+app.MapControllers();
 
 var loader = app.Services.GetRequiredService<IConfigurationLoader>();
 loader.BeginLoading();
@@ -24,3 +40,5 @@ logger.LogInformation("App version: " + Assembly.GetEntryAssembly()!.GetName().V
 logger.LogInformation("Temp files path: " + Paths.GetTempPath);
 
 app.Run();
+
+public partial class Program;

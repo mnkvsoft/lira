@@ -8,7 +8,7 @@ public class IntRandomIntervalDataRange : IntDataRange
 {
     private Interval<long> Interval { get; }
 
-    public IntRandomIntervalDataRange(DataName name, Interval<long> interval) : base(name)
+    public IntRandomIntervalDataRange(DataName name, Interval<long> interval, string? description) : base(name, description)
     {
         Interval = interval;
     }

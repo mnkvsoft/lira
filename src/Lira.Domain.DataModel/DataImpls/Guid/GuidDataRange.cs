@@ -8,7 +8,7 @@ public class GuidDataRange : DataRange<System.Guid>
 {
     private readonly SequenceStateful _seq;
 
-    public GuidDataRange(DataName name, SequenceStateful seq, string? format) : base(name, format)
+    public GuidDataRange(DataName name, SequenceStateful seq, string? format, string? description) : base(name, format, description)
     {
         _seq = seq;
     }

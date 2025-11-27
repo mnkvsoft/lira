@@ -8,7 +8,7 @@ public class DecSetIntervalDataRange : DecDataRange
     private readonly int _decimals;
     private Interval<decimal> Interval { get; }
 
-    public DecSetIntervalDataRange(DataName name, Interval<decimal> interval, int decimals) : base(name)
+    public DecSetIntervalDataRange(DataName name, Interval<decimal> interval, int decimals, string? description) : base(name, description)
     {
         _decimals = decimals;
         Interval = interval;
