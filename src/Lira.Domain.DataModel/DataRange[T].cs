@@ -6,7 +6,7 @@ public abstract class DataRange<T> : DataRange where T : notnull
 {
     private readonly string? _format;
 
-    protected DataRange(DataName name, string? format) : base(name)
+    protected DataRange(DataName name, string? format, string? description) : base(name, description)
     {
         _format = format;
     }

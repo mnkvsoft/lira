@@ -213,7 +213,7 @@ public class Rules_Tests : TestBase
 
 class ConsoleLoggerFactory : ILoggerFactory
 {
-    private static readonly Logger _logger = new Logger();
+    private static readonly Logger _logger = new();
 
     public void Dispose()
     {

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lira.IntegrationTests;
 
-class TestApplicationFactory : WebApplicationFactory<Startup>
+class TestApplicationFactory : WebApplicationFactory<Program>
 {
     private readonly string _rulesPath;
     private readonly AppMocks? _appMocks;

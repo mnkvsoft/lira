@@ -41,7 +41,7 @@ class IntParser
                     var seq = new Int64Sequence(p.Value);
                     var stateId = Utils.GetStateId(rangeName, subRangeName);
 
-                    return (IntDataRange)new IntSeqDataRange(subRangeName, new SequenceStateful(seq, stateId));
+                    return (IntDataRange)new IntSeqDataRange(subRangeName, new SequenceStateful(seq, stateId), dto.Description);
                 });
             return new IntData(rangeName, seqDatas, infoForData);
         }
@@ -49,7 +49,7 @@ class IntParser
         if (mode == "random")
         {
             var seqDatas = intervals.ToDictionary(p => p.Key,
-                p => (IntDataRange)new IntRandomIntervalDataRange(p.Key, p.Value));
+                p => (IntDataRange)new IntRandomIntervalDataRange(p.Key, p.Value, dto.Description));
             return new IntData(rangeName, seqDatas, infoForData);
         }
 

@@ -2,7 +2,7 @@ namespace Lira.Domain.DataModel.DataImpls.Dec;
 
 public abstract class DecDataRange : DataRange<decimal>
 {
-    protected DecDataRange(DataName name) : base(name, format: null)
+    protected DecDataRange(DataName name, string? description) : base(name, format: null, description)
     {
     }
 

@@ -4,7 +4,7 @@ namespace Lira.Domain.DataModel.DataImpls.Int;
 
 public abstract class IntDataRange : DataRange<long>
 {
-    protected IntDataRange(DataName name) : base(name, format: null)
+    protected IntDataRange(DataName name, string? description) : base(name, format: null, description: description)
     {
     }
 

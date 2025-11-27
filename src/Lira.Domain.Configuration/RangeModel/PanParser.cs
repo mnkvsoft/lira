@@ -35,7 +35,7 @@ class PanParser
 
         return new PanData(
             name,
-            intervals.ToDictionary(p => p.Key, p => new PanDataRange(p.Key, new Interval<int>((int)p.Value.From, (int)p.Value.To), bins)),
+            intervals.ToDictionary(p => p.Key, p => new PanDataRange(p.Key, new Interval<int>((int)p.Value.From, (int)p.Value.To), bins, dto.Description)),
             new StringBuilder().AddInfo(fullInfo, intervals).ToString());
     }
 }
