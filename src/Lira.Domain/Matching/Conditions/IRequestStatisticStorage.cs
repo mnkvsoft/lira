@@ -6,40 +6,32 @@ namespace Lira.Domain.Matching.Conditions;
 
 public interface IRequestStatisticStorage
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="request"></param>
-    /// <param name="requestId">
-    /// Is required so as not to add statistics for the same request from different rules
-    /// </param>
-    Task<RequestStatistic> Add(RequestContext context);
+    Task<RequestStatistic> Add(RuleExecutingContext context);
 }
 
-class RequestStatisticStorage : IRequestStatisticStorage
+class RequestStatisticStorage(IMemoryCache cache) : IRequestStatisticStorage
 {
-    private readonly IMemoryCache _cache;
+    private static readonly object Flag = new();
 
-    public RequestStatisticStorage(IMemoryCache cache)
-    {
-        _cache = cache;
-    }
-
-    public async Task<RequestStatistic> Add(RequestContext context)
+    public async Task<RequestStatistic> Add(RuleExecutingContext context)
     {
         var hash = await GetHash(context.RequestData);
 
-        var statistic = _cache.Get<RequestStatistic>(hash);
+        var statistic = cache.Get<RequestStatistic>(hash);
 
         if (statistic != null)
         {
-            statistic.AddIfNotExist(context.RequestId);
+            if (context.Items.TryAdd(GetType(), Flag))
+            {
+                statistic.Add();
+            }
         }
         else
         {
             statistic = new RequestStatistic();
-            statistic.AddIfNotExist(context.RequestId);
-            _cache.Set(
+            context.Items.TryAdd(GetType(), Flag);
+            statistic.Add();
+            cache.Set(
                 hash,
                 statistic,
                 new MemoryCacheEntryOptions
@@ -63,7 +55,7 @@ class RequestStatisticStorage : IRequestStatisticStorage
         await sw.WriteAsync(string.Join("", request.Headers.Select(x => x.Key + x.Value)));
 
         await sw.FlushAsync();
-        
+
         await request.Body.CopyToAsync(memoryStream);
 
         memoryStream.Seek(0, SeekOrigin.Begin);

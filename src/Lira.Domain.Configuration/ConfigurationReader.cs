@@ -15,9 +15,10 @@ namespace Lira.Domain.Configuration;
 class ConfigurationReader(
     RangesLoader rangesLoader,
     IServiceScopeFactory serviceScopeFactory,
-    ILogger<ConfigurationReader> logger)
+    ILogger<ConfigurationReader> logger,
+    IRequestHandlerFactory requestHandlerFactory)
 {
-    public async Task<(IReadOnlyCollection<Rule> Rules, IReadOnlyCollection<IStateful> States)> Read(string path)
+    public async Task<(IRequestHandler RequestHandler, IReadOnlyCollection<IStateful> States)> Read(string path)
     {
         logger.LogInformation("Loading rules...");
         var sw = Stopwatch.StartNew();
@@ -47,6 +48,7 @@ class ConfigurationReader(
         var rules = await rulesLoader.LoadRules(path, context);
 
         logger.LogInformation($"{rules.Count} rules were successfully loaded ({(int)sw.ElapsedMilliseconds} ms)");
+        var requestHandler = requestHandlerFactory.Create(rules);
 
         var sequence = provider.GetRequiredService<SystemSequence>();
         var rangesStates = ranges.SelectMany(x => x.Value.GetStates());
@@ -58,6 +60,6 @@ class ConfigurationReader(
                 throw new Exception($"Duplicate state '{state.StateId}'");
         }
 
-        return (rules, states.Select(x=> x.Value).ToArray());
+        return (requestHandler, states.Select(x=> x.Value).ToArray());
     }
 }

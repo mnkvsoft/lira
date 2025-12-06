@@ -1,12 +1,6 @@
-using Lira.Common.Exceptions;
-
 namespace Lira.Domain;
 
-public interface IRuleMatchWeight : IComparable<IRuleMatchWeight>
-{
-}
-
-class RuleMatchWeight : IRuleMatchWeight
+class RuleMatchWeight : IComparable<RuleMatchWeight>
 {
     private readonly int _weight;
     private readonly IReadOnlyCollection<Matched> _matchedResults;
@@ -17,15 +11,12 @@ class RuleMatchWeight : IRuleMatchWeight
         _matchedResults = matchedResults;
     }
 
-    public int CompareTo(IRuleMatchWeight? other)
+    public int CompareTo(RuleMatchWeight? other)
     {
         if (other == null)
             return 1;
-        
-        if (other is not RuleMatchWeight otherWeight)
-            throw new UnsupportedInstanceType(other);
 
-        return _weight.CompareTo(otherWeight._weight);
+        return _weight.CompareTo(other._weight);
     }
 
     public override string ToString()

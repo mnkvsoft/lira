@@ -74,7 +74,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IRangesProvider>(provider => provider.GetRequiredService<RangesProvider>())
 
             .AddTransient<RulesLoader>()
-            .AddSingleton<IRulesProvider>(provider => provider.GetRequiredService<ConfigurationLoader>())
+            .AddSingleton<IRequestHandlerProvider>(provider => provider.GetRequiredService<ConfigurationLoader>())
 
             .AddScoped<CustomDictsProvider>()
             .AddScoped<ICustomDictsProvider>(provider => provider.GetRequiredService<CustomDictsProvider>());

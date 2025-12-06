@@ -15,7 +15,7 @@ public interface IConfigurationLoader
 class ConfigurationLoader(
     IRulesStorageStrategy rulesStorageStrategy,
     IStateRepository stateRepository,
-    ILogger<ConfigurationLoader> logger, ConfigurationReader configurationReader) : IAsyncDisposable, IRulesProvider, IConfigurationLoader
+    ILogger<ConfigurationLoader> logger, ConfigurationReader configurationReader) : IAsyncDisposable, IRequestHandlerProvider, IConfigurationLoader
 {
     private readonly ILogger<ConfigurationLoader> _logger = logger;
     private readonly ConfigurationReader _configurationReader = configurationReader;
@@ -43,7 +43,7 @@ class ConfigurationLoader(
         try
         {
             _rulesStorageStrategy.InitIfNeed();
-            var (rules, newStates) = await _configurationReader.Read(_rulesStorageStrategy.Path);
+            var (requestHandler, newStates) = await _configurationReader.Read(_rulesStorageStrategy.Path);
 
             if (_lastOkConfiguration != null)
             {
@@ -60,7 +60,7 @@ class ConfigurationLoader(
                 RestoreStates(newStates, savedStates, statesInMemory: null);
             }
 
-            _lastOkConfiguration = new ConfigurationState.Ok(DateTime.Now, rules, newStates);
+            _lastOkConfiguration = new ConfigurationState.Ok(DateTime.Now, requestHandler, newStates);
             return _lastOkConfiguration;
         }
         catch (Exception e)
@@ -76,7 +76,7 @@ class ConfigurationLoader(
         }
     }
 
-    async Task<IReadOnlyCollection<Rule>> IRulesProvider.GetRules()
+    async Task<IRequestHandler> IRequestHandlerProvider.GetRequestHandler()
     {
         if (_configurationLoadingTask == null)
             throw new Exception("Method BeginLoading() must be called first");
@@ -84,7 +84,7 @@ class ConfigurationLoader(
         var state = await _configurationLoadingTask;
 
         if (state is ConfigurationState.Ok ok)
-            return ok.Rules;
+            return ok.RequestHandler;
 
         var error = (ConfigurationState.Error)state;
 

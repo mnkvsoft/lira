@@ -1,5 +1,4 @@
 
-using System.Collections.Immutable;
 using Lira.Domain.Matching.Request;
 
 namespace Lira.Domain.Matching.Conditions;
@@ -18,7 +17,7 @@ internal abstract class ConditionMatcher : IRequestMatcher
 
     public async Task<RequestMatchResult> IsMatch(RuleExecutingContext context)
     {
-        var statistic = await _requestStatisticStorage.Add(context.RequestContext);
+        var statistic = await _requestStatisticStorage.Add(context);
         bool isMatch = IsMatch(statistic);
 
         if (!isMatch)

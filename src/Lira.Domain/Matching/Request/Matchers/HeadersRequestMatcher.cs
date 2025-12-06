@@ -14,8 +14,7 @@ public class HeadersRequestMatcher : IRequestMatcher
 
     async Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext context)
     {
-        var request = context.RequestContext.RequestData;
-        var matchedValuesSet = new Dictionary<string, string?>();
+        var request = context.RequestData;
         int weight = 0;
 
         foreach (var header in _headers)
@@ -26,7 +25,7 @@ public class HeadersRequestMatcher : IRequestMatcher
             var isMatch = false;
             foreach (var value in values)
             {
-                if (await pattern.Match(context, value) is TextPatternPart.MatchResult.Matched matched)
+                if (await pattern.Match(context, value))
                 {
                     isMatch = true;
                     break;

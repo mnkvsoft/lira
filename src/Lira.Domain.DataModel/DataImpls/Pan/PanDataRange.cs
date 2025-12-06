@@ -37,11 +37,7 @@ public class PanDataRange : DataRange<string>
             throw new Exception("Maximum bins length is greater than the maximum bin length: " + maxBinLength);
 
         var bns = new List<int[]>(bins.Length);
-        foreach (var bin in binStrs)
-        {
-            // _bins.Add(bin.Select(c => byte.Parse(c.ToString())).ToArray());
-            bns.Add(bin.PadRight(_binLength, '0').Select(c => int.Parse(c.ToString())).ToArray());
-        }
+        bns.AddRange(binStrs.Select(bin => bin.PadRight(_binLength, '0').Select(c => int.Parse(c.ToString())).ToArray()));
 
         _bins = bns;
         _binsStr = binStrs;

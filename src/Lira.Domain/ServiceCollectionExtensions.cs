@@ -7,6 +7,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDomain(this IServiceCollection services)
     {
-        return services.AddSingleton<IRequestStatisticStorage, RequestStatisticStorage>();
+        return services
+            .AddSingleton<IRequestStatisticStorage, RequestStatisticStorage>()
+            .AddSingleton<IRequestHandlerFactory, RequestHandlerFactory>();
     }
 }

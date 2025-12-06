@@ -16,7 +16,7 @@ class JsonPathExtractFunction : WithArgumentFunction<string>, IBodyExtractFuncti
 
     public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
-        yield return Extract(context.RequestContext.RequestData.ReadBody());
+        yield return Extract(context.RequestData.ReadBody());
     }
 
     public override void SetArgument(string arguments) => _jpath = arguments;

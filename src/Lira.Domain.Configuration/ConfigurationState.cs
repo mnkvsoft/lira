@@ -6,7 +6,7 @@ public abstract record ConfigurationState
 {
     public record Ok(
         DateTime LoadTime,
-        IReadOnlyCollection<Rule> Rules,
+        IRequestHandler RequestHandler,
         IReadOnlyCollection<IStateful> Statefuls) : ConfigurationState;
 
     public record Error(DateTime LoadTime, Exception Exception) : ConfigurationState;

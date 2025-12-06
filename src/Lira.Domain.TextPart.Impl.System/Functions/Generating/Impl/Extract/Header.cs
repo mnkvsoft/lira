@@ -8,7 +8,7 @@ internal class Header : WithArgumentFunction<string>, IObjectTextPart
 
     public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
-        yield return context.RequestContext.RequestData.GetHeader(_headerName);
+        yield return context.RequestData.GetHeader(_headerName);
     }
 
     public override void SetArgument(string arguments)

@@ -2,56 +2,31 @@ namespace Lira.Domain.Matching.Request;
 
 public abstract record TextPatternPart
 {
-    public abstract record MatchResult
-    {
-        public record NotMatch : MatchResult
-        {
-            public static readonly NotMatch Instance = new();
-        }
-
-        public record Matched : MatchResult
-        {
-            public static readonly Matched WithoutDynamic = new();
-        }
-    }
-
-    public abstract Task<MatchResult> Match(RuleExecutingContext context, string? value);
+    public abstract Task<bool> Match(RuleExecutingContext context, string? value);
 
     public record Static(string Expected) : TextPatternPart
     {
-        public override Task<MatchResult> Match(RuleExecutingContext context, string? current)
-        {
-            return Task.FromResult<MatchResult>(Expected.Equals(current, StringComparison.OrdinalIgnoreCase)
-                ? MatchResult.Matched.WithoutDynamic
-                : MatchResult.NotMatch.Instance);
-
-        }
+        public override Task<bool> Match(RuleExecutingContext context, string? current) => Task.FromResult(Expected.Equals(current, StringComparison.OrdinalIgnoreCase));
     }
 
     public record NullOrEmpty : TextPatternPart
     {
-        public override Task<MatchResult> Match(RuleExecutingContext context, string? current)
-        {
-            return Task.FromResult<MatchResult>(string.IsNullOrWhiteSpace(current)
-               ? MatchResult.Matched.WithoutDynamic
-               : MatchResult.NotMatch.Instance);
-        }
+        public override Task<bool> Match(RuleExecutingContext context, string? current) => Task.FromResult(string.IsNullOrWhiteSpace(current));
     }
 
     public record Dynamic(string? Start, string? End, IMatchFunction MatchFunction) : TextPatternPart
     {
-        public override async Task<MatchResult> Match(RuleExecutingContext context, string? current)
+        public override async Task<bool> Match(RuleExecutingContext context, string? current)
         {
-            MatchResult.NotMatch notMatch = MatchResult.NotMatch.Instance;
             var toMatch = current;
 
             if (Start != null)
             {
                 if (string.IsNullOrWhiteSpace(current))
-                    return notMatch;
+                    return false;
 
                 if (!current.StartsWith(Start, StringComparison.OrdinalIgnoreCase))
-                    return notMatch;
+                    return false;
 
                 toMatch = current.Substring(Start.Length);
             }
@@ -59,17 +34,15 @@ public abstract record TextPatternPart
             if (End != null)
             {
                 if (string.IsNullOrWhiteSpace(current))
-                    return notMatch;
+                    return false;
 
                 if (!current.EndsWith(End, StringComparison.OrdinalIgnoreCase))
-                    return notMatch;
+                    return false;
 
                 toMatch = toMatch!.Substring(0, toMatch.Length - End.Length);
             }
 
-            return await MatchFunction.IsMatch(context, toMatch)
-               ? new MatchResult.Matched()
-               : notMatch;
+            return await MatchFunction.IsMatch(context, toMatch);
         }
     }
 }

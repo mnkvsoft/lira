@@ -3,13 +3,9 @@ using Microsoft.Extensions.Primitives;
 
 namespace Lira.Domain;
 
-public record RequestContext(RequestData RequestData)
-{
-    public readonly Guid RequestId = Guid.NewGuid();
-}
-
 public record RequestData
 {
+    public string Protocol { get; }
     public string Method { get; }
     public PathString Path { get; }
 
@@ -61,7 +57,7 @@ public record RequestData
         }
     }
 
-    public RequestData(string method, PathString path, QueryString queryString, IHeaderDictionary headers, IQueryCollection query, Stream body)
+    public RequestData(string method, PathString path, QueryString queryString, IHeaderDictionary headers, IQueryCollection query, Stream body, string protocol)
     {
         Method = method;
         Path = path;
@@ -69,6 +65,7 @@ public record RequestData
         Headers = headers;
         _originBodyStream = body;
         Query = query;
+        Protocol = protocol;
     }
 
     public async Task SaveBody()

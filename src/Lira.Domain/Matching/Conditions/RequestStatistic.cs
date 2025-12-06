@@ -6,15 +6,12 @@ public record RequestStatisticEntry(DateTime InvokeTime);
 
 public class RequestStatistic
 {
-    private readonly ConcurrentDictionary<Guid, RequestStatisticEntry> _requestIdToStatisticEntryMap = new();
-    public ICollection<RequestStatisticEntry> Entries => _requestIdToStatisticEntryMap.Values;
+    private readonly ConcurrentBag<RequestStatisticEntry> _requestIdToStatisticEntryMap = new();
+    public ICollection<RequestStatisticEntry> Entries => _requestIdToStatisticEntryMap.ToList();
 
-    public void AddIfNotExist(Guid requestId)
+    public void Add()
     {
-        if (_requestIdToStatisticEntryMap.ContainsKey(requestId))
-            return;
-
-        _requestIdToStatisticEntryMap.TryAdd(requestId, new RequestStatisticEntry(DateTime.Now));
+        _requestIdToStatisticEntryMap.Add(new RequestStatisticEntry(DateTime.Now));
     }
 }
 

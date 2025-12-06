@@ -43,7 +43,7 @@ static partial class ClassCodeCreator
 
                 public IEnumerable<dynamic?> Get(RuleExecutingContext [context])
                 {
-                    var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
+                    var [externalRequestVariableName] = new RequestModel([context].RequestData);
                     var __variablesWriter = GetVariablesWriter([context], readOnly: false);
 
                     [code]
@@ -113,7 +113,7 @@ static partial class ClassCodeCreator
 
                 public bool IsMatch(RuleExecutingContext __ctx)
                 {
-                    var [externalRequestVariableName] = new RequestModel(__ctx.RequestContext.RequestData);
+                    var [externalRequestVariableName] = new RequestModel(__ctx.RequestData);
                     [code]
                 }
             }
@@ -133,7 +133,7 @@ static partial class ClassCodeCreator
 
                 protected override async Task<bool> IsMatchInternal(RuleExecutingContext __ctx)
                 {
-                    var [externalRequestVariableName] = new RequestModel(__ctx.RequestContext.RequestData);
+                    var [externalRequestVariableName] = new RequestModel(__ctx.RequestData);
                     var __variablesWriter = GetVariablesWriter(__ctx, readOnly: false);
 
                     [code]
@@ -155,7 +155,7 @@ static partial class ClassCodeCreator
 
                 public async Task Execute(RuleExecutingContext [context])
                 {
-                    var [externalRequestVariableName] = new RequestModel([context].RequestContext.RequestData);
+                    var [externalRequestVariableName] = new RequestModel([context].RequestData);
                     var __variablesWriter = GetVariablesWriter([context], readOnly: false);
 
                     [code]

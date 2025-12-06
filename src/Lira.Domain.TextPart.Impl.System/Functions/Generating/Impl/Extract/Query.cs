@@ -10,7 +10,7 @@ internal class Query : WithArgumentFunction<string>, IObjectTextPart
 
     public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
-        yield return context.RequestContext.RequestData.GetQueryParam(_queryParamName);
+        yield return context.RequestData.GetQueryParam(_queryParamName);
     }
 
     public override void SetArgument(string arguments)

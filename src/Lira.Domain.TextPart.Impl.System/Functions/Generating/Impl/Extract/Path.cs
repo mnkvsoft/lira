@@ -9,7 +9,7 @@ internal class Path : WithArgumentFunction<int>, IObjectTextPart
 
     public IEnumerable<dynamic?> Get(RuleExecutingContext context)
     {
-        yield return context.RequestContext.RequestData.GetPath(_index);
+        yield return context.RequestData.GetPath(_index);
     }
 
 
