@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDomainConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
+        // so that each service has its own separate instance
         services.TryAddTransient<IMemoryCache, MemoryCache>();
 
         services.Configure<GitConfig>(configuration);

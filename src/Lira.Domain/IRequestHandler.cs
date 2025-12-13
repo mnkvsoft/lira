@@ -8,17 +8,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain;
 
-public interface IRequestHandlerFactory
-{
-    IRequestHandler Create(IReadOnlyCollection<Rule> rules);
-}
-
-public class RequestHandlerFactory(ILoggerFactory loggerFactory, IConfiguration configuration) : IRequestHandlerFactory
-{
-    public IRequestHandler Create(IReadOnlyCollection<Rule> rules) =>
-        new RequestHandler(rules, loggerFactory, configuration);
-}
-
 public interface IRequestHandler
 {
     Task Handle(RequestData requestData, HttpResponse response);
@@ -54,16 +43,16 @@ class RequestHandler : IRequestHandler
 
             try
             {
-                await match.Rule.Handle(new HttpContextData(ctx, response));
+                await match.Rule.Handle(new HttpContextData(ctx, new ResponseData(response)));
             }
             catch (Exception exc)
             {
-                throw new Exception("An unexpected exception occurred while rule processing. Rule name: " + match.Rule.Name, exc);
+                throw new Exception("An unexpected exception occurred while rule processing. Rule name: " + match.Rule.Info, exc);
             }
 
             if (_isLoggingEnabled)
             {
-                _logger.LogInformation($"Was usage rule (time: {swTotal.GetElapsedDoubleMilliseconds()} ms (search: {searchMs} ms, exe: {sw.GetElapsedDoubleMilliseconds()} ms). protocol: {requestData.Protocol}. weight: {match.Weight}): " + match.Rule.Name);
+                _logger.LogInformation($"Was usage rule (time: {swTotal.GetElapsedDoubleMilliseconds()} ms (search: {searchMs} ms, exe: {sw.GetElapsedDoubleMilliseconds()} ms). protocol: {requestData.Protocol}. weight: {match.Weight}): " + match.Rule.Info);
             }
 
             return;
@@ -101,7 +90,7 @@ class RequestHandler : IRequestHandler
             }
             catch (Exception e)
             {
-                throw new Exception($"An error occured while rule '{rule.Name}' matching", e);
+                throw new Exception($"An error occured while rule '{rule.Info}' matching", e);
             }
         }
 
@@ -123,7 +112,7 @@ class RequestHandler : IRequestHandler
 
         foreach (var rule in matchedRules)
         {
-            sb.AppendLine("- " + rule.Name);
+            sb.AppendLine("- " + rule.Info);
         }
 
         return sb.ToString();

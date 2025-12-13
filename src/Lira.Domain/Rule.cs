@@ -1,28 +1,19 @@
 namespace Lira.Domain;
 
-public class Rule(
-    string name,
-    IReadOnlyCollection<IRequestMatcher> matchers,
-    IReadOnlyCollection<Delayed<IHandler>> handlers)
+public record RuleData(
+    string Info,
+    IReadOnlyCollection<IRequestMatcher> Matchers,
+    IReadOnlyCollection<Delayed<IHandler>> Handlers);
+
+internal class Rule(RuleData data)
 {
-    public string Name { get; } = name;
+    public string Info { get; } = data.Info;
 
-    // public async Task<IRuleExecutor?> GetExecutor(RequestContext context)
-    // {
-    //     var ruleExecutingContext = new RuleExecutingContext(context);
-    //     var matchResult = await IsMatch(ruleExecutingContext);
-    //
-    //     if (matchResult is RuleMatchResult.Matched matched)
-    //         return new RuleExecutor(ruleExecutingContext, this, matched.Weight);
-    //
-    //     return null;
-    // }
-
-    internal async Task Handle(HttpContextData httpContextData)
+    public async Task Handle(HttpContextData httpContextData)
     {
         await httpContextData.RuleExecutingContext.RequestData.SaveBody();
 
-        foreach (var handler in handlers)
+        foreach (var handler in data.Handlers)
         {
             if(handler.GetDelay != null)
                 await Task.Delay(handler.GetDelay(httpContextData.RuleExecutingContext));
@@ -31,11 +22,11 @@ public class Rule(
         }
     }
 
-    internal async Task<RuleMatchResult> IsMatch(RuleExecutingContext context)
+    public async Task<RuleMatchResult> IsMatch(RuleExecutingContext context)
     {
         var matcheds = new List<Matched>();
 
-        foreach (var matcher in matchers)
+        foreach (var matcher in data.Matchers)
         {
             var matchResult = await matcher.IsMatch(context);
             if (matchResult is not Matched matched)
@@ -46,12 +37,4 @@ public class Rule(
 
         return new RuleMatchResult.Matched(new RuleMatchWeight(matcheds), this);
     }
-
-    // record RuleExecutor(RuleExecutingContext RuleExecutingContext, Rule Rule, IRuleMatchWeight Weight) : IRuleExecutor
-    // {
-    //     public Task Execute(HttpResponse response)
-    //     {
-    //         return Rule.Handle(new HttpContextData(RuleExecutingContext, response));
-    //     }
-    // }
 }

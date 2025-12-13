@@ -14,6 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services
+     // swagger
+    .AddEndpointsApiExplorer()
+    .AddSwaggerGen()
+     // other
     .AddLogging(x => { x.AddConsole(); })
     .AddSingleton<RoutingMiddleware>()
     .AddDomainConfiguration(configuration)
@@ -23,12 +27,15 @@ builder.Services
 
 var app = builder.Build();
 
+
 if (configuration.IsLoggingEnabled())
     app.UseMiddleware<LoggingMiddleware>();
 
 app.UseMiddleware<RoutingMiddleware>();
 
 app.UsePathBase(configuration.GetValue<string>("SystemEndpointStartSegment"));
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseRouting();
 app.MapControllers();

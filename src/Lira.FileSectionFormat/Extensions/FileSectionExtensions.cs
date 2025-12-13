@@ -111,6 +111,11 @@ public static class FileSectionExtensions
         return section.LinesWithoutBlock.JoinWithNewLine();
     }
 
+    public static IEnumerable<string> GetNotEmptyLinesWithoutBlock(this FileSection section)
+    {
+        return section.LinesWithoutBlock.Where(x => !string.IsNullOrWhiteSpace(x));
+    }
+
     public static IReadOnlyCollection<string> GetLinesFromBlockOrEmpty(this FileSection section, string blockName)
     {
         return section.GetBlockOrNull(blockName)?.Lines ?? (IReadOnlyCollection<string>)Array.Empty<string>();

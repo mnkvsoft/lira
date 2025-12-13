@@ -6,7 +6,7 @@ class Constants
     {
         public const string Rule = "rule";
         public const string Declare = "declare";
-        public const string Templates = "templates";
+        public const string Config = "config";
         public const string Condition = "condition";
         public const string Response = "response";
         public const string ActionPrefix = "action";

@@ -3,6 +3,7 @@ using Lira.Common.Extensions;
 using Lira.Domain.Configuration.DeclarationItems;
 using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+using Lira.Domain.Handling.Generating;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.FileSectionFormat;
 
@@ -29,12 +30,12 @@ internal class RuleFileParser
         _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
     }
 
-    public async Task<IReadOnlyCollection<Rule>> Parse(string ruleFile, IReadonlyParsingContext parsingContext)
+    public async Task<IReadOnlyCollection<RuleData>> Parse(string ruleFile, IReadonlyParsingContext parsingContext)
     {
         var sectionsRoot = await SectionFileParser.Parse(ruleFile);
 
         var sections = sectionsRoot.Sections;
-        AssertContainsOnlySections(sections, [Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Templates]);
+        AssertContainsOnlySections(sections, [Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Config]);
 
         var usingContext = _functionFactoryCSharpFactory.CreateRulesUsingContext(sectionsRoot.Lines);
 
@@ -44,17 +45,17 @@ internal class RuleFileParser
         var declaredItems = await GetDeclaredItems(sections, ctx);
         ctx.SetDeclaredItems(declaredItems);
 
-        var rules = new List<Rule>();
+        var rules = new List<RuleData>();
         var ruleSections = sections.Where(s => s.Name == Constants.SectionName.Rule).ToArray();
         for (var i = 0; i < ruleSections.Length; i++)
         {
             var fi = new FileInfo(ruleFile);
-            var ruleName = $"no. {i + 1} file: {fi.FullName}";
+            var ruleInfo = $"no. {i + 1} file: {fi.FullName}";
 
             var ruleSection = ruleSections[i];
 
             rules.AddRange(await CreateRules(
-                ruleName,
+                ruleInfo,
                 ruleSection,
                 ctx));
         }
@@ -62,8 +63,8 @@ internal class RuleFileParser
         return rules;
     }
 
-    private async Task<IReadOnlyCollection<Rule>> CreateRules(
-        string ruleName,
+    private async Task<IReadOnlyCollection<RuleData>> CreateRules(
+        string ruleInfo,
         FileSection ruleSection,
         ParsingContext parsingContext)
     {
@@ -86,14 +87,14 @@ internal class RuleFileParser
 
         if (existsConditionSection)
         {
-            AssertContainsOnlySections(childSections, [Constants.SectionName.Condition, Constants.SectionName.Declare, Constants.SectionName.Templates]);
+            AssertContainsOnlySections(childSections, [Constants.SectionName.Condition, Constants.SectionName.Declare, Constants.SectionName.Config]);
 
             var conditionSections = childSections.Where(s => s.Name == Constants.SectionName.Condition).ToArray();
 
             if (conditionSections.Length < 2)
                 throw new Exception($"Must be at least 2 '{Constants.SectionName.Condition}' sections");
 
-            var rules = new List<Rule>();
+            var rules = new List<RuleData>();
 
             for (var i = 0; i < conditionSections.Length; i++)
             {
@@ -101,11 +102,15 @@ internal class RuleFileParser
                 var childConditionSections = conditionSection.ChildSections;
                 AssertContainsOnlySections(
                     rulesSections: childConditionSections,
-                    expectedSectionName: _handlersParser.GetAllSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare));
+                    expectedSectionName: _handlersParser.GetAllSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Config));
+
 
                 ctx.SetDeclaredItems(await GetDeclaredItems(childConditionSections, ctx));
 
-                var handlers = await _handlersParser.Parse(childConditionSections, ctx);
+                var handlers = await _handlersParser.Parse(
+                    GetWriteHistoryMode(childConditionSections),
+                    childConditionSections,
+                    ctx);
 
                 var conditionMatchers = _conditionMatcherParser.Parse(conditionSection);
 
@@ -114,8 +119,8 @@ internal class RuleFileParser
                 matchers.AddRange(conditionMatchers);
 
                 rules.Add(
-                    new Rule(
-                        ruleName + $". Condition no. {i + 1}",
+                    new RuleData(
+                        ruleInfo + $". Condition no. {i + 1}",
                         matchers,
                         handlers)
                 );
@@ -172,16 +177,38 @@ internal class RuleFileParser
 
         AssertContainsOnlySections(
             childSections,
-            _handlersParser.GetAllSectionNames(childSections).NewWith(Constants.SectionName.Declare, Constants.SectionName.Templates));
+            _handlersParser.GetAllSectionNames(childSections).NewWith(Constants.SectionName.Declare, Constants.SectionName.Config));
 
-        var handlerss = await _handlersParser.Parse(childSections, ctx);
-        return
-        [
-            new Rule(
-            ruleName,
-            requestMatchers,
-            handlerss)
-        ];
+        {
+            var handlers = await _handlersParser.Parse(GetWriteHistoryMode(childSections), childSections, ctx);
+            return
+            [
+                new RuleData(
+                    ruleInfo,
+                    requestMatchers,
+                    handlers)
+            ];
+        }
+    }
+
+    private static WriteHistoryMode GetWriteHistoryMode(IImmutableList<FileSection> childConditionSections)
+    {
+        var config = ConfigSectionParser.Parse(childConditionSections);
+        WriteHistoryMode writeHistoryMode;
+        if (config?.HistoryEnabled == true)
+        {
+            if (config.RuleName == null)
+                throw new Exception(
+                    $"If parameter '{Config.ParameterName.HistoryEnabled}' set true, you must set parameter '{Config.ParameterName.RuleName}'");
+
+            writeHistoryMode = new WriteHistoryMode.Write(config.RuleName.Value);
+        }
+        else
+        {
+            writeHistoryMode = WriteHistoryMode.None.Instance;
+        }
+
+        return writeHistoryMode;
     }
 
     private async Task<DeclaredItems> GetDeclaredItems(IReadOnlyCollection<FileSection> childSections, ParsingContext parsingContext)

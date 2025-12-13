@@ -1,6 +1,6 @@
 namespace Lira.Domain.Matching.Conditions.Matchers.Elapsed;
 
-internal class ElapsedConditionMatcher : ConditionMatcher
+public class ElapsedConditionMatcher : ConditionMatcher
 {
     private readonly IComparableMatchFunction<TimeSpan>[] _functions;
 

@@ -2,6 +2,7 @@ using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Handling.Actions;
+using Lira.Domain.Handling.Generating;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;
@@ -41,7 +42,7 @@ class HandlersParser
 
     private static string GetSectionName(ISystemActionRegistrator registrator) => Constants.SectionName.ActionPrefix + "." + registrator.Name;
 
-    public async Task<IReadOnlyCollection<Delayed<IHandler>>> Parse(IReadOnlyCollection<FileSection> sections, ParsingContext parsingContext)
+    public async Task<IReadOnlyCollection<Delayed<IHandler>>> Parse(WriteHistoryMode writeHistoryMode, IReadOnlyCollection<FileSection> sections, ParsingContext parsingContext)
     {
         var result = new List<Delayed<IHandler>>();
 
@@ -60,7 +61,7 @@ class HandlersParser
             }
             else if(section.Name == Constants.SectionName.Response)
             {
-                action = await _responseGenerationHandlerParser.Parse(section, parsingContext);
+                action = await _responseGenerationHandlerParser.Parse(writeHistoryMode, section, parsingContext);
             }
             else
             {

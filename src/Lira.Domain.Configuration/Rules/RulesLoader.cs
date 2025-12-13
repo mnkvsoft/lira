@@ -8,10 +8,10 @@ internal class RulesLoader
 
     public RulesLoader(RuleFileParser ruleFileParser) => _ruleFileParser = ruleFileParser;
 
-    public async Task<IReadOnlyCollection<Rule>> LoadRules(string path, IReadonlyParsingContext parsingContext)
+    public async Task<IReadOnlyCollection<RuleData>> LoadRulesDatas(string path, IReadonlyParsingContext parsingContext)
     {
         var rulesFiles = DirectoryHelper.GetFiles(path, "*.rules");
-        var rules = new List<Rule>(rulesFiles.Count * 3);
+        var rules = new List<RuleData>(rulesFiles.Count * 3);
 
         foreach (var ruleFile in rulesFiles)
         {

@@ -1,8 +1,6 @@
-- make dic-function
-- json() in base class to extension method
-
+- ~ req => ~ match
 - set body encoding
-- fail container start if error in rule
+
 - {{{ escaping
 - key for conditions
 - cache section
@@ -14,3 +12,59 @@
 - describe file section format
 - custom parameters in declared function
 - clean connected assemblies
+- fail container start if error in rule
+
+
+
+---------------------------- rule
+
+GET /payment/status/{{ int >> $$id }}
+
+----- config
+~ key: $$id
+
+----- caching
+~ time: 2m30s
+
+----- response
+
+~ condition
+stat.elapsed > "2s" 
+
+~ condition
+elapsed < 2 second
+
+~ code
+200
+
+~ body
+{
+    "status": "registered"
+}
+
+----- response
+
+~ condition
+elapsed in [2 second..4 second]
+
+~ code
+200
+
+~ body
+{
+    "status": "pending"
+}
+
+
+----- response
+
+~ condition
+elapsed > 4 second
+
+~ code
+200
+
+~ body
+{
+    "status": "ok"
+}

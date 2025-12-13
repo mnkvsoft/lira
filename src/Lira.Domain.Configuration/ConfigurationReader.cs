@@ -45,7 +45,7 @@ class ConfigurationReader(
         context.SetDeclaredItems(variables);
 
         var rulesLoader = provider.GetRequiredService<RulesLoader>();
-        var rules = await rulesLoader.LoadRules(path, context);
+        var rules = await rulesLoader.LoadRulesDatas(path, context);
 
         logger.LogInformation($"{rules.Count} rules were successfully loaded ({(int)sw.ElapsedMilliseconds} ms)");
         var requestHandler = requestHandlerFactory.Create(rules);

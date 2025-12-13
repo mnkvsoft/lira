@@ -1,5 +1,5 @@
 namespace Lira.Domain.Matching.Conditions.Matchers.Attempt;
-internal class AttemptConditionMatcher : ConditionMatcher
+public class AttemptConditionMatcher : ConditionMatcher
 {
     private readonly IComparableMatchFunction<int>[] _functions;
 

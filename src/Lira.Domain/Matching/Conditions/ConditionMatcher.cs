@@ -3,7 +3,7 @@ using Lira.Domain.Matching.Request;
 
 namespace Lira.Domain.Matching.Conditions;
 
-internal abstract class ConditionMatcher : IRequestMatcher
+public abstract class ConditionMatcher : IRequestMatcher
 {
     private readonly IRequestStatisticStorage _requestStatisticStorage;
 

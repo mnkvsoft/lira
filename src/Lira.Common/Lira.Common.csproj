@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="ArgValidation" Version="1.10.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
   </ItemGroup>
 
 </Project>

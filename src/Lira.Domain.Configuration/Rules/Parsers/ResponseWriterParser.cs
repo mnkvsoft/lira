@@ -11,14 +11,16 @@ class ResponseGenerationHandlerParser
 {
     private readonly HeadersParser _headersParser;
     private readonly ITextPartsParser _partsParser;
+    private readonly IResponseGenerationHandlerFactory _responseGenerationHandlerFactory;
 
-    public ResponseGenerationHandlerParser(HeadersParser headersParser, ITextPartsParser partsParser)
+    public ResponseGenerationHandlerParser(HeadersParser headersParser, ITextPartsParser partsParser, IResponseGenerationHandlerFactory responseGenerationHandlerFactory)
     {
         _headersParser = headersParser;
         _partsParser = partsParser;
+        _responseGenerationHandlerFactory = responseGenerationHandlerFactory;
     }
 
-    public async Task<ResponseGenerationHandler> Parse(FileSection responseSection, ParsingContext parsingContext)
+    public async Task<IHandler> Parse(WriteHistoryMode writeHistoryMode, FileSection responseSection, ParsingContext parsingContext)
     {
         if (responseSection.Blocks.Count == 0)
         {
@@ -28,28 +30,31 @@ class ResponseGenerationHandlerParser
                 if (string.IsNullOrEmpty(strCode))
                     throw new Exception("No response section found");
 
-                return new ResponseGenerationHandler.Normal(
+                return _responseGenerationHandlerFactory.CreateNormal(
+                    writeHistoryMode,
                     new StaticHttCodeGenerator(strCode.ToHttpCode()),
-                    BodyGenerator: null,
-                    HeadersGenerator: null);
+                    bodyGenerator: null,
+                    headersGenerator: null);
             }
 
             if (responseSection.LinesWithoutBlock.Count == 1 &&
                 int.TryParse(responseSection.GetSingleLine(), out var code))
             {
-                return new ResponseGenerationHandler.Normal(
+                return _responseGenerationHandlerFactory.CreateNormal(
+                    writeHistoryMode,
                     new StaticHttCodeGenerator(code),
-                    BodyGenerator: null,
-                    HeadersGenerator: null);
+                    bodyGenerator: null,
+                    headersGenerator: null);
             }
 
             string text = responseSection.GetLinesWithoutBlockAsString();
             var parts = await _partsParser.Parse(text, parsingContext);
 
-            return new ResponseGenerationHandler.Normal(
+            return _responseGenerationHandlerFactory.CreateNormal(
+                writeHistoryMode,
                 StaticHttCodeGenerator.Code200,
                 new BodyGenerator(parts.WrapToTextParts()),
-                HeadersGenerator: null);
+                headersGenerator: null);
         }
 
         if (responseSection.ExistBlock(Constants.BlockName.Response.Abort))
@@ -69,10 +74,11 @@ class ResponseGenerationHandlerParser
                                     $"but there are: {string.Join(", ", blocks.Select(b => b.Name))}");
             }
 
-            return new ResponseGenerationHandler.Abort();
+            return _responseGenerationHandlerFactory.CreateAbort(writeHistoryMode);
         }
 
-        return new ResponseGenerationHandler.Normal(
+        return _responseGenerationHandlerFactory.CreateNormal(
+            writeHistoryMode,
             await GetHttpCodeGenerator(responseSection, parsingContext),
             await GetBodyGenerator(responseSection, parsingContext),
             await GetHeadersGenerator(responseSection, parsingContext));

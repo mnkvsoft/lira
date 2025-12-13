@@ -24,7 +24,7 @@ public record RequestData
     public string? GetHeader(string name)
     {
         if (Headers.TryGetValue(name, out StringValues values))
-            return values.First();
+            return values.Last();
 
         return null;
     }
@@ -32,7 +32,7 @@ public record RequestData
     public string? GetQueryParam(string name)
     {
         if (Query.TryGetValue(name, out StringValues values))
-            return values.First();
+            return values.Last();
 
         return null;
     }
