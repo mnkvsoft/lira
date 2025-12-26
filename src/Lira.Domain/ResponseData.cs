@@ -26,6 +26,7 @@ public class ResponseData(HttpResponse response)
                 _statusCode = value;
 
             _statusCode = value;
+            response.StatusCode = value;
         }
     }
 

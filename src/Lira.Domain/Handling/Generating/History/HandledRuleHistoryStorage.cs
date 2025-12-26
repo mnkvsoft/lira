@@ -1,24 +1,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 
-namespace Lira.Domain.Handling.Generating;
-
-abstract record RequestHandleResult
-{
-    public record Response(int StatusCode, IReadOnlyCollection<Header>? Headers, string? Body) : RequestHandleResult;
-
-    public record Fault : RequestHandleResult
-    {
-        public static readonly Fault Instance = new();
-    }
-}
-
-record RuleHistoryItem(DateTime HandleTime, RequestData Request, RequestHandleResult Result);
-
-internal interface IHandledRuleHistoryStorage
-{
-    IEnumerable<RuleHistoryItem> GetHistory(RuleName ruleName);
-}
+namespace Lira.Domain.Handling.Generating.History;
 
 class HandledRuleHistoryStorage : IHandledRuleHistoryStorage
 {

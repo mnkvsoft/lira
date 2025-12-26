@@ -33,6 +33,7 @@ public static class StringExtensions
         return result;
     }
 
+    public static (string part1, string? part2) SplitToTwoParts(this string value, char splitter) => SplitToTwoParts(value, splitter.ToString());
     public static (string part1, string? part2) SplitToTwoParts(this string value, string splitter)
     {
         var index = value.IndexOf(splitter, StringComparison.Ordinal);

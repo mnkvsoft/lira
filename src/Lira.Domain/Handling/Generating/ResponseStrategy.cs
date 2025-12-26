@@ -1,17 +1,7 @@
+using Lira.Domain.Handling.Generating.History;
 using Lira.Domain.Handling.Generating.Writers;
 
 namespace Lira.Domain.Handling.Generating;
-
-public abstract record WriteHistoryMode
-{
-    public record Write(RuleName RuleName) : WriteHistoryMode;
-
-    public record None : WriteHistoryMode
-    {
-        public static readonly None Instance = new();
-    }
-}
-
 
 public interface IResponseGenerationHandlerFactory
 {
@@ -32,12 +22,17 @@ class ResponseGenerationHandlerFactory(HandledRuleHistoryStorage handledRuleHist
         BodyGenerator? bodyGenerator,
         HeadersGenerator? headersGenerator)
     {
-        throw new NotImplementedException();
+        return new ResponseGenerationHandler.Normal(
+            new ResponseGenerationHandler.WriteStatDependencies(handledRuleHistoryStorage, writeHistoryMode),
+            codeGenerator,
+            bodyGenerator,
+            headersGenerator);
     }
 
     public IHandler CreateAbort(WriteHistoryMode writeHistoryMode)
     {
-        throw new NotImplementedException();
+        return new ResponseGenerationHandler.Abort(
+            new ResponseGenerationHandler.WriteStatDependencies(handledRuleHistoryStorage, writeHistoryMode));
     }
 }
 

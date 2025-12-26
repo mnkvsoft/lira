@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /history
+
+----- options
+
+name    = withHistory
+history = true
+
+----- response
+200

@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace Lira.Domain.Handling.Generating;
 
 public class TextPartsProvider(IEnumerable<ITextParts> valueParts)
@@ -15,15 +13,5 @@ public class TextPartsProvider(IEnumerable<ITextParts> valueParts)
         }
     }
 
-    public string GetSingleString(RuleExecutingContext context)
-    {
-        var sb = new StringBuilder();
-
-        foreach (var text in Get(context))
-        {
-            sb.Append(text);
-        }
-
-        return sb.ToString();
-    }
+    public string GetSingleString(RuleExecutingContext context) => string.Concat(Get(context));
 }

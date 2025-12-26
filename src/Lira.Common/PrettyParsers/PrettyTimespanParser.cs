@@ -4,14 +4,14 @@ namespace Lira.Common.PrettyParsers;
 
 public class PrettyTimespanParser : Interval<TimeSpan>.IConverter
 {
-    private static readonly List<(string[], Func<int, TimeSpan>)> NameToCreatorMap = new()
-    {
-        (new[]{ "ms", "milliseconds", "millisecond" }, value => TimeSpan.FromMilliseconds(value)),
-        (new[]{ "s",  "second",       "seconds" }, value => TimeSpan.FromSeconds(value)),
-        (new[]{ "m",  "minute",       "minutes" }, value => TimeSpan.FromMinutes(value)),
-        (new[]{ "h",  "hour",         "hours" }, value => TimeSpan.FromHours(value)),
-        (new[]{ "d",  "day",          "days" }, value => TimeSpan.FromDays(value)),
-    };
+    private static readonly List<(string[], Func<int, TimeSpan>)> NameToCreatorMap =
+    [
+        (["ms", "milliseconds", "millisecond"], value => TimeSpan.FromMilliseconds(value)),
+        (["s", "second", "seconds"], value => TimeSpan.FromSeconds(value)),
+        (["m", "minute", "minutes"], value => TimeSpan.FromMinutes(value)),
+        (["h", "hour", "hours"], value => TimeSpan.FromHours(value)),
+        (["d", "day", "days"], value => TimeSpan.FromDays(value))
+    ];
 
     public static TimeSpan Parse(string? str)
     {
@@ -19,11 +19,11 @@ public class PrettyTimespanParser : Interval<TimeSpan>.IConverter
             throw new ArgumentException($"Invalid timespan value: '{str}'");
         return result;
     }
-    
+
     public static bool TryParse(string? str, out TimeSpan result)
     {
         result = default;
-        
+
         if (string.IsNullOrWhiteSpace(str))
             return false;
 

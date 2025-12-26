@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.DeclarationItems;
 using Lira.Domain.Configuration.Rules.Parsers;
@@ -35,7 +36,7 @@ internal class RuleFileParser
         var sectionsRoot = await SectionFileParser.Parse(ruleFile);
 
         var sections = sectionsRoot.Sections;
-        AssertContainsOnlySections(sections, [Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Config]);
+        AssertContainsOnlySections(sections, [Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Options]);
 
         var usingContext = _functionFactoryCSharpFactory.CreateRulesUsingContext(sectionsRoot.Lines);
 
@@ -87,7 +88,7 @@ internal class RuleFileParser
 
         if (existsConditionSection)
         {
-            AssertContainsOnlySections(childSections, [Constants.SectionName.Condition, Constants.SectionName.Declare, Constants.SectionName.Config]);
+            AssertContainsOnlySections(childSections, [Constants.SectionName.Condition, Constants.SectionName.Declare, Constants.SectionName.Options]);
 
             var conditionSections = childSections.Where(s => s.Name == Constants.SectionName.Condition).ToArray();
 
@@ -102,7 +103,7 @@ internal class RuleFileParser
                 var childConditionSections = conditionSection.ChildSections;
                 AssertContainsOnlySections(
                     rulesSections: childConditionSections,
-                    expectedSectionName: _handlersParser.GetAllSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Config));
+                    expectedSectionName: _handlersParser.GetAllSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare, Constants.SectionName.Options));
 
 
                 ctx.SetDeclaredItems(await GetDeclaredItems(childConditionSections, ctx));
@@ -177,7 +178,7 @@ internal class RuleFileParser
 
         AssertContainsOnlySections(
             childSections,
-            _handlersParser.GetAllSectionNames(childSections).NewWith(Constants.SectionName.Declare, Constants.SectionName.Config));
+            _handlersParser.GetAllSectionNames(childSections).NewWith(Constants.SectionName.Declare, Constants.SectionName.Options));
 
         {
             var handlers = await _handlersParser.Parse(GetWriteHistoryMode(childSections), childSections, ctx);
@@ -193,15 +194,16 @@ internal class RuleFileParser
 
     private static WriteHistoryMode GetWriteHistoryMode(IImmutableList<FileSection> childConditionSections)
     {
-        var config = ConfigSectionParser.Parse(childConditionSections);
+        var config = OptionsSectionParser.Parse(childConditionSections);
         WriteHistoryMode writeHistoryMode;
         if (config?.HistoryEnabled == true)
         {
             if (config.RuleName == null)
                 throw new Exception(
-                    $"If parameter '{Config.ParameterName.HistoryEnabled}' set true, you must set parameter '{Config.ParameterName.RuleName}'");
+                    $"If parameter '{AttributeExtractor.Extract<Options, ParameterNameAttribute>(opt => opt.HistoryEnabled).Name}' set true, " +
+                    $"you must set parameter '{AttributeExtractor.Extract<Options, ParameterNameAttribute>(opt => opt.RuleName).Name}'");
 
-            writeHistoryMode = new WriteHistoryMode.Write(config.RuleName.Value);
+            writeHistoryMode = new WriteHistoryMode.Write(new RuleName(config.RuleName));
         }
         else
         {

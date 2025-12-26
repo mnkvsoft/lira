@@ -1,4 +1,5 @@
 ﻿using Lira.Domain.Handling.Generating;
+using Lira.Domain.Handling.Generating.History;
 using Lira.Domain.Matching.Conditions;
 using Microsoft.Extensions.DependencyInjection;
 

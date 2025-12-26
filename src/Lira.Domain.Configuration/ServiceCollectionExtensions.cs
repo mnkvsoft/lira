@@ -25,6 +25,7 @@ public static class ServiceCollectionExtensions
     {
         // so that each service has its own separate instance
         services.TryAddTransient<IMemoryCache, MemoryCache>();
+        services.TryAddTransient<MemoryCache, MemoryCache>();
 
         services.Configure<GitConfig>(configuration);
 

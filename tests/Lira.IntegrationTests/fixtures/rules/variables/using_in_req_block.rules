@@ -16,5 +16,6 @@ if(req.path().StartsWith("/variables/using_in_req_block/"))
 return false;
 
 ----- response
+
 ~ code
 {{ $$code }}
