@@ -21,15 +21,17 @@ class HandledRuleHistoryStorage : IHandledRuleHistoryStorage
 
     public void Add(RuleName ruleName, DateTime executeTime, RequestData requestData, RequestHandleResult handleResult)
     {
+        string key = GetCacheKeyPattern(ruleName) + Interlocked.Increment(ref _counter);
         _memoryCache.Set(
-            GetCacheKeyPattern(ruleName) + Interlocked.Increment(ref _counter),
+            key,
             new RuleHistoryItem(executeTime, requestData, handleResult),
             _lifeTime);
     }
 
     public IEnumerable<RuleHistoryItem> GetHistory(RuleName ruleName)
     {
-        foreach (string key in _memoryCache.Keys)
+        var cacheKeys = _memoryCache.Keys.ToArray();
+        foreach (string key in cacheKeys)
         {
             var pattern = GetCacheKeyPattern(ruleName);
             if (key.StartsWith(pattern))

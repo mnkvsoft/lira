@@ -1,8 +1,0 @@
--------------------- case
-
-GET /history
-
------ expected
-
-~ code
-201

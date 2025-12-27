@@ -4,7 +4,6 @@ namespace Lira.IntegrationTests.Tests;
 
 public class ReloadRules_Tests : TestBase
 {
-    private static string Nl = Constants.NewLine;
     private static readonly TimeSpan PhysicalFileProviderPoolingInterval = TimeSpan.FromSeconds(10);
 
     [Test]
@@ -19,12 +18,14 @@ public class ReloadRules_Tests : TestBase
 
         await File.WriteAllTextAsync(
             Path.Combine(rulesPath, "1.rules"),
-
-            @"----- rule" + Nl +
-            "GET /test" + Nl +
-            "--- response" + Nl +
-            "~ code" + Nl +
-            "200");
+            """
+            ----- rule
+            GET /test
+            --- response
+            ~ code
+            200
+            """
+            );
 
         await Task.Delay(PhysicalFileProviderPoolingInterval);
 
@@ -40,13 +41,13 @@ public class ReloadRules_Tests : TestBase
         var ruleFile = Path.Combine(rulesPath, "1.rules");
         await File.WriteAllTextAsync(
             ruleFile,
-
-            @"----- rule" + Nl +
-            "GET /test" + Nl +
-            "--- response" + Nl +
-            "~ code" + Nl +
-            "200"
-
+            """
+            ----- rule
+            GET /test
+            --- response
+            ~ code
+            200
+            """
         );
 
         await using var factory = new TestApplicationFactory(rulesPath, new AppMocks());
@@ -71,13 +72,13 @@ public class ReloadRules_Tests : TestBase
         var ruleFile = Path.Combine(rulesPath, "1.rules");
         await File.WriteAllTextAsync(
             ruleFile,
-
-            @"----- rule" + Nl +
-            "GET /test" + Nl +
-            "--- response" + Nl +
-            "~ code" + Nl +
-            "200"
-
+            """
+            ----- rule
+            GET /test
+            --- response
+            ~ code
+            200
+            """
         );
 
         await using var factory = new TestApplicationFactory(rulesPath, new AppMocks());
@@ -88,13 +89,13 @@ public class ReloadRules_Tests : TestBase
 
         await File.WriteAllTextAsync(
             ruleFile,
-
-            @"----- rule" + Nl +
-            "GET /test" + Nl +
-            "--- response" + Nl +
-            "~ code" + Nl +
-            "204"
-
+            """
+            ----- rule
+            GET /test
+            --- response
+            ~ code
+            204
+            """
         );
         await Task.Delay(PhysicalFileProviderPoolingInterval);
 

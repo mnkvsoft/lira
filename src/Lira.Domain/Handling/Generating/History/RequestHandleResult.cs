@@ -1,8 +1,8 @@
 namespace Lira.Domain.Handling.Generating.History;
 
-abstract record RequestHandleResult
+public abstract record RequestHandleResult
 {
-    public record Response(int StatusCode, IReadOnlyCollection<Header>? Headers, string? Body) : RequestHandleResult;
+    public record Response(int StatusCode, IReadOnlyDictionary<string, string?>? Headers, string? Body) : RequestHandleResult;
 
     public record Fault : RequestHandleResult
     {

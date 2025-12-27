@@ -1,4 +1,3 @@
-using System.Text;
 using Lira.Common;
 using Lira.Common.Exceptions;
 using Lira.Domain.Configuration;

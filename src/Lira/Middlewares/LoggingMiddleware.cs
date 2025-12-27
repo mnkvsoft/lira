@@ -104,7 +104,6 @@ public class LoggingMiddleware
         var sb = new StringBuilder();
         sb.AppendLine("Response:");
         sb.AppendLine(response.StatusCode.ToString());
-        sb.AppendLine();
 
         if (response.Headers.Any())
         {
@@ -115,6 +114,7 @@ public class LoggingMiddleware
             }
         }
 
+        sb.AppendLine();
         if (text.Length > 0)
         {
             sb.AppendLine(text);

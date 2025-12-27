@@ -8,7 +8,7 @@ public class ResponseData(HttpResponse response)
     public bool NeedSaveData { get; set; }
 
     private int? _statusCode;
-    private List<Header>? _headers;
+    private Dictionary<string, string?>? _headers;
     private StringBuilder? _body;
 
     public int StatusCode
@@ -30,17 +30,20 @@ public class ResponseData(HttpResponse response)
         }
     }
 
-    public IReadOnlyCollection<Header>? Headers => _headers;
+    public IReadOnlyDictionary<string, string?>? Headers => _headers;
     public string? Body => _body?.ToString();
 
     public void AddHeader(Header header)
     {
+        var name = header.Name;
         if (NeedSaveData)
         {
-            _headers ??= new List<Header>();
-            _headers.Add(header);
+            _headers ??= new Dictionary<string, string?>();
+
+            _headers.TryGetValue(name, out var value);
+            _headers[name] = value == null ? header.Value : value + "," + header.Value;
         }
-        response.Headers.Add(header.Name, header.Value);
+        response.Headers.Append(name, header.Value);
     }
 
     public async Task WriteBody(string part)

@@ -555,10 +555,10 @@
     <None Update="fixtures\rules\custom_dic\generating.cs.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\history\1.rules">
+    <None Update="fixtures\rules\history\base.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="fixtures\rules\history\1.test">
+    <None Update="fixtures\rules\history\base.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

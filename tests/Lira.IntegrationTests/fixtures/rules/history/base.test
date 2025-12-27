@@ -1,0 +1,22 @@
+-------------------- case
+
+GET /history?a=1&a=2&b=asd
+
+~ headers
+a: 123
+a: 456
+b: asd
+
+----- expected
+
+~ code
+200
+
+-------------------- case
+
+GET /sys/api/history/withHistory
+
+----- expected
+
+~ code
+200

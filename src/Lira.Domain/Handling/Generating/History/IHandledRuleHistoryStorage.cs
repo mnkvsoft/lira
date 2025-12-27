@@ -1,8 +1,8 @@
 namespace Lira.Domain.Handling.Generating.History;
 
-internal interface IHandledRuleHistoryStorage
+public interface IHandledRuleHistoryStorage
 {
     IEnumerable<RuleHistoryItem> GetHistory(RuleName ruleName);
 }
 
-record RuleHistoryItem(DateTime HandleTime, RequestData Request, RequestHandleResult Result);
+public record RuleHistoryItem(DateTime HandleTime, RequestData Request, RequestHandleResult Result);
