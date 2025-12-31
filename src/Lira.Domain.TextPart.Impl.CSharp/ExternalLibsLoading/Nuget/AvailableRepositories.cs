@@ -27,10 +27,14 @@ class AvailableRepositories : IEnumerable<SourceRepository>
         _globalPackagesFolder = SettingsUtility.GetGlobalPackagesFolder(settings);
         _repositories = GetSourceRepositories(settings);
 
-        _repositoriesWithGlobalFolder = new List<SourceRepository>(_repositories)
+        // first add local folder
+        var repositoriesWithGlobalFolder = new List<SourceRepository>
         {
-            new(new PackageSource(_globalPackagesFolder, "global folder"),Repository.Provider.GetVisualStudio())
+            new(new PackageSource(_globalPackagesFolder, "global folder"), Repository.Provider.GetVisualStudio())
         };
+        repositoriesWithGlobalFolder.AddRange(_repositories);
+
+        _repositoriesWithGlobalFolder = repositoriesWithGlobalFolder;
 
         _logger = logger;
         _settings = settings;
@@ -71,7 +75,7 @@ class AvailableRepositories : IEnumerable<SourceRepository>
 
         string source = null!;
 
-        var packageStream = await TryInvoke(_repositories, async r=>
+        var packageStream = await TryInvoke(_repositories, async r =>
         {
             var ms = new MemoryStream();
             var resource = await r.GetResourceAsync<FindPackageByIdResource>(ct);
@@ -102,7 +106,7 @@ class AvailableRepositories : IEnumerable<SourceRepository>
             _nugetLogger,
             ct);
 
-        if(downloadResult.Status != DownloadResourceResultStatus.Available)
+        if (downloadResult.Status != DownloadResourceResultStatus.Available)
             throw new Exception($"{nameof(downloadResult)} status is not Available: {downloadResult.Status}");
 
         return downloadResult.PackageReader;

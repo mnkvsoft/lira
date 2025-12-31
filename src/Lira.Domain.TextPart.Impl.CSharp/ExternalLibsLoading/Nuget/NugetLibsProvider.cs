@@ -37,7 +37,7 @@ internal class NugetLibsProvider
 
         // Load machine and user settings
 
-        var settings = GetSettings(_rulesPath, configuration.GetNugetLibsPath());
+        var settings = GetSettings(_rulesPath, configuration.GetNugetConfigPath());
         _repositories = new AvailableRepositories(settings, _logger, _nugetLogger);
         LogNugetInfo(settings, _repositories);
 
