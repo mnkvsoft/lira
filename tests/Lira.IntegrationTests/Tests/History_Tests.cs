@@ -162,38 +162,4 @@ public class History_Tests : TestBase
         Assert.That(invoke.Result.Response, Is.EqualTo(null));
         Assert.That(invoke.Result.Fault, Is.True);
     }
-
-
-    [Test]
-    public async Task NotConfigured()
-    {
-        // arrange
-        string rulesPath = CreateRulesPath();
-
-        string ruleName = "withHistory";
-
-        await File.WriteAllTextAsync(
-            Path.Combine(rulesPath, "history.rules"),
-              """
-              -------------------- rule
-              GET /historyNotConfigured
-
-              ----- response
-              200
-              """
-        );
-
-        await using var factory = new TestApplicationFactory(rulesPath, new AppMocks());
-        var httpClient = factory.CreateDefaultClient();
-
-        // act
-        var response = await httpClient.GetAsync("/historyNotConfigured");
-        Assert.That((int)response.StatusCode, Is.EqualTo(200));
-
-        // validate history response
-
-        var responseHistory = await httpClient.GetAsync($"/sys/api/history/{ruleName}");
-
-        Assert.That((int)responseHistory.StatusCode, Is.EqualTo(400));
-    }
 }

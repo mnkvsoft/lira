@@ -4,8 +4,5 @@ public interface IAction : IHandler
 {
     protected Task Execute(RuleExecutingContext context);
 
-    Task IHandler.Handle(HttpContextData httpContextData)
-    {
-        return Execute(httpContextData.RuleExecutingContext);
-    }
+    Task IHandler.Handle(HttpContextData httpContextData) => Execute(httpContextData.RuleExecutingContext);
 }
