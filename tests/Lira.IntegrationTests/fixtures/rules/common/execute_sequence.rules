@@ -8,7 +8,7 @@ return true;
 
 }}
 
-~ req
+~ match
 $$chain = $$chain + ">2";
 return true;
 

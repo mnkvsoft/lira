@@ -2,7 +2,7 @@
 
 GET /match/sharp/req/cache/read/{{ any >> $$key }}
 
-~ req
+~ match
 
 bool result = !cache.contains($$key);
 return result;

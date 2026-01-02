@@ -27,7 +27,7 @@ class Constants
             public const string Query = "query";
             public const string Headers = "headers";
             public const string Body = "body";
-            public const string Request = "req";
+            public const string Match = "match";
         }
 
         public class Response

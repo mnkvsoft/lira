@@ -5,7 +5,7 @@
 ~ method
 POST
 
-~ req
+~ match
 
 if(req.path().StartsWith("/variables/using_in_req_block/"))
 {

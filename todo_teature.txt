@@ -1,4 +1,3 @@
-- ~ req => ~ match
 - set body encoding
 
 - {{{ escaping
@@ -29,7 +28,7 @@ GET /payment/status/{{ int >> $$id }}
 ----- response
 
 ~ condition
-stat.elapsed > "2s" 
+stat.elapsed > "2s"
 
 ~ condition
 elapsed < 2 second
