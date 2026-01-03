@@ -45,7 +45,7 @@ public class FullParamsParserTests
             "[intParam:int = 1], " +
             "[boolParam:bool = true]" +
         "]")]
-    public void HappyWay(string str, string expected)
+    public void HappyPath(string str, string expected)
     {
         var boolDef = MethodParameterDefinition.Bool("boolParam", isRequired: true);
         var strDef = MethodParameterDefinition.Str("strParam", isRequired: true);

@@ -1,4 +1,5 @@
-﻿using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+﻿using System.Text;
+using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Handling.Generating;
 using Lira.Domain.Handling.Generating.Writers;
 using Lira.Domain.TextPart;
@@ -13,7 +14,10 @@ class ResponseGenerationHandlerParser
     private readonly ITextPartsParser _partsParser;
     private readonly IResponseGenerationHandlerFactory _responseGenerationHandlerFactory;
 
-    public ResponseGenerationHandlerParser(HeadersParser headersParser, ITextPartsParser partsParser, IResponseGenerationHandlerFactory responseGenerationHandlerFactory)
+    public ResponseGenerationHandlerParser(
+        HeadersParser headersParser,
+        ITextPartsParser partsParser,
+        IResponseGenerationHandlerFactory responseGenerationHandlerFactory)
     {
         _headersParser = headersParser;
         _partsParser = partsParser;
@@ -92,12 +96,18 @@ class ResponseGenerationHandlerParser
         if (codeBlock == null)
             return StaticHttCodeGenerator.Code200;
 
-        var str = codeBlock.GetLinesAsString();
+        var key = codeBlock.Key;
+        var content = codeBlock.GetLinesAsString();
 
-        if (string.IsNullOrWhiteSpace(str))
-            throw new Exception($"Empty http code: '{str}'");
+        if(key != null && !string.IsNullOrEmpty(content))
+            throw new Exception($"Duplicate code: {key}, {content}");
 
-        var textParts = await _partsParser.Parse(str, parsingContext);
+        var code = key ?? content;
+
+        if (string.IsNullOrWhiteSpace(code))
+            throw new Exception($"Empty http code: '{code}'");
+
+        var textParts = await _partsParser.Parse(code, parsingContext);
         return new DynamicHttCodeGenerator(textParts.WrapToTextParts());
     }
 

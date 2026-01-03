@@ -1,0 +1,14 @@
+-------------------- rule
+
+GET /generating/charset/base
+
+----- response
+
+~ headers
+Content-Type: text/plain; charset=utf-16
+
+~ code
+200
+
+~ body
+it's body in specific charset

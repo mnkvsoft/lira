@@ -5,10 +5,8 @@ namespace Lira.IntegrationTests.Tests;
 
 public class History_Tests : TestBase
 {
-    private static readonly TimeSpan PhysicalFileProviderPoolingInterval = TimeSpan.FromSeconds(10);
-
     [Test]
-    public async Task HappyWay()
+    public async Task HappyPath()
     {
         // arrange
         string rulesPath = CreateRulesPath();

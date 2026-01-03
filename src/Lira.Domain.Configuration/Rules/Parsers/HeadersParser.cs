@@ -17,11 +17,13 @@ public class HeadersParser(ITextPartsParser textPartsParser)
         {
             var (headerName, headerPattern) = line.SplitToTwoParts(":").Trim();
 
-            if (headerPattern == null)
-                throw new Exception($"Empty matching for header '{headerPattern}' in line: '{line}'");
+            var headerParts = headerPattern == null
+                ? null
+                : await textPartsParser.Parse(headerPattern.ToString(), parsingContext);
 
-            var headerParts = await textPartsParser.Parse(headerPattern.ToString(), parsingContext);
-            headers.Add(new GeneratingHeader(headerName.SingleStaticValueToString(), headerParts.WrapToTextParts()));
+            headers.Add(new GeneratingHeader(
+                headerName.SingleStaticValueToString(),
+                headerParts?.WrapToTextParts() ?? TextPartsProvider.Empty));
         }
 
         return headers;

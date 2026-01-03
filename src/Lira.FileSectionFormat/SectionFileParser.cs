@@ -101,8 +101,7 @@ public static class SectionFileParser
         {
             if (line.StartsWith(currentSplitter))
             {
-                currentPortion = new List<string>();
-                currentPortion.Add(line);
+                currentPortion = [ line ];
                 sectionsLines.Add(currentPortion);
             }
             else
@@ -147,16 +146,12 @@ public static class SectionFileParser
             FileBlockBuilder? currentBlock = null;
             foreach (var line in sectionBlocksLines)
             {
-                if (IsBlock(line, out var blockName, out var shortBlockValue))
+                if (IsBlock(line, out var blockName, out var blockKey))
                 {
                     if (currentBlock != null)
-                    {
                         section.Blocks.AddOrThrowIfContains(currentBlock.Build());
-                    }
 
-                    currentBlock = new FileBlockBuilder(blockName);
-                    if(shortBlockValue != null)
-                        currentBlock.Add(shortBlockValue);
+                    currentBlock = new FileBlockBuilder(blockName, blockKey);
 
                     continue;
                 }
@@ -201,14 +196,14 @@ public static class SectionFileParser
     }
 
     private static bool IsBlock(string cleanLine,
-        [MaybeNullWhen(returnValue: false)] out string blockName, out string? shortBlockValue)
+        [MaybeNullWhen(returnValue: false)] out string blockName, out string? blockKey)
     {
         blockName = null;
-        shortBlockValue = null;
+        blockKey = null;
 
         if (cleanLine.StartsWith(BlockStartChar + " "))
         {
-            (blockName, shortBlockValue) = cleanLine.TrimStart(BlockStartChar).SplitToTwoParts(":").Trim();
+            (blockName, blockKey) = cleanLine.TrimStart(BlockStartChar).SplitToTwoParts(":").Trim();
             return true;
         }
 

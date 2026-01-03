@@ -1,7 +1,7 @@
 using Lira.Common.Extensions;
 
 namespace Lira.FileSectionFormat;
-public record FileBlock(string Name, IReadOnlyList<string> Lines) : IComparable<FileBlock>
+public record FileBlock(string Name, string? Key, IReadOnlyList<string> Lines) : IComparable<FileBlock>
 {
     public int CompareTo(FileBlock? other)
     {
@@ -19,17 +19,11 @@ public record FileBlock(string Name, IReadOnlyList<string> Lines) : IComparable<
     }
 }
 
-internal class FileBlockBuilder
+internal class FileBlockBuilder(string name, string? key)
 {
     private readonly List<string> _lines = new();
-    private readonly string _name;
-
-    public FileBlockBuilder(string name)
-    {
-        _name = name;
-    }
 
     public void Add(string line) => _lines.Add(line);
 
-    public FileBlock Build() => new(_name, _lines.TrimEmptyLines().ToArray());
+    public FileBlock Build() => new(name, key, _lines.TrimEmptyLines().ToArray());
 }

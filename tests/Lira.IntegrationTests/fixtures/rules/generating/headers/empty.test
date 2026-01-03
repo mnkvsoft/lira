@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/headers/empty
+
+----- expected
+
+~ headers
+Empty-Header:
+
+~ code
+200

@@ -1,0 +1,11 @@
+-------------------- case
+
+GET /generating/charset/base
+
+----- expected
+
+~ code
+200
+
+~ body
+it's body in specific charset

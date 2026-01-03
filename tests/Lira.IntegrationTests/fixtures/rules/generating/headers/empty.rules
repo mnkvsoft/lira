@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/headers/empty
+
+----- response
+
+~ headers
+Empty-Header:
+
+~ code
+200

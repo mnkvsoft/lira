@@ -2,5 +2,5 @@ namespace Lira.Domain;
 
 public interface IHandler
 {
-    Task Handle(HttpContextData httpContextData);
+    internal Task Handle(HttpContextData httpContextData);
 }

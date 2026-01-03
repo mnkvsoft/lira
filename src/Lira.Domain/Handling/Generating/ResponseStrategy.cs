@@ -1,5 +1,8 @@
+using System.Text;
 using Lira.Domain.Handling.Generating.History;
 using Lira.Domain.Handling.Generating.Writers;
+using Lira.Domain.Utils;
+using Microsoft.Net.Http.Headers;
 
 namespace Lira.Domain.Handling.Generating;
 
@@ -60,19 +63,42 @@ internal abstract record ResponseGenerationHandler : IHandler
             var statusCode = CodeGenerator.Generate(httpContextData.RuleExecutingContext);
             response.StatusCode = statusCode;
 
+            Header? contentTypeHeader = null;
             if (HeadersGenerator != null)
             {
                 foreach (var header in HeadersGenerator.Create(context))
                 {
-                    response.AddHeader(header);
+                    if (header.Name == HeaderNames.ContentType)
+                        contentTypeHeader = header;
+                    else
+                        response.AddHeader(header);
                 }
+            }
+
+            Encoding? encoding = null;
+
+            if (contentTypeHeader != null)
+            {
+                var charset = contentTypeHeader.Value.ExtractCharset();
+
+                if (charset != null)
+                {
+                    if (!ContentTypeHeaderUtils.TryGetEncoding(charset, out encoding))
+                    {
+                        throw new Exception(
+                            $"The charset '{charset}' is not supported. " +
+                            $"Supported encoding types are: {string.Join(", ", ContentTypeHeaderUtils.AvailableEncodings.Select(x => x.WebName))}");
+                    }
+                }
+
+                response.AddHeader(contentTypeHeader.Value);
             }
 
             if (BodyGenerator != null)
             {
                 foreach (string bodyPart in BodyGenerator.Create(context))
                 {
-                    await response.WriteBody(bodyPart);
+                    await response.WriteBody(bodyPart, encoding ?? Encoding.UTF8);
                 }
             }
 

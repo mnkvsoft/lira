@@ -66,3 +66,4 @@ docker run -p 80:8080 -e LibsPath=/tmp/lira/libs -v c:/lira/rules:/app/rules -v 
 
 - added writing rules executed history
 - ~ req block renamed to ~ match 
+- added the ability to add `charset` to the Content-Type header

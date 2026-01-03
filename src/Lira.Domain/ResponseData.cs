@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Lira.Domain;
 
-public class ResponseData(HttpResponse response)
+class ResponseData(HttpResponse response)
 {
     public bool NeedSaveData { get; set; }
 
@@ -43,21 +43,22 @@ public class ResponseData(HttpResponse response)
             _headers.TryGetValue(name, out var value);
             _headers[name] = value == null ? header.Value : value + "," + header.Value;
         }
-        response.Headers.Append(name, header.Value);
+
+        if(response.Headers.ContainsKey(name))
+            response.Headers.Append(name, header.Value);
+        else
+            response.Headers.Add(name, header.Value);
     }
 
-    public async Task WriteBody(string part)
+    public async Task WriteBody(string part, Encoding encoding)
     {
         if (NeedSaveData)
         {
             _body ??= new StringBuilder();
             _body.Append(part);
-            await response.WriteAsync(part);
         }
-        else
-        {
-            await response.WriteAsync(part);
-        }
+
+        await response.WriteAsync(part, encoding);
     }
 
     public void Abort()
@@ -66,4 +67,4 @@ public class ResponseData(HttpResponse response)
     }
 }
 
-public readonly record struct Header(string Name, string? Value);
+internal readonly record struct Header(string Name, string? Value);
