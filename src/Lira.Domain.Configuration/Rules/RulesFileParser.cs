@@ -15,19 +15,19 @@ internal class RuleFileParser
     private readonly RequestMatchersParser _requestMatchersParser;
     private readonly ConditionMatcherParser _conditionMatcherParser;
     private readonly FileSectionDeclaredItemsParser _fileSectionDeclaredItemsParser;
-    private readonly HandlersParser _handlersParser;
+    private readonly MiddlewaresParser _middlewaresParser;
     private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
 
     public RuleFileParser(
         RequestMatchersParser requestMatchersParser,
         ConditionMatcherParser conditionMatcherParser,
         FileSectionDeclaredItemsParser fileSectionDeclaredItemsParser,
-        HandlersParser handlersParser, IFunctionFactoryCSharpFactory functionFactoryCSharpFactory)
+        MiddlewaresParser middlewaresParser, IFunctionFactoryCSharpFactory functionFactoryCSharpFactory)
     {
         _requestMatchersParser = requestMatchersParser;
         _conditionMatcherParser = conditionMatcherParser;
         _fileSectionDeclaredItemsParser = fileSectionDeclaredItemsParser;
-        _handlersParser = handlersParser;
+        _middlewaresParser = middlewaresParser;
         _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
     }
 
@@ -103,12 +103,12 @@ internal class RuleFileParser
                 var childConditionSections = conditionSection.ChildSections;
                 AssertContainsOnlySections(
                     rulesSections: childConditionSections,
-                    expectedSectionName: _handlersParser.GetAllSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare, Constants.SectionName.Options));
+                    expectedSectionName: _middlewaresParser.GetAllSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare, Constants.SectionName.Options));
 
 
                 ctx.SetDeclaredItems(await GetDeclaredItems(childConditionSections, ctx));
 
-                var handlers = await _handlersParser.Parse(
+                var middlewares = await _middlewaresParser.Parse(
                     GetWriteHistoryMode(childConditionSections),
                     childConditionSections,
                     ctx);
@@ -123,7 +123,7 @@ internal class RuleFileParser
                     new RuleData(
                         ruleInfo + $". Condition no. {i + 1}",
                         matchers,
-                        handlers)
+                        middlewares)
                 );
             }
 
@@ -178,16 +178,16 @@ internal class RuleFileParser
 
         AssertContainsOnlySections(
             childSections,
-            _handlersParser.GetAllSectionNames(childSections).NewWith(Constants.SectionName.Declare, Constants.SectionName.Options));
+            _middlewaresParser.GetAllSectionNames(childSections).NewWith(Constants.SectionName.Declare, Constants.SectionName.Options));
 
         {
-            var handlers = await _handlersParser.Parse(GetWriteHistoryMode(childSections), childSections, ctx);
+            var middlewares = await _middlewaresParser.Parse(GetWriteHistoryMode(childSections), childSections, ctx);
             return
             [
                 new RuleData(
                     ruleInfo,
                     requestMatchers,
-                    handlers)
+                    middlewares)
             ];
         }
     }

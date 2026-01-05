@@ -1,9 +1,23 @@
+using Lira.Common.Exceptions;
+using Lira.Domain.Handling;
+
 namespace Lira.Domain;
 
-public record RuleData(
-    string Info,
-    IReadOnlyCollection<IRequestMatcher> Matchers,
-    IReadOnlyCollection<Delayed<IHandler>> Handlers);
+public record RuleData
+{
+    public string Info { get; }
+    public IReadOnlyCollection<IRequestMatcher> Matchers { get; }
+    public IReadOnlyCollection<Func<Delayed<IMiddleware>>> MiddlewareFactories { get; }
+
+    public RuleData(string info,
+        IReadOnlyCollection<IRequestMatcher> matchers,
+        IReadOnlyCollection<Func<Delayed<IMiddleware>>> middlewareFactories)
+    {
+        Info = info;
+        Matchers = matchers;
+        MiddlewareFactories = middlewareFactories;
+    }
+}
 
 internal class Rule(RuleData data)
 {
@@ -13,13 +27,31 @@ internal class Rule(RuleData data)
     {
         await httpContextData.RuleExecutingContext.RequestData.SaveBody();
 
-        foreach (var handler in data.Handlers)
+        bool wasHandled = false;
+        foreach (var factory in data.MiddlewareFactories)
         {
-            if(handler.GetDelay != null)
-                await Task.Delay(handler.GetDelay(httpContextData.RuleExecutingContext));
+            var middleware = factory();
 
-            await handler.Value.Handle(httpContextData);
+            if(middleware.GetDelay != null)
+                await Task.Delay(middleware.GetDelay(httpContextData.RuleExecutingContext));
+
+            if (middleware.Value is IHandler handler)
+            {
+                wasHandled = true;
+                await handler.Handle(httpContextData);
+            }
+            else if (middleware.Value is IAction action)
+            {
+                await action.Execute(httpContextData.RuleExecutingContext);
+            }
+            else
+            {
+                throw new UnsupportedInstanceType(factory);
+            }
         }
+
+        // if (!wasHandled)
+        //     throw new Exception("No handler was found");
     }
 
     public async Task<RuleMatchResult> IsMatch(RuleExecutingContext context)

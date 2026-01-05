@@ -1,7 +1,8 @@
-﻿using System.Text;
-using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+﻿using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+using Lira.Domain.Handling;
 using Lira.Domain.Handling.Generating;
-using Lira.Domain.Handling.Generating.Writers;
+using Lira.Domain.Handling.Generating.ResponseStrategies;
+using Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Normal.Generators;
 using Lira.Domain.TextPart;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;
@@ -78,7 +79,7 @@ class ResponseGenerationHandlerParser
                                     $"but there are: {string.Join(", ", blocks.Select(b => b.Name))}");
             }
 
-            return _responseGenerationHandlerFactory.CreateAbort(writeHistoryMode);
+            return _responseGenerationHandlerFactory.CreateFault(writeHistoryMode);
         }
 
         return _responseGenerationHandlerFactory.CreateNormal(

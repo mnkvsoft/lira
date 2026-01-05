@@ -1,0 +1,18 @@
+-------------------- rule
+
+GET /generating/multiple_responses/base
+
+----- response
+
+~ code
+500
+
+----- response
+
+~ code
+500
+
+----- response
+
+~ code
+500

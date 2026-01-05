@@ -8,7 +8,7 @@ public static class FileSectionExtensions
     {
         var unknownBlocks = section.Blocks.Where(b => !knownBlockNames.Contains(b.Name)).ToList();
         if (unknownBlocks.Any())
-            throw new Exception($"Section '{section.Name}' has unknown blocks: {string.Join(", ", unknownBlocks)}");
+            throw new Exception($"Section '{section.Name}' has unknown blocks: {string.Join(", ", unknownBlocks.Select(x => x.Name))}");
     }
 
     public static IReadOnlyCollection<FileBlock> GetBlocks(this FileSection section, params string[] names)

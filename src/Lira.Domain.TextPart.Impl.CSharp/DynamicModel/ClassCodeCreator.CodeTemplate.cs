@@ -144,7 +144,7 @@ static partial class ClassCodeCreator
         public readonly static string IAction =
             ImportNamespaces + Nl + Nl +
             Namespace + Nl + Nl +
-            "using Lira.Domain.Handling.Actions;" + Nl +
+            "using Lira.Domain.Handling;" + Nl +
             """
 
             public sealed class [className] : DynamicObjectBaseAction, IAction

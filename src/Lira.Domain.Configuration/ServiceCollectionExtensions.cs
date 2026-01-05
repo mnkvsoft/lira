@@ -44,7 +44,7 @@ public static class ServiceCollectionExtensions
             .AddOperators()
 
             .AddScoped<ResponseGenerationHandlerParser>()
-            .AddScoped<HandlersParser>()
+            .AddScoped<MiddlewaresParser>()
             .AddScoped<HeadersParser>()
             .AddScoped<GetDelayParser>()
             .AddScoped<DeclaredItemsLoader>()

@@ -26,7 +26,7 @@ public class BlockNameHelper
     {
         return type
             .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-            .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(T))
+            .Where(fi => fi is { IsLiteral: true, IsInitOnly: false } && fi.FieldType == typeof(T))
             .Select(x => (T?)x.GetRawConstantValue())
             .ToList();
     }

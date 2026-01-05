@@ -21,8 +21,4 @@
     <ProjectReference Include="..\Lira.Configuration\Lira.Configuration.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Handling\" />
-  </ItemGroup>
-
 </Project>

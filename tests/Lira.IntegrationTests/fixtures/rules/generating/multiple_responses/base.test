@@ -1,0 +1,8 @@
+-------------------- case
+
+GET /generating/multiple_responses/base
+
+----- expected
+
+~ code
+500
