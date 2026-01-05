@@ -51,9 +51,6 @@ class HandlersParser
 
         foreach (var section in sections.Where(s => sectionNames.Contains(s.Name)))
         {
-            if(!GetAllSectionNames(sections).Contains(section.Name))
-                continue;
-
             IHandler action;
             if (actionNames.Contains(section.Name))
             {
@@ -116,7 +113,7 @@ class HandlersParser
         }
         else
         {
-            var codeBlock = section.GetBlockRequired(Constants.BlockName.Action.Code);
+            var codeBlock = section.GetBlockRequired(Constants.BlockName.Action.Script);
 
             code = codeBlock.GetLinesAsString();
         }

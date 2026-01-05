@@ -1,13 +1,16 @@
-- set body encoding
+- multiple response
+- key for conditions
+- response model in cs-code
+- cache section
+- guid >> uuid
 
 - {{{ escaping
-- key for conditions
-- cache section
+
+
 - type inference for dynamic block
 - RequestStatisticStorage ttl to config
 - slow network
 - rules index
-- response model in cs-code
 - describe file section format
 - custom parameters in declared function
 - clean connected assemblies

@@ -5,7 +5,7 @@
 ~ method
 POST
 
-~ match
+~ script
 
 string allPath              = req.path();
 string accountSource        = req.path(4);

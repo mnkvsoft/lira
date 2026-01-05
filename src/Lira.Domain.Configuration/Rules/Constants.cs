@@ -27,7 +27,7 @@ class Constants
             public const string Query = "query";
             public const string Headers = "headers";
             public const string Body = "body";
-            public const string Match = "match";
+            public const string Script = "script";
         }
 
         public class Response
@@ -41,12 +41,12 @@ class Constants
 
         public class Action
         {
-            public const string Code = "code";
+            public const string Script = "script";
         }
     }
 
-    public static readonly HashSet<string> HttpMethods = new()
-    {
+    public static readonly HashSet<string> HttpMethods =
+    [
         "GET",
         "PUT",
         "POST",
@@ -55,5 +55,5 @@ class Constants
         "TRACE",
         "OPTIONS",
         "CONNECT"
-    };
+    ];
 }

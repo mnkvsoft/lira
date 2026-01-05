@@ -5,7 +5,7 @@ POST /match/sharp/req/read_to_variable/{{ regex:^[0-9]{20}$ >> $$account}}
 ~ body
 {{ jpath: $.amount }} >> {{ dec >> $$amount}}
 
-~ match
+~ script
 
 @- the account balance is encoded in its number
 

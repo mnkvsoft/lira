@@ -8,7 +8,7 @@ return true;
 
 }}
 
-~ match
+~ script
 $$chain = $$chain + ">2";
 return true;
 

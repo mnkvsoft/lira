@@ -14,7 +14,7 @@ GET /logging/base/{{
     return true;
 }}
 
-~ match
+~ script
 
 log("hello from req");
 return true;

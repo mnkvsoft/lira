@@ -89,7 +89,7 @@ class RequestMatchersParser
                 return await CreateBodyRequestMatcher(block, context);
             case Constants.BlockName.Rule.Path:
                 return await CreatePathRequestMatcher(PatternParser.Parse(block.GetLinesAsString()), context);
-            case Constants.BlockName.Rule.Match:
+            case Constants.BlockName.Rule.Script:
                 return await CreateCustomRequestMatcher(block.GetLinesAsString(), context);
             default:
                 throw new Exception($"Unknown block '{block.Name}' in 'rule' section");
