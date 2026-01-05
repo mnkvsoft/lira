@@ -3,6 +3,7 @@
 - response model in cs-code
 - cache section
 - guid >> uuid
+- easy access to body fields
 
 - {{{ escaping
 

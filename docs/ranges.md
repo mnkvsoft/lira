@@ -237,7 +237,7 @@ curl --location 'http://localhost/payment' \
 @- PAYMENT
 
 @- success
-@- Правило №1
+@- rule no.1
 
 -------------------- rule
 
@@ -260,7 +260,7 @@ example: manual_payment_with_reversal
 
 
 @- success with pending reversal
-@- Правило №2
+@- rule no.2
 
 -------------------- rule
 
@@ -283,7 +283,7 @@ example: manual_payment_with_reversal
 
 
 @- success with reject reversal
-@- Правило №3
+@- rule no.3
 
 -------------------- rule
 
@@ -306,7 +306,7 @@ example: manual_payment_with_reversal
 
 
 @- pending
-@- Правило №4
+@- rule no.4
 
 -------------------- rule
 
@@ -329,7 +329,7 @@ example: manual_payment_with_reversal
 
 
 @- reject
-@- Правило №5
+@- rule no.5
 
 -------------------- rule
 
@@ -353,7 +353,7 @@ example: manual_payment_with_reversal
 @- REVERSAL
 
 @- success
-@- Правило №6
+@- rule no.6
 
 -------------------- rule
 
@@ -370,7 +370,7 @@ example: manual_payment_with_reversal
 }
 
 @- pending
-@- Правило №7
+@- rule no.7
 
 -------------------- rule
 
@@ -387,7 +387,7 @@ example: manual_payment_with_reversal
 }
 
 @- reject
-@- Правило №8
+@- rule no.8
 
 -------------------- rule
 
@@ -594,7 +594,7 @@ reversal.reject   [2000001..3000000]
 @- PAYMENT
 
 @- success
-@- Правило №1
+@- rule no.1
 
 -------------------- rule
 
@@ -617,7 +617,7 @@ example: ranges_payment_with_reversal
 
 
 @- success with pending reversal
-@- Правило №2
+@- rule no.2
 
 -------------------- rule
 
@@ -640,7 +640,7 @@ example: ranges_payment_with_reversal
 
 
 @- success with reject reversal
-@- Правило №3
+@- rule no.3
 
 -------------------- rule
 
@@ -663,7 +663,7 @@ example: ranges_payment_with_reversal
 
 
 @- pending
-@- Правило №4
+@- rule no.4
 
 -------------------- rule
 
@@ -686,7 +686,7 @@ example: ranges_payment_with_reversal
 
 
 @- reject
-@- Правило №5
+@- rule no.5
 
 -------------------- rule
 
@@ -710,7 +710,7 @@ example: ranges_payment_with_reversal
 @- REVERSAL
 
 @- success
-@- Правило №6
+@- rule no.6
 
 -------------------- rule
 
@@ -727,7 +727,7 @@ example: ranges_payment_with_reversal
 }
 
 @- pending
-@- Правило №7
+@- rule no.7
 
 -------------------- rule
 
@@ -744,7 +744,7 @@ example: ranges_payment_with_reversal
 }
 
 @- reject
-@- Правило №8
+@- rule no.8
 
 -------------------- rule
 
