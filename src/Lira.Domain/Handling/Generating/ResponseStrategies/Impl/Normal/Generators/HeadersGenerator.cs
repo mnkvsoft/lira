@@ -2,7 +2,12 @@ using ArgValidation;
 
 namespace Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Normal.Generators;
 
-public class HeadersGenerator
+public interface IHeadersGenerator
+{
+    IEnumerable<Header> Create(RuleExecutingContext context);
+}
+
+public class HeadersGenerator : IHeadersGenerator
 {
     private readonly IReadOnlyCollection<GeneratingHeader> _headers;
 
@@ -12,7 +17,7 @@ public class HeadersGenerator
         _headers = headers;
     }
 
-    internal IEnumerable<Header> Create(RuleExecutingContext context)
+    public IEnumerable<Header> Create(RuleExecutingContext context)
     {
         foreach (var header in _headers)
         {

@@ -1,39 +1,31 @@
+using Lira.Common;
+using Lira.Domain.Caching;
 using Lira.Domain.Handling.Generating.History;
-using Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Fault;
-using Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Normal;
-using Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Normal.Generators;
+using Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Caching;
 
 namespace Lira.Domain.Handling.Generating.ResponseStrategies;
 
-public interface IResponseGenerationHandlerFactory
+class ResponseMiddlewareFactory(
+    HandledRuleHistoryStorage handledRuleHistoryStorage,
+    ResponseCache responseCache)
 {
-    IHandler CreateNormal(
-        WriteHistoryMode writeHistoryMode,
-        IHttCodeGenerator codeGenerator,
-        BodyGenerator? bodyGenerator,
-        HeadersGenerator? headersGenerator);
-
-    IHandler CreateFault(WriteHistoryMode writeHistoryMode);
-}
-
-class ResponseGenerationHandlerFactory(HandledRuleHistoryStorage handledRuleHistoryStorage) : IResponseGenerationHandlerFactory
-{
-    public IHandler CreateNormal(
-        WriteHistoryMode writeHistoryMode,
-        IHttCodeGenerator codeGenerator,
-        BodyGenerator? bodyGenerator,
-        HeadersGenerator? headersGenerator)
+    public Middleware Create(
+        ResponseMiddlewareModes modes,
+        Factory<IResponseStrategy> responseStrategyFactory)
     {
-        return new NormalResponseGenerationHandler(
-            new WriteStatDependencies(handledRuleHistoryStorage, writeHistoryMode),
-            codeGenerator,
-            bodyGenerator,
-            headersGenerator);
-    }
+        var factory = responseStrategyFactory;
 
-    public IHandler CreateFault(WriteHistoryMode writeHistoryMode)
-    {
-        return new FaultResponseGenerationHandler(
-            new WriteStatDependencies(handledRuleHistoryStorage, writeHistoryMode));
+        if (modes.Caching is CachingMode.Enabled enabled)
+        {
+            factory = () => new CachingResponseStrategy(
+                enabled.Time,
+                enabled.RuleKeyExtractor,
+                responseCache,
+                responseStrategyFactory);
+        }
+
+        return new Middleware.Response(
+            new WriteStatDependencies(handledRuleHistoryStorage, modes.WriteHistory),
+            factory);
     }
 }

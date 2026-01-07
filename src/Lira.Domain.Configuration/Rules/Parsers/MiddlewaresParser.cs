@@ -1,8 +1,9 @@
+using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.Configuration.Rules.Parsers.CodeParsing;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Handling;
-using Lira.Domain.Handling.Generating;
+using Lira.Domain.Handling.Generating.ResponseStrategies;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;
@@ -14,18 +15,24 @@ class MiddlewaresParser
     private readonly IEnumerable<ISystemActionRegistrator> _externalCallerRegistrators;
     private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
     private readonly GetDelayParser _getDelayParser;
-    private readonly ResponseGenerationHandlerParser _responseGenerationHandlerParser;
+    private readonly ResponseStrategyParser _responseStrategyParser;
     private readonly CodeParser _codeParser;
+    private readonly IMiddlewareFactory _middlewareFactory;
 
-    public MiddlewaresParser(IEnumerable<ISystemActionRegistrator> externalCallerRegistrators,
-        IFunctionFactoryCSharpFactory functionFactoryCSharpFactory, GetDelayParser getDelayParser,
-        ResponseGenerationHandlerParser responseGenerationHandlerParser, CodeParser codeParser)
+    public MiddlewaresParser(
+        IEnumerable<ISystemActionRegistrator> externalCallerRegistrators,
+        IFunctionFactoryCSharpFactory functionFactoryCSharpFactory,
+        GetDelayParser getDelayParser,
+        ResponseStrategyParser responseStrategyParser,
+        CodeParser codeParser,
+        IMiddlewareFactory middlewareFactory)
     {
         _externalCallerRegistrators = externalCallerRegistrators;
         _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
         _getDelayParser = getDelayParser;
-        _responseGenerationHandlerParser = responseGenerationHandlerParser;
+        _responseStrategyParser = responseStrategyParser;
         _codeParser = codeParser;
+        _middlewareFactory = middlewareFactory;
     }
 
     public IReadOnlySet<string> GetAllSectionNames(IReadOnlyCollection<FileSection> sections)
@@ -45,15 +52,16 @@ class MiddlewaresParser
     private static string GetSectionName(ISystemActionRegistrator registrator) =>
         Constants.SectionName.ActionPrefix + "." + registrator.Name;
 
-
     record MiddlewareBuilder
     {
-        public Delayed<IMiddleware>? Action = null;
-        public List<Delayed<IMiddleware>> Handlers = new();
+        public Delayed<IAction>? Action;
+        public readonly List<Delayed<IResponseStrategy>> Responses = new();
     }
 
-    public async Task<IReadOnlyCollection<Func<Delayed<IMiddleware>>>> Parse(WriteHistoryMode writeHistoryMode,
-        IReadOnlyCollection<FileSection> sections, ParsingContext parsingContext)
+    public async Task<IReadOnlyCollection<Factory<Delayed<Middleware>>>> Parse(
+        ResponseMiddlewareModes modes,
+        IReadOnlyCollection<FileSection> sections,
+        ParsingContext parsingContext)
     {
         var builders = new List<MiddlewareBuilder>();
 
@@ -72,19 +80,19 @@ class MiddlewaresParser
 
                 builders.Add(new MiddlewareBuilder
                 {
-                    Action = new Delayed<IMiddleware>(action, getDelay)
+                    Action = new Delayed<IAction>(action, getDelay)
                 });
             }
             else if (section.Name == Constants.SectionName.Response)
             {
-                var handler = await _responseGenerationHandlerParser.Parse(writeHistoryMode, section, parsingContext);
+                var responseStrategy = await _responseStrategyParser.Parse(section, parsingContext);
                 if (handlerBuilder == null)
                 {
                     handlerBuilder = new MiddlewareBuilder();
                     builders.Add(handlerBuilder);
                 }
 
-                handlerBuilder.Handlers.Add(new Delayed<IMiddleware>(handler, getDelay));
+                handlerBuilder.Responses.Add(new Delayed<IResponseStrategy>(responseStrategy, getDelay));
             }
             else
             {
@@ -92,21 +100,24 @@ class MiddlewaresParser
             }
         }
 
-        return builders.Select(GetMiddleware).ToArray();
+        return builders.Select(builder => GetMiddleware(modes, builder)).ToArray();
+    }
 
-        static Func<Delayed<IMiddleware>> GetMiddleware(MiddlewareBuilder builder)
+    Factory<Delayed<Middleware>> GetMiddleware(ResponseMiddlewareModes modes, MiddlewareBuilder builder)
+    {
+        if (builder.Action != null)
+            return _middlewareFactory.CreateAction(builder.Action);
+
+        if (builder.Responses.Count == 0)
+            throw new Exception("No handlers have been configured for rule");
+
+        if (builder.Responses.Count == 1)
         {
-            if (builder.Action != null)
-                return () => builder.Action;
-
-            if (builder.Handlers.Count == 0)
-                throw new Exception("No handlers have been configured for rule");
-
-            if (builder.Handlers.Count == 1)
-                return () => builder.Handlers.First();
-
-            return () => builder.Handlers.Random();
+            var delayed = builder.Responses.First();
+            return _middlewareFactory.CreateResponse(modes, delayed);
         }
+
+        return _middlewareFactory.CreateMultipleResponse(modes, builder.Responses);
     }
 
     private async Task<IAction> GetAction(ParsingContext parsingContext, FileSection section)

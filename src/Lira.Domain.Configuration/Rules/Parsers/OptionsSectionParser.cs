@@ -10,8 +10,14 @@ class Options
     [ParameterName("name")]
     public string? RuleName { get; init; }
 
+    [ParameterName("key")]
+    public string? RuleKey { get; init; }
+
     [ParameterName("history")]
     public bool HistoryEnabled { get; init; }
+
+    [ParameterName("caching")]
+    public string? CachingEnabled { get; init; }
 }
 
 static class OptionsSectionParser

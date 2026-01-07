@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Text;
 using Lira.Common.Extensions;
 using Lira.Configuration;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +9,7 @@ namespace Lira.Domain;
 
 public interface IRequestHandler
 {
-    Task Handle(RequestData requestData, HttpResponse response);
+    Task Handle(RequestData requestData, IResponseWriter responseWriter);
 }
 
 class RequestHandler : IRequestHandler
@@ -26,7 +25,7 @@ class RequestHandler : IRequestHandler
         _isLoggingEnabled = configuration.IsLoggingEnabled();
     }
 
-    public async Task Handle(RequestData requestData, HttpResponse response)
+    public async Task Handle(RequestData requestData, IResponseWriter responseWriter)
     {
         var swTotal = Stopwatch.StartNew();
         var sw = Stopwatch.StartNew();
@@ -43,7 +42,7 @@ class RequestHandler : IRequestHandler
 
             try
             {
-                await match.Rule.Handle(new HttpContextData(ctx, new ResponseData(response)));
+                await match.Rule.Handle(new HttpContextData(ctx, responseWriter));
             }
             catch (Exception exc)
             {
@@ -60,15 +59,13 @@ class RequestHandler : IRequestHandler
 
         if (matches.Count == 0)
         {
-            response.StatusCode = 404;
-            await response.WriteAsync("Rule not found");
+            await responseWriter.Write404("Rule not found");
             return;
         }
 
         if (matches.Count > 1)
         {
-            response.StatusCode = 404;
-            await response.WriteAsync(GetErrorMessageForManyRules(matches.Select(x => x.Rule)));
+            await responseWriter.Write404(GetErrorMessageForManyRules(matches.Select(x => x.Rule)));
             return;
         }
 

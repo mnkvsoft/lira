@@ -4,6 +4,7 @@ using Lira.Domain.Configuration.RangeModel;
 using Lira.Domain.Configuration.Rules;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using System.Diagnostics;
+using Lira.Common;
 using Lira.Common.State;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.Domain.TextPart.Impl.System;
@@ -16,7 +17,7 @@ class ConfigurationReader(
     RangesLoader rangesLoader,
     IServiceScopeFactory serviceScopeFactory,
     ILogger<ConfigurationReader> logger,
-    IRequestHandlerFactory requestHandlerFactory)
+    Factory<IRequestHandlerBuilder> requestHandlerBuilderFactory)
 {
     public async Task<(IRequestHandler RequestHandler, IReadOnlyCollection<IStateful> States)> Read(string path)
     {
@@ -45,10 +46,11 @@ class ConfigurationReader(
         context.SetDeclaredItems(variables);
 
         var rulesLoader = provider.GetRequiredService<RulesLoader>();
-        var rules = await rulesLoader.LoadRulesDatas(path, context);
+        var requestHandlerBuilder = requestHandlerBuilderFactory();
+        await rulesLoader.LoadRulesDatas(requestHandlerBuilder, path, context);
 
-        logger.LogInformation($"{rules.Count} rules were successfully loaded ({(int)sw.ElapsedMilliseconds} ms)");
-        var requestHandler = requestHandlerFactory.Create(rules);
+        logger.LogInformation($"{requestHandlerBuilder.Count} rules were successfully loaded ({(int)sw.ElapsedMilliseconds} ms)");
+        var requestHandler = requestHandlerBuilder.Build();
 
         var sequence = provider.GetRequiredService<SystemSequence>();
         var rangesStates = ranges.SelectMany(x => x.Value.GetStates());

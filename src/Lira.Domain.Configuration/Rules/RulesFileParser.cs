@@ -1,52 +1,65 @@
 using System.Collections.Immutable;
 using Lira.Common;
 using Lira.Common.Extensions;
+using Lira.Common.PrettyParsers;
+using Lira.Domain.Caching;
 using Lira.Domain.Configuration.DeclarationItems;
 using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Handling.Generating;
+using Lira.Domain.Handling.Generating.ResponseStrategies;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.FileSectionFormat;
+using Microsoft.Extensions.Configuration;
 
 namespace Lira.Domain.Configuration.Rules;
 
-internal class RuleFileParser
+internal class RuleFileLoader
 {
     private readonly RequestMatchersParser _requestMatchersParser;
     private readonly ConditionMatcherParser _conditionMatcherParser;
     private readonly FileSectionDeclaredItemsParser _fileSectionDeclaredItemsParser;
     private readonly MiddlewaresParser _middlewaresParser;
     private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
+    private readonly IConfiguration _configuration;
 
-    public RuleFileParser(
+    public RuleFileLoader(
         RequestMatchersParser requestMatchersParser,
         ConditionMatcherParser conditionMatcherParser,
         FileSectionDeclaredItemsParser fileSectionDeclaredItemsParser,
-        MiddlewaresParser middlewaresParser, IFunctionFactoryCSharpFactory functionFactoryCSharpFactory)
+        MiddlewaresParser middlewaresParser,
+        IFunctionFactoryCSharpFactory functionFactoryCSharpFactory,
+        IConfiguration configuration)
     {
         _requestMatchersParser = requestMatchersParser;
         _conditionMatcherParser = conditionMatcherParser;
         _fileSectionDeclaredItemsParser = fileSectionDeclaredItemsParser;
         _middlewaresParser = middlewaresParser;
         _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
+        _configuration = configuration;
     }
 
-    public async Task<IReadOnlyCollection<RuleData>> Parse(string ruleFile, IReadonlyParsingContext parsingContext)
+    public async Task Load(
+        IRequestHandlerBuilder builder,
+        string ruleFile,
+        IReadonlyParsingContext parsingContext)
     {
         var sectionsRoot = await SectionFileParser.Parse(ruleFile);
 
         var sections = sectionsRoot.Sections;
-        AssertContainsOnlySections(sections, [Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Options]);
+        AssertContainsOnlySections(sections,
+            [Constants.SectionName.Rule, Constants.SectionName.Declare, Constants.SectionName.Options]);
 
         var usingContext = _functionFactoryCSharpFactory.CreateRulesUsingContext(sectionsRoot.Lines);
 
-        // var ctx = new ParsingContext(parsingContext, cSharpUsingContext: usingContext, currentPath: ruleFile.GetDirectory());
-        var ctx = new ParsingContext(parsingContext, cSharpUsingContext: usingContext, currentPath: ruleFile.GetDirectory());
+        var ctx = new ParsingContext(
+            parsingContext,
+            cSharpUsingContext: usingContext,
+            currentPath: ruleFile.GetDirectory());
 
         var declaredItems = await GetDeclaredItems(sections, ctx);
         ctx.SetDeclaredItems(declaredItems);
 
-        var rules = new List<RuleData>();
         var ruleSections = sections.Where(s => s.Name == Constants.SectionName.Rule).ToArray();
         for (var i = 0; i < ruleSections.Length; i++)
         {
@@ -55,16 +68,16 @@ internal class RuleFileParser
 
             var ruleSection = ruleSections[i];
 
-            rules.AddRange(await CreateRules(
+            await CreateRules(
+                builder,
                 ruleInfo,
                 ruleSection,
-                ctx));
+                ctx);
         }
-
-        return rules;
     }
 
-    private async Task<IReadOnlyCollection<RuleData>> CreateRules(
+    private async Task CreateRules(
+        IRequestHandlerBuilder builder,
         string ruleInfo,
         FileSection ruleSection,
         ParsingContext parsingContext)
@@ -80,22 +93,27 @@ internal class RuleFileParser
         var declaredItems = await GetDeclaredItems(childSections, ctx);
         ctx.SetDeclaredItems(declaredItems);
 
-        bool existsConditionSection = childSections.Any(x => x.Name == Constants.SectionName.Condition);
-        bool existsCacheSection = childSections.Any(x => x.Name == Constants.SectionName.Cache);
+        var modes = GetResponseMiddlewareModes(childSections);
 
-        if (existsConditionSection && existsCacheSection)
-            throw new Exception("Section and 2 cannot be declared together");
+        var cachingEnabled = modes.Caching is CachingMode.Enabled;
+
+        var existsConditionSection = childSections.Any(x => x.Name == Constants.SectionName.Condition);
+        if (existsConditionSection && cachingEnabled)
+            throw new Exception(
+                $"Section '{Constants.SectionName.Condition}' cannot be determined when '{AttributeExtractor.Extract<Options, ParameterNameAttribute>(x => x.CachingEnabled)} = true'");
 
         if (existsConditionSection)
         {
-            AssertContainsOnlySections(childSections, [Constants.SectionName.Condition, Constants.SectionName.Declare, Constants.SectionName.Options]);
+            AssertContainsOnlySections(childSections, [
+                Constants.SectionName.Condition,
+                Constants.SectionName.Declare,
+                Constants.SectionName.Options
+            ]);
 
             var conditionSections = childSections.Where(s => s.Name == Constants.SectionName.Condition).ToArray();
 
             if (conditionSections.Length < 2)
                 throw new Exception($"Must be at least 2 '{Constants.SectionName.Condition}' sections");
-
-            var rules = new List<RuleData>();
 
             for (var i = 0; i < conditionSections.Length; i++)
             {
@@ -103,13 +121,14 @@ internal class RuleFileParser
                 var childConditionSections = conditionSection.ChildSections;
                 AssertContainsOnlySections(
                     rulesSections: childConditionSections,
-                    expectedSectionName: _middlewaresParser.GetAllSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare, Constants.SectionName.Options));
+                    expectedSectionName: _middlewaresParser.GetAllSectionNames(childConditionSections)
+                        .NewWith(Constants.SectionName.Response, Constants.SectionName.Declare));
 
 
                 ctx.SetDeclaredItems(await GetDeclaredItems(childConditionSections, ctx));
 
                 var middlewares = await _middlewaresParser.Parse(
-                    GetWriteHistoryMode(childConditionSections),
+                    modes,
                     childConditionSections,
                     ctx);
 
@@ -119,82 +138,53 @@ internal class RuleFileParser
                 matchers.AddRange(requestMatchers);
                 matchers.AddRange(conditionMatchers);
 
-                rules.Add(
-                    new RuleData(
-                        ruleInfo + $". Condition no. {i + 1}",
-                        matchers,
-                        middlewares)
-                );
+                builder.AddRule(ruleInfo + $". Condition no. {i + 1}", matchers, middlewares);
             }
-
-            return rules;
         }
-
-        //if (existsCacheSection)
-        //{
-        //    AssertContainsOnlySections(childSections, new[] { Constants.SectionName.Cache, Constants.SectionName.Declare, Constants.SectionName.Templates });
-
-        //    var conditionSections = childSections.Where(s => s.Name == Constants.SectionName.Cache).ToArray();
-
-        //    if (conditionSections.Length > 1)
-        //        throw new Exception($"There can only be one {Constants.SectionName.Cache} section");
-
-        //    var cacheSection = childSections.Single(s => s.Name == Constants.SectionName.Cache);
-
-        //    var rules = new List<Rule>();
-
-        //    if(cacheSection.ChildSections.Count > 0)
-        //        throw new Exception($"Section {Constants.SectionName.Cache} cannot contains child section. Contains: {string.Join(", ", cacheSection.ChildSections.Select(x => x.Name))}");
-
-
-
-        //    for (var i = 0; i < conditionSections.Length; i++)
-        //    {
-        //        var conditionSection = conditionSections[i];
-        //        var childConditionSections = conditionSection.ChildSections;
-        //        AssertContainsOnlySections(
-        //            childConditionSections, _actionsParser.GetSectionNames(childConditionSections).NewWith(Constants.SectionName.Response, Constants.SectionName.Declare));
-
-        //        ctx = ctx with { DeclaredItems = await GetDeclaredItems(childConditionSections, ctx) };
-
-        //        responseStrategy = await _responseStrategyParser.Parse(conditionSection, ctx);
-        //        externalCallers = await _actionsParser.Parse(childConditionSections, ctx);
-
-        //        var conditionMatchers = _conditionMatcherParser.Parse(conditionSection);
-
-        //        var matchers = new List<IRequestMatcher>();
-        //        matchers.AddRange(requestMatchers);
-        //        matchers.AddRange(conditionMatchers);
-
-        //        rules.Add(new Rule(
-        //            ruleName + $". Condition no. {i + 1}",
-        //            new RequestMatcherSet(matchers),
-        //            new ActionsExecutor(externalCallers, _loggerFactory),
-        //            responseStrategy));
-        //    }
-
-        //    return rules;
-        //}
-
-        AssertContainsOnlySections(
-            childSections,
-            _middlewaresParser.GetAllSectionNames(childSections).NewWith(Constants.SectionName.Declare, Constants.SectionName.Options));
-
+        else
         {
-            var middlewares = await _middlewaresParser.Parse(GetWriteHistoryMode(childSections), childSections, ctx);
-            return
-            [
-                new RuleData(
-                    ruleInfo,
-                    requestMatchers,
-                    middlewares)
-            ];
+            var middlewares = await _middlewaresParser.Parse(modes, childSections, ctx);
+
+            AssertContainsOnlySections(
+                childSections,
+                _middlewaresParser.GetAllSectionNames(childSections)
+                    .NewWith(Constants.SectionName.Declare, Constants.SectionName.Options));
+
+            builder.AddRule(ruleInfo, requestMatchers, middlewares);
         }
     }
 
-    private static WriteHistoryMode GetWriteHistoryMode(IImmutableList<FileSection> childConditionSections)
+    private ResponseMiddlewareModes GetResponseMiddlewareModes(IImmutableList<FileSection> childSections)
     {
-        var config = OptionsSectionParser.Parse(childConditionSections);
+        var options = OptionsSectionParser.Parse(childSections);
+
+        var writeHistoryMode = GetWriteHistoryMode(options);
+        var cachingMode = GetCachingMode(options);
+
+        return new ResponseMiddlewareModes(cachingMode, writeHistoryMode);
+    }
+
+    private CachingMode GetCachingMode(Options? options)
+    {
+        CachingMode cachingMode;
+        if (string.IsNullOrWhiteSpace(options?.CachingEnabled))
+        {
+            cachingMode = CachingMode.Disabled.Instance;
+        }
+        else
+        {
+            var lifeTime = bool.TryParse(options.CachingEnabled, out _)
+                ? _configuration.GetValue<TimeSpan>("DefaultLifeTimeCachingResponse")
+                : PrettyTimespanParser.Parse(options.CachingEnabled);
+
+            cachingMode = new CachingMode.Enabled(lifeTime, null);
+        }
+
+        return cachingMode;
+    }
+
+    private static WriteHistoryMode GetWriteHistoryMode(Options? config)
+    {
         WriteHistoryMode writeHistoryMode;
         if (config?.HistoryEnabled == true)
         {
@@ -213,7 +203,8 @@ internal class RuleFileParser
         return writeHistoryMode;
     }
 
-    private async Task<DeclaredItems> GetDeclaredItems(IReadOnlyCollection<FileSection> childSections, ParsingContext parsingContext)
+    private async Task<DeclaredItems> GetDeclaredItems(IReadOnlyCollection<FileSection> childSections,
+        ParsingContext parsingContext)
     {
         var result = DeclaredItems.WithoutLocalVariables(parsingContext.DeclaredItems);
 

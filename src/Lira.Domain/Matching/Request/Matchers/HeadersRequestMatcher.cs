@@ -12,9 +12,9 @@ public class HeadersRequestMatcher : IRequestMatcher
         _headers = headers;
     }
 
-    async Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext context)
+    async Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext ctx)
     {
-        var request = context.RequestData;
+        var request = ctx.RequestData;
         int weight = 0;
 
         foreach (var header in _headers)
@@ -25,7 +25,7 @@ public class HeadersRequestMatcher : IRequestMatcher
             var isMatch = false;
             foreach (var value in values)
             {
-                if (await pattern.Match(context, value))
+                if (await pattern.Match(ctx, value))
                 {
                     isMatch = true;
                     break;

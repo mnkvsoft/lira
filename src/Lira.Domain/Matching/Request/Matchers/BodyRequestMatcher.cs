@@ -17,9 +17,9 @@ public class BodyRequestMatcher : IRequestMatcher
         _extractToMatchFunctionMap = extractToMatchFunctionMap;
     }
 
-    async Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext context)
+    async Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext ctx)
     {
-        var request = context.RequestData;
+        var request = ctx.RequestData;
         request.Body.Position = 0;
         var stream = new StreamReader(request.Body);
         var body = await stream.ReadToEndAsync();
@@ -32,7 +32,7 @@ public class BodyRequestMatcher : IRequestMatcher
 
             var value = extractor.Extract(body);
 
-            if (await matcher.Match(context, value) == false)
+            if (await matcher.Match(ctx, value) == false)
                 return RequestMatchResult.NotMatched;
 
             weight += TextPatternPartWeightCalculator.Calculate(matcher);

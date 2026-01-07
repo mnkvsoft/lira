@@ -18,8 +18,7 @@ class HandledRuleHistoryStorage : IHandledRuleHistoryStorage
         _lifeTime = configuration.GetValue<TimeSpan>("RuleHistoryLifeTime");
     }
 
-
-    public void Add(RuleName ruleName, DateTime executeTime, RequestData requestData, RequestHandleResult handleResult)
+    public void Add(RuleName ruleName, DateTime executeTime, RequestData requestData, Response handleResult)
     {
         string key = GetCacheKeyPattern(ruleName) + Interlocked.Increment(ref _counter);
         _memoryCache.Set(

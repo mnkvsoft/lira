@@ -1,7 +1,8 @@
 ﻿using Lira.Domain.Configuration.Rules.ValuePatternParsing;
-using Lira.Domain.Handling;
 using Lira.Domain.Handling.Generating;
 using Lira.Domain.Handling.Generating.ResponseStrategies;
+using Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Fault;
+using Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Normal;
 using Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Normal.Generators;
 using Lira.Domain.TextPart;
 using Lira.FileSectionFormat;
@@ -9,23 +10,20 @@ using Lira.FileSectionFormat.Extensions;
 
 namespace Lira.Domain.Configuration.Rules.Parsers;
 
-class ResponseGenerationHandlerParser
+class ResponseStrategyParser
 {
     private readonly HeadersParser _headersParser;
     private readonly ITextPartsParser _partsParser;
-    private readonly IResponseGenerationHandlerFactory _responseGenerationHandlerFactory;
 
-    public ResponseGenerationHandlerParser(
+    public ResponseStrategyParser(
         HeadersParser headersParser,
-        ITextPartsParser partsParser,
-        IResponseGenerationHandlerFactory responseGenerationHandlerFactory)
+        ITextPartsParser partsParser)
     {
         _headersParser = headersParser;
         _partsParser = partsParser;
-        _responseGenerationHandlerFactory = responseGenerationHandlerFactory;
     }
 
-    public async Task<IHandler> Parse(WriteHistoryMode writeHistoryMode, FileSection responseSection, ParsingContext parsingContext)
+    public async Task<IResponseStrategy> Parse(FileSection responseSection, ParsingContext parsingContext)
     {
         if (responseSection.Blocks.Count == 0)
         {
@@ -35,31 +33,21 @@ class ResponseGenerationHandlerParser
                 if (string.IsNullOrEmpty(strCode))
                     throw new Exception("No response section found");
 
-                return _responseGenerationHandlerFactory.CreateNormal(
-                    writeHistoryMode,
-                    new StaticHttCodeGenerator(strCode.ToHttpCode()),
-                    bodyGenerator: null,
-                    headersGenerator: null);
+                return new NormalResponseStrategy(new StaticHttCodeGenerator(strCode.ToHttpCode()));
             }
 
             if (responseSection.LinesWithoutBlock.Count == 1 &&
                 int.TryParse(responseSection.GetSingleLine(), out var code))
             {
-                return _responseGenerationHandlerFactory.CreateNormal(
-                    writeHistoryMode,
-                    new StaticHttCodeGenerator(code),
-                    bodyGenerator: null,
-                    headersGenerator: null);
+                return new NormalResponseStrategy(new StaticHttCodeGenerator(code));
             }
 
             string text = responseSection.GetLinesWithoutBlockAsString();
             var parts = await _partsParser.Parse(text, parsingContext);
 
-            return _responseGenerationHandlerFactory.CreateNormal(
-                writeHistoryMode,
+            return new NormalResponseStrategy(
                 StaticHttCodeGenerator.Code200,
-                new BodyGenerator(parts.WrapToTextParts()),
-                headersGenerator: null);
+                new BodyGenerator(parts.WrapToTextParts()));
         }
 
         if (responseSection.ExistBlock(Constants.BlockName.Response.Abort))
@@ -79,14 +67,17 @@ class ResponseGenerationHandlerParser
                                     $"but there are: {string.Join(", ", blocks.Select(b => b.Name))}");
             }
 
-            return _responseGenerationHandlerFactory.CreateFault(writeHistoryMode);
+            return FaultResponseStrategy.Instance;
         }
 
-        return _responseGenerationHandlerFactory.CreateNormal(
-            writeHistoryMode,
-            await GetHttpCodeGenerator(responseSection, parsingContext),
-            await GetBodyGenerator(responseSection, parsingContext),
-            await GetHeadersGenerator(responseSection, parsingContext));
+        var codeGenerator = await GetHttpCodeGenerator(responseSection, parsingContext);
+        var bodyGenerator = await GetBodyGenerator(responseSection, parsingContext);
+        var headersGenerator = await GetHeadersGenerator(responseSection, parsingContext);
+
+        return new NormalResponseStrategy(
+            codeGenerator,
+            bodyGenerator,
+            headersGenerator);
     }
 
     private async Task<IHttCodeGenerator> GetHttpCodeGenerator(FileSection responseSection,
@@ -112,7 +103,7 @@ class ResponseGenerationHandlerParser
         return new DynamicHttCodeGenerator(textParts.WrapToTextParts());
     }
 
-    private async Task<BodyGenerator?> GetBodyGenerator(FileSection responseSection, ParsingContext parsingContext)
+    private async Task<IBodyGenerator?> GetBodyGenerator(FileSection responseSection, ParsingContext parsingContext)
     {
         BodyGenerator? bodyWriter = null;
         var bodyBlock = responseSection.GetBlockOrNull(Constants.BlockName.Response.Body);
@@ -126,7 +117,7 @@ class ResponseGenerationHandlerParser
         return bodyWriter;
     }
 
-    private async Task<HeadersGenerator?> GetHeadersGenerator(FileSection responseSection,
+    private async Task<IHeadersGenerator?> GetHeadersGenerator(FileSection responseSection,
         ParsingContext parsingContext)
     {
         var headersBlock = responseSection.GetBlockOrNull(Constants.BlockName.Response.Headers);

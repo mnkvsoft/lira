@@ -2,7 +2,7 @@ namespace Lira.Domain.Handling.Generating;
 
 public class TextPartsProvider(IEnumerable<ITextParts> parts)
 {
-    public readonly static  TextPartsProvider Empty = new([]);
+    public readonly static TextPartsProvider Empty = new([]);
 
     public IEnumerable<string> Get(RuleExecutingContext ctx)
     {
@@ -14,6 +14,11 @@ public class TextPartsProvider(IEnumerable<ITextParts> parts)
             }
         }
     }
+}
 
-    public string GetSingleString(RuleExecutingContext context) => string.Concat(Get(context));
+public static class TextPartsProviderExtensions
+{
+    public static string GetSingleString(this TextPartsProvider provider,
+        RuleExecutingContext context)
+        => string.Concat(provider.Get(context));
 }

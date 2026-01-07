@@ -1,6 +1,11 @@
 namespace Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Normal.Generators;
 
-public class BodyGenerator(TextPartsProvider partsProvider)
+public interface IBodyGenerator
 {
-    internal IEnumerable<string> Create(RuleExecutingContext context) => partsProvider.Get(context);
+    IEnumerable<string> Create(RuleExecutingContext context);
+}
+
+public class BodyGenerator(TextPartsProvider partsProvider) : IBodyGenerator
+{
+    public IEnumerable<string> Create(RuleExecutingContext context) => partsProvider.Get(context);
 }

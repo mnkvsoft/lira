@@ -15,9 +15,9 @@ public abstract class ConditionMatcher : IRequestMatcher
         _requestStatisticStorage = requestStatisticStorage;
     }
 
-    public async Task<RequestMatchResult> IsMatch(RuleExecutingContext context)
+    public async Task<RequestMatchResult> IsMatch(RuleExecutingContext ctx)
     {
-        var statistic = await _requestStatisticStorage.Add(context);
+        var statistic = await _requestStatisticStorage.Add(ctx);
         bool isMatch = IsMatch(statistic);
 
         if (!isMatch)

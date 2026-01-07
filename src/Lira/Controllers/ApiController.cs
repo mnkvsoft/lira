@@ -3,6 +3,7 @@ using Lira.Contracts;
 using Lira.Domain;
 using Lira.Domain.Handling.Generating.History;
 using Microsoft.AspNetCore.Mvc;
+using Response = Lira.Domain.Response;
 
 namespace Lira.Controllers;
 
@@ -25,13 +26,13 @@ public class ApiController : ControllerBase
     {
         Result result = item.Result switch
         {
-            RequestHandleResult.Response res => new Result(
-                Response: new Response(
-                    res.StatusCode,
+            Response.Normal res => new Result(
+                Response: new Contracts.Response(
+                    res.Code,
                     res.Headers ?? EmptyDictionary,
                     res.Body),
                 Fault: false),
-            RequestHandleResult.Fault => new Result(
+            Domain.Response.Fault => new Result(
                 Response: null,
                 Fault: true),
             _ => throw new UnsupportedInstanceType(item.Result)

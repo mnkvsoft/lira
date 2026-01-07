@@ -36,14 +36,14 @@ public static class ServiceCollectionExtensions
             .AddTransient<ConditionMatcherParser>()
             .AddTransient<RequestMatchersParser>()
 
-            .AddTransient<RuleFileParser>()
+            .AddTransient<RuleFileLoader>()
 
             .AddScoped<OperatorParser>()
             .AddScoped<OperatorPartFactory>()
 
             .AddOperators()
 
-            .AddScoped<ResponseGenerationHandlerParser>()
+            .AddScoped<ResponseStrategyParser>()
             .AddScoped<MiddlewaresParser>()
             .AddScoped<HeadersParser>()
             .AddScoped<GetDelayParser>()

@@ -12,9 +12,9 @@ public class PathRequestMatcher : IRequestMatcher
         _segmentsPatterns = expectedSegments;
     }
 
-    async Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext context)
+    async Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext ctx)
     {
-        var request = context.RequestData;
+        var request = ctx.RequestData;
         var currentSegments = request.Path.Value.Split('/');
 
         if (_segmentsPatterns.Count != currentSegments.Length)
@@ -26,7 +26,7 @@ public class PathRequestMatcher : IRequestMatcher
             var pattern = _segmentsPatterns[i];
             var current = currentSegments[i];
 
-            if (await pattern.Match(context, current) == false)
+            if (await pattern.Match(ctx, current) == false)
                 return RequestMatchResult.NotMatched;
 
             weight += TextPatternPartWeightCalculator.Calculate(pattern);

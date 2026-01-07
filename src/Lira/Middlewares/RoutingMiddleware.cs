@@ -1,4 +1,6 @@
+using System.Text;
 using Lira.Common.Extensions;
+using Lira.Domain;
 using Lira.Domain.Configuration;
 using RequestData = Lira.Domain.RequestData;
 
@@ -52,6 +54,27 @@ class RoutingMiddleware : IMiddleware
 
         var ok = (ConfigurationState.Ok)state;
         var request = new RequestData(req.Method, req.Path, req.QueryString, req.Headers, req.Query, req.Body, req.Protocol);
-        await ok.RequestHandler.Handle(request, context.Response);
+        await ok.RequestHandler.Handle(request, new ResponseWriter(context.Response));
     }
+}
+
+file class ResponseWriter(HttpResponse response) : IResponseWriter
+{
+    public void WriteCode(int code) => response.StatusCode = code;
+
+    public void WriteHeader(Header header)
+    {
+        var name = header.Name;
+        var value = header.Value;
+
+        if(response.Headers.ContainsKey(name))
+            response.Headers.Append(name, value);
+        else
+            response.Headers[name] = value;
+    }
+
+    public async Task WriteBody(string part, Encoding encoding)
+        => await response.WriteAsync(part, encoding);
+
+    public void Abort() => response.HttpContext.Abort();
 }

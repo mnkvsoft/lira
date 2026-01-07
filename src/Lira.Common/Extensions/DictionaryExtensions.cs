@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Lira.Common.Extensions;
 
 public static class DictionaryExtensions

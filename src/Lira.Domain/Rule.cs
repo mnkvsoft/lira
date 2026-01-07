@@ -1,64 +1,62 @@
-using Lira.Common.Exceptions;
+using Lira.Common;
 using Lira.Domain.Handling;
 
 namespace Lira.Domain;
+//
+// internal record RuleData
+// {
+//     public string Info { get; }
+//     public IReadOnlyCollection<IRequestMatcher> Matchers { get; }
+//     public IReadOnlyCollection<Factory<Delayed<Middleware>>> MiddlewaresFactories { get; }
+//
+//     public RuleData(string info,
+//         IReadOnlyCollection<IRequestMatcher> matchers,
+//         IReadOnlyCollection<Factory<Delayed<Middleware>>> middlewaresFactories)
+//     {
+//         Info = info;
+//         Matchers = matchers;
+//         MiddlewaresFactories = middlewaresFactories;
+//     }
+// }
 
-public record RuleData
+internal class Rule
 {
     public string Info { get; }
-    public IReadOnlyCollection<IRequestMatcher> Matchers { get; }
-    public IReadOnlyCollection<Func<Delayed<IMiddleware>>> MiddlewareFactories { get; }
+    private readonly IReadOnlyCollection<IRequestMatcher> _matchers;
+    private readonly IReadOnlyCollection<Factory<Delayed<Middleware>>> _middlewaresFactories;
 
-    public RuleData(string info,
+    public Rule(
+        string info,
         IReadOnlyCollection<IRequestMatcher> matchers,
-        IReadOnlyCollection<Func<Delayed<IMiddleware>>> middlewareFactories)
+        IReadOnlyCollection<Factory<Delayed<Middleware>>> middlewaresFactories)
     {
         Info = info;
-        Matchers = matchers;
-        MiddlewareFactories = middlewareFactories;
+        _matchers = matchers;
+        _middlewaresFactories = middlewaresFactories;
     }
-}
 
-internal class Rule(RuleData data)
-{
-    public string Info { get; } = data.Info;
 
     public async Task Handle(HttpContextData httpContextData)
     {
         await httpContextData.RuleExecutingContext.RequestData.SaveBody();
 
-        bool wasHandled = false;
-        foreach (var factory in data.MiddlewareFactories)
+        foreach (var factory in _middlewaresFactories)
         {
-            var middleware = factory();
+            var delayedMiddleware = factory();
 
-            if(middleware.GetDelay != null)
-                await Task.Delay(middleware.GetDelay(httpContextData.RuleExecutingContext));
+            if(delayedMiddleware.GetDelay != null)
+                await Task.Delay(delayedMiddleware.GetDelay(httpContextData.RuleExecutingContext));
 
-            if (middleware.Value is IHandler handler)
-            {
-                wasHandled = true;
-                await handler.Handle(httpContextData);
-            }
-            else if (middleware.Value is IAction action)
-            {
-                await action.Execute(httpContextData.RuleExecutingContext);
-            }
-            else
-            {
-                throw new UnsupportedInstanceType(factory);
-            }
+            var middleware = delayedMiddleware.Value;
+            await middleware.Handle(httpContextData);
         }
-
-        // if (!wasHandled)
-        //     throw new Exception("No handler was found");
     }
 
     public async Task<RuleMatchResult> IsMatch(RuleExecutingContext context)
     {
         var matcheds = new List<Matched>();
 
-        foreach (var matcher in data.Matchers)
+        foreach (var matcher in _matchers)
         {
             var matchResult = await matcher.IsMatch(context);
             if (matchResult is not Matched matched)

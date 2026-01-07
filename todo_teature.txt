@@ -16,6 +16,7 @@
 - custom parameters in declared function
 - clean connected assemblies
 - fail container start if error in rule
+- history writing: unexpected exception
 
 
 

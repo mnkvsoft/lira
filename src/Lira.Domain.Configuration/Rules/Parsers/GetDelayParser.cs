@@ -1,5 +1,6 @@
 using Lira.Common.PrettyParsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
+using Lira.Domain.Handling.Generating;
 using Lira.Domain.TextPart;
 using Lira.FileSectionFormat;
 using Lira.FileSectionFormat.Extensions;

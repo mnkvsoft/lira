@@ -5,4 +5,4 @@ public interface IHandledRuleHistoryStorage
     IEnumerable<RuleHistoryItem> GetHistory(RuleName ruleName);
 }
 
-public record RuleHistoryItem(DateTime HandleTime, RequestData Request, RequestHandleResult Result);
+public record RuleHistoryItem(DateTime HandleTime, RequestData Request, Response Result);
