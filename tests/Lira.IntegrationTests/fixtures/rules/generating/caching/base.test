@@ -1,0 +1,71 @@
+-------------------- case
+
+POST /generating/caching/base
+
+~ headers
+Request-Id: 7C0B3600-F6CF-48E3-A2FA-F30AB8EB9863
+
+~ body
+{
+    "merchant_id": 123
+}
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "id": 1,
+    "status" : "created"
+}
+
+-------------------- case
+
+POST /generating/caching/base
+
+~ headers
+Request-Id: 7C0B3600-F6CF-48E3-A2FA-F30AB8EB9863
+
+~ body
+{
+    "merchant_id": 123
+}
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "id": 1,
+    "status" : "created"
+}
+
+-------------------- case
+
+POST /generating/caching/base
+
+~ headers
+Request-Id: 7C0B3600-F6CF-48E3-A2FA-F30AB8EB9863
+
+~ delay
+00:00:02
+
+~ body
+{
+    "merchant_id": 123
+}
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "id": 2,
+    "status" : "created"
+}

@@ -17,7 +17,10 @@ class ResponseMiddlewareFactory(
 
         if (modes.Caching is CachingMode.Enabled enabled)
         {
+            var id = Guid.NewGuid();
+
             factory = () => new CachingResponseStrategy(
+                id,
                 enabled.Time,
                 enabled.RuleKeyExtractor,
                 responseCache,

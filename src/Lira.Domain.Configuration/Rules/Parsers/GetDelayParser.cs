@@ -29,6 +29,6 @@ class GetDelayParser(ITextPartsParser partsParser)
 
         return GetDelay;
 
-        TimeSpan GetDelay(RuleExecutingContext ctx) =>  PrettyTimespanParser.Parse(textParts.GetSingleString(ctx));
+        TimeSpan GetDelay(RuleExecutingContext ctx) => PrettyTimespanParser.Parse(textParts.GetSingleString(ctx));
     }
 }

@@ -7,7 +7,6 @@ using Lira.Domain.Configuration.DeclarationItems;
 using Lira.Domain.Configuration.Rules.Parsers;
 using Lira.Domain.Configuration.Rules.ValuePatternParsing;
 using Lira.Domain.Handling.Generating;
-using Lira.Domain.Handling.Generating.ResponseStrategies;
 using Lira.Domain.TextPart.Impl.CSharp;
 using Lira.FileSectionFormat;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +19,8 @@ internal class RuleFileLoader
     private readonly ConditionMatcherParser _conditionMatcherParser;
     private readonly FileSectionDeclaredItemsParser _fileSectionDeclaredItemsParser;
     private readonly MiddlewaresParser _middlewaresParser;
+    private readonly RuleKeyExtractorParser _keyExtractorParser;
+
     private readonly IFunctionFactoryCSharpFactory _functionFactoryCSharpFactory;
     private readonly IConfiguration _configuration;
 
@@ -29,7 +30,7 @@ internal class RuleFileLoader
         FileSectionDeclaredItemsParser fileSectionDeclaredItemsParser,
         MiddlewaresParser middlewaresParser,
         IFunctionFactoryCSharpFactory functionFactoryCSharpFactory,
-        IConfiguration configuration)
+        IConfiguration configuration, RuleKeyExtractorParser keyExtractorParser)
     {
         _requestMatchersParser = requestMatchersParser;
         _conditionMatcherParser = conditionMatcherParser;
@@ -37,6 +38,7 @@ internal class RuleFileLoader
         _middlewaresParser = middlewaresParser;
         _functionFactoryCSharpFactory = functionFactoryCSharpFactory;
         _configuration = configuration;
+        _keyExtractorParser = keyExtractorParser;
     }
 
     public async Task Load(
@@ -93,7 +95,7 @@ internal class RuleFileLoader
         var declaredItems = await GetDeclaredItems(childSections, ctx);
         ctx.SetDeclaredItems(declaredItems);
 
-        var modes = GetResponseMiddlewareModes(childSections);
+        var modes = await GetResponseMiddlewareModes(childSections, ctx);
 
         var cachingEnabled = modes.Caching is CachingMode.Enabled;
 
@@ -154,17 +156,17 @@ internal class RuleFileLoader
         }
     }
 
-    private ResponseMiddlewareModes GetResponseMiddlewareModes(IImmutableList<FileSection> childSections)
+    private async Task<ResponseMiddlewareModes> GetResponseMiddlewareModes(IImmutableList<FileSection> childSections, IParsingContext parsingContext)
     {
         var options = OptionsSectionParser.Parse(childSections);
 
         var writeHistoryMode = GetWriteHistoryMode(options);
-        var cachingMode = GetCachingMode(options);
+        var cachingMode = await GetCachingMode(options, parsingContext);
 
         return new ResponseMiddlewareModes(cachingMode, writeHistoryMode);
     }
 
-    private CachingMode GetCachingMode(Options? options)
+    private async Task<CachingMode> GetCachingMode(Options? options, IParsingContext parsingContext)
     {
         CachingMode cachingMode;
         if (string.IsNullOrWhiteSpace(options?.CachingEnabled))
@@ -177,7 +179,13 @@ internal class RuleFileLoader
                 ? _configuration.GetValue<TimeSpan>("DefaultLifeTimeCachingResponse")
                 : PrettyTimespanParser.Parse(options.CachingEnabled);
 
-            cachingMode = new CachingMode.Enabled(lifeTime, null);
+            var extractRuleKeyExpression = options.RuleKey;
+
+            if (string.IsNullOrWhiteSpace(extractRuleKeyExpression))
+                throw new Exception($"If caching is enabled, the '{AttributeExtractor.Extract<Options, ParameterNameAttribute>(x => x.RuleKey)}' parameter is required");
+
+            var keyExtractor = await _keyExtractorParser.Parse(extractRuleKeyExpression, parsingContext);
+            cachingMode = new CachingMode.Enabled(lifeTime, keyExtractor);
         }
 
         return cachingMode;

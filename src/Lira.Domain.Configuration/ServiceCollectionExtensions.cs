@@ -47,6 +47,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<MiddlewaresParser>()
             .AddScoped<HeadersParser>()
             .AddScoped<GetDelayParser>()
+            .AddScoped<RuleKeyExtractorParser>()
             .AddScoped<DeclaredItemsLoader>()
             .AddScoped<DeclaredItemsLinesParser>()
             .AddScoped<TextPartsParserInternal>()

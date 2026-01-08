@@ -3,54 +3,35 @@ using Lira.Common.Exceptions;
 using Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Fault;
 using Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Normal;
 using Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Normal.Generators;
-using Lira.Domain.Matching.Request;
 
 namespace Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Caching;
 
 class CachingResponseStrategy(
+    Guid id,
     TimeSpan cachingTime,
     IRuleKeyExtractor ruleKeyExtractor,
     ResponseCache responseCache,
     Factory<IResponseStrategy> originalResponseStrategyFactory)
-    : IResponseStrategy, IRequestMatcher
+    : IResponseStrategy
 {
-    private readonly Guid _id = Guid.NewGuid();
-    private static readonly Type ContextItemsKey = typeof(CachingResponseStrategy);
-
-    Task<RequestMatchResult> IRequestMatcher.IsMatch(RuleExecutingContext ctx)
-    {
-        var key = GetKey(ctx);
-
-        if (!responseCache.TryGet(key, out var requestHandleResult))
-            return Task.FromResult(RequestMatchResult.NotMatched);
-
-        ctx.Items.Add(ContextItemsKey, requestHandleResult);
-
-        return Task.FromResult(RequestMatchResult.Matched("caching", WeightValue.CustomCode));
-    }
-
     async Task IResponseStrategy.Handle(RuleExecutingContext ctx, IResponseWriter responseWriter)
     {
-        if (ctx.TryGetItem<Response>(ContextItemsKey, out var requestHandleResult))
-        {
-            var responseStrategy = CreateResponseStrategy(requestHandleResult);
-            await responseStrategy.Handle(ctx, responseWriter);
-        }
-        else
+        var ruleKey = ruleKeyExtractor.Extract(ctx);
+        var key = $"{id}-{ruleKey}";
+
+        if (!responseCache.TryGet(key, out var requestHandleResult))
         {
             var savingResponseWriter = new SavingResponseWriter(responseWriter);
             var strategy = originalResponseStrategyFactory();
             await strategy.Handle(ctx, savingResponseWriter);
 
             var handleResult = savingResponseWriter.GetRequestHandleResult();
-            responseCache.Add(GetKey(ctx), handleResult, cachingTime);
+            responseCache.Add(key, handleResult, cachingTime);
+            return;
         }
-    }
 
-    private string GetKey(RuleExecutingContext ruleExecutingContext)
-    {
-        string ruleKey = ruleKeyExtractor.Extract(ruleExecutingContext);
-        return $"{_id}-{ruleKey}";
+        var responseStrategy = CreateResponseStrategy(requestHandleResult);
+        await responseStrategy.Handle(ctx, responseWriter);
     }
 
     private static IResponseStrategy CreateResponseStrategy(Response response)

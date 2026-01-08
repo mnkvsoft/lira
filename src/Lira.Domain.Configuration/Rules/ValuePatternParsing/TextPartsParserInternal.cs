@@ -90,10 +90,6 @@ class TextPartsParserInternal
     {
         string value = dynamicPart.Value;
 
-        // var (wasRead, parts) = await TryReadParts(context, value);
-        // if (wasRead)
-        //     return parts!;
-
         TransformPipeline pipeline;
         if (value.Contains("return"))
         {

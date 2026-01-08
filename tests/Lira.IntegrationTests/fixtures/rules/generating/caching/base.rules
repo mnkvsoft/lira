@@ -1,0 +1,20 @@
+-------------------- rule
+
+POST /generating/caching/base
+
+~ headers
+Request-Id: {{ any >> $$requestId }}
+
+~ body
+{{ jpath: $.merchant_id }} >> {{ any >> $$merchantId }}
+
+----- options
+
+caching = 1 second
+key     = {{ $$merchantId }} {{ $$requestId }}
+
+----- response
+{
+    "id": {{ seq }},
+    "status" : "created"
+}
