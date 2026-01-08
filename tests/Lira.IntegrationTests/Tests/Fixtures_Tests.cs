@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Net.Http.Headers;
 using Lira.Common;
 using Moq;
 using Moq.Contrib.HttpClient;
@@ -182,16 +183,20 @@ public class Fixtures_Tests : TestBase
         req.RequestUri = new Uri(splitted[1], UriKind.Relative);
 
         var headersLines = caseSection.GetLinesFromBlockOrEmpty("headers");
+        string? contentTypeHeaderValue = null;
         foreach (var headerLine in headersLines)
         {
             splitted = headerLine.Split(':');
             string name = splitted[0];
             string value = splitted[1].Trim();
 
-            req.Headers.Add(name, value);
+            if(name == "Content-Type")
+                contentTypeHeaderValue = value;
+            else
+                req.Headers.Add(name, value);
         }
 
-        req.Content = new StringContent(caseSection.GetStringValueFromBlockOrEmpty("body"));
+        req.Content = new StringContent(caseSection.GetStringValueFromBlockOrEmpty("body"), mediaType: new MediaTypeHeaderValue(contentTypeHeaderValue ?? "plain/text") );
 
         return req;
     }

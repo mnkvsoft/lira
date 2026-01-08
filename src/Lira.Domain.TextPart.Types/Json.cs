@@ -1,5 +1,5 @@
 ﻿using System.Dynamic;
-using Lira.Common.Exceptions;
+using Lira.Common.Extensions;
 using Newtonsoft.Json.Linq;
 
 // ReSharper disable InconsistentNaming
@@ -135,35 +135,8 @@ public class Json : DynamicObject
 
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
     {
-        result = true;
-        var name = binder.Name;
-        if (string.IsNullOrEmpty(name))
-            throw new Exception("Name is empty");
-
-        var token = _jObject.GetValue(name);
-
-        if (token == null)
-            throw new Exception($"Field '{name}' not found");
-
-        if (token is JValue value)
-        {
-            result = value.Value;
-            return true;
-        }
-
-        if (token is JObject obj)
-        {
-            result = obj;
-            return true;
-        }
-
-        if (token is JArray array)
-        {
-            result = array;
-            return true;
-        }
-
-        throw new Exception($"Unknown token type for '{name}': " + token);
+        result = _jObject.GetFieldValue(binder);
+        return true;
     }
 
     private static JToken GetNewToken(object newValue)
