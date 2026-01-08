@@ -1,0 +1,35 @@
+-------------------- case
+
+POST /generating/caching/different_keys
+
+~ headers
+Request-Id: 111
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "id": 1,
+    "status" : "created"
+}
+
+-------------------- case
+
+POST /generating/caching/different_keys
+
+~ headers
+Request-Id: 222
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "id": 2,
+    "status" : "created"
+}

@@ -1,6 +1,6 @@
 -------------------- rule
 
-POST /generating/caching/base
+POST /generating/caching/different_keys
 
 ~ headers
 Request-Id: {{ any >> $$requestId }}

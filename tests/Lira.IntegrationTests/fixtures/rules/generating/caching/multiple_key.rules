@@ -1,14 +1,17 @@
 -------------------- rule
 
-POST /generating/caching/base
+POST /generating/caching/multiple_key
 
 ~ headers
 Request-Id: {{ any >> $$requestId }}
 
+~ body
+{{ jpath: $.merchant_id }} >> {{ any >> $$merchantId }}
+
 ----- options
 
 caching = 1 second
-key     = {{ $$requestId }}
+key     = {{ $$merchantId }} {{ $$requestId }}
 
 ----- response
 {

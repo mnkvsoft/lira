@@ -5,6 +5,11 @@ POST /generating/caching/base
 ~ headers
 Request-Id: 111
 
+~ body
+{
+    "merchant_id": 222
+}
+
 ----- expected
 
 ~ code
@@ -22,6 +27,11 @@ POST /generating/caching/base
 
 ~ headers
 Request-Id: 111
+
+~ body
+{
+    "merchant_id": 222
+}
 
 ----- expected
 
@@ -43,6 +53,11 @@ Request-Id: 111
 
 ~ delay
 00:00:02
+
+~ body
+{
+    "merchant_id": 222
+}
 
 ----- expected
 
