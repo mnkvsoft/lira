@@ -17,14 +17,13 @@ class ResponseMiddlewareFactory(
 
         if (modes.Caching is CachingMode.Enabled enabled)
         {
-            var id = Guid.NewGuid();
-
-            factory = () => new CachingResponseStrategy(
-                id,
+            var cachingStrategy = new CachingResponseStrategy(
                 enabled.Time,
                 enabled.RuleKeyExtractor,
                 responseCache,
                 responseStrategyFactory);
+
+            factory = () => cachingStrategy;
         }
 
         return new Middleware.Response(

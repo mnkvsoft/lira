@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Lira.Common;
 using Lira.Domain.Configuration.Extensions;
@@ -160,7 +161,7 @@ static class FullParamsParser
         {
             var value = iterator.MoveToNextParameterOrEnd();
 
-            if (!double.TryParse(value, out var decValue))
+            if (!double.TryParse(value, CultureInfo.InvariantCulture, out var decValue))
             {
                 fail = new ParamsParseResult.Fail($"Parameter '{definition.Name}' is decimal but have invalid value: '{value}'");
                 return false;
