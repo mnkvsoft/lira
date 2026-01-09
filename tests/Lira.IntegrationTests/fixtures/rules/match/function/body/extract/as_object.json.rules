@@ -1,0 +1,11 @@
+-------------------- rule
+
+POST /match/function/body/extract/as_object_json
+
+~ body
+{{ address.city }} >> Nara
+
+----- response
+
+~ code
+200

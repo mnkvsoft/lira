@@ -1,0 +1,25 @@
+-------------------- case
+
+GET /generating/csharp/body_access/body/as_object_json
+
+~ body
+{
+  "persons": [
+    {
+      "name": "Mason Power",
+      "age": 37,
+      "hobby": [
+        "sport",
+        "fishing"
+      ]
+    }
+  ]
+}
+
+----- expected
+
+~ code
+200
+
+~ body
+Mason Power

@@ -1,0 +1,11 @@
+-------------------- rule
+
+GET /generating/csharp/body_access/body/as_object_form
+
+----- response
+
+~ code
+200
+
+~ body
+{{ req.body.name }}

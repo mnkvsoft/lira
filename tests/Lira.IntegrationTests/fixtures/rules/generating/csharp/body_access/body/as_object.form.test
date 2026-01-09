@@ -1,0 +1,14 @@
+-------------------- case
+
+GET /generating/csharp/body_access/body/as_object_form
+
+~ body
+name=Mason Power
+
+----- expected
+
+~ code
+200
+
+~ body
+Mason Power

@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Lira.Common;
 using Lira.Common.Extensions;
 using Lira.Domain.Matching.Request.Matchers;
 using Lira.Domain.TextPart.Impl.System.Functions.Generating.Impl.Extract.Body;
@@ -50,6 +51,14 @@ internal class GeneratingFunctionFactory
         if (value == "all")
         {
             function = new AllExtractFunction();
+            return true;
+        }
+
+        if (!value.Contains(":"))
+        {
+            var path = ObjectPath.Parse(value);
+            function = new FieldExtractFunction(path);
+
             return true;
         }
 
