@@ -1,0 +1,8 @@
+-------------------- rule
+
+GET /generating/corner_cases/null_part
+
+----- response
+{
+    "id": "{{ req.header: missing }}"
+}
