@@ -97,10 +97,10 @@ public static class ObjectTextPartsExtensions
         }
     }
 
-    public static string? GetStringValue(dynamic? obj)
+    public static string GetStringValue(dynamic? obj)
     {
         if (obj == null)
-            return null;
+            return string.Empty;
 
         if (obj is DateTime date)
             return date.ToString("O");

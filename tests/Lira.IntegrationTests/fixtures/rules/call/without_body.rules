@@ -1,0 +1,15 @@
+-------------------- rule
+
+GET /call/http/without_body
+
+----- declare
+
+$$callback_server = http://fakeserver:9876
+
+----- action.call.http
+
+GET {{ $$callback_server }}/api/callback/without_body
+
+----- response: 200
+
+

@@ -26,6 +26,9 @@ class TokenParser
 
     public IReadOnlyList<Token> Parse(PatternParts input)
     {
+        if(input.Count == 0)
+            return Array.Empty<Token>();
+
         var openOperators = new Stack<Token.Operator>();
 
         var result = new List<Token>();

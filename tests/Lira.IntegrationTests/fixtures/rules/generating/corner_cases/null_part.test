@@ -1,0 +1,13 @@
+-------------------- case
+
+GET /generating/corner_cases/null_part
+
+----- expected
+
+~ code
+200
+
+~ body
+{
+    "id": ""
+}
