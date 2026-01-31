@@ -44,20 +44,17 @@ public class HttpSystemActionRegistrator : ISystemActionRegistrator
         var method = methodStr.ToHttpMethod();
         var urlParts = await _partsParser.Parse(urlStr, parsingContext);
 
-        var bodyRawText = section.GetStringValueFromBlockOrEmpty(BlockName.Body);
-        var bodyParts = await _partsParser.Parse(bodyRawText, parsingContext);
+        var bodyBlock = section.GetBlockOrNull(BlockName.Body);
+        var bodyParts = bodyBlock == null ? null : await _partsParser.Parse(bodyBlock.GetLinesAsString(), parsingContext);
 
         var headerBlock = section.GetBlockOrNull(BlockName.Headers);
         var headers = headerBlock == null ? null : await _headersParser.ParseHeaders(headerBlock, parsingContext);
-
-        if(headers?.FirstOrDefault(x => x.Name == "Content-Type") == null)
-            throw new Exception("Header Content-Type is required");
 
         var caller = new HttpAction(
             _httpClientFactory,
             method,
             urlParts.WrapToTextParts(),
-            bodyParts.WrapToTextParts(),
+            bodyParts?.WrapToTextParts(),
             headers);
 
         return caller;

@@ -1,0 +1,12 @@
+-------------------- case
+
+GET /call/http/without_body
+
+----- expected
+
+~ code
+200
+
+--- action.call.http
+
+GET http://fakeserver:9876/api/callback/without_body

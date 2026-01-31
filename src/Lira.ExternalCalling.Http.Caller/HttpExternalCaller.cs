@@ -66,11 +66,17 @@ public class HttpAction : IAction
             }
         }
 
-        if (string.IsNullOrWhiteSpace(contentType))
-            throw new Exception("Header Content-Type is required");
+        if (_bodyParts != null)
+        {
+            if (string.IsNullOrWhiteSpace(contentType))
+                throw new Exception("Header Content-Type is required");
 
-        var content = _bodyParts == null ? "" : _bodyParts.GetSingleString(context);
-        req.Content = new StringContent(content, Encoding.UTF8, contentType);
+            req.Content = new StringContent(
+                _bodyParts.GetSingleString(context),
+                Encoding.UTF8,
+                contentType);
+        }
+
         return req;
     }
 }
