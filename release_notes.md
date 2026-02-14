@@ -68,3 +68,4 @@ docker run -p 80:8080 -e LibsPath=/tmp/lira/libs -v c:/lira/rules:/app/rules -v 
 - `~ req` block renamed to `~ script`
 - `~ code` block in `action` section renamed to `~ script`
 - added the ability to add `charset` to the Content-Type header
+- response caching

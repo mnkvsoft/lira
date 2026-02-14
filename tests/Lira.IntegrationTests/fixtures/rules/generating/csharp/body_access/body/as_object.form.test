@@ -1,0 +1,17 @@
+-------------------- case
+
+GET /generating/csharp/body_access/body/as_object_form
+
+~ headers
+Content-Type: application/x-www-form-urlencoded
+
+~ body
+name=Mason Power
+
+----- expected
+
+~ code
+200
+
+~ body
+Mason Power

@@ -1,0 +1,11 @@
+-------------------- case
+
+POST /match/function/body/extract/as_object_form
+
+~ body
+name=Johnny%20Dapp
+
+----- expected
+
+~ code
+200

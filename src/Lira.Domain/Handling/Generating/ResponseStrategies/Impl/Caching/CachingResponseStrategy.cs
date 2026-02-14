@@ -7,17 +7,18 @@ using Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Normal.Generators;
 namespace Lira.Domain.Handling.Generating.ResponseStrategies.Impl.Caching;
 
 class CachingResponseStrategy(
-    Guid id,
     TimeSpan cachingTime,
     IRuleKeyExtractor ruleKeyExtractor,
     ResponseCache responseCache,
     Factory<IResponseStrategy> originalResponseStrategyFactory)
     : IResponseStrategy
 {
+    readonly Guid _id = Guid.NewGuid();
+
     async Task IResponseStrategy.Handle(RuleExecutingContext ctx, IResponseWriter responseWriter)
     {
         var ruleKey = ruleKeyExtractor.Extract(ctx);
-        var key = $"{id}-{ruleKey}";
+        var key = $"{_id}-{ruleKey}";
 
         if (!responseCache.TryGet(key, out var requestHandleResult))
         {
