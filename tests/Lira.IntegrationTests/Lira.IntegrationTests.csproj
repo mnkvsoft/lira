@@ -633,18 +633,6 @@
     <None Update="fixtures\rules\match\function\body\extract\as_object.form.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-<<<<<<< HEAD
-    <None Update="fixtures\rules\call\without_body.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\call\without_body.test">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\corner_cases\null_part.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="fixtures\rules\generating\corner_cases\null_part.test">
-=======
     <None Update="fixtures\rules\generating\csharp\body_access\body\as_object.json.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -667,7 +655,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="fixtures\rules\match\function\body\extract\as_object.form.test">
->>>>>>> feature/body_object_access
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
