@@ -121,7 +121,7 @@ public class OperatorParserTests
     {
         var sut = GetSut();
         var result = sut.Parse(
-            """
+                """
                 [
                     @repeat
                         @random
@@ -136,7 +136,7 @@ public class OperatorParserTests
                         @end
                     @end
                 ]
-                """.Replace("\r\n", "\n"));
+                """);
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -186,7 +186,7 @@ public class OperatorParserTests
                         @end
                     ]
                 }
-                """.Replace("\r\n", "\n"));
+                """);
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -252,7 +252,7 @@ public class OperatorParserTests
                         @end
                     ]
                 }
-                """.Replace("\r\n", "\n"));
+                """);
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -302,7 +302,7 @@ public class OperatorParserTests
                     Nothing
                 @end
                 Finish
-                """.Replace("\r\n", "\n"));
+                """);
 
         string xmlView = result.GetXmlView();
         Assert.That(xmlView, Is.EqualTo(
@@ -377,7 +377,7 @@ public class OperatorParserTests
                 @else
                     Default
                 @end
-                """.Replace("\r\n", "\n");
+                """;
 
         var result = sut.Parse(input);
 

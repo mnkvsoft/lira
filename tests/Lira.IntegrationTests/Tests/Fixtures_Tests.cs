@@ -204,9 +204,17 @@ public class Fixtures_Tests : TestBase
     readonly static PeImagesCache PeImagesCache = new(new ConsoleLoggerFactory());
 
     [OneTimeSetUp]
-    public static void OneTimeSetUp()
+    public static async Task OneTimeSetUp()
     {
-        PeImagesCache.TryGet(new Hash([1]), out _);
+        string fixturesDirectory = GetFixturesDirectory();
+        var mocks = new AppMocks
+        {
+            PeImagesCache = PeImagesCache
+        };
+
+        await using var factory = new TestApplicationFactory(fixturesDirectory, mocks);
+        var httpClient = factory.CreateDefaultClient();
+        await httpClient.GetAsync("/warm-cache");
     }
 
     [OneTimeTearDown]

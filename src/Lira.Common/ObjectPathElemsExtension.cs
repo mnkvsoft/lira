@@ -12,7 +12,7 @@ public static class ObjectPathElemsExtension
         result = null;
         if (TryGetNode(path, node, out var resultNode))
         {
-            result = resultNode?.ToString();
+            result = resultNode?.ToString().Replace("\r\n", "\n");
             return true;
         }
 
