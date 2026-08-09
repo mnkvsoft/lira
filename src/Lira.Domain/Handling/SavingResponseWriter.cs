@@ -2,7 +2,7 @@
 
 namespace Lira.Domain.Handling;
 
-internal class SavingResponseWriter(IResponseWriter original) : IResponseWriter
+internal class SavingResponseWriter(IResponseWriter original) : Domain.IResponseWriter
 {
     private Dictionary<string, string?>? _headers;
     private List<string>? _bodyParts;

@@ -15,7 +15,7 @@ class CachingResponseStrategy(
 {
     readonly Guid _id = Guid.NewGuid();
 
-    async Task IResponseStrategy.Handle(RuleExecutingContext ctx, IResponseWriter responseWriter)
+    async Task IResponseStrategy.Handle(RuleExecutingContext ctx, Domain.IResponseWriter responseWriter)
     {
         var ruleKey = ruleKeyExtractor.Extract(ctx);
         var key = $"{_id}-{ruleKey}";

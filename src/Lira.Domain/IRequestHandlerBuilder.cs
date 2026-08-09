@@ -1,5 +1,3 @@
-using Lira.Common;
-using Lira.Domain.Handling;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -10,8 +8,10 @@ public interface IRequestHandlerBuilder
     int Count { get; }
     IRequestHandler Build();
 
-    void AddRule(string ruleInfo, IReadOnlyCollection<IRequestMatcher> requestMatchers,
-        IReadOnlyCollection<Factory<Delayed<Middleware>>> middlewares);
+    public void AddRule(
+        string ruleInfo,
+        IReadOnlyCollection<IRequestMatcher> requestMatchers,
+        RuleMiddlewares middlewares);
 }
 
 public class RequestHandlerBuilder(ILoggerFactory loggerFactory, IConfiguration configuration) : IRequestHandlerBuilder
@@ -25,8 +25,11 @@ public class RequestHandlerBuilder(ILoggerFactory loggerFactory, IConfiguration 
     public void AddRule(
         string ruleInfo,
         IReadOnlyCollection<IRequestMatcher> requestMatchers,
-        IReadOnlyCollection<Factory<Delayed<Middleware>>> middlewares)
+        RuleMiddlewares middlewares)
     {
-        _rules.Add(new Rule(ruleInfo, requestMatchers, middlewares));
+        _rules.Add(new Rule(
+            ruleInfo,
+            requestMatchers,
+            middlewares));
     }
 }

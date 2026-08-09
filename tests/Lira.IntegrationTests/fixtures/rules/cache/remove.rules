@@ -6,6 +6,8 @@ POST /cache/set/{{ any >> $$key }}
 
 cache.set($$key, req.body.all())
 
+----- response: 200
+
 --------------------------------------- rule
 
 GET /cache/value/{{ cache.contains(value) >> $$key }}
@@ -31,3 +33,5 @@ POST /cache/remove/{{ any >> $$key }}
 ----- action
 
 cache.remove($$key)
+
+----- response: 200

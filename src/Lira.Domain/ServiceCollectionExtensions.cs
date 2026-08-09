@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
         return services
             .AddSingleton<ResponseCache>()
             .AddSingleton<ResponseMiddlewareFactory>()
-            .AddSingleton<IMiddlewareFactory, MiddlewareFactory>()
+            .AddSingleton<IResponseGeneratorFactory, ResponseGeneratorFactory>()
             .AddSingleton<HandledRuleHistoryStorage>()
             .AddSingleton<IHandledRuleHistoryStorage>(provider => provider.GetRequiredService<HandledRuleHistoryStorage>())
             .AddSingleton<IRequestStatisticStorage, RequestStatisticStorage>()

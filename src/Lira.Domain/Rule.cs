@@ -2,37 +2,32 @@ using Lira.Common;
 using Lira.Domain.Handling;
 
 namespace Lira.Domain;
-//
-// internal record RuleData
-// {
-//     public string Info { get; }
-//     public IReadOnlyCollection<IRequestMatcher> Matchers { get; }
-//     public IReadOnlyCollection<Factory<Delayed<Middleware>>> MiddlewaresFactories { get; }
-//
-//     public RuleData(string info,
-//         IReadOnlyCollection<IRequestMatcher> matchers,
-//         IReadOnlyCollection<Factory<Delayed<Middleware>>> middlewaresFactories)
-//     {
-//         Info = info;
-//         Matchers = matchers;
-//         MiddlewaresFactories = middlewaresFactories;
-//     }
-// }
+
+public record RuleMiddlewares(
+    IReadOnlyCollection<Delayed<IAction>> PreResponseActionFactories,
+    Factory<Delayed<IResponseGenerator>> ResponseGeneratorFactory,
+    IReadOnlyCollection<Delayed<IAction>> PostResponseActionFactories
+);
 
 internal class Rule
 {
     public string Info { get; }
     private readonly IReadOnlyCollection<IRequestMatcher> _matchers;
-    private readonly IReadOnlyCollection<Factory<Delayed<Middleware>>> _middlewaresFactories;
+
+    private readonly IReadOnlyCollection<Delayed<IAction>> _preResponseActions;
+    private readonly Factory<Delayed<IResponseGenerator>> _responseGeneratorFactory;
+    private readonly IReadOnlyCollection<Delayed<IAction>> _postResponseActions;
 
     public Rule(
         string info,
         IReadOnlyCollection<IRequestMatcher> matchers,
-        IReadOnlyCollection<Factory<Delayed<Middleware>>> middlewaresFactories)
+        RuleMiddlewares middlewares)
     {
         Info = info;
         _matchers = matchers;
-        _middlewaresFactories = middlewaresFactories;
+        _preResponseActions = middlewares.PreResponseActionFactories;
+        _responseGeneratorFactory = middlewares.ResponseGeneratorFactory;
+        _postResponseActions = middlewares.PostResponseActionFactories;
     }
 
 
@@ -40,15 +35,34 @@ internal class Rule
     {
         await httpContextData.RuleExecutingContext.RequestData.SaveBody();
 
-        foreach (var factory in _middlewaresFactories)
+        foreach (var delayedAction in _preResponseActions)
         {
-            var delayedMiddleware = factory();
+            if(delayedAction.GetDelay != null)
+                await Task.Delay(delayedAction.GetDelay(httpContextData.RuleExecutingContext));
 
-            if(delayedMiddleware.GetDelay != null)
-                await Task.Delay(delayedMiddleware.GetDelay(httpContextData.RuleExecutingContext));
+            var action = delayedAction.Value;
+            await action.Execute(httpContextData.RuleExecutingContext);
+        }
 
-            var middleware = delayedMiddleware.Value;
-            await middleware.Handle(httpContextData);
+        var delayedResponse = _responseGeneratorFactory();
+        if(delayedResponse.GetDelay != null)
+            await Task.Delay(delayedResponse.GetDelay(httpContextData.RuleExecutingContext));
+        var responseHandler = delayedResponse.Value;
+        await responseHandler.Generate(httpContextData);
+
+        if (_postResponseActions.Count > 0)
+        {
+            _ = Task.Run(async () =>
+            {
+                foreach (var delayedAction in _postResponseActions)
+                {
+                    if (delayedAction.GetDelay != null)
+                        await Task.Delay(delayedAction.GetDelay(httpContextData.RuleExecutingContext));
+
+                    var action = delayedAction.Value;
+                    await action.Execute(httpContextData.RuleExecutingContext);
+                }
+            });
         }
     }
 

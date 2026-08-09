@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
         if (configuration.IsLoggingEnabled())
             builder.AddHttpMessageHandler<LoggingHandler>();
 
-        builder.ConfigurePrimaryHttpMessageHandler(provider => 
+        builder.ConfigurePrimaryHttpMessageHandler(provider =>
             {
                 var factory = provider.GetRequiredService<IHttpMessageHandlerFactory>();
                 var handler = factory.Create();

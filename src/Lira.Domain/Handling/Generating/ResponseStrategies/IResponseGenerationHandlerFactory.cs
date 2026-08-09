@@ -9,7 +9,7 @@ class ResponseMiddlewareFactory(
     HandledRuleHistoryStorage handledRuleHistoryStorage,
     ResponseCache responseCache)
 {
-    public Middleware Create(
+    public IResponseGenerator Create(
         ResponseMiddlewareModes modes,
         Factory<IResponseStrategy> responseStrategyFactory)
     {
@@ -26,7 +26,7 @@ class ResponseMiddlewareFactory(
             factory = () => cachingStrategy;
         }
 
-        return new Middleware.Response(
+        return new ResponseGenerator(
             new WriteStatDependencies(handledRuleHistoryStorage, modes.WriteHistory),
             factory);
     }

@@ -63,7 +63,7 @@ class IfHandler(TextPartsParserInternal parser, IfOperatorDefinition operatorDef
     }
 
     private async Task<(IPredicateFunction, IReadOnlyCollection<IObjectTextPart>)> GetPredicateAndParts(
-        string? predicateCode,
+        string predicateCode,
         List<Token> content,
         IParsingContext context,
         OperatorPartFactory operatorPartFactory)

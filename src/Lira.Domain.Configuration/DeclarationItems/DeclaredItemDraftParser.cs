@@ -48,18 +48,7 @@ static class DeclaredItemDraftOrderer
         // checking loops
         foreach (var (_, node) in nodes)
         {
-            foreach (var (_, n) in nodes)
-            {
-                n.LoopDetectedFlag = false;
-            }
-
-            RecursiveTraversal(node.Draft.Name, node, (current, route) =>
-            {
-                if (current.LoopDetectedFlag)
-                    throw new Exception("Circular reference detected in declaration: " + route);
-
-                current.LoopDetectedFlag = true;
-            });
+            RecursiveTraversal(node.Draft.Name, node);
         }
 
         // generate ordered set
@@ -84,12 +73,18 @@ static class DeclaredItemDraftOrderer
         return ordered;
     }
 
-    static void RecursiveTraversal(string route, Node node, Action<Node, string> handle)
+    static void RecursiveTraversal(string route, Node node)
     {
-        handle(node, route);
+        if (node.LoopDetectedFlag)
+             throw new Exception("Circular reference detected in declaration: " + route);
+
+        node.LoopDetectedFlag = true;
+
         foreach (Node n in node.DependsOn)
         {
-            RecursiveTraversal(route + " --> " + n.Draft.Name, n, handle);
+            RecursiveTraversal(route + " --> " + n.Draft.Name, n);
         }
+
+        node.LoopDetectedFlag = false;
     }
 }

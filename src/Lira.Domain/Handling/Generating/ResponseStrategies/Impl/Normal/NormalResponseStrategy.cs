@@ -10,7 +10,7 @@ public record NormalResponseStrategy(
     IBodyGenerator? BodyGenerator = null,
     IHeadersGenerator? HeadersGenerator = null) : IResponseStrategy
 {
-    async Task IResponseStrategy.Handle(RuleExecutingContext ruleExecutingContext, IResponseWriter responseWriter)
+    async Task IResponseStrategy.Handle(RuleExecutingContext ruleExecutingContext, Domain.IResponseWriter responseWriter)
     {
         var statusCode = CodeGenerator.Generate(ruleExecutingContext);
         responseWriter.WriteCode(statusCode);
