@@ -11,16 +11,22 @@ namespace Lira.IntegrationTests;
 class AppMocks
 {
     public PeImagesCache? PeImagesCache { get; set; }
+    public DateTime CallTime;
 
-    public Mock<HttpMessageHandler> HttpMessageHandler = new Mock<HttpMessageHandler>()
-        .Apply(mock =>
-        {
-            mock
+    public readonly Mock<HttpMessageHandler> HttpMessageHandler = new();
+
+    public AppMocks()
+    {
+        HttpMessageHandler
             .SetupAnyRequest()
-            .ReturnsResponse(System.Net.HttpStatusCode.OK);
-        });
+            .ReturnsResponse(System.Net.HttpStatusCode.OK)
+            .Callback(() =>
+            {
+                CallTime = DateTime.Now;
+            });
+    }
 
-    public Mock<IStateRepository> StateRepository = new Mock<IStateRepository>().Apply(r =>
+    private Mock<IStateRepository> StateRepository = new Mock<IStateRepository>().Apply(r =>
     {
         r.Setup(x => x.GetStates())
             .ReturnsAsync(ImmutableDictionary<string, string>.Empty);

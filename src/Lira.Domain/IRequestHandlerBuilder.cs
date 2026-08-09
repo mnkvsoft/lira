@@ -30,6 +30,7 @@ public class RequestHandlerBuilder(ILoggerFactory loggerFactory, IConfiguration 
         _rules.Add(new Rule(
             ruleInfo,
             requestMatchers,
-            middlewares));
+            middlewares,
+            loggerFactory));
     }
 }

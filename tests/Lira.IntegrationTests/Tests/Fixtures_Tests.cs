@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Net.Http.Headers;
-using Lira.Common;
 using Moq;
 using Moq.Contrib.HttpClient;
 using Lira.Common.Extensions;
@@ -69,6 +68,7 @@ public class Fixtures_Tests : TestBase
 
                 var expectedSection = caseSection.GetSingleChildSection("expected");
                 HttpResponseMessage res;
+
                 try
                 {
                     res = await httpClient.SendAsync(req);
@@ -79,15 +79,16 @@ public class Fixtures_Tests : TestBase
                         continue;
                     throw;
                 }
+                var responseTime = DateTime.Now;
+
+                var elapsed = expectedSection.GetBlockValueOrDefault<TimeSpan>("elapsedFromStartRequest");
+                if (elapsed != TimeSpan.Zero)
+                    Assert.That(sw.Elapsed, Is.GreaterThan(elapsed));
 
                 var wait = caseSection.GetBlockValueOrDefault<TimeSpan>("wait");
 
                 if (wait != TimeSpan.Zero)
                     await Task.Delay(wait);
-
-                var elapsed = expectedSection.GetBlockValueOrDefault<TimeSpan>("elapsed");
-                if (elapsed != TimeSpan.Zero)
-                    Assert.That(sw.Elapsed, Is.GreaterThan(elapsed));
 
                 int expectedHttpCode = expectedSection.GetBlockValue<int>("code");
                 Assert.That((int)res.StatusCode, Is.EqualTo(expectedHttpCode));
@@ -105,7 +106,7 @@ public class Fixtures_Tests : TestBase
                 AssertValidHeaders(res, expectedSection);
 
                 var httpCallSection = expectedSection.ChildSections.FirstOrDefault(x => x.Name == "action.call.http");
-                AsserCallHttp(httpCallSection, mocks);
+                AsserCallHttp(httpCallSection, mocks, responseTime);
             }
         }
         catch (Exception e)
@@ -114,7 +115,7 @@ public class Fixtures_Tests : TestBase
         }
     }
 
-    private static void AsserCallHttp(FileSection? httpCallSection, AppMocks mocks)
+    private static void AsserCallHttp(FileSection? httpCallSection, AppMocks mocks, DateTime responseTime)
     {
         if (httpCallSection != null)
         {
@@ -144,6 +145,14 @@ public class Fixtures_Tests : TestBase
                 {
                     string expectedBody = bodyBlock.GetLinesAsString();
                     Assert.That(expectedBody, Is.EqualTo(await message.Content!.ReadAsStringAsync()));
+                }
+
+                var elapsedBlock = httpCallSection.GetBlockOrNull("elapsedFromEndRequest");
+                if (elapsedBlock != null)
+                {
+                    var elapsedExpected = TimeSpan.Parse(elapsedBlock.GetLinesAsString());
+                    var elapsedActual = mocks.CallTime - responseTime;
+                    Assert.Greater(elapsedActual, elapsedExpected);
                 }
 
                 return true;

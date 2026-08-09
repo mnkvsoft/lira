@@ -657,6 +657,12 @@
     <None Update="fixtures\rules\match\function\body\extract\as_object.form.test">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="fixtures\rules\call\async.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="fixtures\rules\call\async.test">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -678,9 +684,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="fixtures\rules\cache\short.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="fixtures\rules\call\1.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

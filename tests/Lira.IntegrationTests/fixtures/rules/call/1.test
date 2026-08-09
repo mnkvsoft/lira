@@ -11,7 +11,7 @@ POST /call/http
 Request-Id: 64F67BF9-28C8-41F8-9D8B-75E0A64B8A16
 
 ~ wait
-00:00:01
+00:00:02
 
 ----- expected
 
@@ -29,7 +29,7 @@ Request-Id: 64F67BF9-28C8-41F8-9D8B-75E0A64B8A16
 
 POST http://fakeserver:9876/api/callback?a=1
 
-~ elapsed 
+~ elapsedFromStartRequest
 00:00:00.100
 
 ~ headers

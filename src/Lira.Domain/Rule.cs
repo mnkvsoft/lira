@@ -1,5 +1,6 @@
 using Lira.Common;
 using Lira.Domain.Handling;
+using Microsoft.Extensions.Logging;
 
 namespace Lira.Domain;
 
@@ -18,16 +19,19 @@ internal class Rule
     private readonly Factory<Delayed<IResponseGenerator>> _responseGeneratorFactory;
     private readonly IReadOnlyCollection<Delayed<IAction>> _postResponseActions;
 
-    public Rule(
-        string info,
+    private readonly ILogger _logger;
+
+    public Rule(string info,
         IReadOnlyCollection<IRequestMatcher> matchers,
-        RuleMiddlewares middlewares)
+        RuleMiddlewares middlewares,
+        ILoggerFactory loggerFactory)
     {
         Info = info;
         _matchers = matchers;
         _preResponseActions = middlewares.PreResponseActionFactories;
         _responseGeneratorFactory = middlewares.ResponseGeneratorFactory;
         _postResponseActions = middlewares.PostResponseActionFactories;
+        _logger = loggerFactory.CreateLogger(GetType());
     }
 
 
@@ -54,13 +58,20 @@ internal class Rule
         {
             _ = Task.Run(async () =>
             {
-                foreach (var delayedAction in _postResponseActions)
+                try
                 {
-                    if (delayedAction.GetDelay != null)
-                        await Task.Delay(delayedAction.GetDelay(httpContextData.RuleExecutingContext));
+                    foreach (var delayedAction in _postResponseActions)
+                    {
+                        if (delayedAction.GetDelay != null)
+                            await Task.Delay(delayedAction.GetDelay(httpContextData.RuleExecutingContext));
 
-                    var action = delayedAction.Value;
-                    await action.Execute(httpContextData.RuleExecutingContext);
+                        var action = delayedAction.Value;
+                        await action.Execute(httpContextData.RuleExecutingContext);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, $"An error occurred while execute post rule action. Rule: {Info}");
                 }
             });
         }

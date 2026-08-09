@@ -6,7 +6,10 @@ POST /cache/set/{{ any >> $$key }}
 
 cache.set($$key, req.body.all())
 
------ response: 200
+----- response
+
+~ code
+200
 
 --------------------------------------- rule
 
@@ -34,4 +37,7 @@ POST /cache/remove/{{ any >> $$key }}
 
 cache.remove($$key)
 
------ response: 200
+----- response
+
+~ code
+200

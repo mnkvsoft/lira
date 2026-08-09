@@ -1,0 +1,13 @@
+-------------------- rule
+
+GET /call/http/async
+
+----- response
+200
+
+----- action.call.http
+
+GET http://fakeserver:9876/api/callback/async
+
+~ delay
+1 second

@@ -38,13 +38,13 @@ public class RequestModel
             if(string.IsNullOrWhiteSpace(value))
                 throw new Exception("The body is empty");
 
-            if (contentType == "application/x-www-form-urlencoded")
+            if (contentType?.Contains("application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase) == true)
             {
                 result = form(binder.Name);
                 return true;
             }
 
-            if (contentType == "application/json")
+            if (contentType?.Contains("application/json", StringComparison.OrdinalIgnoreCase) == true)
             {
                 result = JObject.Parse(value).GetFieldValue(binder);
                 return true;
@@ -55,31 +55,6 @@ public class RequestModel
                   Unable to access body field as an object. Unknown data format (ContentType: {{contentType}}):
                   {{value}}
                   """);
-
-//             try
-//             {
-//                 result = JObject.Parse(value).GetFieldValue(binder);
-//                 return true;
-//             }
-//             catch
-//             {
-//                 // nothing
-//             }
-//
-//             try
-//             {
-//                 var pars = HttpUtility.ParseQueryString(value);
-//                 result = pars[binder.Name];
-//                 return true;
-//             }
-//             catch
-//             {
-//                 throw new Exception(
-//                     $$"""
-//                       Unable to access body field as an object. Unknown data format (ContentType: {{contentType}}):
-//                       {{value}}
-//                       """);
-//             }
         }
     }
 }

@@ -1,0 +1,18 @@
+-------------------- case
+
+GET /call/http/async
+
+~ wait
+00:00:02
+
+----- expected
+
+~ code
+200
+
+--- action.call.http
+
+GET http://fakeserver:9876/api/callback/async
+
+~ elapsedFromEndRequest
+00:00:01

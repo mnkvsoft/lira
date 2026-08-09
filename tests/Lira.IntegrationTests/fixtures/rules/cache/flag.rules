@@ -13,6 +13,10 @@ POST /cache/flag/{{ int >> $$id }}
 ~ headers
 Request-Id: reject_scenario
 
+----- action
+
+cache.setFlag("reject_scenario_" + $$id)
+
 ----- response
 
 ~ code
@@ -23,11 +27,6 @@ Request-Id: reject_scenario
     @response
         .replace("status", "pending")
 }}
-
------ action
-
-cache.setFlag("reject_scenario_" + $$id)
-
 
 -------------------- rule
 
